@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>菜单页</title>
+    <script src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".select").change(function () {
+                window.location.href = "./list?subject="+$(this).val();
+            });
+        })
+    </script>
+</head>
+<body>
+    <div>
+        <a>机构关系</a>
+        <select class="select" name="subject">
+            <#list userRelations as ur>
+                <option value="${ur.subject.id}">${ur.subject.name}</option>
+            </#list>
+        </select>
+        <a>所属部门:${depart.name?if_exists}</a>
+        <a>所属机构:${groups.name?if_exists}</a>
+    </div>
+    <div>
+        <a>菜单</a>
+        <ul>
+            <#list menus as m>
+                <li><a>${m.name}</a></li>
+            </#list>
+        </ul>
+        <a>页面:${page.name}</a>
+        <ul>
+            <#list fields as f>
+                <li>
+                    <a>${f.name}</a>
+                    <ul>
+                        <#list buttons as b>
+                            <#if b.field.id == f.id>
+                                <li>b.name</li>
+                            </#if>
+                        </#list>
+                    </ul>
+                </li>
+            </#list>
+        </ul>
+    </div>
+</body>
+</html>
