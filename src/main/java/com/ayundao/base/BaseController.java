@@ -46,6 +46,10 @@ public abstract class BaseController {
      */
     private static final String CONSTRAINT_VIOLATIONS_ATTRIBUTE_NAME = "constraintViolations";
     private static final String USER_INFO = ":userInfo";
+    /**
+     * 默认返回结果
+     */
+    public JsonResult jsonResult = JsonResult.success();
     @Autowired
     private Validator validator;
     @Value("${server.salt}")
@@ -64,11 +68,6 @@ public abstract class BaseController {
     private ButtonRoleService buttonRoleService;
     private String account;
     private User user;
-
-    /**
-     * 默认返回结果
-     */
-    public JsonResult jsonResult = JsonResult.success();
 
     /**
      * 数据验证
