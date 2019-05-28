@@ -4,7 +4,6 @@ import com.ayundao.base.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @ClassName: Role
@@ -25,6 +24,12 @@ public class Role extends BaseEntity<String> {
      */
     @Column(name = "NAME", length = 30, nullable = false)
     private String name;
+
+    /**
+     * 等级
+     */
+    @Column(name = "LEVEL", length = 1, nullable = false, columnDefinition = "tinyint(1) default 0")
+    private int level;
 
     /**
      * 菜单关系
@@ -76,6 +81,14 @@ public class Role extends BaseEntity<String> {
         this.name = name;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     public Set<MenuRelation> getMenuRelations() {
         return menuRelations;
     }
@@ -91,5 +104,4 @@ public class Role extends BaseEntity<String> {
     public void setUserRoles(Set<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
-
 }

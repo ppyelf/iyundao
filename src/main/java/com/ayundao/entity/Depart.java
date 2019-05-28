@@ -4,7 +4,6 @@ import com.ayundao.base.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @ClassName: Depart
@@ -29,21 +28,21 @@ public class Depart extends BaseEntity<String> {
     /**
      * 描述
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "SUBJECT_ID", nullable = false)
     private Subject subject;
 
     /**
      * 父级--部门
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "FATHERID")
-    private Depart depart;
+    private Depart father;
 
     /**
      * 负责人
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USERID")
     private User user;
 
@@ -100,12 +99,12 @@ public class Depart extends BaseEntity<String> {
         this.subject = subject;
     }
 
-    public Depart getDepart() {
-        return depart;
+    public Depart getFather() {
+        return father;
     }
 
-    public void setDepart(Depart depart) {
-        this.depart = depart;
+    public void setFather(Depart father) {
+        this.father = father;
     }
 
     public User getUser() {

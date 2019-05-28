@@ -13,7 +13,6 @@ import java.util.Date;
  */
 public class TimeUtils {
 
-
     public static String setTime(Date date) {
         return convertTime(date, "yyyy-MM-dd");
     }
@@ -26,8 +25,11 @@ public class TimeUtils {
         return convertTime(date, "yyyy-MM-dd HH:mm:ss");
     }
     
-    private static String convertTime(Date date, String patten) {
+    public static String convertTime(Date date, String patten) {
         return new SimpleDateFormat(patten).format(date);
     }
-
+    
+    public static String nowTime() {
+       return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(System.currentTimeMillis()));
+    }
 }

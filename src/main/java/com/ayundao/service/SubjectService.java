@@ -1,6 +1,7 @@
 package com.ayundao.service;
 
 import com.ayundao.entity.Subject;
+import com.ayundao.entity.UserGroup;
 
 import java.util.List;
 
@@ -19,4 +20,19 @@ public interface SubjectService {
      * @return
      */
     List<Subject> findAll();
+
+    /**
+     * 根据id获取实体信息
+     * @param id
+     * @return
+     */
+    Subject findById(String id);
+
+    /**
+     * 保存实体
+     * @param subject
+     * @return
+     */
+    Subject save(Subject subject);
+
 }

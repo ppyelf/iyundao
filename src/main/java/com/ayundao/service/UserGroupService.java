@@ -1,5 +1,9 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.UserGroup;
+
+import java.util.List;
+
 /**
  * @ClassName: UserGroupService
  * @project: ayundao
@@ -10,4 +14,22 @@ package com.ayundao.service;
  */
 public interface UserGroupService {
 
+    /**
+     * 获取用户组列表
+     * @return
+     */
+    List<UserGroup> getList();
+
+    /**
+     * 根据ID获取实体信息
+     * @param id
+     * @return
+     */
+    UserGroup findById(String id);
+
+    /**
+     * 保存用户组实体
+     * @param userGroup
+     */
+    UserGroup save(UserGroup userGroup);
 }

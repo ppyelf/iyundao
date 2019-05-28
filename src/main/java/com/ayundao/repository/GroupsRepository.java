@@ -28,4 +28,7 @@ public interface GroupsRepository extends CrudRepository<Groups, String> {
      */
     @Query("select g from Groups g where g.id = ?1")
     Groups findByGroupsId(String groupsId);
+
+    @Query("select g from Groups g")
+    List<Groups> getList();
 }

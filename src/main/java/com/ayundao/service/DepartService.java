@@ -20,4 +20,24 @@ public interface DepartService {
      * @return
      */
     List<Depart> findBySubjectId(String subjectId);
+
+    /**
+     * 获取部门列表
+     * @return
+     */
+    List<Depart> getList();
+
+    /**
+     * 根据id获取实体
+     * @param id
+     * @return
+     */
+    Depart findById(String id);
+
+    /**
+     * 保存实体
+     * @param depart
+     * @return
+     */
+    Depart save(Depart depart);
 }

@@ -1,5 +1,9 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.Role;
+
+import java.util.List;
+
 /**
  * @ClassName: RoleService
  * @project: ayundao
@@ -10,4 +14,23 @@ package com.ayundao.service;
  */
 public interface RoleService {
 
+    /**
+     * 获取权限列表
+     * @return
+     */
+    List<Role> getList();
+
+    /**
+     * 根据ID获取实体信息
+     * @param id
+     * @return
+     */
+    Role findById(String id);
+
+    /**
+     * 保存实体
+     * @param role
+     * @return
+     */
+    Role save(Role role);
 }

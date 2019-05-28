@@ -28,4 +28,19 @@ public class DepartServiceImpl implements DepartService {
     public List<Depart> findBySubjectId(String subjectId) {
         return departRepository.findBySubjectId(subjectId);
     }
+
+    @Override
+    public List<Depart> getList() {
+        return departRepository.getList();
+    }
+
+    @Override
+    public Depart findById(String id) {
+        return departRepository.findByDepartId(id);
+    }
+
+    @Override
+    public Depart save(Depart depart) {
+        return departRepository.save(depart);
+    }
 }

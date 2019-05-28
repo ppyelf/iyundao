@@ -1,5 +1,6 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.Depart;
 import com.ayundao.entity.Groups;
 
 import java.util.List;
@@ -20,4 +21,24 @@ public interface GroupsService {
      * @return
      */
     List<Groups> findBySubjectId(String subjectId);
+
+    /**
+     * 获取小组集合
+     * @return
+     */
+    List<Groups> getList();
+
+    /**
+     * 根据id获取实体
+     * @param id
+     * @return
+     */
+    Groups findById(String id);
+
+    /**
+     * 保存实体
+     * @param groups
+     * @return
+     */
+    Groups save(Groups groups);
 }

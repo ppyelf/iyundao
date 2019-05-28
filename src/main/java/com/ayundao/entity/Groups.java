@@ -35,14 +35,14 @@ public class Groups extends BaseEntity<String> {
     /**
      * 所属机构
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "SUBJECTID")
     private Subject subject;
 
     /**
      * 负责人
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USERID")
     private User user;
 

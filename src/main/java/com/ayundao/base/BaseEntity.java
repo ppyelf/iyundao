@@ -2,12 +2,17 @@ package com.ayundao.base;
 
 import com.ayundao.base.utils.ClassUtils;
 import com.ayundao.base.utils.TimeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.tree.AbstractEntity;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.groups.Default;
@@ -17,6 +22,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -69,7 +75,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      * 版本
      */
     @Version
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION", nullable = false, columnDefinition = "bigint(20) default 1")
     private Long version;
     public BaseEntity() {
     }
@@ -120,6 +126,9 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      * @return 创建日期
      */
     public String getCreatedDate() {
+        if (StringUtils.isBlank(this.createdDate)) {
+            this.createdDate = TimeUtils.nowTime();
+        }
         return createdDate;
     }
 
@@ -129,7 +138,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      * @param createdDate 创建日期
      */
     public void setCreatedDate(Date createdDate) {
-        this.createdDate = TimeUtils.setTime(createdDate);
+        this.createdDate = TimeUtils.convertTime(createdDate, "yyyyMMddHHmmss");
     }
 
     /**
@@ -138,6 +147,9 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      * @return 最后修改日期
      */
     public String getLastModifiedDate() {
+        if (StringUtils.isBlank(this.lastModifiedDate)) {
+            this.lastModifiedDate = TimeUtils.nowTime();
+        }
         return lastModifiedDate;
     }
 
@@ -147,7 +159,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      * @param lastModifiedDate 最后修改日期
      */
     public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = TimeUtils.setTime(lastModifiedDate);
+        this.lastModifiedDate = TimeUtils.convertTime(lastModifiedDate, "yyyyMMddHHmmss");
     }
 
     /**

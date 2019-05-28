@@ -1,5 +1,6 @@
 package com.ayundao.base.utils;
 
+import com.ayundao.base.BaseEntity;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -74,8 +75,7 @@ public class JsonUtils {
             String key = entry.getKey();
             Field field = entry.getValue();
             Class cls = field.getType();
-            if (!AbstractEntity.class.isAssignableFrom(cls)
-                    && !Collection.class.isAssignableFrom(cls)
+            if (!Collection.class.isAssignableFrom(cls)
                     && !Map.class.isAssignableFrom(cls)) {
                 try {
                     json.put(key, ClassUtils.forceGetProperty(obj, field.getName()));
@@ -84,7 +84,8 @@ public class JsonUtils {
                 }
             }
         }
-        String result = json.toString().replace("\"", "\'");
+        String result = json.toString().replace("\\", "");
+//        String result = json.toString();
         return result;
     }
 
@@ -94,7 +95,7 @@ public class JsonUtils {
      * @return
      */
     public static String delString(String s) {
-        return s.replace("\"", "\'");
+        return s.replace("\\", "");
     }
 
     /**

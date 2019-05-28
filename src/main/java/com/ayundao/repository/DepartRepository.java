@@ -24,4 +24,7 @@ public interface DepartRepository extends CrudRepository<Depart, String> {
 
     @Query("select d from Depart d where d.id = ?1")
     Depart findByDepartId(String departId);
+
+    @Query("select d from Depart d")
+    List<Depart> getList();
 }

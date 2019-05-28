@@ -1,5 +1,6 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.entity.Depart;
 import com.ayundao.entity.Groups;
 import com.ayundao.repository.GroupsRepository;
 import com.ayundao.service.GroupsService;
@@ -27,5 +28,20 @@ public class GroupsServiceImpl implements GroupsService {
     @Override
     public List<Groups> findBySubjectId(String subjectId) {
         return groupsRepository.findBySubjectId(subjectId);
+    }
+
+    @Override
+    public List<Groups> getList() {
+        return groupsRepository.getList();
+    }
+
+    @Override
+    public Groups findById(String id) {
+        return groupsRepository.findByGroupsId(id);
+    }
+
+    @Override
+    public Groups save(Groups groups) {
+        return groupsRepository.save(groups);
     }
 }
