@@ -10,8 +10,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.dom4j.tree.AbstractEntity;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.data.domain.Page;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -86,7 +88,37 @@ public class JsonUtils {
         return result;
     }
 
+    /**
+     * 去掉字符串中的双引号
+     * @param s
+     * @return
+     */
+    public static String delString(String s) {
+        return s.replace("\"", "\'");
+    }
 
+    /**
+     * 将page对象转化成json对象
+     * @param page
+     * @return
+     */
+    public static String toJsonPage(Page<?> page) {
+        try {
+            JSONObject pageJson = new JSONObject();
+            pageJson.put("pages", page.getTotalElements());
+            pageJson.put("elements", page.getTotalElements());
+            JSONArray arr = new JSONArray();
+            for (Object entity : page.getContent()) {
+                JSONObject json = new JSONObject(getJson(entity));
+                arr.put(json);
+            }
+            pageJson.put("entity", arr);
+            return delString(pageJson.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
     /**
      * 将JSON字符串转换为对象

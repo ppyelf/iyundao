@@ -1,7 +1,12 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.entity.Subject;
+import com.ayundao.repository.SubjectRepository;
 import com.ayundao.service.SubjectService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @ClassName: SubjectServiceImpl
@@ -14,4 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class SubjectServiceImpl implements SubjectService {
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Override
+    public List<Subject> findAll() {
+        return (List<Subject>) subjectRepository.findAll();
+    }
 }

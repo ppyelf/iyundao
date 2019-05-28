@@ -1,5 +1,14 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.entity.Groups;
+import com.ayundao.repository.GroupsRepository;
+import com.ayundao.service.GroupsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 /**
  * @ClassName: GroupsServiceImpl
  * @project: ayundao
@@ -8,6 +17,15 @@ package com.ayundao.service.impl;
  * @Description: 实现 - 小组
  * @Version: V1.0
  */
-public class GroupsServiceImpl {
+@Service
+@Transactional
+public class GroupsServiceImpl implements GroupsService {
 
+    @Autowired
+    private GroupsRepository groupsRepository;
+
+    @Override
+    public List<Groups> findBySubjectId(String subjectId) {
+        return groupsRepository.findBySubjectId(subjectId);
+    }
 }

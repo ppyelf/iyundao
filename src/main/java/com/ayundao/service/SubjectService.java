@@ -1,5 +1,9 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.Subject;
+
+import java.util.List;
+
 /**
  * @ClassName: SubjectService
  * @project: ayundao
@@ -10,4 +14,9 @@ package com.ayundao.service;
  */
 public interface SubjectService {
 
+    /**
+     * 获取所有机构实体
+     * @return
+     */
+    List<Subject> findAll();
 }

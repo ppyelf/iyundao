@@ -1,5 +1,14 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.entity.Depart;
+import com.ayundao.repository.DepartRepository;
+import com.ayundao.service.DepartService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 /**
  * @ClassName: DepartServiceImpl
  * @project: ayundao
@@ -8,6 +17,15 @@ package com.ayundao.service.impl;
  * @Description: 实现 - 部门
  * @Version: V1.0
  */
-public class DepartServiceImpl {
+@Service
+@Transactional
+public class DepartServiceImpl implements DepartService {
 
+    @Autowired
+    private DepartRepository departRepository;
+
+    @Override
+    public List<Depart> findBySubjectId(String subjectId) {
+        return departRepository.findBySubjectId(subjectId);
+    }
 }

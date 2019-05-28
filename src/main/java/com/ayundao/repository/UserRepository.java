@@ -1,10 +1,13 @@
 package com.ayundao.repository;
 
 import com.ayundao.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
+import java.util.Optional;
 
 /**
  * @ClassName: UserRepository
@@ -15,7 +18,7 @@ import java.util.UUID;
  * @Version: V1.0
  */
 @Repository
-public interface UserRepository extends CrudRepository<User, UUID> {
+public interface UserRepository extends CrudRepository<User, String> {
 
     /**
      * 查询用户名是否存在
@@ -31,4 +34,18 @@ public interface UserRepository extends CrudRepository<User, UUID> {
      * @return
      */
     User findByAccountAndPassword(String account, String password);
+
+    /**
+     * 用户搜索
+     * @param key 查询条件
+     * @return
+     */
+    @Query("select u from User u where u.account like ?1 or u.name like ?1 or u.createdDate like ?1")
+    Page<User> findByKey(String key, Pageable pageable);
+
+    @Query("select u from User u where u.id = ?1")
+    User findByUserId(String id);
+
+    @Query("select u from User u")
+    Page<User> findAllForPage(Pageable pageable);
 }

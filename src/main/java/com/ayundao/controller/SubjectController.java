@@ -4,11 +4,11 @@ import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
+import com.ayundao.service.SubjectService;
 import com.ayundao.service.UserRelationService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,50 +30,41 @@ public class SubjectController extends BaseController {
     @Autowired
     private UserRelationService userRelationService;
 
+    @Autowired
+    private SubjectService subjectService;
+
     /**
-     * @api {POST} /subject/list 获取结构关系
-     * @apiGroup Index
+     * @api {POST} /subject/list 机构列表
+     * @apiGroup Subject
      * @apiVersion 1.0.0
-     * @apiDescription 获取结构关系
+     * @apiDescription 机构列表
      * @apiParamExample {json} 请求样例：
      *                /subject/list
      * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:未登录</br>
+     *                                 404:请添加机构</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
      * {
      * 	"code": 200,
-     * 	"message": "登录成功",
-     * 	"data": "{'version':'0','id':'0a4179fc06cb49e3ac0db7bcc8cf0882','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'管理员','password':'b356a1a11a067620275401a5a3de04300bf0c47267071e06','status':'normal','remark':'未填写','sex':'0','salt':'3a10624a300f4670','account':'admin','userType':'amdin'}"
+     * 	"message": "成功",
+     * 	"data": "['{'version':'1','id':'bd6886bc88e54ef0a36472efd95c744c','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'总院','subjectType':'head'}','{'version':'1','id':'c72a2c6bd1e8428fac6706b217417831','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'分院','subjectType':'head'}']"
      * }
      */
     @GetMapping("/list")
     public JsonResult list() {
-        User user = getUser();
-        if (user == null) {
+        List<Subject> subjects = subjectService.findAll();
+        if (CollectionUtils.isEmpty(subjects)) {
             jsonResult.setCode(404);
-            jsonResult.setMessage("未登录");
+            jsonResult.setMessage("请添加机构");
             return jsonResult;
         }
-        List<UserRelation> userRelations = getUserRelation(user);
         JSONArray arr = new JSONArray();
-        try {
-            for (UserRelation ur : userRelations) {
-                JSONObject json = new JSONObject();
-                json.put("subject", JsonUtils.getJson(ur.getSubject()));
-                json.put("depart", ur.getDepart() != null ? JsonUtils.getJson(ur.getDepart()) : null);
-                json.put("groups", ur.getGroups() != null ? JsonUtils.getJson(ur.getGroups()) : null);
-                json.put("user", JsonUtils.getJson(ur.getUser()));
-                arr.put(json);
-            }
-            jsonResult.setCode(200);
-            jsonResult.setMessage("成功");
-            jsonResult.setData(arr.toString());
-            return jsonResult;
-        } catch (JSONException e) {
-            e.printStackTrace();
+        for (Subject s :subjects){
+            s.setUserRelations(null);
+            arr.put(JsonUtils.getJson(s));
         }
+        jsonResult.setData(JsonUtils.delString(arr.toString()));
         return jsonResult;
     }
 

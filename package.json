@@ -2,6 +2,6 @@
   "name": "权限框架--后台管理",
   "version": "1.0.0",
   "description": "Springboot与后台框架的对接文档",
-  "title": "后台管理接口",
-  "url" : "http://localhost"
+  "url" : "http://localhost",
+  "sampleUrl": "http://localhost"
 }

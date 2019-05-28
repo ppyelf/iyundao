@@ -1,11 +1,15 @@
 package com.ayundao.service.impl;
 
-import com.ayundao.entity.User;
-import com.ayundao.repository.UserRepository;
+import com.ayundao.entity.*;
+import com.ayundao.repository.*;
 import com.ayundao.service.UserService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 /**
  * @ClassName: UserServiceImpl
@@ -21,6 +25,18 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
+    private DepartRepository departRepository;
+
+    @Autowired
+    private GroupsRepository groupsRepository;
+
+    @Autowired
+    private UserRelationRepository userRelationRepository;
 
 
     @Override
@@ -40,5 +56,46 @@ public class UserServiceImpl implements UserService {
             return false;
         } 
         return user.getUserType().equals(User.USER_TYPE.amdin);
+    }
+
+    @Override
+    public Page<User> findByKey(String key, Pageable pageable) {
+        key = "%" + key + "%";
+        return userRepository.findByKey(key, pageable);
+    }
+
+    @Override
+    public User findById(String id) {
+        return userRepository.findByUserId(id);
+    }
+
+    @Override
+    public void delete(String id) {
+        User user = userRepository.findByUserId(id);
+        userRepository.delete(user);
+    }
+
+    @Override
+    public void save(User user, String subjectId, String departId, String groupsId) {
+        if (StringUtils.isBlank(subjectId)
+                 || StringUtils.isBlank(departId)
+                    || StringUtils.isBlank(groupsId)) {
+            return ;
+        }
+        Subject subject = subjectRepository.findBySubjectId(subjectId);
+        Depart depart = departRepository.findByDepartId(departId);
+        Groups groups = groupsRepository.findByGroupsId(groupsId);
+        UserRelation userRelation = new UserRelation();
+        userRelation.setSubject(subject);
+        userRelation.setDepart(depart);
+        userRelation.setGroups(groups);
+        userRelation.setUser(user);
+        userRepository.save(user);
+        userRelationRepository.save(userRelation);
+    }
+
+    @Override
+    public Page<User> findAllForPage(Pageable pageable) {
+        return userRepository.findAllForPage(pageable);
     }
 }

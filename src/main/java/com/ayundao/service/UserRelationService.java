@@ -36,4 +36,10 @@ public interface UserRelationService {
      * @return
      */
     UserRelation findByUserIdAndSubject(User user, String subject);
+
+    /**
+     * 获取所有机构关系
+     * @return
+     */
+    List<UserRelation> getAll();
 }

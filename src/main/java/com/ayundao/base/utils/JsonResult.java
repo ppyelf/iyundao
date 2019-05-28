@@ -9,8 +9,9 @@ import java.io.Serializable;
 public class JsonResult implements Serializable {
 	public static final int CODE_SUCCESS = 200;
 	public static final int CODE_FAILURED = -1;
-	public static final int CODE_PARAMS_ERROR = 600;
-	public static final int CODE_SIGN_ERROR = 601;
+	public static final int CODE_PARAM = 600;
+	public static final int CODE_NOT_FOUND = 404;
+    public static final String MESSAGE_PARAM = "参数异常";
 	private static final long serialVersionUID = -1491499610244557029L;
 	public static String[] NOOP = new String[] {};
 
@@ -79,6 +80,24 @@ public class JsonResult implements Serializable {
 	 */
 	public static final JsonResult failure(int code, String message) {
 		return new JsonResult(code, message, NOOP);
+	}
+
+	/**
+	 * 处理失败 -- 参数异常
+	 *
+	 * @return data
+	 */
+	public static final JsonResult paramError() {
+        return new JsonResult(CODE_PARAM, MESSAGE_PARAM, NOOP);
+	}
+
+	/**
+	 * 处理失败 -- 查询不存在
+	 *
+	 * @return data
+	 */
+	public static final JsonResult notFound(String message) {
+        return new JsonResult(CODE_NOT_FOUND, message, NOOP);
 	}
 
 	/**

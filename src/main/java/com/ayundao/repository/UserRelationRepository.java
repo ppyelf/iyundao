@@ -26,4 +26,7 @@ public interface UserRelationRepository extends CrudRepository<UserRelation, Str
 
     @Query("select ur from UserRelation ur where ur.user.id = ?1 and ur.subject.id = ?2")
     UserRelation findByUserIdAndSubject(String userId, String subjectId);
+
+    @Query("select ur from UserRelation ur")
+    List<UserRelation> getAll();
 }

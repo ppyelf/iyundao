@@ -1,5 +1,9 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.Groups;
+
+import java.util.List;
+
 /**
  * @ClassName: GroupsService
  * @project: ayundao
@@ -10,4 +14,10 @@ package com.ayundao.service;
  */
 public interface GroupsService {
 
+    /**
+     * 根据机构ID获取小组集合
+     * @param subjectId
+     * @return
+     */
+    List<Groups> findBySubjectId(String subjectId);
 }

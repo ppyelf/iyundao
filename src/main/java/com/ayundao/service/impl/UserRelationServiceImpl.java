@@ -45,4 +45,9 @@ public class UserRelationServiceImpl implements UserRelationService {
         Subject s = subjectRepository.findBySubjectId(subject);
         return userRelationRepository.findByUserIdAndSubject(user.getId(), s.getId());
     }
+
+    @Override
+    public List<UserRelation> getAll() {
+        return userRelationRepository.getAll();
+    }
 }

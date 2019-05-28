@@ -1,8 +1,9 @@
 package com.ayundao.service;
 
 import com.ayundao.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
 
 /**
  * @ClassName: UserService
@@ -31,4 +32,37 @@ public interface UserService {
 
     //是否是管理员
     boolean isAdmin(String account);
+
+    /**
+     * 用户搜索
+     * @param key 查询条件
+     * @return
+     */
+    Page<User> findByKey(String key, Pageable pageable);
+
+    /**
+     * 根据ID获取实体信息
+     * @param id
+     * @return
+     */
+    User findById(String id);
+
+    /**
+     * 删除用户
+     * @param id
+     * @return
+     */
+    void delete(String id);
+
+    /**
+     * 添加用户
+     * @param user
+     */
+    void save(User user, String subjectId, String departId, String groupsId);
+
+    /**
+     * 查询用户分页
+     * @return
+     */
+    Page<User> findAllForPage(Pageable pageable);
 }
