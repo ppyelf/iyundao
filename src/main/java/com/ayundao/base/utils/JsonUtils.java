@@ -17,8 +17,10 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.util.Assert;
 
+import javax.persistence.ManyToOne;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -75,7 +77,7 @@ public class JsonUtils {
             String key = entry.getKey();
             Field field = entry.getValue();
             Class cls = field.getType();
-            if (!Collection.class.isAssignableFrom(cls)
+            if (!BaseEntity.class.isAssignableFrom(cls) &&!Collection.class.isAssignableFrom(cls)
                     && !Map.class.isAssignableFrom(cls)) {
                 try {
                     json.put(key, ClassUtils.forceGetProperty(obj, field.getName()));

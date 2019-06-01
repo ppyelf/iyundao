@@ -2,6 +2,7 @@ package com.ayundao.base;
 
 import com.ayundao.base.utils.ClassUtils;
 import com.ayundao.base.utils.TimeUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -9,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.tree.AbstractEntity;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -45,6 +47,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      * "最后修改日期"属性名称
      */
     public static final String LAST_MODIFIED_DATE_PROPERTY_NAME = "lastModifiedDate";
+
     /**
      * "版本"属性名称
      */
@@ -55,11 +58,13 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     /**
      * 创建日期
      */
+    @JsonIgnore
     @Column(name = "CREATEDATE", nullable = false, updatable = false)
     private String createdDate;
     /**
      * 最后修改日期
      */
+    @JsonIgnore
     @Column(name = "LASTMODIFIEDTIME", nullable = false)
     private String lastModifiedDate;
     /**
@@ -74,6 +79,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     /**
      * 版本
      */
+    @JsonIgnore
     @Version
     @Column(name = "VERSION", nullable = false, columnDefinition = "bigint(20) default 1")
     private Long version;
@@ -255,11 +261,20 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
         hashCode += getId() != null ? getId().hashCode() * 31 : 0;
         return hashCode;
     }
-    
+
+    /**
+     * 获取json--主要用于处理级联抓取时需要处理大量json的转换工作
+     */
+    public JSONObject getJson() {
+        //TODO 主要用于处理级联抓取时需要处理大量json的转换工作
+        return null;
+    }
+
     /**
      * 保存验证组
      */
     public interface Save extends Default {
+
 
     }
 

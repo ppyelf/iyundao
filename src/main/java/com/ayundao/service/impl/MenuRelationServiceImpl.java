@@ -1,6 +1,7 @@
 package com.ayundao.service.impl;
 
 import com.ayundao.entity.Menu;
+import com.ayundao.entity.MenuRelation;
 import com.ayundao.entity.UserGroupRelation;
 import com.ayundao.repository.MenuRelationRepository;
 import com.ayundao.repository.UserGroupRelationRepository;
@@ -26,4 +27,9 @@ public class MenuRelationServiceImpl implements MenuRelationService {
     @Autowired
     private MenuRelationRepository menuRelationRepository;
 
+    @Override
+    public List<MenuRelation> findByMenuId(String menuId) {
+
+        return menuRelationRepository.findByMenuId(menuId);
+    }
 }

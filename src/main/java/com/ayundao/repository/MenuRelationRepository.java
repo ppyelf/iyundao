@@ -25,4 +25,7 @@ public interface MenuRelationRepository extends CrudRepository<MenuRelation, Str
 
     @Query("select mr.menu from MenuRelation mr where mr in ?1")
     List<Menu> getMenuByMenuRelation(List<MenuRelation> list);
+
+    @Query("select mr from MenuRelation mr where mr.menu.id = ?1")
+    List<MenuRelation> findByMenuId(String menuId);
 }

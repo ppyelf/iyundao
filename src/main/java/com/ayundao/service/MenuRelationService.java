@@ -1,6 +1,10 @@
 package com.ayundao.service;
 
 
+import com.ayundao.entity.MenuRelation;
+
+import java.util.List;
+
 /**
  * @ClassName: MenuRelationService
  * @project: ayundao
@@ -12,4 +16,10 @@ package com.ayundao.service;
 public interface MenuRelationService {
 
 
+    /**
+     * 根据菜单ID查找菜单关系集合
+     * @param menuId
+     * @return
+     */
+    List<MenuRelation> findByMenuId(String menuId);
 }

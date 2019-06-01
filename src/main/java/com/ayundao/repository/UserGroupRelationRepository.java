@@ -29,4 +29,8 @@ public interface UserGroupRelationRepository extends CrudRepository<UserGroupRel
     List<UserGroupRelation> findByUser(User user);
 
     List<UserGroupRelation> findByUserId(String id);
+
+    @Query("select ug from UserGroupRelation ug where ug.userGroup.id = ?1")
+    List<UserGroupRelation> findByUserGroupId(String userGroupsId);
+
 }

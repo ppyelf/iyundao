@@ -1,8 +1,6 @@
 package com.ayundao.repository;
 
-import com.ayundao.entity.Subject;
-import com.ayundao.entity.User;
-import com.ayundao.entity.UserRelation;
+import com.ayundao.entity.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -29,4 +27,7 @@ public interface UserRelationRepository extends CrudRepository<UserRelation, Str
 
     @Query("select ur from UserRelation ur")
     List<UserRelation> getAll();
+
+    @Query("select ur from UserRelation ur where ur.subject.id = ?1 and (ur.depart.id = ?2 or ur.groups.id - ?3)")
+    List<UserRelation> findBySubjectAndDepartOrGroups(String subjectId, String departId, String groupsId);
 }

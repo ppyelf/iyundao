@@ -112,7 +112,6 @@ public abstract class BaseController {
      * @return 验证结果
      */
     protected boolean isValid(Class<?> type, String property, Object value, Class<?>... groups) {
-
         Set<?> constraintViolations = validator.validateValue(type, property, value, groups);
         if (constraintViolations.isEmpty()) {
             return true;
@@ -266,4 +265,11 @@ public abstract class BaseController {
         return buttonRoleService.findByUserAndField(user, field);
     }
 
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
 }

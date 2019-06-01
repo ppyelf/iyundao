@@ -2,18 +2,15 @@ package com.ayundao.service.impl;
 
 import com.ayundao.entity.*;
 import com.ayundao.repository.*;
-import com.ayundao.service.MenuService;
-import com.ayundao.service.UserRelationService;
+import com.ayundao.service.*;
 import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @ClassName: MenuServiceImpl
@@ -31,6 +28,9 @@ public class MenuServiceImpl implements MenuService {
     private MenuRelationRepository menuRelationRepository;
 
     @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
     private UserGroupRelationRepository userGroupRelationRepository;
 
     @Autowired
@@ -38,6 +38,18 @@ public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private UserRoleRepository userRoleRepository;
+
+    @Autowired
+    private SubjectService subjectService;
+
+    @Autowired
+    private DepartService departService;
+
+    @Autowired
+    private GroupsService groupsService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public List<Menu> getMenuByUserId(String id, UserRelation ur) {
@@ -67,4 +79,58 @@ public class MenuServiceImpl implements MenuService {
         }
         return new ArrayList<>();
     }
+
+    @Override
+    public List<Menu> getList() {
+        return menuRepository.getList();
+    }
+
+    @Override
+    public List<Menu> getListByMenuRelationId(String menuRelationId) {
+        return null;
+    }
+
+    @Override
+    public Menu findById(String id) {
+        return menuRepository.findByMenuId(id);
+    }
+
+    @Override
+    @Transactional
+    public Menu save(String name, String remark, boolean isPublic, String uri, String fatherId, int level, List<UserRelation> userRelations, Role role, List<UserGroupRelation> userGroupRelations) {
+        Date date = new Date(System.currentTimeMillis());
+        Menu menu = new Menu();
+        menu.setCreatedDate(date);
+        menu.setLastModifiedDate(date);
+        menu.setPublic(isPublic);
+        menu.setName(name);
+        menu.setUri(uri);
+        if (StringUtils.isNotBlank(fatherId)) {
+            Menu father = menuRepository.findByMenuId(fatherId);
+            menu.setFather(father);
+        }
+        menu.setLevel(level);
+        menu = menuRepository.save(menu);
+        //用户关系
+        //用户组关系
+        List<MenuRelation> menuRelations = new ArrayList<>();
+        for (UserRelation userRelation : userRelations) {
+            MenuRelation mr = new MenuRelation();
+            mr.setCreatedDate(date);
+            mr.setLastModifiedDate(date);
+            mr.setUserRelation(userRelation);
+            for (UserGroupRelation userGroupRelation : userGroupRelations) {
+                mr.setUserGroupRelation(userGroupRelation);
+                menuRelations.add(mr);
+            }
+        }
+        //角色关系
+        for (MenuRelation mr : menuRelations) {
+            mr.setMenu(menu);
+            mr.setRole(role);
+            menuRelationRepository.save(mr);
+        }
+        return menu;
+    }
+
 }

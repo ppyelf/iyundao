@@ -1,15 +1,18 @@
 package com.ayundao.service.impl;
 
-import com.ayundao.entity.Subject;
-import com.ayundao.entity.User;
-import com.ayundao.entity.UserRelation;
+import com.ayundao.entity.*;
+import com.ayundao.repository.DepartRepository;
+import com.ayundao.repository.GroupsRepository;
 import com.ayundao.repository.SubjectRepository;
 import com.ayundao.repository.UserRelationRepository;
 import com.ayundao.service.UserRelationService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +33,12 @@ public class UserRelationServiceImpl implements UserRelationService {
     @Autowired
     private SubjectRepository subjectRepository;
 
+    @Autowired
+    private DepartRepository departRepository;
+
+    @Autowired
+    private GroupsRepository groupsRepository;
+
     @Override
     public List<UserRelation> findByUser(User user) {
         return userRelationRepository.findByUser(user);
@@ -49,5 +58,13 @@ public class UserRelationServiceImpl implements UserRelationService {
     @Override
     public List<UserRelation> getAll() {
         return userRelationRepository.getAll();
+    }
+
+    @Override
+    public List<UserRelation> findBySubjectAndDepartOrGroups(String subjectId, String departId, String groupsId) {
+        List<UserRelation> userRelations = userRelationRepository.findBySubjectAndDepartOrGroups(subjectId, departId, groupsId);
+        return CollectionUtils.isEmpty(userRelations)
+                ? new ArrayList<>()
+                : userRelations;
     }
 }

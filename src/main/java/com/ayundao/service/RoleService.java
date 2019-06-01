@@ -33,4 +33,11 @@ public interface RoleService {
      * @return
      */
     Role save(Role role);
+
+    /**
+     *
+     * @param roleId
+     * @return
+     */
+    Role findByRoleId(String roleId);
 }

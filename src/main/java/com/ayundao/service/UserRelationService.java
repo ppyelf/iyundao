@@ -42,4 +42,13 @@ public interface UserRelationService {
      * @return
      */
     List<UserRelation> getAll();
+
+    /**
+     * 根据机构,部门,小组查找用户关系
+     * @param subjectId
+     * @param departId
+     * @param groupsId
+     * @return
+     */
+    List<UserRelation> findBySubjectAndDepartOrGroups(String subjectId, String departId, String groupsId);
 }

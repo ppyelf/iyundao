@@ -1,10 +1,12 @@
 package com.ayundao.entity;
 
 import com.ayundao.base.BaseEntity;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @ClassName: Menu
@@ -23,12 +25,15 @@ public class Menu extends BaseEntity<String> {
     /**
      * 名称
      */
+    @NotNull
+    @Max(30)
     @Column(name = "NAME", nullable = false, length = 30)
     private String name;
 
     /**
      * 描述
      */
+    @Length(max = 500)
     @Column(name = "REMARK", length = 500)
     private String remark;
 
@@ -44,12 +49,19 @@ public class Menu extends BaseEntity<String> {
     @Column(name = "URI", length = 10)
     private String uri;
 
+
     /**
      * 父级--菜单
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "FATHERID")
     private Menu father;
+
+    /**
+     * 等级
+     */
+    @Column(name = "LEVEL", columnDefinition = "tinyint(1) default 0")
+    private int level;
 
     /**
      * 菜单关系
@@ -131,6 +143,14 @@ public class Menu extends BaseEntity<String> {
 
     public void setFather(Menu father) {
         this.father = father;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public Set<MenuRelation> getMenuRelations() {

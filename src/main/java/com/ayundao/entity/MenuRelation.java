@@ -23,28 +23,28 @@ public class MenuRelation extends BaseEntity<String> {
     /**
      * 所属机构
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USERRELATIONID")
     private UserRelation userRelation;
 
     /**
      * 用户组ID
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USERGROUPRELATIONID")
     private UserGroupRelation userGroupRelation;
 
     /**
      * 所属角色
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ROLEID")
     private Role role;
 
     /**
      * 菜单
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "MENUID")
     private Menu menu;
 

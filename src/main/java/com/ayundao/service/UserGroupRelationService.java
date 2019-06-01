@@ -28,4 +28,11 @@ public interface UserGroupRelationService {
      * @return
      */
     List<UserGroupRelation> findByUserId(String id);
+
+    /**
+     * 根据用户组ID获取用户组关系集合
+     * @param userGroupId
+     * @return
+     */
+    List<UserGroupRelation> findByUserGroupId(String userGroupId);
 }
