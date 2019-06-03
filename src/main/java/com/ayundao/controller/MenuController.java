@@ -5,14 +5,20 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.*;
+import org.apache.catalina.mbeans.UserMBean;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.FastHashMap;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
+import javax.imageio.event.IIOReadProgressListener;
+import javax.swing.plaf.synth.SynthScrollBarUI;
 import java.lang.reflect.Array;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,6 +47,9 @@ public class MenuController extends BaseController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private PageService pageService;
 
     /**
      * @api {get} /menu/list 列表
@@ -99,6 +108,16 @@ public class MenuController extends BaseController {
      * @apiGroup Menu
      * @apiVersion 1.0.0
      * @apiDescription 新增
+     * @apiParam {String} name (必填)
+     * @apiParam {String} remark
+     * @apiParam {boolean} isPublic
+     * @apiParam {String} fatherId
+     * @apiParam {number} level
+     * @apiParam {String} subjectId (必填)
+     * @apiParam {String[]} departIds
+     * @apiParam {String[]} groupsIds
+     * @apiParam {String[]} roleIds
+     * @apiParam {String[]} userGroupIds
      * @apiParamExample {json} 请求样例：
      *                /menu/add
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -108,6 +127,11 @@ public class MenuController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{"version":"0","id":"402881916b1ae347016b1c84de06000c","createdDate":"20190603164638","lastModifiedDate":"20190603164638","name":"添加菜单","level":"0","uri":"","remark":""}"
+     * }
      */
     @PostMapping(value = "/add")
     public JsonResult add(String name,
@@ -117,25 +141,41 @@ public class MenuController extends BaseController {
                           String fatherId,
                           @RequestParam(defaultValue = "0") int level,
                           String subjectId,
-                          String departId,
-                          String groupsId,
-                          String roleId,
-                          String userGroupId) {
-        List<UserRelation> userRelations = userRelationService.findBySubjectAndDepartOrGroups(subjectId, departId, groupsId);
+                          String[] departIds,
+                          String[] groupsIds,
+                          String[] roleIds,
+                          String[] userGroupIds) {
+        List<UserRelation> userRelations = userRelationService.findBySubjectAndDepartIdsOrGroupsIds(subjectId, departIds, groupsIds);
         if (CollectionUtils.isEmpty(userRelations)) {
             return JsonResult.notFound("未查询到相关用户的机构关系,请先添加用户关系");
         }
 
-        List<UserGroupRelation> userGroupRelations = userGroupRelationService.findByUserGroupId(userGroupId);
+        List<UserGroupRelation> userGroupRelations = userGroupRelationService.findByUserGroupIds(userGroupIds);
         if (CollectionUtils.isEmpty(userGroupRelations)) {
             return JsonResult.notFound("用户组尚未添加用户");
         }
 
-        Role role = roleService.findByRoleId(roleId);
+        List<Role> role = roleService.findByRoleIds(roleIds);
         if (role == null) {
             return JsonResult.notFound("角色不存在");
-        } 
-        Menu menu = menuService.save(name, remark, isPublic, uri, fatherId, level, userRelations, role, userGroupRelations);
+        }
+        Menu menu = new Menu();
+        menu.setCreatedDate(new Date(System.currentTimeMillis()));
+        menu.setLastModifiedDate(new Date(System.currentTimeMillis()));
+        menu.setPublic(isPublic);
+        menu.setName(name);
+        menu.setRemark(remark);
+        menu.setUri(uri);
+        if (StringUtils.isNotBlank(fatherId)) {
+            Menu father = menuService.findById(fatherId);
+            menu.setFather(father);
+        }
+        menu.setLevel(level);
+        menu = menuService.save(menu, userRelations, role, userGroupRelations);
+        if (menu == null) {
+            return JsonResult.failure(1, "添加菜单失败");
+        }
+        jsonResult.setData(JsonUtils.getJson(menu));
         return jsonResult;
     }
 
@@ -144,18 +184,105 @@ public class MenuController extends BaseController {
      * @apiGroup Menu
      * @apiVersion 1.0.0
      * @apiDescription 修改
+     * @apiParam {String} name (必填)
+     * @apiParam {String} remark
+     * @apiParam {boolean} isPublic
+     * @apiParam {String} fatherId
+     * @apiParam {number} level
+     * @apiParam {String} subjectId (必填)
+     * @apiParam {String[]} departIds
+     * @apiParam {String[]} groupsIds
+     * @apiParam {String[]} roleIds
+     * @apiParam {String[]} userGroupIds
      * @apiParamExample {json} 请求样例：
      *                /menu/modify
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
-     *                                 601:此机构不存在</br>
+     *                                 601:菜单不存在</br>
+     *                                 602:用户组尚未添加用户</br>
+     *                                 603:父级菜单不存在</br>
+     *                                 604:角色不存在</br>
+     *                                 605:未查询到相关用户的机构关系,请先添加用户关系</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
      */
     @PostMapping("/modify")
-    public JsonResult modify() {
+    public JsonResult modify(String id,
+                             String name,
+                             String remark,
+                             boolean isPublic,
+                             String uri,
+                             String fatherId,
+                             @RequestParam(defaultValue = "0") int level,
+                             String subjectId,
+                             String[] departIds,
+                             String[] groupsIds,
+                             String[] roleIds,
+                             String[] userGroupIds) {
+        Menu menu = menuService.findById(id);
+        if (menu == null) {
+            return jsonResult.failure(601, "菜单不存在");
+        }
+        menu.setName(name);
+        menu.setRemark(remark);
+        menu.setPublic(isPublic);
+        menu.setUri(uri);
+        Menu father = StringUtils.isBlank(fatherId) ? menu.getFather() : menuService.findById(fatherId);
+        if (StringUtils.isNotBlank(fatherId) && father == null) {
+            return JsonResult.failure(603, "父级菜单不存在");
+        }
+        menu.setFather(father);
+
+        List<UserRelation> userRelations = userRelationService.findBySubjectAndDepartIdsOrGroupsIds(subjectId, departIds, groupsIds);
+        if (CollectionUtils.isEmpty(userRelations)) {
+            return JsonResult.failure(605, "未查询到相关用户的机构关系,请先添加用户关系");
+        }
+        List<UserGroupRelation> userGroupRelations = userGroupRelationService.findByUserGroupIds(userGroupIds);
+        if (CollectionUtils.isEmpty(userGroupRelations)) {
+            return JsonResult.failure(602,"用户组尚未添加用户");
+        }
+
+        List<Role> role = roleService.findByRoleIds(roleIds);
+        if (role == null) {
+            return JsonResult.failure(604, "角色不存在");
+        }
+        menu = menuService.modify(menu, userRelations, role, userGroupRelations);
+        jsonResult.setData(JsonUtils.delString(convertRelation(menu).toString()));
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /menu/del 查看
+     * @apiGroup Menu
+     * @apiVersion 1.0.0
+     * @apiDescription 查看
+     * @apiParam {String} id 必填
+     * @apiParamExample {json} 请求样例：
+     *                /menu/del
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 -1:此菜单包含页面,请先删除该菜单拥有的所有页面</br>
+     *                                 600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @PostMapping("/del")
+    public JsonResult del(String id) {
+        if (StringUtils.isBlank(id)) {
+            return JsonResult.paramError();
+        }
+        List<Page> pages = pageService.findPageByMenuId(id);
+        if (CollectionUtils.isNotEmpty(pages)) {
+            return JsonResult.failure("此菜单包含页面,请先删除该菜单拥有的所有页面");
+        }
+        menuService.delete(id);
         return jsonResult;
     }
 

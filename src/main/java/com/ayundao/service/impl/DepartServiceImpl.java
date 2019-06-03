@@ -43,4 +43,5 @@ public class DepartServiceImpl implements DepartService {
     public Depart save(Depart depart) {
         return departRepository.save(depart);
     }
+
 }

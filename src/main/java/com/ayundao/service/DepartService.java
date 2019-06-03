@@ -40,4 +40,5 @@ public interface DepartService {
      * @return
      */
     Depart save(Depart depart);
+
 }

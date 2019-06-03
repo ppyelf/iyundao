@@ -41,7 +41,7 @@ public class User extends BaseEntity<String> {
     /**
      * 密码盐
      */
-    @Column(name = "SALT", nullable = false, length = 30)
+    @Column(name = "SALT", nullable = false, length = 50)
     private String salt;
 
     /**

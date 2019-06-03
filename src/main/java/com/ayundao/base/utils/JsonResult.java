@@ -91,6 +91,15 @@ public class JsonResult implements Serializable {
         return new JsonResult(CODE_PARAM, MESSAGE_PARAM, NOOP);
 	}
 
+    /**
+     * 处理失败 -- 参数异常
+     *
+     * @return data
+     */
+    public static final JsonResult paramError(String paramName) {
+        return new JsonResult(CODE_PARAM, paramName + MESSAGE_PARAM, NOOP);
+    }
+
 	/**
 	 * 处理失败 -- 查询不存在
 	 *

@@ -1,7 +1,12 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.entity.Field;
+import com.ayundao.repository.FieldRepository;
 import com.ayundao.service.FieldService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @ClassName: FieldServiceImpl
@@ -14,4 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class FieldServiceImpl implements FieldService {
 
+    @Autowired
+    private FieldRepository fieldRepository;
+
+    @Override
+    public List<Field> findByPageId(String pageId) {
+        return fieldRepository.findByPageId(pageId);
+    }
 }

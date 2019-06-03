@@ -38,4 +38,46 @@ public interface PageService {
      * @return
      */
     List<Field> getFieldsByUserAndPage(User user, Page page);
+
+    /**
+     * 获取所有页面的集合 - list
+     * @return
+     */
+    List<Page> getAllForList();
+
+    /**
+     * 根据ID获取实体信息
+     * @param id
+     * @return
+     */
+    Page find(String id);
+
+    /**
+     * 保存实体
+     * @param page
+     * @param menu
+     * @param father
+     * @return
+     */
+    Page save(Page page, Menu menu, Page father);
+
+    /**
+     * 根据菜单ID获取页面集合
+     * @param id
+     * @return
+     */
+    List<Page> findPageByMenuId(String id);
+
+    /**
+     * 根据页面ID删除实体
+     * @param id
+     */
+    void delete(String id);
+
+    /**
+     * 根据父级ID获取所有子集的集合
+     * @param id
+     * @return
+     */
+    List<Page> findSonsByFatherId(String id);
 }

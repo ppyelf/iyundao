@@ -29,4 +29,20 @@ public interface PageRepository extends CrudRepository<Page, String> {
 
     //根据菜单ID获取所有页面分页
     Page getPageByMenuId(String id);
+
+    //获取所有页面的集合 - list
+    @Query("select p from Page p")
+    List<Page> getAllForList();
+
+    //根据ID获取实体信息
+    @Query("select p from Page p where p.id = ?1")
+    Page find(String id);
+
+    //根据菜单ID获取页面集合
+    @Query("select p from Page p where p.menu.id = ?1")
+    List<Page> findPageByMenuId(String id);
+
+    //根据父级ID获取所有子集的集合
+    @Query("select p from Page p where p.father.id = ?1")
+    List<Page> findSonsByFatherId(String id);
 }

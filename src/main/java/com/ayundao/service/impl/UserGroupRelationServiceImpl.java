@@ -38,4 +38,9 @@ public class UserGroupRelationServiceImpl implements UserGroupRelationService {
         return userGroupRelationRepository.findByUserGroupId(userGroupId);
     }
 
+    @Override
+    public List<UserGroupRelation> findByUserGroupIds(String[] userGroupIds) {
+        return userGroupRelationRepository.findByUserGroupIds(userGroupIds);
+    }
+
 }

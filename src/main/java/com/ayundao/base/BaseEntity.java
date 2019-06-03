@@ -11,20 +11,12 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.tree.AbstractEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.groups.Default;
-import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -74,7 +66,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     @GeneratedValue(generator = "jpa-uuid")
     @GenericGenerator(name = "jpa-uuid",
             strategy = "uuid")
-    @Column(name = "ID", length = 32)
+    @Column(name = "ID", length = 50)
     private ID id;
     /**
      * 版本
@@ -218,7 +210,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
         }
         return builder.toString();
     }
-
+    
     /**
      * 重写equals方法
      *
@@ -265,7 +257,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     /**
      * 获取json--主要用于处理级联抓取时需要处理大量json的转换工作
      */
-    public JSONObject getJson() {
+    public JSONObject getJson(Object obj, String[] ignores) {
         //TODO 主要用于处理级联抓取时需要处理大量json的转换工作
         return null;
     }

@@ -24,7 +24,7 @@ public class Button extends BaseEntity<String> {
     /**
      * 名称
      */
-    @Column(name = "NAME", nullable = false, length = 30)
+    @Column(name = "NAME", nullable = false, length = 50)
     private String name;
 
     /**

@@ -23,7 +23,7 @@ public class Groups extends BaseEntity<String> {
     /**
      * 名称
      */
-    @Column(name = "NAME", length = 30)
+    @Column(name = "NAME", length = 50)
     private String name;
 
     /**

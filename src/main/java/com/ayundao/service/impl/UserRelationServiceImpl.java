@@ -10,7 +10,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +62,14 @@ public class UserRelationServiceImpl implements UserRelationService {
     @Override
     public List<UserRelation> findBySubjectAndDepartOrGroups(String subjectId, String departId, String groupsId) {
         List<UserRelation> userRelations = userRelationRepository.findBySubjectAndDepartOrGroups(subjectId, departId, groupsId);
+        return CollectionUtils.isEmpty(userRelations)
+                ? new ArrayList<>()
+                : userRelations;
+    }
+
+    @Override
+    public List<UserRelation> findBySubjectAndDepartIdsOrGroupsIds(String subjectId, String[] departIds, String[] groupsIds) {
+        List<UserRelation> userRelations = userRelationRepository.findBySubjectAndDepartIdsOrGroupsIds(subjectId, departIds, groupsIds);
         return CollectionUtils.isEmpty(userRelations)
                 ? new ArrayList<>()
                 : userRelations;

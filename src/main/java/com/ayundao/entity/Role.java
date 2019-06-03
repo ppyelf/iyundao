@@ -22,7 +22,7 @@ public class Role extends BaseEntity<String> {
     /**
      * 名称
      */
-    @Column(name = "NAME", length = 30, nullable = false)
+    @Column(name = "NAME", length = 50, nullable = false)
     private String name;
 
     /**

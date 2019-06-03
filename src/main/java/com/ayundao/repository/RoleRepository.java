@@ -25,4 +25,8 @@ public interface RoleRepository extends CrudRepository<Role, String> {
     //根据ID获取实体信息
     @Query("select r from Role r where r.id = ?1")
     Role findByRoleId(String id);
+
+    //根据IDS获取实体集合信息
+    @Query("select r from Role r where r.id in (?1)")
+    List<Role> findByRoleIds(String[] roleIds);
 }

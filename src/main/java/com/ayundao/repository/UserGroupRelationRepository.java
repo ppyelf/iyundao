@@ -31,4 +31,7 @@ public interface UserGroupRelationRepository extends CrudRepository<UserGroupRel
     @Query("select ug from UserGroupRelation ug where ug.userGroup.id = ?1")
     List<UserGroupRelation> findByUserGroupId(String userGroupsId);
 
+    //根据用户组IDS获取用户组集合信息
+    @Query("select ug from UserGroupRelation ug where ug.userGroup.id in (?1)")
+    List<UserGroupRelation> findByUserGroupIds(String[] userGroupIds);
 }

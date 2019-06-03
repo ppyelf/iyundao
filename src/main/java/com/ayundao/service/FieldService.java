@@ -1,5 +1,9 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.Field;
+
+import java.util.List;
+
 /**
  * @ClassName: FieldService
  * @project: ayundao
@@ -10,4 +14,10 @@ package com.ayundao.service;
  */
 public interface FieldService {
 
+    /**
+     * 根据页面ID获取字段集合信息
+     * @param pageId
+     * @return
+     */
+    List<Field> findByPageId(String pageId);
 }

@@ -1,6 +1,7 @@
 package com.ayundao.repository;
 
 import com.ayundao.entity.Depart;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -29,4 +30,5 @@ public interface DepartRepository extends CrudRepository<Depart, String> {
     //获取所有部门列表
     @Query("select d from Depart d")
     List<Depart> getList();
+
 }

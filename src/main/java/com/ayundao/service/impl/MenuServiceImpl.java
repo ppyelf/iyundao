@@ -7,6 +7,7 @@ import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,20 +98,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public Menu save(String name, String remark, boolean isPublic, String uri, String fatherId, int level, List<UserRelation> userRelations, Role role, List<UserGroupRelation> userGroupRelations) {
+    public Menu save(Menu menu, List<UserRelation> userRelations, List<Role> role, List<UserGroupRelation> userGroupRelations) {
         Date date = new Date(System.currentTimeMillis());
-        Menu menu = new Menu();
-        menu.setCreatedDate(date);
-        menu.setLastModifiedDate(date);
-        menu.setPublic(isPublic);
-        menu.setName(name);
-        menu.setRemark(remark);
-        menu.setUri(uri);
-        if (StringUtils.isNotBlank(fatherId)) {
-            Menu father = menuRepository.findByMenuId(fatherId);
-            menu.setFather(father);
-        }
-        menu.setLevel(level);
         menu = menuRepository.save(menu);
         //用户关系
         //用户组关系
@@ -128,10 +117,35 @@ public class MenuServiceImpl implements MenuService {
         //角色关系
         for (MenuRelation mr : menuRelations) {
             mr.setMenu(menu);
-            mr.setRole(role);
-            menuRelationRepository.save(mr);
+            for (Role r : role) {
+                mr.setRole(r);
+                menuRelationRepository.save(mr);
+            }
         }
         return menu;
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public void delete(String id) {
+        Menu menu = menuRepository.findByMenuId(id);
+        List<MenuRelation> menuRelations = menuRelationRepository.findByMenuId(menu.getId());
+        if (CollectionUtils.isNotEmpty(menuRelations)) {
+            menuRelationRepository.deleteAll(menuRelations);
+        }
+        menuRepository.deleteById(id);
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public Menu modify(Menu menu, List<UserRelation> userRelations, List<Role> roles, List<UserGroupRelation> userGroupRelations) {
+        List<MenuRelation> menuRelations = menuRelationRepository.findByMenuId(menu.getId());
+        if (CollectionUtils.isNotEmpty(menuRelations)) {
+            menuRelationRepository.deleteAll(menuRelations);
+        }
+        return save(menu, userRelations, roles, userGroupRelations);
     }
 
 }

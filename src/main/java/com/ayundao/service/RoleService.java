@@ -40,4 +40,11 @@ public interface RoleService {
      * @return
      */
     Role findByRoleId(String roleId);
+
+    /**
+     * 根据IDS集合获取实体集合信息
+     * @param roleIds
+     * @return
+     */
+    List<Role> findByRoleIds(String[] roleIds);
 }

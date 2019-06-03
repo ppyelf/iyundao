@@ -65,4 +65,39 @@ public class PageServiceImpl implements PageService {
         }
         return new ArrayList<>();
     }
+
+    @Override
+    public List<Page> getAllForList() {
+        return pageRepository.getAllForList();
+    }
+
+    @Override
+    public Page find(String id) {
+        return pageRepository.find(id);
+    }
+
+    @Override
+    public Page save(Page page, Menu menu, Page father) {
+        if (father != null) {
+            page.setFather(father);
+        }
+        page.setMenu(menu);
+        page = pageRepository.save(page);
+        return page;
+    }
+
+    @Override
+    public List<Page> findPageByMenuId(String id) {
+        return pageRepository.findPageByMenuId(id);
+    }
+
+    @Override
+    public void delete(String id) {
+        pageRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Page> findSonsByFatherId(String id) {
+        return pageRepository.findSonsByFatherId(id);
+    }
 }

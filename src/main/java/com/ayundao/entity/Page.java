@@ -1,6 +1,7 @@
 package com.ayundao.entity;
 
 import com.ayundao.base.BaseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -43,7 +44,7 @@ public class Page extends BaseEntity<String> {
     /**
      * 页面名称 == index(无需后缀)
      */
-    @Column(name = "NAME", nullable = false, length = 30)
+    @Column(name = "NAME", nullable = false, length = 50)
     private String name;
 
     /**
@@ -66,6 +67,11 @@ public class Page extends BaseEntity<String> {
     @OneToMany(mappedBy = "page", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Field> fields;
 
+    /**
+     * 等级
+     */
+    @Column(name = "LEVEL", columnDefinition = "tinyint default 0")
+    private int level;
 
     /**
      * 备用字段1
@@ -151,5 +157,13 @@ public class Page extends BaseEntity<String> {
 
     public void setFields(Set<Field> fields) {
         this.fields = fields;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

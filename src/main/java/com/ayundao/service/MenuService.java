@@ -1,9 +1,6 @@
 package com.ayundao.service;
 
-import com.ayundao.entity.Menu;
-import com.ayundao.entity.Role;
-import com.ayundao.entity.UserGroupRelation;
-import com.ayundao.entity.UserRelation;
+import com.ayundao.entity.*;
 
 import java.util.List;
 
@@ -46,13 +43,27 @@ public interface MenuService {
 
     /**
      * 后台管理模块 - 添加菜单
-     * @param name
-     * @param remark
-     * @param isPublic
-     * @param uri
-     * @param fatherId
-     * @param level
+     * @param menu
+     * @param userRelations
+     * @param role
+     * @param userGroupRelations
      * @return
      */
-    Menu save(String name, String remark, boolean isPublic, String uri, String fatherId, int level, List<UserRelation> userRelations, Role role, List<UserGroupRelation> userGroupRelations);
+    Menu save(Menu menu, List<UserRelation> userRelations, List<Role> role, List<UserGroupRelation> userGroupRelations);
+
+    /**
+     * 后台管理 - 删除菜单
+     * @param id
+     */
+    void delete(String id);
+
+    /**
+     * 修改实体
+     * @param menu
+     * @param userRelations
+     * @param roles
+     * @param userGroupRelations
+     * @return
+     */
+    Menu modify(Menu menu, List<UserRelation> userRelations, List<Role> roles, List<UserGroupRelation> userGroupRelations);
 }
