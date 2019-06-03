@@ -26,7 +26,7 @@ import java.util.List;
  * @project: ayundao
  * @author: 念
  * @Date: 2019/5/13 16:24
- * @Description: Service - 基类
+ * @Description: 控制层 - 用户
  * @Version: V1.0
  */
 @RestController
@@ -75,10 +75,10 @@ public class UserController extends BaseController {
     }
 
     /**
-     * @api {POST} /user/search 用户搜索
+     * @api {POST} /user/search 新建用户
      * @apiGroup User
      * @apiVersion 1.0.0
-     * @apiDescription 用户搜索
+     * @apiDescription 新建用户
      * @apiParam {String} key 搜索条件
      * @apiParam {int} page 页数(默认:1)
      * @apiParam {int} size 长度(默认:10)
@@ -120,7 +120,7 @@ public class UserController extends BaseController {
     }
 
     /**
-     * @api {get} /user/search 删除用户
+     * @api {get} /user/del 删除用户
      * @apiGroup User
      * @apiVersion 1.0.0
      * @apiDescription 删除

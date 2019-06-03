@@ -125,11 +125,10 @@ public abstract class BaseController {
      * 存储当前用户
      *
      * @param req
-     * @param resp
      * @param user
      * @return
      */
-    public User setCurrentUser(HttpServletRequest req, HttpServletResponse resp, User user) {
+    public User setCurrentUser(HttpServletRequest req, User user) {
         //用户信息
         account = user.getAccount();
         account = EncryptUtils.DESencode(account, salt);

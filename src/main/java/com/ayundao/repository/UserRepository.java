@@ -43,9 +43,19 @@ public interface UserRepository extends CrudRepository<User, String> {
     @Query("select u from User u where u.account like ?1 or u.name like ?1 or u.createdDate like ?1")
     Page<User> findByKey(String key, Pageable pageable);
 
+    /**
+     * 根据用户ID查询实体信息
+     * @param id
+     * @return
+     */
     @Query("select u from User u where u.id = ?1")
     User findByUserId(String id);
 
+    /**
+     * 查询所有用户分页
+     * @param pageable
+     * @return
+     */
     @Query("select u from User u")
     Page<User> findAllForPage(Pageable pageable);
 }

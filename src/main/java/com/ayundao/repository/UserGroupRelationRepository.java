@@ -21,15 +21,13 @@ import java.util.List;
 @Repository
 public interface UserGroupRelationRepository extends CrudRepository<UserGroupRelation, String> {
 
-    /**
-     * 查找用户所属用户组
-     * @param user
-     * @return
-     */
+    //查找用户所属用户组
     List<UserGroupRelation> findByUser(User user);
 
+    //根据用户ID获取用户组集合
     List<UserGroupRelation> findByUserId(String id);
 
+    //根据用户组ID获取用户组集合
     @Query("select ug from UserGroupRelation ug where ug.userGroup.id = ?1")
     List<UserGroupRelation> findByUserGroupId(String userGroupsId);
 

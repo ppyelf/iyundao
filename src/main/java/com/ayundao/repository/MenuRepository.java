@@ -18,9 +18,11 @@ import java.util.List;
 @Repository
 public interface MenuRepository extends CrudRepository<Menu, String> {
 
+    //获取所有菜单集合
     @Query("select m from Menu m")
     List<Menu> getList();
 
+    //根据菜单ID获取菜单实体
     @Query("select m from Menu m where m.id = ?1")
     Menu findByMenuId(String id);
 }

@@ -20,10 +20,13 @@ import java.util.List;
 @Repository
 public interface PageRepository extends CrudRepository<Page, String> {
 
+    //获取菜单所有的页面
     @Query("select p from Page p where p.menu in ?1")
     List<Page> getPageByUserAndMenu(List<Menu> menu);
 
+    //根据菜单获取所有页面分页
     Page getPageByMenu(Menu menu);
 
+    //根据菜单ID获取所有页面分页
     Page getPageByMenuId(String id);
 }

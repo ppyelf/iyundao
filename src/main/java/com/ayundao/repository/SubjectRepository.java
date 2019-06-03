@@ -16,6 +16,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubjectRepository extends CrudRepository<Subject, String> {
 
+    /**
+     * 根据ID获取实体
+     * @param subjectId
+     * @return
+     */
     @Query("select s from Subject s where s.id = ?1")
     Subject findBySubjectId(String subjectId);
 }

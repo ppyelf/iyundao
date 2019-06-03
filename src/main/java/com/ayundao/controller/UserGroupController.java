@@ -197,6 +197,11 @@ public class UserGroupController extends BaseController {
     }
 
 
+    /**
+     * 简要获取父级关系
+     * @param userGroup
+     * @param json
+     */
     private void jsonFather(UserGroup userGroup, JSONObject json) {
         try {
             if (userGroup.getFather() != null) {

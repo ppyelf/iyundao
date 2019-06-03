@@ -73,7 +73,7 @@ public class IndexController extends BaseController {
             password = EncryptUtils.getSaltMD5(password, user.getSalt());
             if (password.equals(user.getPassword())) {
                 //封装用户
-                setCurrentUser(req, resp, user);
+                setCurrentUser(req, user);
                 jsonResult.setCode(200);
                 jsonResult.setMessage("登录成功");
                 jsonResult.setData(JsonUtils.getJson(user));

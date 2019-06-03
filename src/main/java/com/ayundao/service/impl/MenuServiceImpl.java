@@ -104,6 +104,7 @@ public class MenuServiceImpl implements MenuService {
         menu.setLastModifiedDate(date);
         menu.setPublic(isPublic);
         menu.setName(name);
+        menu.setRemark(remark);
         menu.setUri(uri);
         if (StringUtils.isNotBlank(fatherId)) {
             Menu father = menuRepository.findByMenuId(fatherId);

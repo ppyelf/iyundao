@@ -106,8 +106,7 @@ public class Pageable implements Serializable {
 		return pageNumber;
 	}
 
-	/**
-	 * 设置页码
+	/**]pif=9`7	 * 设置页码
 	 * 
 	 * @param pageNumber
 	 *            页码

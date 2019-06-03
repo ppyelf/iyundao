@@ -49,7 +49,7 @@ public class DepartController extends BaseController {
     private SubjectService subjectService;
 
     /**
-     * @api {POST} /depart/list 部门列表
+     * @api {POST} /depart/list 机构部门列表
      * @apiName list
      * @apiGroup Depart
      * @apiVersion 1.0.0
@@ -278,7 +278,12 @@ public class DepartController extends BaseController {
         }
         return "";
     }
-    
+
+    /**
+     * 设置父级关系
+     * @param depart
+     * @return
+     */
     private String setFather(Depart depart) {
         try {
             JSONObject json = new JSONObject();

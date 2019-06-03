@@ -18,9 +18,11 @@ import java.util.List;
 @Repository
 public interface RoleRepository extends CrudRepository<Role, String> {
 
+    //获取所有实体结合
     @Query("select r from Role r")
     List<Role> getList();
 
+    //根据ID获取实体信息
     @Query("select r from Role r where r.id = ?1")
     Role findByRoleId(String id);
 }

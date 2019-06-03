@@ -35,7 +35,7 @@ public interface RoleService {
     Role save(Role role);
 
     /**
-     *
+     * 根据ID获取实体信息
      * @param roleId
      * @return
      */

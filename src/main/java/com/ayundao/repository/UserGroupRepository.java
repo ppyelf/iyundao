@@ -18,9 +18,11 @@ import java.util.List;
 @Repository
 public interface UserGroupRepository extends CrudRepository<UserGroup, String> {
 
+    //所有用户组集合
     @Query("select ug from UserGroup ug")
     List<UserGroup> getList();
 
+    //根据ID获取用户组实体
     @Query("select ug from UserGroup ug where ug.id = ?1")
     UserGroup findByUserGroupId(String id);
 }

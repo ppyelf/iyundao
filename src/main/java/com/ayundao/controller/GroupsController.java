@@ -247,6 +247,11 @@ public class GroupsController extends BaseController {
         return jsonResult;
     }
 
+    /**
+     * 转换实体json信息
+     * @param groups
+     * @return
+     */
     private String convertJson(Groups groups) {
         try {
             JSONObject json = new JSONObject(JsonUtils.getJson(groups));

@@ -18,13 +18,15 @@ import java.util.List;
 @Repository
 public interface DepartRepository extends CrudRepository<Depart, String> {
 
+    //获取机构的部门列表
     @Query("select d from Depart d where d.subject.id = ?1")
     List<Depart> findBySubjectId(String subjectId);
 
-
+    //根据ID获取部门实体
     @Query("select d from Depart d where d.id = ?1")
     Depart findByDepartId(String departId);
 
+    //获取所有部门列表
     @Query("select d from Depart d")
     List<Depart> getList();
 }

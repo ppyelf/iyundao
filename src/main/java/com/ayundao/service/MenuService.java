@@ -52,7 +52,6 @@ public interface MenuService {
      * @param uri
      * @param fatherId
      * @param level
-     * @param roleId
      * @return
      */
     Menu save(String name, String remark, boolean isPublic, String uri, String fatherId, int level, List<UserRelation> userRelations, Role role, List<UserGroupRelation> userGroupRelations);

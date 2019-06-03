@@ -12,6 +12,7 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 /**
@@ -120,9 +121,6 @@ public class MenuController extends BaseController {
                           String groupsId,
                           String roleId,
                           String userGroupId) {
-        if (isValid(name) || isValid(subjectId) || isValid(departId) || isValid(groupsId) || isValid(roleId)) {
-            return JsonResult.paramError();
-        }
         List<UserRelation> userRelations = userRelationService.findBySubjectAndDepartOrGroups(subjectId, departId, groupsId);
         if (CollectionUtils.isEmpty(userRelations)) {
             return JsonResult.notFound("未查询到相关用户的机构关系,请先添加用户关系");
@@ -161,6 +159,11 @@ public class MenuController extends BaseController {
         return jsonResult;
     }
 
+    /**
+     * 转换关系json格式
+     * @param menu
+     * @return
+     */
     private JSONObject convertRelation(Menu menu) {
         try {
             JSONObject json = new JSONObject(JsonUtils.getJson(menu));

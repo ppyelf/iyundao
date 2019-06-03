@@ -26,7 +26,7 @@ public class Menu extends BaseEntity<String> {
      * 名称
      */
     @NotNull
-    @Max(30)
+    @Max(50)
     @Column(name = "NAME", nullable = false, length = 30)
     private String name;
 
