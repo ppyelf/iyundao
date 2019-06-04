@@ -133,7 +133,7 @@ public class FieldController extends BaseController {
                           String[] roleIds,
                           @RequestParam(defaultValue = "0") int sort,
                           @RequestParam(defaultValue = "0") int level) {
-        if (StringUtils.isBlank(name) || pageId == null) {
+        if (StringUtils.isBlank(name) || StringUtils.isBlank(pageId)) {
             return JsonResult.notFound("字段名或所属页面不能为空");
         } 
         Page page = pageService.find(pageId);

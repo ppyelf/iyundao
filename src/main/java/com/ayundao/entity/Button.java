@@ -48,6 +48,12 @@ public class Button extends BaseEntity<String> {
     private int sort;
 
     /**
+     * 等级
+     */
+    @Column(name = "LEVEL", columnDefinition = "tinyint default 0")
+    private int level;
+
+    /**
      * 按钮关系
      */
     @OneToMany(mappedBy = "button", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -121,5 +127,13 @@ public class Button extends BaseEntity<String> {
 
     public void setButtonRoles(Set<ButtonRole> buttonRoles) {
         this.buttonRoles = buttonRoles;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

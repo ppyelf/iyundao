@@ -12,12 +12,17 @@ import java.util.List;
  * @project: ayundao
  * @author: 念
  * @Date: 2019/5/24 3:25
- * @Description: 仓库 - 按钮
+ * @Description: 仓库 - 按钮关系
  * @Version: V1.0
  */
 @Repository
 public interface ButtonRoleRepository extends CrudRepository<ButtonRole, String> {
 
+    //根据用户组IDS和角色IDS获取集合信息,并返回按钮集合
     @Query("select br.button from ButtonRole br where br.userGroup in ?1 and br.role in ?2")
     List<Button> findByFieldAndUserAndUserRole(List<UserGroup> userGroup, List<Role> roles);
+
+    //根据按钮ID获取集合信息
+    @Query("select br from ButtonRole br where br.button.id = ?1")
+    List<ButtonRole> findByButtonId(String id);
 }
