@@ -3,10 +3,12 @@ package com.ayundao.service.impl;
 import com.ayundao.entity.UserGroup;
 import com.ayundao.repository.UserGroupRepository;
 import com.ayundao.service.UserGroupService;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +39,14 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     public UserGroup save(UserGroup userGroup) {
         return userGroupRepository.save(userGroup);
+    }
+
+    @Override
+    public List<UserGroup> findByIds(String[] userGroupIds) {
+        List<UserGroup> userGroups = userGroupRepository.findByIds(userGroupIds);
+        return CollectionUtils.isEmpty(userGroups)
+                ? new ArrayList<>()
+                : userGroups;
     }
 
 }

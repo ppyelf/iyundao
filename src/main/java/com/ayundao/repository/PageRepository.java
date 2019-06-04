@@ -45,4 +45,8 @@ public interface PageRepository extends CrudRepository<Page, String> {
     //根据父级ID获取所有子集的集合
     @Query("select p from Page p where p.father.id = ?1")
     List<Page> findSonsByFatherId(String id);
+
+    //根据IDS获取实体集合信息
+    @Query("select p from Page p where p.id in (?1)")
+    List<Page> findByIds(String[] pageIds);
 }

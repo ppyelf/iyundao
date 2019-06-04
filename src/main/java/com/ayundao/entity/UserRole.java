@@ -35,19 +35,6 @@ public class UserRole extends BaseEntity<String> {
     private Role role;
 
     /**
-     * 字段关系
-     */
-    @OneToMany(mappedBy = "userRole", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<FieldRole> fieldRoles;
-
-    /**
-     * 字段关系
-     */
-    @OneToMany(mappedBy = "userRole", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ButtonRole> buttonRoles;
-
-
-    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -91,21 +78,5 @@ public class UserRole extends BaseEntity<String> {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public Set<FieldRole> getFieldRoles() {
-        return fieldRoles;
-    }
-
-    public void setFieldRoles(Set<FieldRole> fieldRoles) {
-        this.fieldRoles = fieldRoles;
-    }
-
-    public Set<ButtonRole> getButtonRoles() {
-        return buttonRoles;
-    }
-
-    public void setButtonRoles(Set<ButtonRole> buttonRoles) {
-        this.buttonRoles = buttonRoles;
     }
 }

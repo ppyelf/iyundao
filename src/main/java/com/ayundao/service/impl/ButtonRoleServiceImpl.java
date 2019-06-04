@@ -36,10 +36,10 @@ public class ButtonRoleServiceImpl implements ButtonRoleService {
 
     @Override
     public List<Button> findByUserAndField(User user, Field field) {
-        List<UserGroupRelation> userGroupRelations = userGroupRelationRepository.findByUserId(user.getId());
-        List<UserRole> userRoles = userRoleRepository.findByUserId(user.getId());
+        List<UserGroup> userGroups = userGroupRelationRepository.findByUserIdForUserGroup(user.getId());
+        List<Role> userRoles = userRoleRepository.findByUserId(user.getId());
         List<Button> buttons = buttonRoleRepository.findByFieldAndUserAndUserRole(
-                CollectionUtils.isEmpty(userGroupRelations) ? null : userGroupRelations,
+                CollectionUtils.isEmpty(userGroups) ? null : userGroups,
                 CollectionUtils.isEmpty(userRoles) ? null : userRoles);
         if (CollectionUtils.isNotEmpty(buttons)) {
             List<Button> list = new ArrayList<>();

@@ -49,11 +49,11 @@ public class PageServiceImpl implements PageService {
 
     @Override
     public List<Field> getFieldsByUserAndPage(User user, Page page) {
-        List<UserGroupRelation> userGroupRelations = userGroupRelationRepository.findByUserId(user.getId());
-        List<UserRole> userRoles = userRoleRepository.findByUserId(user.getId());
-        List<Field> fields = fieldRoleRepository.findByPageAndUserGroupAndUserRole(
-                CollectionUtils.isEmpty(userGroupRelations) ? null : userGroupRelations,
-                CollectionUtils.isEmpty(userRoles) ? null : userRoles);
+        List<UserGroup> userGroups = userGroupRelationRepository.findByUserIdForUserGroup(user.getId());
+        List<Role> roles = userRoleRepository.findByUserId(user.getId());
+        List<Field> fields = fieldRoleRepository.findByPageAndUserGroupAndRole(
+                CollectionUtils.isEmpty(userGroups) ? null : userGroups,
+                CollectionUtils.isEmpty(roles) ? null : roles);
         if (CollectionUtils.isNotEmpty(fields)) {
             List<Field> list = new ArrayList<>();
             for (Field f : fields) {
@@ -99,5 +99,13 @@ public class PageServiceImpl implements PageService {
     @Override
     public List<Page> findSonsByFatherId(String id) {
         return pageRepository.findSonsByFatherId(id);
+    }
+
+    @Override
+    public List<Page> findByIds(String[] pageIds) {
+        List<Page> pages = pageRepository.findByIds(pageIds);
+        return CollectionUtils.isEmpty(pages)
+                ? new ArrayList<>()
+                : pages;
     }
 }

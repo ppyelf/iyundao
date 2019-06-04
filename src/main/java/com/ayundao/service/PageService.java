@@ -80,4 +80,11 @@ public interface PageService {
      * @return
      */
     List<Page> findSonsByFatherId(String id);
+
+    /**
+     * 根据IDS获取实体集合
+     * @param pageIds
+     * @return
+     */
+    List<Page> findByIds(String[] pageIds);
 }

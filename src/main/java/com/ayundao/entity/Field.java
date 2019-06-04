@@ -42,6 +42,12 @@ public class Field extends BaseEntity<String> {
     private int sort;
 
     /**
+     * 等级
+     */
+    @Column(name = "LEVEL", columnDefinition = "tinyint default 0")
+    private int level;
+
+    /**
      * 字段关系
      */
     @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -123,5 +129,11 @@ public class Field extends BaseEntity<String> {
         this.buttons = buttons;
     }
 
+    public int getLevel() {
+        return level;
+    }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
 }

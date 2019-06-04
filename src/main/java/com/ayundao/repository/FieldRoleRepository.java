@@ -18,6 +18,11 @@ import java.util.List;
 @Repository
 public interface FieldRoleRepository extends CrudRepository<FieldRole, String> {
 
-    @Query("select fr.field from FieldRole fr where fr.userGroupRelation in ?1 and fr.userRole in ?2")
-    List<Field> findByPageAndUserGroupAndUserRole(List<UserGroupRelation> userGroupRelations, List<UserRole> userRoles);
+    //根据用户组和角色集合获取字段信息
+    @Query("select f from FieldRole f where f.userGroup in (?1) and f.role in (?2)")
+    List<Field> findByPageAndUserGroupAndRole(List<UserGroup> userGroups, List<Role> role);
+
+    //根据字段ID获取字段关系合集
+    @Query("select fr from FieldRole fr where fr.field.id = ?1")
+    List<FieldRole> findByFieldId(String id);
 }

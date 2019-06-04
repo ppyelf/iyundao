@@ -30,15 +30,15 @@ public class FieldRole extends BaseEntity<String> {
      * 所属用户组关系
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USERGROUPRELATIONID", nullable = false)
-    private UserGroupRelation userGroupRelation;
+    @JoinColumn(name = "USERGROUPID", nullable = false)
+    private UserGroup userGroup;
 
     /**
      * 所属角色关系
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USERROLEID", nullable = false)
-    private UserRole userRole;
+    @JoinColumn(name = "ROLEID", nullable = false)
+    private Role role;
 
     /**
      * 备用字段1
@@ -78,19 +78,19 @@ public class FieldRole extends BaseEntity<String> {
         this.field = field;
     }
 
-    public UserGroupRelation getUserGroupRelation() {
-        return userGroupRelation;
+    public UserGroup getUserGroup() {
+        return userGroup;
     }
 
-    public void setUserGroupRelation(UserGroupRelation userGroupRelation) {
-        this.userGroupRelation = userGroupRelation;
+    public void setUserGroup(UserGroup userGroup) {
+        this.userGroup = userGroup;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public Role getRole() {
+        return role;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

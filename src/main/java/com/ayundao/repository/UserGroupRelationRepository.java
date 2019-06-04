@@ -1,6 +1,7 @@
 package com.ayundao.repository;
 
 import com.ayundao.entity.User;
+import com.ayundao.entity.UserGroup;
 import com.ayundao.entity.UserGroupRelation;
 import com.ayundao.entity.UserRelation;
 import org.springframework.data.jpa.repository.Query;
@@ -24,7 +25,8 @@ public interface UserGroupRelationRepository extends CrudRepository<UserGroupRel
     //查找用户所属用户组
     List<UserGroupRelation> findByUser(User user);
 
-    //根据用户ID获取用户组集合
+    //根据用户ID获取用户关系集合
+    @Query("select ug from UserGroupRelation ug where ug.user.id = ?1")
     List<UserGroupRelation> findByUserId(String id);
 
     //根据用户组ID获取用户组集合
@@ -34,4 +36,8 @@ public interface UserGroupRelationRepository extends CrudRepository<UserGroupRel
     //根据用户组IDS获取用户组集合信息
     @Query("select ug from UserGroupRelation ug where ug.userGroup.id in (?1)")
     List<UserGroupRelation> findByUserGroupIds(String[] userGroupIds);
+
+    //根据用户ID获取用户组集合
+    @Query("select ug.userGroup from UserGroupRelation ug where ug.user.id = ?1")
+    List<UserGroup> findByUserIdForUserGroup(String id);
 }

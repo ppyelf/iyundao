@@ -33,5 +33,7 @@ public interface UserRoleRepository extends CrudRepository<UserRole, String> {
     @Query("select ur.role from UserRole ur where ur.user.id = :id")
     List<Role> getRoleByUserId(@Param("id") String id);
 
-    List<UserRole> findByUserId(String userId);
+    //根据用户ID获取所有角色
+    @Query("select ur.role from UserRole ur where ur.user = ?1")
+    List<Role> findByUserId(String userId);
 }

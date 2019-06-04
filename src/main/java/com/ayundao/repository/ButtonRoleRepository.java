@@ -1,9 +1,6 @@
 package com.ayundao.repository;
 
-import com.ayundao.entity.Button;
-import com.ayundao.entity.ButtonRole;
-import com.ayundao.entity.UserGroupRelation;
-import com.ayundao.entity.UserRole;
+import com.ayundao.entity.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -21,6 +18,6 @@ import java.util.List;
 @Repository
 public interface ButtonRoleRepository extends CrudRepository<ButtonRole, String> {
 
-    @Query("select br.button from ButtonRole br where br.userGroupRelation in ?1 and br.userRole in ?2")
-    List<Button> findByFieldAndUserAndUserRole(List<UserGroupRelation> userGroupRelations, List<UserRole> userRoles);
+    @Query("select br.button from ButtonRole br where br.userGroup in ?1 and br.role in ?2")
+    List<Button> findByFieldAndUserAndUserRole(List<UserGroup> userGroup, List<Role> roles);
 }
