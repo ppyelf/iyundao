@@ -1,6 +1,7 @@
 package com.ayundao.base.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -27,6 +28,18 @@ public class TimeUtils {
     
     public static String convertTime(Date date, String patten) {
         return new SimpleDateFormat(patten).format(date);
+    }
+
+    public static String convertTime(String date, String patten) {
+        Calendar cal = Calendar.getInstance();
+        int year = Integer.parseInt(date.substring(0, 4));
+        int month = Integer.parseInt(date.substring(4, 6));
+        int day = Integer.parseInt(date.substring(6, 8));
+        int hour = Integer.parseInt(date.substring(8, 10));
+        int min = Integer.parseInt(date.substring(10, 12));
+        int sec = Integer.parseInt(date.substring(12, 14));
+        cal.set(year, month - 1, day, hour, min, sec);
+        return new SimpleDateFormat(patten).format(cal.getTime());
     }
     
     public static String nowTime() {

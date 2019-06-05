@@ -3,6 +3,7 @@ package com.ayundao.base;
 import com.ayundao.base.utils.ClassUtils;
 import com.ayundao.base.utils.TimeUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.netty.channel.ConnectTimeoutException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
