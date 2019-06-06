@@ -1,6 +1,7 @@
 package com.ayundao.base.utils;
 
 import com.ayundao.base.BaseEntity;
+import com.ayundao.entity.Activity;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -9,7 +10,9 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonBooleanFormatVisitor;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.sun.media.jfxmedia.logging.Logger;
 import org.dom4j.tree.AbstractEntity;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -88,6 +91,25 @@ public class JsonUtils {
         }
         String result = json.toString().replace("\\", "");
 //        String result = json.toString();
+        return result;
+    }
+
+    public static String getPage(Page<?> page) {
+        String result = "";
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("total", page.getTotalElements());
+            jsonObject.put("page", page.getTotalPages());
+            JSONArray arr = new JSONArray();
+            for (Object o : page.getContent()) {
+                arr.put(getJson(o));
+            }
+            jsonObject.put("content", arr.toString());
+            result = delString(jsonObject.toString());
+            return result;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 

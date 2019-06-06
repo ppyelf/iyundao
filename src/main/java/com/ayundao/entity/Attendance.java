@@ -2,7 +2,6 @@ package com.ayundao.entity;
 
 import com.ayundao.base.BaseEntity;
 import com.ayundao.base.utils.TimeUtils;
-import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,7 +24,7 @@ public class Attendance extends BaseEntity<String> {
      * 活动
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACTIVITYID", nullable = false)
+    @JoinColumn(name = "ACTIVITYID")
     private Activity activity;
 
     /**
@@ -105,9 +104,6 @@ public class Attendance extends BaseEntity<String> {
     }
 
     public String getStartTime() {
-        if (StringUtils.isBlank(this.startTime)) {
-            this.startTime = TimeUtils.nowTime();
-        }
         return startTime;
     }
 
@@ -115,14 +111,7 @@ public class Attendance extends BaseEntity<String> {
         this.startTime = startTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = TimeUtils.convertTime(startTime, "yyyyMMddHHmmss");
-    }
-
     public String getEndTime() {
-        if (StringUtils.isBlank(this.endTime)) {
-            this.endTime = TimeUtils.nowTime();
-        }
         return endTime;
     }
 

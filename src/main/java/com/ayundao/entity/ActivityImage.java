@@ -46,7 +46,7 @@ public class ActivityImage extends BaseEntity<String> {
      * 所属活动
      */
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ACTIVITYID", nullable = false)
+    @JoinColumn(name = "ACTIVITYID")
     private Activity activity;
 
     /**

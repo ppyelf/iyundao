@@ -24,6 +24,12 @@ public class DateEditor extends PropertyEditorSupport {
 	 */
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    /**
+     * 公司日期格式
+     */
+    private static final String COMPANY_DATE_FORMAT = "yyyyMMddHHmmss";
+
+
 	/**
 	 * 是否将空转换为null
 	 */

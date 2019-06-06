@@ -1,6 +1,5 @@
 package com.ayundao.base.utils;
 
-import com.ayundao.base.BaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,6 @@ public class ClassUtils {
                 }
             }
         } catch (NullPointerException e) {
-            logger.error(e.getMessage());
         } catch (NoSuchMethodException e) {
             logger.error(e.getMessage());
         } catch (IllegalAccessException e) {

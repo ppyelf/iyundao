@@ -69,6 +69,12 @@ public class Activity extends BaseEntity<String> {
     private Set<ActivityFile> activityFiles;
 
     /**
+     * 活动图片
+     */
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ActivityImage> activityImages;
+
+    /**
      * 发布机构
      */
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -237,6 +243,14 @@ public class Activity extends BaseEntity<String> {
 
     public void setInfo5(String info5) {
         this.info5 = info5;
+    }
+
+    public Set<ActivityImage> getActivityImages() {
+        return activityImages;
+    }
+
+    public void setActivityImages(Set<ActivityImage> activityImages) {
+        this.activityImages = activityImages;
     }
 
     public enum ACTIVITY_TYPE{
