@@ -15,6 +15,7 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -486,7 +487,7 @@ public class ActivityController extends BaseController {
     public JsonResult page(@RequestParam(defaultValue = "1") int page,
                            @RequestParam(defaultValue = "10") int size,
                            String search) {
-        PageRequest pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size);
         Page<Activity> activityPage = activityService.findAllForPage(pageable);
         jsonResult.setData(JsonUtils.getPage(activityPage));
         return jsonResult;

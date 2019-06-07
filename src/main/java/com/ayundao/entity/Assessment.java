@@ -38,7 +38,7 @@ public class Assessment extends BaseEntity<String> {
     /**
      * 总分
      */
-    @Column(name = "total", columnDefinition = "tinyint default 0", length = 4)
+    @Column(name = "TOTAL", columnDefinition = "tinyint default 0", length = 4)
     private int total;
 
     /**

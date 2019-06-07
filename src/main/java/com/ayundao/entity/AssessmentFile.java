@@ -34,7 +34,7 @@ public class AssessmentFile extends BaseEntity<String> {
      * 所属考核项目
      */
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ASSESSMENTID", nullable = false)
+    @JoinColumn(name = "ASSESSMENTID")
     private Assessment assessment;
 
     /**

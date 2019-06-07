@@ -33,13 +33,13 @@ public class AssessmentIndex extends BaseEntity<String> {
     /**
      * 父级指标
      */
-    @JoinColumn(name = "FATHERID")
-    private AssessmentIndex assessmentIndex;
+    @Column(name = "FATHERID",length = 50)
+    private AssessmentIndex father;
 
     /**
      * 编码
      */
-    @Column(name = "CODE", length = 10)
+    @Column(name = "CODE", length = 10, unique = true)
     private int code;
 
     /**
@@ -95,12 +95,12 @@ public class AssessmentIndex extends BaseEntity<String> {
         this.remark = remark;
     }
 
-    public AssessmentIndex getAssessmentIndex() {
-        return assessmentIndex;
+    public AssessmentIndex getFather() {
+        return father;
     }
 
-    public void setAssessmentIndex(AssessmentIndex assessmentIndex) {
-        this.assessmentIndex = assessmentIndex;
+    public void setFather(AssessmentIndex father) {
+        this.father = father;
     }
 
     public int getCode() {
@@ -158,4 +158,6 @@ public class AssessmentIndex extends BaseEntity<String> {
     public void setInfo5(String info5) {
         this.info5 = info5;
     }
+
+
 }
