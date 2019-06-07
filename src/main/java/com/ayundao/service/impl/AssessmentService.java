@@ -1,9 +1,6 @@
 package com.ayundao.service.impl;
 
-import com.ayundao.entity.Activity;
-import com.ayundao.entity.Assessment;
-import com.ayundao.entity.AssessmentFile;
-import com.ayundao.entity.AssessmentIndex;
+import com.ayundao.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -109,4 +106,27 @@ public interface AssessmentService {
      * @return
      */
     Assessment modify(Assessment assessment, List<AssessmentIndex> index, List<AssessmentFile> file, String subjectId, String departId, String groupId, String userGroupId);
+
+    /**
+     * 根据考核ID和用户ID获取实体信息
+     * @param userId
+     * @param assessmentId
+     * @return
+     */
+    AssessmentRange findByAssessmentIdAndUserId(String userId, String assessmentId);
+
+    /**
+     * 保存用户指标
+     * @param ui
+     * @return
+     */
+    UserIndex saveUserIndex(UserIndex ui);
+
+    /**
+     * 项目添加指标
+     * @param assessment
+     * @param assessmentIndices
+     * @return
+     */
+    Assessment addAssessments(Assessment assessment, List<AssessmentIndex> assessmentIndices);
 }

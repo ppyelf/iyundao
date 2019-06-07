@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Id;
 import java.util.*;
 
 /**
@@ -198,6 +197,29 @@ public class AssessmentServiceImpl implements AssessmentService {
         assessmentIndexRepository.deleteAll(assessmentIndices);
         assessmentFileRepository.deleteAll(files);
         return save(assessment, index, file, subjectId, departId, groupId, userGroupId);
+    }
+
+    @Override
+    public AssessmentRange findByAssessmentIdAndUserId(String userId, String assessmentId) {
+        return assessmentRangeRepository.findByAssessmentIdAndUserId(userId, assessmentId);
+    }
+
+    @Override
+    public UserIndex saveUserIndex(UserIndex ui) {
+        return userIndexRepository.save(ui);
+    }
+
+    @Override
+    public Assessment addAssessments(Assessment assessment, List<AssessmentIndex> assessmentIndices) {
+        Set<AssessmentIndex> set = new HashSet<>();
+        for (AssessmentIndex ai : assessmentIndices) {
+            ai.setAssessment(assessment);
+            set.add(ai);
+        }
+        assessmentIndexRepository.saveAll(set);
+        assessment.setAssessmentIndices(set);
+        assessment = assessmentRepository.save(assessment);
+        return assessment;
     }
 
     private int getIndexLastCode() {

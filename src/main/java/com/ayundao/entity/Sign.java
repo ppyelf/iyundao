@@ -54,7 +54,7 @@ public class Sign extends BaseEntity<String> {
      * 位置Y
      */
     @Column(name = "AXISY", nullable = false)
-    private String asisy;
+    private String axisy;
 
     /**
      * 备用字段1
@@ -126,12 +126,12 @@ public class Sign extends BaseEntity<String> {
         this.axisx = axisx;
     }
 
-    public String getAsisy() {
-        return asisy;
+    public String getAxisy() {
+        return axisy;
     }
 
-    public void setAsisy(String asisy) {
-        this.asisy = asisy;
+    public void setAxisy(String axisy) {
+        this.axisy = axisy;
     }
 
     public String getInfo1() {

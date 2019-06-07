@@ -169,4 +169,10 @@ public class ActivityServiceImpl implements ActivityService {
         Page<Activity> activityPage = activityRepository.findAllForPage(pageable);
         return activityPage;
     }
+
+    @Override
+    public Sign saveUserSign(Sign sign) {
+        sign = signRepository.save(sign);
+        return sign;
+    }
 }

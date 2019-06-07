@@ -1,10 +1,7 @@
 package com.ayundao.service.impl;
 
 
-import com.ayundao.entity.Activity;
-import com.ayundao.entity.ActivityFile;
-import com.ayundao.entity.ActivityImage;
-import com.ayundao.entity.Attendance;
+import com.ayundao.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -97,4 +94,11 @@ public interface ActivityService {
      * @param pageable
      */
     Page<Activity> findAllForPage(Pageable pageable);
+
+    /**
+     * 保存用户签到流程
+     * @param sign
+     * @return
+     */
+    Sign saveUserSign(Sign sign);
 }

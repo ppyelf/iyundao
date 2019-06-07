@@ -21,4 +21,8 @@ public interface AssessmentRangeRepository extends CrudRepository<AssessmentRang
     //根据考核ID获取实体信息
     @Query("select ar from AssessmentRange ar where ar.assessmentId = ?1")
     List<AssessmentRange> findByAssessmentId(String id);
+
+    //根据用户ID和考核ID获取考核范围
+    @Query("select ar from AssessmentRange ar where ar.userId = ?1 and ar.assessmentId = ?2")
+    AssessmentRange findByAssessmentIdAndUserId(String userId, String assessmentId);
 }

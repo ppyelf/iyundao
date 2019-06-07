@@ -10,6 +10,7 @@ import com.ayundao.entity.AssessmentIndex;
 import com.ayundao.service.impl.AssessmentService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.hql.spi.id.inline.IdsClauseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -136,6 +137,7 @@ public class AssessmentController extends BaseController {
      *                /ass/add_index?name=添加指标&remark=测试添加指标
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:活动不存在</br>
+     *                                 601:考核不存在</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -148,12 +150,18 @@ public class AssessmentController extends BaseController {
     @PostMapping("/add_index")
     public JsonResult addIndex(String name,
                                String remark,
-                               String fatherId) {
+                               String fatherId,
+                               String assessmentId) {
+        Assessment assessment = assessmentService.find(assessmentId);
+        if (assessment == null) {
+            return JsonResult.failure(601, "考核不存在");
+        } 
         AssessmentIndex index = new AssessmentIndex();
         index.setCreatedDate(new Date());
         index.setLastModifiedDate(new Date());
         index.setName(name);
         index.setRemark(remark);
+        index.setAssessment(assessment);
         AssessmentIndex father = assessmentService.findIndexById(fatherId);
         if (father != null) {
             index.setFather(father);
@@ -415,7 +423,7 @@ public class AssessmentController extends BaseController {
         jsonResult.setData(conver(assessment));
         return jsonResult;
     }
-    
+
     private String conver(Assessment ass) {
         String reuslt = null;
         try {

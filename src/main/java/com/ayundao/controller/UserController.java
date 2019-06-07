@@ -4,10 +4,10 @@ package com.ayundao.controller;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
-import com.ayundao.entity.Subject;
-import com.ayundao.entity.User;
-import com.ayundao.entity.UserRelation;
+import com.ayundao.entity.*;
 import com.ayundao.service.UserService;
+import com.ayundao.service.impl.ActivityService;
+import com.ayundao.service.impl.AssessmentService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -35,6 +36,12 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ActivityService activityService;
+
+    @Autowired
+    private AssessmentService assessmentService;
 
     /**
      * @api {POST} /user/search 用户搜索
@@ -245,6 +252,128 @@ public class UserController extends BaseController {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /user/sign 用户签到
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     * @apiDescription 查看
+     * @apiParam {String} userId 用户ID
+     * @apiParam {int} type 签到类型
+     * @apiParam {String} activityId 活动ID
+     * @apiParam {String} singTime 签到时间
+     * @apiParam {String} axisx 坐标x
+     * @apiParam {String} axisy 坐标y
+     * @apiParamExample {json} 请求样例
+     *                /user/sign?activityId=402881916b2a3187016b2a3247350002&userId=0a4179fc06cb49e3ac0db7bcc8cf0882&singTime=now&axisx=123&axisy=456
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              601:用户不存在</br>
+     *                              602:活动不存在</br>
+     *                              603:签到类型不能为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{"version":"0","id":"2c92eb816b32f12a016b33962eb90012","createdDate":"20190608041648","lastModifiedDate":"20190608041648","userId":"0a4179fc06cb49e3ac0db7bcc8cf0882","axisx":"123","axisy":"456","info1":"","info3":"","info4":"","info5":"","info2":"","signTime":"now","signType":"normal"}"
+     * }
+     */
+    @PostMapping("/sign")
+    public JsonResult sign(String userId,
+                           @RequestParam(defaultValue = "0") int type,
+                           String activityId,
+                           String singTime,
+                           String axisx,
+                           String axisy) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return JsonResult.failure(601, "用户不存在");
+        }
+        Activity activity = activityService.find(activityId);
+        if (activity == null) {
+            return JsonResult.failure(602, "活动不存在");
+        }
+        Sign s = new Sign();
+        s.setCreatedDate(new Date());
+        s.setLastModifiedDate(new Date());
+        s.setSignTime(singTime);
+        s.setAxisx(axisx);
+        s.setAxisy(axisy);
+        s.setUserId(userId);
+        s.setActivity(activity);
+        for (Sign.SIGN_TYPE st : Sign.SIGN_TYPE.values()) {
+            if (st.ordinal() == type) {
+                s.setSignType(st);
+                break;
+            } 
+        }
+        if (s.getSignType() == null) {
+            return JsonResult.failure(603, "签到类型不能为空");
+        }
+        s = activityService.saveUserSign(s);
+        jsonResult.setData(JsonUtils.getJson(s));
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /user/add_index 添加用户指标
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     * @apiDescription 添加用户指标
+     * @apiParam {String} id 用户ID
+     * @apiParam {String} assessmentId 考核项目ID
+     * @apiParam {String} assessmentIndexId 考核指标ID
+     * @apiParam {int} score 分数
+     * @apiParamExample {json} 请求样例
+     *                /user/add_index?userId=0a4179fc06cb49e3ac0db7bcc8cf0882&assessmentId=2c92eb816b32f12a016b33a555170013&assessmentIndexId=2c92eb816b32f12a016b33b399950017
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              601:用户不存在</br>
+     *                              602:考核不存在</br>
+     *                              603:考核指标不存在</br>
+     *                              604:用户不属于该项目考核范围</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{"version":"0","id":"2c92eb816b32f12a016b33b497400018","createdDate":"20190608045001","lastModifiedDate":"20190608045001","userId":"0a4179fc06cb49e3ac0db7bcc8cf0882","info1":"","info3":"","info4":"","info5":"","info2":"","assessmentId":"2c92eb816b32f12a016b33a555170013","score":"0","finishTime":"20190608045001","assessmentIndexId":"2c92eb816b32f12a016b33b399950017"}"
+     * }
+     */
+    @PostMapping("/add_index")
+    public JsonResult addIndex(String userId,
+                               String assessmentId,
+                               String assessmentIndexId,
+                               @RequestParam(defaultValue = "0") int score) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return JsonResult.failure(601, "用户不存在");
+        }
+        Assessment assessment = assessmentService.find(assessmentId);
+        if (assessment == null) {
+            return JsonResult.failure(602, "考核不存在");
+        }
+        AssessmentIndex index = assessmentService.findIndexById(assessmentIndexId);
+        if (index == null) {
+            return JsonResult.failure(603, "考核指标不存在");
+        } 
+        AssessmentRange ar = assessmentService.findByAssessmentIdAndUserId(userId, assessmentId);
+        if (ar == null) {
+            return JsonResult.failure(604, "用户不属于该项目考核范围");
+        }
+        UserIndex ui = new UserIndex();
+        ui.setCreatedDate(new Date());
+        ui.setLastModifiedDate(new Date());
+        ui.setAssessmentId(assessmentId);
+        ui.setAssessmentIndexId(assessmentIndexId);
+        ui.setUserId(userId);
+        ui.setScore(score);
+        ui.setFinishTime(new Date());
+        ui = assessmentService.saveUserIndex(ui);
+        jsonResult.setData(JsonUtils.getJson(ui));
         return jsonResult;
     }
 
