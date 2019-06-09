@@ -6,8 +6,8 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.UserService;
-import com.ayundao.service.impl.ActivityService;
-import com.ayundao.service.impl.AssessmentService;
+import com.ayundao.service.ActivityService;
+import com.ayundao.service.AssessmentService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 
 /**

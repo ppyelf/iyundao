@@ -2,6 +2,7 @@ package com.ayundao.service.impl;
 
 import com.ayundao.entity.*;
 import com.ayundao.repository.*;
+import com.ayundao.service.AssessmentService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
