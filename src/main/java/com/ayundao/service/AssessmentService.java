@@ -1,4 +1,4 @@
-package com.ayundao.service.impl;
+package com.ayundao.service;
 
 import com.ayundao.entity.*;
 import org.springframework.data.domain.Page;
