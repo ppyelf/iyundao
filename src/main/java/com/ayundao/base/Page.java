@@ -134,15 +134,6 @@ public class Page<T> implements Serializable {
 	}
 
 	/**
-	 * 获取筛选
-	 *
-	 * @return 筛选
-	 */
-	public List<Filter> getFilters() {
-		return pageable.getFilters();
-	}
-
-	/**
 	 * 获取总页数
 	 *
 	 * @return 总页数

@@ -1,5 +1,6 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.base.Order;
 import com.ayundao.entity.*;
 import com.ayundao.repository.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -175,4 +176,24 @@ public class ActivityServiceImpl implements ActivityService {
         sign = signRepository.save(sign);
         return sign;
     }
+
+    @Override
+    public ActivityFile findByIds(String id) {
+        return activityFileRepository.find(id);
+    }
+
+    @Override
+    public List<ActivityFile> findAllFile() {
+        //设置排序
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order("url", Order.Direction.desc));
+        com.ayundao.base.Pageable pageable = new com.ayundao.base.Pageable();
+        pageable.setSearchProperty("url");
+        pageable.setSearchValue("aaaa");
+        pageable.setOrders(orders);
+//        return activityFileRepository.findList(pageable);
+        List<ActivityFile> page = activityFileRepository.findList(pageable);
+        return page;
+    }
+
 }

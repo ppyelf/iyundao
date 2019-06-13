@@ -22,7 +22,7 @@ public class Pageable implements Serializable {
 	/**
 	 * 默认页码
 	 */
-	private static final int DEFAULT_PAGE_NUMBER = 1;
+	private static final int DEFAULT_PAGE_NUMBER = 0;
 
 	/**
 	 * 默认每页记录数
@@ -63,11 +63,6 @@ public class Pageable implements Serializable {
 	 * 排序方向
 	 */
 	private Order.Direction orderDirection;
-
-	/**
-	 * 筛选
-	 */
-	private List<Filter> filters = new ArrayList<>();
 
 	/**
 	 * 排序
@@ -214,25 +209,6 @@ public class Pageable implements Serializable {
 	 */
 	public void setOrderDirection(Order.Direction orderDirection) {
 		this.orderDirection = orderDirection;
-	}
-
-	/**
-	 * 获取筛选
-	 * 
-	 * @return 筛选
-	 */
-	public List<Filter> getFilters() {
-		return filters;
-	}
-
-	/**
-	 * 设置筛选
-	 * 
-	 * @param filters
-	 *            筛选
-	 */
-	public void setFilters(List<Filter> filters) {
-		this.filters = filters;
 	}
 
 	/**

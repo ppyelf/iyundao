@@ -42,11 +42,11 @@ public class ValidationAdvice{
         return new ResponseEntity(responseBody, null, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity processIllegalArgumentException(IllegalArgumentException iae) {
-        Map<String, Object> responseBody = new HashMap<>(3);
-        responseBody.put("message", "参数校验失败:校验参数不能为空");
-        responseBody.put("code", HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity(responseBody, null, HttpStatus.NOT_FOUND);
-    }
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public ResponseEntity processIllegalArgumentException(IllegalArgumentException iae) {
+//        Map<String, Object> responseBody = new HashMap<>(3);
+//        responseBody.put("message", "参数校验失败:校验参数不能为空");
+//        responseBody.put("code", HttpStatus.NOT_FOUND.value());
+//        return new ResponseEntity(responseBody, null, HttpStatus.NOT_FOUND);
+//    }
 }

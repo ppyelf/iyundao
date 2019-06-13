@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Depart;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.data.jpa.repository.Query;
@@ -17,10 +18,10 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface DepartRepository extends CrudRepository<Depart, String> {
+public interface DepartRepository extends BaseRepository<Depart, String> {
 
     //获取机构的部门列表
-    @Query("select d from Depart d where d.subject.id = ?1")
+    @Query(value = "select d from Depart d where d.subject.id = ?1")
     List<Depart> findBySubjectId(String subjectId);
 
     //根据ID获取部门实体

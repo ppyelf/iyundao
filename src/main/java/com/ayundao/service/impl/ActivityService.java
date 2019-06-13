@@ -101,4 +101,17 @@ public interface ActivityService {
      * @return
      */
     Sign saveUserSign(Sign sign);
+
+    /**
+     * 根据IDS获取实体信息
+     * @param id
+     * @return
+     */
+    ActivityFile findByIds(String id);
+
+    /**
+     * 获取所有文件
+     * @return
+     */
+    List<ActivityFile> findAllFile();
 }
