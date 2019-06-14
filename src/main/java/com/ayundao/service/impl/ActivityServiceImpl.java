@@ -183,18 +183,4 @@ public class ActivityServiceImpl implements ActivityService {
         return activityFileRepository.find(id);
     }
 
-    @Override
-    public List<ActivityFile> findAllFile() {
-        //设置排序
-        List<Order> orders = new ArrayList<>();
-        orders.add(new Order("url", Order.Direction.desc));
-        com.ayundao.base.Pageable pageable = new com.ayundao.base.Pageable();
-        pageable.setSearchProperty("url");
-        pageable.setSearchValue("aaaa");
-        pageable.setOrders(orders);
-//        return activityFileRepository.findList(pageable);
-        List<ActivityFile> page = activityFileRepository.findList(pageable);
-        return page;
-    }
-
 }

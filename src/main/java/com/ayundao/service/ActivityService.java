@@ -109,9 +109,4 @@ public interface ActivityService {
      */
     ActivityFile findByIds(String id);
 
-    /**
-     * 获取所有文件
-     * @return
-     */
-    List<ActivityFile> findAllFile();
 }

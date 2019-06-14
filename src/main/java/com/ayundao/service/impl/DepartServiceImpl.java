@@ -44,4 +44,19 @@ public class DepartServiceImpl implements DepartService {
         return departRepository.save(depart);
     }
 
+    @Override
+    public List<Depart> findByIds(String[] departIds) {
+        return departRepository.findByIds(departIds);
+    }
+
+    @Override
+    public List<Depart>  saveAll(List<Depart> departs) {
+        return departRepository.saveAll(departs);
+    }
+
+    @Override
+    public List<Depart> findSubjectIsNull() {
+        return departRepository.findSubjectIsNull();
+    }
+
 }

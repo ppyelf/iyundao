@@ -4,9 +4,7 @@ import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
-import com.ayundao.service.SubjectService;
-import com.ayundao.service.UserRelationService;
-import com.ayundao.service.UserService;
+import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
+import sun.rmi.server.DeserializationChecker;
 
 import java.util.Date;
 import java.util.List;
@@ -33,9 +32,14 @@ public class SubjectController extends BaseController {
     @Autowired
     private UserRelationService userRelationService;
 
-
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private DepartService departService;
+
+    @Autowired
+    private GroupsService groupsService;
 
     /**
      * @api {POST} /subject/list 机构列表
@@ -59,9 +63,7 @@ public class SubjectController extends BaseController {
     public JsonResult list() {
         List<Subject> subjects = subjectService.findAll();
         if (CollectionUtils.isEmpty(subjects)) {
-            jsonResult.setCode(404);
-            jsonResult.setMessage("请添加机构");
-            return jsonResult;
+            return JsonResult.failure(404, "请添加机构");
         }
         JSONArray arr = new JSONArray();
         for (Subject s :subjects){
@@ -143,7 +145,7 @@ public class SubjectController extends BaseController {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
         }
-        Subject subject = subjectService.findById(id);
+        Subject subject = subjectService.find(id);
         if (subject == null) {
             return JsonResult.notFound("未查询到此机构");
         }
@@ -226,7 +228,7 @@ public class SubjectController extends BaseController {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
         }
-        Subject subject = subjectService.findById(id);
+        Subject subject = subjectService.find(id);
         if (subject == null) {
             return JsonResult.notFound("未查询到此机构");
         }
@@ -242,6 +244,85 @@ public class SubjectController extends BaseController {
         } 
         subject = subjectService.save(subject);
         jsonResult.setData(converType(subject));
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /subject/getdeparts 获取未分配部门列表
+     * @apiGroup Subject
+     * @apiVersion 1.0.0
+     * @apiDescription 获取未分配部门列表
+     * @apiParamExample {json} 请求样例：
+     *                /subject/getdeparts
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     */
+    public JsonResult getDepartList() {
+        List<Depart> departs = departService.findSubjectIsNull();
+        JSONArray arr = new JSONArray();
+        for (Depart depart : departs) {
+            arr.put(JsonUtils.getJson(depart));
+        }
+        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /subject/getgroups 获取未分配的组织列表
+     * @apiGroup Subject
+     * @apiVersion 1.0.0
+     * @apiDescription 获取未分配的组织列表
+     * @apiParamExample {json} 请求样例：
+     *                /subject/getgroups
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     */
+    public JsonResult getGroupsList() {
+        List<Groups> groups = groupsService.findSubjectIsNull();
+        JSONArray arr = new JSONArray();
+        for (Groups group : groups) {
+            arr.put(JsonUtils.getJson(group));
+        }
+        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /subject/distribution 分配
+     * @apiGroup Subject
+     * @apiVersion 1.0.0
+     * @apiDescription 分配
+     * @apiParam {String} id 必填,机构ID
+     * @apiParam {String[]} departIds 部门ID集合
+     * @apiParam {String[]} groupIds 组织ID集合
+     * @apiParamExample {json} 请求样例：
+     *                /subject/distribution
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:机构不存在</br>
+     *                                 600:参数异常</br>
+     *                                 601:机构ID不能为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     */
+    public JsonResult addDepartsAndGroups(String id,
+                                          String[] departIds,
+                                          String[] groupIds) {
+        if (StringUtils.isBlank(id)) {
+            return JsonResult.failure(601, "机构ID不能为空");
+        }
+        Subject subject = subjectService.find(id);
+        if (subject == null) {
+            return JsonResult.notFound("机构不存在");
+        }
+        if (departIds == null && groupIds == null) {
+            return JsonResult.paramError();
+        }
+        subject = subjectService.saveDepartAndGroup(subject, departIds, groupIds);
         return jsonResult;
     }
 

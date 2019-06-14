@@ -195,7 +195,7 @@ public class DepartController extends BaseController {
         depart.setName(name);
         depart.setLastModifiedDate(new Date(System.currentTimeMillis()));
         depart.setCreatedDate(new Date(System.currentTimeMillis()));
-        Subject subject = subjectService.findById(subjectId);
+        Subject subject = subjectService.find(subjectId);
         if (subject == null) {
             return JsonResult.notFound("机构参数异常");
         }
@@ -245,7 +245,7 @@ public class DepartController extends BaseController {
         depart.setLastModifiedDate(new Date(System.currentTimeMillis()));
         depart.setName(name);
         if (StringUtils.isNotBlank(subjectId)) {
-            Subject subject = subjectService.findById(subjectId);
+            Subject subject = subjectService.find(subjectId);
             if (subject == null) {
                 return JsonResult.notFound("此机构不存在");
             }

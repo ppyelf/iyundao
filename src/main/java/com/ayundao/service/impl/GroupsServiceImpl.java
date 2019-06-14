@@ -44,4 +44,19 @@ public class GroupsServiceImpl implements GroupsService {
     public Groups save(Groups groups) {
         return groupsRepository.save(groups);
     }
+
+    @Override
+    public List<Groups> findbyIds(String[] groupIds) {
+        return groupsRepository.findByIds(groupIds);
+    }
+
+    @Override
+    public List<Groups> saveAll(List<Groups> groups) {
+        return groupsRepository.saveAll(groups);
+    }
+
+    @Override
+    public List<Groups> findSubjectIsNull() {
+        return groupsRepository.findSubjectIsNull();
+    }
 }

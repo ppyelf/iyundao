@@ -188,7 +188,7 @@ public class GroupsController extends BaseController {
         groups.setName(name);
         groups.setLastModifiedDate(new Date(System.currentTimeMillis()));
         groups.setCreatedDate(new Date(System.currentTimeMillis()));
-        Subject subject = subjectService.findById(subjectId);
+        Subject subject = subjectService.find(subjectId);
         if (subject == null) {
             return JsonResult.notFound("机构参数异常");
         }
@@ -234,7 +234,7 @@ public class GroupsController extends BaseController {
         groups.setLastModifiedDate(new Date(System.currentTimeMillis()));
         groups.setName(StringUtils.isBlank(name) ? groups.getName() : name);
         if (StringUtils.isNotBlank(subjectId)) {
-            Subject subject = subjectService.findById(subjectId);
+            Subject subject = subjectService.find(subjectId);
             if (subject == null)   return JsonResult.notFound("此机构不存在");
             groups.setSubject(subject);
         }

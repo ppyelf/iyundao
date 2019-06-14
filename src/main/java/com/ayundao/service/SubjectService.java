@@ -26,7 +26,7 @@ public interface SubjectService {
      * @param id
      * @return
      */
-    Subject findById(String id);
+    Subject find(String id);
 
     /**
      * 保存实体
@@ -35,4 +35,11 @@ public interface SubjectService {
      */
     Subject save(Subject subject);
 
+    /**
+     * 分配组织和
+     * @param departIds
+     * @param groupIds
+     * @return
+     */
+    Subject saveDepartAndGroup(Subject subject, String[] departIds, String[] groupIds);
 }

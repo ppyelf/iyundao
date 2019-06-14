@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Groups;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,7 +17,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface GroupsRepository extends CrudRepository<Groups, String> {
+public interface GroupsRepository extends BaseRepository<Groups, String> {
 
     //获取机构的所有小组集合
     @Query("select g from Groups g where g.subject.id = ?1")
@@ -36,4 +37,7 @@ public interface GroupsRepository extends CrudRepository<Groups, String> {
      */
     @Query("select g from Groups g")
     List<Groups> getList();
+
+    @Query("select g from Groups g where g.subject is null")
+    List<Groups> findSubjectIsNull();
 }

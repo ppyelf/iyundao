@@ -41,4 +41,22 @@ public interface DepartService {
      */
     Depart save(Depart depart);
 
+    /**
+     * 根据ID集合获取集合信息
+     * @param departIds
+     * @return
+     */
+    List<Depart> findByIds(String[] departIds);
+
+    /**
+     * 保存所有实体
+     * @param departs
+     */
+    List<Depart> saveAll(List<Depart> departs);
+
+    /**
+     * 获取机构为空的部门列表
+     * @return
+     */
+    List<Depart> findSubjectIsNull();
 }

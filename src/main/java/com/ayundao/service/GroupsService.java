@@ -41,4 +41,19 @@ public interface GroupsService {
      * @return
      */
     Groups save(Groups groups);
+
+    /**
+     * 根据IDS获取集合信息
+     * @param groupIds
+     * @return
+     */
+    List<Groups> findbyIds(String[] groupIds);
+
+    List<Groups> saveAll(List<Groups> groups);
+
+    /**
+     * 获取未分配的组织列表
+     * @return
+     */
+    List<Groups> findSubjectIsNull();
 }

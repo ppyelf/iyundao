@@ -4,6 +4,7 @@ import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Depart;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -32,4 +33,7 @@ public interface DepartRepository extends BaseRepository<Depart, String> {
     @Query("select d from Depart d")
     List<Depart> getList();
 
+    //获取机构为空的部门列表
+    @Query("select d from Depart d where d.subject is null")
+    List<Depart> findSubjectIsNull();
 }

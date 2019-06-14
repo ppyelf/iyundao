@@ -231,12 +231,12 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     public List<T> findList() {
-        return findAll();
+        return findList(new Pageable());
     }
 
     @Override
     public Page<T> findPage() {
-        return findPage();
+        return findPage(new Pageable());
     }
 
     @Override

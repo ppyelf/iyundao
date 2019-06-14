@@ -42,13 +42,6 @@ public class ActivityController extends BaseController {
     @Autowired
     private SignService signService;
 
-    @PostMapping("/files")
-    public JsonResult file() {
-        String[] ids = new String[]{"402881916b3a160f016b3a164b940000", "402881916b4535c7016b45362a8b0000"};
-//        ActivityFile activityFile = activityService.findByIds("402881916b3a160f016b3a164b940000");
-        List<ActivityFile> list = activityService.findAllFile();
-        return jsonResult;
-    }
     /**
      * @api {POST} /activity/upload_file 上传文件
      * @apiGroup Activity
