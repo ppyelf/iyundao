@@ -1,7 +1,6 @@
 package com.ayundao.base;
 
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @NoRepositoryBean
-public interface BaseRepository<T, ID> extends CrudRepository<T, ID>, JpaSpecificationExecutor<T> {
+public interface BaseRepository<T, ID> extends JpaRepositoryImplementation<T, ID> {
 
     T find(ID id);
 
@@ -31,13 +30,14 @@ public interface BaseRepository<T, ID> extends CrudRepository<T, ID>, JpaSpecifi
 
     Page<T> findPage(Pageable pageable);
 
+    @Override
     <S extends T> S save(S entity);
 
+    @Override
     <S extends T> List<S> saveAll(Iterable<S> entities);
 
+    @Override
     <S extends T> S saveAndFlush(S entity);
-
-    List<T> findAll();
 
     void delete(T s);
 

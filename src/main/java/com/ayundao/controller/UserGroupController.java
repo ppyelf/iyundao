@@ -3,12 +3,10 @@ package com.ayundao.controller;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
-import com.ayundao.entity.Depart;
 import com.ayundao.entity.User;
 import com.ayundao.entity.UserGroup;
 import com.ayundao.service.UserGroupService;
 import com.ayundao.service.UserService;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -198,40 +196,6 @@ public class UserGroupController extends BaseController {
         return jsonResult;
     }
 
-    /**
-     * @api {post} /depart/add_user 添加成员
-     * @apiGroup Depart
-     * @apiVersion 1.0.0
-     * @apiDescription 添加成员
-     * @apiParamExample {json} 请求样例：
-     *                /depart/add_user
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:用户组不存在</br>
-     *                                 601:用户ID异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{"version":"0","id":"402881f46afe9429016afea8c2570001","createdDate":"20190528213713","lastModifiedDate":"20190528213713","name":"添加部门"}"
-     * }
-     */
-    @PostMapping("/add_user")
-    public JsonResult addUser(String id,
-                              String[] userIds) {
-        UserGroup userGroup = userGroupService.findById(id);
-        if (userGroup == null) {
-            return jsonResult.notFound("用户组不存在");
-        }
-        List<User> users = userService.findByIds(userIds);
-        if (CollectionUtils.isEmpty(users)) {
-            return JsonResult.failure(601, "用户ID异常");
-        }
-        userGroup = userGroupService.saveDepartUsers(userGroup, users);
-        jsonResult.setData(JsonUtils.getJson(userGroup));
-        return jsonResult;
-    }
 
     /**
      * 简要获取父级关系

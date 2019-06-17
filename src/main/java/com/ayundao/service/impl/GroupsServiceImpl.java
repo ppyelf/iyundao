@@ -55,4 +55,8 @@ public class GroupsServiceImpl implements GroupsService {
         return groupsRepository.saveAll(groups);
     }
 
+    @Override
+    public List<Groups> findSubjectIsNull() {
+        return groupsRepository.findSubjectIsNull();
+    }
 }

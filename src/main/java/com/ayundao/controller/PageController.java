@@ -58,11 +58,6 @@ public class PageController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "["{"id":"2c4824f71b6f4de389e0b8b375636d94","version":"1","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"测试分院页面","level":"0","uri":"","sort":"0","title":"管理员页面"}","{"id":"402881916b1ae347016b1c8bfc63000e","version":"0","lastModifiedDate":"20190603165424","createdDate":"20190603165424","name":"添加页面","level":"1","uri":"","sort":"0","title":"菜单标题"}","{"id":"402881916b1ae347016b1c965bb10010","version":"0","lastModifiedDate":"20190603170544","createdDate":"20190603170544","name":"添加子页面","level":"0","uri":"菜单标题","sort":"0","title":"菜单标题"}","{"id":"92f8f66f00c2478794d3dea9d68b6b00","version":"1","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"测试页面","level":"0","uri":"","sort":"0","title":"总院页面"}"]"
-     * }
      */
     @GetMapping("/list")
     public JsonResult list() {
@@ -237,31 +232,6 @@ public class PageController extends BaseController {
     }
 
     /**
-     * @api {post} /page/dis_user 新增
-     * @apiGroup Page
-     * @apiVersion 1.0.0
-     * @apiDescription 新增
-     * @apiParam {String} name
-     * @apiParamExample {json} 请求样例：
-     *                /page/dis_user
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:未查询到此菜单</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "操作成功",
-     *     "data": "{"version":"0","id":"402881916b1ae347016b1c8d344a000f","createdDate":"20190603165544","lastModifiedDate":"20190603165544","name":"添加子页面","level":"1","sort":"0","title":"菜单标题","uri":""}"
-     * }
-     */
-    @PostMapping("/dis_user")
-    public JsonResult disUser() {
-        return jsonResult;
-    }
-
-    /**
      * 实体的集合字段信息转换
      * @param page
      * @param jsonResult
@@ -293,7 +263,5 @@ public class PageController extends BaseController {
         }
         return JsonResult.paramError();
     }
-
-
 
 }

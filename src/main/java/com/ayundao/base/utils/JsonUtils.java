@@ -1,7 +1,6 @@
 package com.ayundao.base.utils;
 
 import com.ayundao.base.BaseEntity;
-import com.ayundao.base.utils.ClassUtils;
 import com.ayundao.entity.Activity;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;

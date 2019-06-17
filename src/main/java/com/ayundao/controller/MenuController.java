@@ -63,11 +63,6 @@ public class MenuController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "["{"id":"078fc9671e2a4b028bcf084f662c51d3","version":"1","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"用户菜单","level":"0","remark":"","uri":""}","{"id":"402881916b1ae347016b1c84de06000c","version":"0","lastModifiedDate":"20190603164638","createdDate":"20190603164638","name":"添加菜单","level":"0","remark":"","uri":""}","{"id":"402881916b1ae347016b1cddb2e20012","version":"1","lastModifiedDate":"20190603182339","createdDate":"20190603182339","name":"添加菜单","level":"0","remark":"","uri":""}","{"id":"77460b21edb947cbb8b158843cea631c","version":"1","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"责任人菜单","level":"0","remark":"","uri":""}","{"id":"da3bde893f544ae9af8ed99bbf788192","version":"1","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"管理员菜单","level":"0","remark":"","uri":""}"]"
-     * }
      */
     @GetMapping("/list")
     public JsonResult list() {
@@ -212,11 +207,6 @@ public class MenuController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{"id":"402881916b1ae347016b1cddb2e20012","version":"1","lastModifiedDate":"20190603182339","createdDate":"20190603182339","name":"添加菜单","level":"0","remark":"","uri":"","menuRelation":[{"id":"402881916b537ed2016b5412b4940000","version":"0","lastModifiedDate":"20190614114040","createdDate":"20190614114040","userRelation":"{"id":"366f02491fee40c68cc396ab7f8b78e3","version":"1","lastModifiedDate":"20190517111111","createdDate":"20190517111111"}","userGroupRelation":"{"id":"a6a475f87c7242fbac37162154621568","version":"1","lastModifiedDate":"20190517111111","createdDate":"20190517111111"}","role":"{"id":"402881f46afe47db016afe562def0000","version":"2","lastModifiedDate":"20190528201337","createdDate":"20190528200701","name":"修改角色11","level":"3"}"}]}"
-     * }
      */
     @PostMapping("/modify")
     public JsonResult modify(String id,

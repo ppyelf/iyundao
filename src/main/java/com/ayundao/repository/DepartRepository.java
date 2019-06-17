@@ -33,4 +33,7 @@ public interface DepartRepository extends BaseRepository<Depart, String> {
     @Query("select d from Depart d")
     List<Depart> getList();
 
+    //获取机构为空的部门列表
+    @Query("select d from Depart d where d.subject is null")
+    List<Depart> findSubjectIsNull();
 }

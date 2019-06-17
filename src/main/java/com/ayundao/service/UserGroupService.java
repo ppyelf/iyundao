@@ -1,7 +1,6 @@
 package com.ayundao.service;
 
 import com.ayundao.entity.Page;
-import com.ayundao.entity.User;
 import com.ayundao.entity.UserGroup;
 
 import java.util.List;
@@ -37,13 +36,4 @@ public interface UserGroupService {
 
 
     List<UserGroup> findByIds(String[] userGroupIds);
-
-    /**
-     * 用户组分配用户
-     * @param userGroup
-     * @param users
-     * @return
-     */
-    UserGroup saveDepartUsers(UserGroup userGroup, List<User> users);
-
 }

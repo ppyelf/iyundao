@@ -59,6 +59,7 @@ public class ClassUtils {
             }
         } catch (NullPointerException e) {
         } catch (NoSuchMethodException e) {
+            logger.error(e.getMessage());
         } catch (IllegalAccessException e) {
             logger.error(e.getMessage());
         } catch (InvocationTargetException e) {

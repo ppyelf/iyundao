@@ -42,12 +42,4 @@ public interface UserGroupRelationService {
      * @return
      */
     List<UserGroupRelation> findByUserGroupIds(String[] userGroupIds);
-
-    /**
-     * 获取用户组成员
-     * @param id
-     * @return
-     */
-    List<User> findUserByUserGroupId(String id);
-
 }

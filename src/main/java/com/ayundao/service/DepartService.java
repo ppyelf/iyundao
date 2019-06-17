@@ -1,7 +1,6 @@
 package com.ayundao.service;
 
 import com.ayundao.entity.Depart;
-import com.ayundao.entity.User;
 
 import java.util.List;
 
@@ -56,10 +55,8 @@ public interface DepartService {
     List<Depart> saveAll(List<Depart> departs);
 
     /**
-     * 部门保存用户关系
-     * @param depart
-     * @param users
+     * 获取机构为空的部门列表
      * @return
      */
-    Depart saveDepartUsers(Depart depart, List<User> users);
+    List<Depart> findSubjectIsNull();
 }

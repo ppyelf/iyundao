@@ -4,7 +4,6 @@ import com.ayundao.entity.User;
 import com.ayundao.entity.UserRelation;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @ClassName: UserRelationService
@@ -61,27 +60,4 @@ public interface UserRelationService {
      * @return
      */
     List<UserRelation> findBySubjectAndDepartIdsOrGroupsIds(String subjectId, String[] departId, String[] groupsId);
-
-
-    List<UserRelation> saveAll(Set<UserRelation> userRelations);
-
-    /**
-     * 获取所有实体集合List
-     * @return
-     */
-    List<UserRelation> findAll();
-
-    /**
-     * 根据部门ID获取成员关系
-     * @param id
-     * @return
-     */
-    List<User> findByDepartId(String id);
-
-    /**
-     * 根据组织ID获取成员关系
-     * @param id
-     * @return
-     */
-    List<User> findByGroupId(String id);
 }

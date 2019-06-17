@@ -1,9 +1,6 @@
 package com.ayundao.entity;
 
 import com.ayundao.base.BaseEntity;
-import com.ayundao.base.utils.EncryptUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -162,7 +159,7 @@ public class User extends BaseEntity<String> {
     }
 
     public void setSalt(String salt) {
-        this.salt = UUID.randomUUID().toString().replace("-","").substring(0, 16);
+        this.salt = salt;
     }
 
     public int getSex() {

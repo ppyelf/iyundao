@@ -1,6 +1,5 @@
 package com.ayundao.repository;
 
-import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,7 +16,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface UserRelationRepository extends BaseRepository<UserRelation, String> {
+public interface UserRelationRepository extends CrudRepository<UserRelation, String> {
 
     //获取用户关系
     List<UserRelation> findByUser(User user);
@@ -41,11 +40,29 @@ public interface UserRelationRepository extends BaseRepository<UserRelation, Str
     @Query("select ur from UserRelation ur where ur.subject.id = ?1 and (ur.depart.id in (?2) or ur.groups.id in (?3))")
     List<UserRelation> findBySubjectAndDepartIdsOrGroupsIds(String subjectId, String[] departIds, String[] groupsIds);
 
-    //根据部门ID获取成员关系
-    @Query("select ur.user from UserRelation ur where ur.depart.id = ?1")
-    List<User> findByDepartId(String id);
+    /**
+     * 根据部门id查询用户id
+     * @param subjectId
+     * @return
+     */
+    @Query("select t.id from UserRelation t where t.depart.id = ?1")
+    List<String> selectByDepart(String subjectId);
 
-    //根据组织ID获取成员关系
-    @Query("select ur.user from UserRelation ur where ur.groups.id = ?1")
-    List<User> findByGroupId(String id);
+    /**
+     * 根据组织id查询用户id
+     * @param subjectId
+     * @return
+     */
+    @Query("select t.id from UserRelation t where t.groups.id = ?1")
+    List<String> selectByGroup(String subjectId);
+
+    /**
+     * 根据机构id查询用户id
+     * @param subjectId
+     * @return
+     */
+    @Query("select t.id from UserRelation t where t.subject.id = ?1")
+    List<String> selectBySubjectId(String subjectId);
+
+
 }

@@ -2,17 +2,14 @@ package com.ayundao.controller;
 
 
 import com.ayundao.base.BaseController;
-import com.ayundao.base.BaseEntity;
-import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
-import com.ayundao.service.*;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonBooleanFormatVisitor;
-import org.apache.commons.collections.CollectionUtils;
+import com.ayundao.service.UserService;
+import com.ayundao.service.ActivityService;
+import com.ayundao.service.AssessmentService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -20,9 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import sun.security.util.Password;
 
-import java.util.*;
+import java.util.Date;
 
 
 /**
@@ -45,13 +41,6 @@ public class UserController extends BaseController {
 
     @Autowired
     private AssessmentService assessmentService;
-
-    @Autowired
-    private UserRelationService userRelationService;
-
-    @Autowired
-    private UserGroupRelationService userGroupRelationService;
-
 
     /**
      * @api {POST} /user/search 用户搜索
@@ -103,8 +92,6 @@ public class UserController extends BaseController {
      *                /user/search?key=张三&page=1&size=10
      * @apiSuccess (200) {int} code 200:成功</br>
      *                                 201:用户名密码错误</br>
-     *                                 601:用户类型不能为空</br>
-     *                                 602:账号已存在</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -122,29 +109,18 @@ public class UserController extends BaseController {
                           String subjectId,
                           String departId,
                           String groupsId,
-                          String remark,
-                          String password) {
+                          String remark) {
         User user = new User();
-        user.setCreatedDate(new Date());
-        user.setLastModifiedDate(new Date());
         user.setAccount(account);
         user.setName(name);
         user.setSex(sex);
-        user.setSalt(UUID.randomUUID().toString().replace("-","").substring(0, 16));
-        user.setPassword(EncryptUtils.DESencode(password, user.getSalt()));
         for (User.USER_TYPE type : User.USER_TYPE.values()) {
             if (type.ordinal() == userType) {
                 user.setUserType(type);
                 break;
             } 
         }
-        if (user.getUserType() == null) {
-            return JsonResult.failure(601, "用户类型不能为空");
-        } 
         user.setRemark(remark);
-        if (userService.existsAccount(user.getAccount())) {
-            return JsonResult.failure(602, "账号已存在");
-        } 
         userService.save(user, subjectId, departId, groupsId);
         return jsonResult;
     }
@@ -400,146 +376,4 @@ public class UserController extends BaseController {
         return jsonResult;
     }
 
-    /**
-     * @api {post} /user/get_depart_users 获取部门成员
-     * @apiGroup User
-     * @apiVersion 1.0.0
-     * @apiDescription 获取部门成员
-     * @apiParam {String} id 部门ID(必填)
-     * @apiParamExample {json} 请求样例：
-     *                /user/get_depart_users
-     * @apiSuccess (200) {String} code 200:成功</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "[{"id":"402881916b5a1eba016b5a1f33d60000","name":"测试账号"},{"id":"402881916b5a1eba016b5a1fafc70002","name":"测试账号11"}]"
-     * }
-     */
-    @GetMapping("/get_depart_users")
-    public JsonResult getDepartUsers(String id) {
-        List<User> users = userRelationService.findByDepartId(id);
-        try {
-            JSONArray arr = new JSONArray();
-            for (User user : users) {
-                JSONObject json = new JSONObject();
-                json.put("id", user.getId());
-                json.put("name", user.getName());
-                arr.put(json);
-            }
-            jsonResult.setData(JsonUtils.delString(arr.toString()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /user/get_group_users 获取组织成员
-     * @apiGroup User
-     * @apiVersion 1.0.0
-     * @apiDescription 获取组织成员
-     * @apiParam {String} id 组织ID(必填)
-     * @apiParamExample {json} 请求样例：
-     *                /user/get_group_users
-     * @apiSuccess (200) {String} code 200:成功</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "[{"id":"402881916b5a1eba016b5a1f33d60000","name":"测试账号"},{"id":"402881916b5a1eba016b5a1fafc70002","name":"测试账号11"}]"
-     * }
-     */
-    @GetMapping("/get_group_users")
-    public JsonResult getGroupUsers(String id) {
-        List<User> users = userRelationService.findByGroupId(id);
-        try {
-            JSONArray arr = new JSONArray();
-            for (User user : users) {
-                JSONObject json = new JSONObject();
-                json.put("id", user.getId());
-                json.put("name", user.getName());
-                arr.put(json);
-            }
-            jsonResult.setData(JsonUtils.delString(arr.toString()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /user/get_user_group_users 获取用户组成员
-     * @apiGroup User
-     * @apiVersion 1.0.0
-     * @apiDescription 获取用户组成员
-     * @apiParam {String} id 组织ID(必填)
-     * @apiParamExample {json} 请求样例：
-     *                /user/get_user_group_users
-     * @apiSuccess (200) {String} code 200:成功</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "[{"id":"402881916b5a1eba016b5a1f33d60000","name":"测试账号"},{"id":"402881916b5a1eba016b5a1fafc70002","name":"测试账号11"}]"
-     * }
-     */
-    @GetMapping("/get_user_group_users")
-    public JsonResult getUserGroupUsers(String id) {
-        List<User> users = userGroupRelationService.findUserByUserGroupId(id);
-        try {
-            JSONArray arr = new JSONArray();
-            for (User user : users) {
-                JSONObject json = new JSONObject();
-                json.put("id", user.getId());
-                json.put("name", user.getName());
-                arr.put(json);
-            }
-            jsonResult.setData(JsonUtils.delString(arr.toString()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /user/get_distribution_users 获取未分配成员
-     * @apiGroup User
-     * @apiVersion 1.0.0
-     * @apiDescription 获取未分配成员
-     * @apiParamExample {json} 请求样例：
-     *                /user/get_distribution_users
-     * @apiSuccess (200) {String} code 200:成功</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "[{"id":"cd22e3407ace4d86bac92f92b9e9113e","name":"用户1"}]"
-     * }
-     */
-    @PostMapping(value = "/get_user")
-    public JsonResult getDistributionUsers() {
-        List<User> users = userService.findNotdistributionUser();
-        try {
-            JSONArray arr = new JSONArray();
-            for (User user : users) {
-                JSONObject json = new JSONObject();
-                json.put("id", user.getId());
-                json.put("name", user.getName());
-                arr.put(json);
-            }
-            jsonResult.setData(JsonUtils.delString(arr.toString()));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonResult;
-    }
 }

@@ -38,4 +38,6 @@ public interface GroupsRepository extends BaseRepository<Groups, String> {
     @Query("select g from Groups g")
     List<Groups> getList();
 
+    @Query("select g from Groups g where g.subject is null")
+    List<Groups> findSubjectIsNull();
 }

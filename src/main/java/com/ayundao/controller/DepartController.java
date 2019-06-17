@@ -1,29 +1,31 @@
 package com.ayundao.controller;
 
 import com.ayundao.base.BaseController;
+import com.ayundao.base.BaseEntity;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
-import com.ayundao.entity.*;
+import com.ayundao.entity.Depart;
+import com.ayundao.entity.Subject;
+import com.ayundao.entity.User;
+import com.ayundao.entity.UserGroup;
 import com.ayundao.service.DepartService;
 import com.ayundao.service.SubjectService;
-import com.ayundao.service.UserRelationService;
 import com.ayundao.service.UserService;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonBooleanFormatVisitor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.Id;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName: DepartController
@@ -45,9 +47,6 @@ public class DepartController extends BaseController {
 
     @Autowired
     private SubjectService subjectService;
-
-    @Autowired
-    private UserRelationService userRelationService;
 
     /**
      * @api {POST} /depart/list 机构部门列表
@@ -277,41 +276,6 @@ public class DepartController extends BaseController {
             e.printStackTrace();
         }
         return "";
-    }
-
-    /**
-     * @api {post} /depart/add_user 添加成员
-     * @apiGroup Depart
-     * @apiVersion 1.0.0
-     * @apiDescription 添加成员
-     * @apiParamExample {json} 请求样例：
-     *                /depart/add_user
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:部门不存在</br>
-     *                                 601:用户ID异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{"version":"0","id":"402881f46afe9429016afea8c2570001","createdDate":"20190528213713","lastModifiedDate":"20190528213713","name":"添加部门"}"
-     * }
-     */
-    @PostMapping("/add_user")
-    public JsonResult addUser(String id,
-                              String[] userIds) {
-        Depart depart = departService.findById(id);
-        if (depart == null) {
-            return jsonResult.notFound("部门不存在");
-        }
-        List<User> users = userService.findByIds(userIds);
-        if (CollectionUtils.isEmpty(users)) {
-            return JsonResult.failure(601, "用户ID异常");
-        }
-        depart = departService.saveDepartUsers(depart, users);
-        jsonResult.setData(JsonUtils.getJson(depart));
-        return jsonResult;
     }
 
     /**

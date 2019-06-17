@@ -270,8 +270,4 @@ public abstract class BaseController {
     public void setValidator(Validator validator) {
         this.validator = validator;
     }
-
-    public String getSalt() {
-        return salt;
-    }
 }
