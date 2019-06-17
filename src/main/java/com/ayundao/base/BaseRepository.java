@@ -30,10 +30,13 @@ public interface BaseRepository<T, ID> extends JpaRepositoryImplementation<T, ID
 
     Page<T> findPage(Pageable pageable);
 
+    @Override
     <S extends T> S save(S entity);
 
+    @Override
     <S extends T> List<S> saveAll(Iterable<S> entities);
 
+    @Override
     <S extends T> S saveAndFlush(S entity);
 
     void delete(T s);
