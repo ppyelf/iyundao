@@ -11,6 +11,7 @@ import org.springframework.data.jpa.provider.PersistenceProvider;
 import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +33,8 @@ import java.util.Optional;
  * @Description: 基类
  * @Version: V1.0
  */
-@Repository
 @Transactional(readOnly = true)
-public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements BaseRepository<T,ID> {
+public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> extends SimpleJpaRepository<T, ID> implements BaseRepository<T,ID> {
 
     /**
      * 属性分隔符
@@ -53,11 +53,9 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     private Class<T> entityClass;
 
-    public BaseRepositoryImpl() {
-    }
-
     @SuppressWarnings("unchecked")
     public BaseRepositoryImpl(JpaEntityInformation<T, ID> entityInformation, EntityManager entityManager) {
+        super(entityInformation, entityManager);
         Assert.notNull(entityInformation);
         Assert.notNull(entityManager);
         this.entityInformation = entityInformation;
@@ -68,6 +66,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @SuppressWarnings("unchecked")
     public BaseRepositoryImpl(Class<T> entityClass, EntityManager entityManager) {
+        super(entityClass, entityManager);
         Assert.notNull(entityClass);
         Assert.notNull(entityManager);
         this.em = entityManager;
@@ -136,6 +135,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     public List<T> findAll() {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(entityClass);
+        Root<T> root = query.from(entityClass);
         TypedQuery<T> typedQuery = em.createQuery(query);
         List<T> list = typedQuery.getResultList();
         return CollectionUtils.isEmpty(list)
@@ -144,61 +144,27 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
-    public List<T> findAll(Sort sort) {
-        return null;
-    }
-
-    @Override
-    public org.springframework.data.domain.Page<T> findAll(org.springframework.data.domain.Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public List<T> findAllById(Iterable<ID> ids) {
-        return null;
-    }
-
-    @Override
-    public long count() {
-        return 0;
-    }
-
-    @Override
     public boolean exists(ID id) {
         return existsById(id);
     }
 
     @Override
-    public void deleteById(ID id) {
-
-    }
-
-    @Override
     public <S extends T> List<S> saveAll(Iterable<S> entities) {
         Assert.notNull(entities);
-        List<S> list = new ArrayList<>();
-        for (S entity : list) {
-            list.add(save(entity));
+
+        List<S> result = new ArrayList<S>();
+
+        for (S entity : entities) {
+            result.add(save(entity));
         }
-        return list;
-    }
 
-    @Override
-    public void flush() {
-
+        return result;
     }
 
     @Override
     public Optional<T> findById(ID id) {
         return Optional.empty();
     }
-
-    @Override
-    public boolean existsById(ID id) {
-        T t = find(id);
-        return t == null ? false : true;
-    }
-
 
     @Override
     public T find(ID id) {
@@ -226,7 +192,11 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     public List<T> findByIds(String[] ids) {
-        return findByIds(ids);
+        List<ID> list = new ArrayList<>();
+        for (String id : ids) {
+            list.add((ID) id);
+        }
+        return findByIds(list);
     }
 
     @Override
@@ -441,77 +411,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
-    public void deleteInBatch(Iterable<T> entities) {
-
-    }
-
-    @Override
-    public void deleteAllInBatch() {
-
-    }
-
-    @Override
-    public T getOne(ID id) {
-        return null;
-    }
-
-    @Override
-    public <S extends T> Optional<S> findOne(Example<S> example) {
-        return Optional.empty();
-    }
-
-    @Override
-    public <S extends T> List<S> findAll(Example<S> example) {
-        return null;
-    }
-
-    @Override
-    public <S extends T> List<S> findAll(Example<S> example, Sort sort) {
-        return null;
-    }
-
-    @Override
-    public <S extends T> org.springframework.data.domain.Page<S> findAll(Example<S> example, org.springframework.data.domain.Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public <S extends T> long count(Example<S> example) {
-        return 0;
-    }
-
-    @Override
-    public <S extends T> boolean exists(Example<S> example) {
-        return false;
-    }
-
-    @Override
     public void setRepositoryMethodMetadata(CrudMethodMetadata crudMethodMetadata) {
         this.metadata = crudMethodMetadata;
-    }
-
-    @Override
-    public Optional<T> findOne(Specification<T> spec) {
-        return Optional.empty();
-    }
-
-    @Override
-    public List<T> findAll(Specification<T> spec) {
-        return null;
-    }
-
-    @Override
-    public org.springframework.data.domain.Page<T> findAll(Specification<T> spec, org.springframework.data.domain.Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public List<T> findAll(Specification<T> spec, Sort sort) {
-        return null;
-    }
-
-    @Override
-    public long count(Specification<T> spec) {
-        return 0;
     }
 }

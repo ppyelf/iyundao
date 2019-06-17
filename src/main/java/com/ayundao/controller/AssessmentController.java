@@ -17,10 +17,7 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -52,7 +49,13 @@ public class AssessmentController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{"total":6,"page":1,"content":"["{"id":"11","version":"2","lastModifiedDate":"20190608034947","createdDate":"11","name":"1234","type":"branch","remark":"","total":"0","startTime":"20191111111111","endTime":"20191111111111","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"2c92eb816b32f12a016b331863dd0003","version":"0","lastModifiedDate":"20190608015924","createdDate":"20190608015924","name":"添加考核","type":"standard","remark":"1234","total":"0","startTime":"20190608111111","endTime":"20190608111112","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"2c92eb816b32f12a016b3318ad540004","version":"0","lastModifiedDate":"20190608015943","createdDate":"20190608015943","name":"添加考核","type":"standard","remark":"1234","total":"11","startTime":"20190608111111","endTime":"20190608111112","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"2c92eb816b32f12a016b3318bc7e0005","version":"0","lastModifiedDate":"20190608015947","createdDate":"20190608015947","name":"添加考核","type":"standard","remark":"1234","total":"111","startTime":"20190608111111","endTime":"20190608111112","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"2c92eb816b32f12a016b3319ff960007","version":"0","lastModifiedDate":"20190608020110","createdDate":"20190608020110","name":"添加考核","type":"standard","remark":"1234","total":"111","startTime":"20190608111111","endTime":"20190608111112","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"2c92eb816b32f12a016b33a555170013","version":"0","lastModifiedDate":"20190608043321","createdDate":"20190608043321","name":"添加考核","type":"standard","remark":"1234","total":"111","startTime":"20190608111111","endTime":"20190608111112","info3":"","info2":"","info5":"","info1":"","info4":""}"]"}"
+     * }
      */
+    @GetMapping("/page")
     public JsonResult page(@RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);

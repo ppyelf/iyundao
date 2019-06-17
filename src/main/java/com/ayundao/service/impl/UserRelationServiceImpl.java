@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @ClassName: UserRelationServiceImpl
@@ -73,5 +74,25 @@ public class UserRelationServiceImpl implements UserRelationService {
         return CollectionUtils.isEmpty(userRelations)
                 ? new ArrayList<>()
                 : userRelations;
+    }
+
+    @Override
+    public List<UserRelation> saveAll(Set<UserRelation> userRelations) {
+        return userRelationRepository.saveAll(userRelations);
+    }
+
+    @Override
+    public List<UserRelation> findAll() {
+        return userRelationRepository.findAll();
+    }
+
+    @Override
+    public List<User> findByDepartId(String id) {
+        return userRelationRepository.findByDepartId(id);
+    }
+
+    @Override
+    public List<User> findByGroupId(String id) {
+        return userRelationRepository.findByGroupId(id);
     }
 }

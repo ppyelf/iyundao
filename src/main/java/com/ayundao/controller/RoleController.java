@@ -134,8 +134,8 @@ public class RoleController extends BaseController {
         }
         Role role = new Role();
         role.setName(name);
-        role.setLastModifiedDate(new Date(System.currentTimeMillis()));
-        role.setCreatedDate(new Date(System.currentTimeMillis()));
+        role.setLastModifiedDate(new Date());
+        role.setCreatedDate(new Date());
         role.setLevel(level);
         role = roleService.save(role);
         jsonResult.setData(JsonUtils.getJson(role));

@@ -482,6 +482,11 @@ public class ActivityController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{"total":7,"page":3,"content":"["{"id":"402881916b2a9588016b2b9a0ef10012","version":"0","lastModifiedDate":"20190606150405","createdDate":"20190606150405","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"402881916b2b9dd2016b2b9e77620000","version":"0","lastModifiedDate":"20190606150853","createdDate":"20190606150853","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"402881916b2b9dd2016b2b9f91f40003","version":"0","lastModifiedDate":"20190606151006","createdDate":"20190606151006","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}"]"}"
+     * }
      */
     @PostMapping("/page")
     public JsonResult page(@RequestParam(defaultValue = "1") int page,

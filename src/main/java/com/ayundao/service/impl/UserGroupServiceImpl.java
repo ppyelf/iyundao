@@ -1,5 +1,6 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.entity.User;
 import com.ayundao.entity.UserGroup;
 import com.ayundao.repository.UserGroupRepository;
 import com.ayundao.service.UserGroupService;
@@ -47,6 +48,11 @@ public class UserGroupServiceImpl implements UserGroupService {
         return CollectionUtils.isEmpty(userGroups)
                 ? new ArrayList<>()
                 : userGroups;
+    }
+
+    @Override
+    public UserGroup saveDepartUsers(UserGroup userGroup, List<User> users) {
+        return null;
     }
 
 }

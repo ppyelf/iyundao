@@ -7,6 +7,7 @@ import io.netty.channel.ConnectTimeoutException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.tree.AbstractEntity;
@@ -77,6 +78,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     @Column(name = "VERSION", nullable = false, columnDefinition = "bigint(20) default 1")
     private Long version;
     public BaseEntity() {
+        this.id = (ID) UUID.randomUUID().toString().replace("-", "");
     }
 
     public static Object toEntity(String str, Object obj) {
@@ -107,13 +109,12 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      * @return ID
      */
     public ID getId() {
-        return (ID) id.toString().replace("-", "");
+        return (ID) this.id.toString().replace("-", "");
     }
 
     /**
      * 设置ID
      *
-     * @param id ID
      */
     public void setId(ID id) {
         this.id = (ID)id.toString().replace("-", "");
@@ -196,7 +197,8 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      */
     @Override
     public String toString() {
-        ToStringBuilder builder = new ToStringBuilder(this.getClass().getSimpleName());
+        StringBuilder builder = new StringBuilder(this.getClass().getSimpleName());
+        builder.append(":{");
         Iterator var3 = ClassUtils.getDeclaredFieldsWithSuper(this.getClass()).values().iterator();
 
         while (var3.hasNext()) {
@@ -205,10 +207,12 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
             if (!AbstractEntity.class.isAssignableFrom(typeClazz) && !Collection.class.isAssignableFrom(typeClazz) && !Map.class.isAssignableFrom(typeClazz)) {
                 int modifiers = field.getModifiers();
                 if (field.getName().indexOf(36) == -1 && !Modifier.isStatic(modifiers) && !Modifier.isTransient(modifiers)) {
-                    builder.append(field.getName(), ClassUtils.forceGetProperty(this, field.getName()));
+                    builder.append(field.getName()+"="+ClassUtils.forceGetProperty(this, field.getName())+",");
                 }
             }
         }
+        builder.delete(builder.length() - 1, builder.length());
+        builder.append("}");
         return builder.toString();
     }
     

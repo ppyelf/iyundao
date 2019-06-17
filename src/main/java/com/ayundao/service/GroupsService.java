@@ -51,9 +51,4 @@ public interface GroupsService {
 
     List<Groups> saveAll(List<Groups> groups);
 
-    /**
-     * 获取未分配的组织列表
-     * @return
-     */
-    List<Groups> findSubjectIsNull();
 }

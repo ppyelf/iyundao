@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.entity.User;
 import com.ayundao.entity.UserGroup;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -29,4 +30,5 @@ public interface UserGroupRepository extends CrudRepository<UserGroup, String> {
     //根据IDS获取用户组集合
     @Query("select ug from UserGroup ug where ug.id in (?1)")
     List<UserGroup> findByIds(String[] userGroupIds);
+
 }

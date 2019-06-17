@@ -1,13 +1,22 @@
 package com.ayundao.service.impl;
 
 import com.ayundao.entity.Depart;
+import com.ayundao.entity.Subject;
+import com.ayundao.entity.User;
+import com.ayundao.entity.UserRelation;
 import com.ayundao.repository.DepartRepository;
+import com.ayundao.repository.SubjectRepository;
 import com.ayundao.service.DepartService;
+import com.ayundao.service.UserRelationService;
+import org.apache.catalina.mbeans.UserMBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @ClassName: DepartServiceImpl
@@ -23,6 +32,12 @@ public class DepartServiceImpl implements DepartService {
 
     @Autowired
     private DepartRepository departRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
+    private UserRelationService userRelationService;
 
     @Override
     public List<Depart> findBySubjectId(String subjectId) {
@@ -55,8 +70,20 @@ public class DepartServiceImpl implements DepartService {
     }
 
     @Override
-    public List<Depart> findSubjectIsNull() {
-        return departRepository.findSubjectIsNull();
+    public Depart saveDepartUsers(Depart depart, List<User> users) {
+        Subject subject = subjectRepository.find(depart.getSubject().getId());
+        Set<UserRelation> userRelations = new HashSet<>();
+        for (User user : users) {
+            UserRelation ur = new UserRelation();
+            ur.setCreatedDate(new Date());
+            ur.setLastModifiedDate(new Date());
+            ur.setSubject(subject);
+            ur.setUser(user);
+            ur.setDepart(depart);
+            userRelations.add(ur);
+        }
+        userRelationService.saveAll(userRelations);
+        return depart;
     }
 
 }

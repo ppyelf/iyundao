@@ -1,8 +1,11 @@
 package com.ayundao.service;
 
 import com.ayundao.entity.User;
+import com.ayundao.entity.UserRelation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 
 /**
@@ -58,11 +61,37 @@ public interface UserService {
      * 添加用户
      * @param user
      */
-    void save(User user, String subjectId, String departId, String groupsId);
+    User save(User user, String subjectId, String departId, String groupsId);
 
     /**
      * 查询用户分页
      * @return
      */
     Page<User> findAllForPage(Pageable pageable);
+
+    /**
+     * 获取未分配的部门/组织的人员
+     * @return
+     */
+    List<User> findNotdistributionUser();
+
+    /**
+     * 根据ID集合查询用户集合信息
+     * @param userIds
+     * @return
+     */
+    List<User> findByIds(String[] userIds);
+
+    /**
+     * 检测账号是否存在
+     * @param account
+     * @return
+     */
+    boolean existsAccount(String account);
+
+    /**
+     * 获取所有用户的List集合
+     * @return
+     */
+    List<User> findAll();
 }
