@@ -53,8 +53,8 @@ public class ActivityController extends BaseController {
      * @apiParam {int} type 必填
      * @apiParam {String} content
      * @apiParam {String} fromTo
-     * @apiParamExample {json} 请求样例：
-     *                /activity/upload_file?name=上传文件1&url=1111111&suffix=jpg&type=1&content=测试内容
+     * @apiParamExample {json} 请求样例:
+     *                ?name=上传文件1&url=1111111&suffix=jpg&type=1&content=测试内容
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 601:名称,路径或后缀名不能为空</br>
      *                                 602:文件类型异常</br>
@@ -64,7 +64,7 @@ public class ActivityController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{"version":"0","id":"402881916b2a9588016b2abd6f300001","createdDate":"20190606110236","lastModifiedDate":"20190606110236","name":"上传文件","type":"file","content":"测试内容","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}"
+     *     "data": {"version":"0","id":"402881916b2a9588016b2abd6f300001","createdDate":"20190606110236","lastModifiedDate":"20190606110236","name":"上传文件","type":"file","content":"测试内容","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
      * }
      */
     @PostMapping("/upload_file")
@@ -105,7 +105,7 @@ public class ActivityController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 活动文件删除
      * @apiParam {String[]} ids 必填
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /activity/del_file?ids=402881916b2a9588016b2abd6f300001
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:活动文件不存在</br>
@@ -128,15 +128,15 @@ public class ActivityController extends BaseController {
     }
 
     /**
-     * @api {POST} /activity/upload_file 上传图片
+     * @api {POST} /activity/upload_image 上传图片
      * @apiGroup Activity
      * @apiVersion 1.0.0
      * @apiDescription 上传图片
      * @apiParam {String} name 必填
      * @apiParam {String} url 必填
      * @apiParam {String} suffix 必填
-     * @apiParamExample {json} 请求样例：
-     *                /activity/upload_file?name=上传图片&url=1111111&suffix=jpg
+     * @apiParamExample {json} 请求样例:
+     *                ?name=上传图片&url=1111111&suffix=jpg
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 601:名称,路径或后缀名不能为空</br>
      * @apiSuccess (200) {String} message 信息
@@ -145,7 +145,7 @@ public class ActivityController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{"version":"0","id":"402881916b2a9588016b2adbe569000e","createdDate":"20190606113622","lastModifiedDate":"20190606113622","name":"上传图片","type":"text","content":"","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}"
+     *     "data": {"version":"0","id":"402881916b2a9588016b2adbe569000e","createdDate":"20190606113622","lastModifiedDate":"20190606113622","name":"上传图片","type":"text","content":"","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
      * }
      */
     @PostMapping("/upload_image")
@@ -172,7 +172,7 @@ public class ActivityController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 活动图片删除
      * @apiParam {String[]} ids 必填
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /activity/del_image?ids=402881916b2b9dd2016b2b9f15010002
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:活动图片不存在</br>
@@ -206,7 +206,7 @@ public class ActivityController extends BaseController {
      * @apiParam {String} axisx
      * @apiParam {String} axisy
      * @apiParam {String} area
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /activity/add_time?name=上传图片&url=1111111&suffix=jpg
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 601:起止时间不能为空</br>
@@ -255,7 +255,7 @@ public class ActivityController extends BaseController {
      * @apiParam {String} subjectId
      * @apiParam {String} departId
      * @apiParam {String} groupId
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /activity/add?name=添加活动2&content=测试内容个&number=13&total=100&type=2&attendanceIds=402881916b2a9588016b2b5dbc480010&attendanceIds=402881916b2a9588016b2b5f1c1c0011&activityFileIds=402881916b2a9588016b2abd6f300001&activityImageIds=402881916b2b9dd2016b2b9f15010002&subjectId=402881f46afdef14016afe28796c000b
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:</br>
@@ -316,7 +316,7 @@ public class ActivityController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 删除
      * @apiParam {String} id 必填
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /activity/del?id=2c9ba3816b27cc90016b27cd24800000
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 601:活动不存在</br>
@@ -356,7 +356,7 @@ public class ActivityController extends BaseController {
      * @apiParam {String} subjectId
      * @apiParam {String} departId
      * @apiParam {String} groupId
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /activity/del?id=2c9ba3816b27cc90016b27cd24800000
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:活动不存在</br>
@@ -418,7 +418,7 @@ public class ActivityController extends BaseController {
      * @apiGroup Activity
      * @apiVersion 1.0.0
      * @apiDescription 列表
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /activity/list
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
@@ -447,7 +447,7 @@ public class ActivityController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 查看
      * @apiParam {String} id 必填
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /activity/view?id=402881916b2a3187016b2a3247350002
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:活动不存在</br>
@@ -475,8 +475,8 @@ public class ActivityController extends BaseController {
      * @apiGroup Activity
      * @apiVersion 1.0.0
      * @apiDescription 分页
-     * @apiParamExample {json} 请求样例：
-     *                /activity/page?id=
+     * @apiParamExample {json} 请求示例:
+     *              /activity/page?id=123
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:活动不存在</br>
      * @apiSuccess (200) {String} message 信息

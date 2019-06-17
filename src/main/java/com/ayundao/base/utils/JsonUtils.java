@@ -74,25 +74,19 @@ public class JsonUtils {
      * @return
      * @author 念
      */
-    public static String getJson(Object obj) {
+    public static com.alibaba.fastjson.JSONObject getJson(Object obj) {
         Map<String, Field> map = ClassUtils.getDeclaredFieldsWithSuper(obj.getClass());
-        JSONObject json = new JSONObject();
+        com.alibaba.fastjson.JSONObject json = new com.alibaba.fastjson.JSONObject();
         for (Map.Entry<String, Field> entry : map.entrySet()) {
             String key = entry.getKey();
             Field field = entry.getValue();
             Class cls = field.getType();
             if (!BaseEntity.class.isAssignableFrom(cls) &&!Collection.class.isAssignableFrom(cls)
                     && !Map.class.isAssignableFrom(cls)) {
-                try {
-                    json.put(key, ClassUtils.forceGetProperty(obj, field.getName()));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                json.put(key, ClassUtils.forceGetProperty(obj, field.getName()));
             }
         }
-        String result = json.toString().replace("\\", "");
-//        String result = json.toString();
-        return result;
+        return json;
     }
 
     public static String getPage(Page<?> page) {

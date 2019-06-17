@@ -8,9 +8,9 @@ import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
 import sun.rmi.server.DeserializationChecker;
 
@@ -68,7 +68,7 @@ public class SubjectController extends BaseController {
         JSONArray arr = new JSONArray();
         for (Subject s :subjects){
             s.setUserRelations(null);
-            arr.put(JsonUtils.getJson(s));
+            arr.add(s);
         }
         jsonResult.setData(JsonUtils.delString(arr.toString()));
         return jsonResult;
@@ -112,7 +112,7 @@ public class SubjectController extends BaseController {
                         json.put("type", "其他");
                          break;
                 }
-                arr.put(json);
+                arr.add(json);
             }
             jsonResult.setData(arr.toString());
         } catch (JSONException e) {
@@ -254,7 +254,7 @@ public class SubjectController extends BaseController {
      * @param subject
      * @return
      */
-    private String converType(Subject subject) {
+    private JSONObject converType(Subject subject) {
         try {
             JSONObject json = new JSONObject(JsonUtils.getJson(subject));
             switch (subject.getSubjectType().ordinal()) {
@@ -271,7 +271,7 @@ public class SubjectController extends BaseController {
                     json.put("subjectType", "总院");
                     break;
             }
-            return json.toString();
+            return json;
         } catch (JSONException e) {
             e.printStackTrace();
         }

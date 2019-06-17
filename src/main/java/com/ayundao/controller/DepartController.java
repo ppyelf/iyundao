@@ -79,19 +79,15 @@ public class DepartController extends BaseController {
         if (CollectionUtils.isEmpty(departs)) {
             return jsonResult.notFound("请添加部门");
         }
-        try {
-            JSONArray arr = new JSONArray();
-            for (Depart d :departs) {
-                JSONObject json = new JSONObject(JsonUtils.getJson(d));
-                json.remove("user");
-                json.remove("subject");
-                arr.put(json);
-            }
-            jsonResult = JsonResult.success();
-            jsonResult.setData(JsonUtils.delString(arr.toString()));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        JSONArray arr = new JSONArray();
+        for (Depart d :departs) {
+            JSONObject json = new JSONObject(JsonUtils.getJson(d));
+            json.remove("user");
+            json.remove("subject");
+            arr.put(json);
         }
+        jsonResult = JsonResult.success();
+        jsonResult.setData(JsonUtils.delString(arr.toString()));
         return jsonResult;
     }
 
@@ -116,11 +112,14 @@ public class DepartController extends BaseController {
     @GetMapping("/manager_list")
     public JsonResult managerList() {
         List<Depart> departs = departService.getList();
-            JSONArray arr = new JSONArray();
+            com.alibaba.fastjson.JSONArray arr = new com.alibaba.fastjson.JSONArray();
             for (Depart depart : departs) {
-                arr.put(convertJson(depart));
+                com.alibaba.fastjson.JSONObject json = new com.alibaba.fastjson.JSONObject();
+                json.put("id", depart.getId());
+                json.put("name", depart.getName());
+                arr.add(json);
             }
-            jsonResult.setData(JsonUtils.delString(arr.toString()));
+            jsonResult.setData(arr);
         return jsonResult;
     }
 

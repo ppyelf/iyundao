@@ -38,7 +38,7 @@ public class RoleController extends BaseController {
      * @apiGroup Role
      * @apiVersion 1.0.0
      * @apiDescription 列表
-     * @apiParamExample {json} 请求样例：
+     * @apiParamExample {json} 请求样例:
      *                /role/list
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息

@@ -269,7 +269,7 @@ public class User extends BaseEntity<String> {
         /**
          * 管理员
          */
-        amdin,
+        admin,
 
         /**
          * 负责人

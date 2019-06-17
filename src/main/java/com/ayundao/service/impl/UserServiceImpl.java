@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return false;
         } 
-        return user.getUserType().equals(User.USER_TYPE.amdin);
+        return user.getUserType().equals(User.USER_TYPE.admin);
     }
 
     @Override
