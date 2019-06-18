@@ -4,9 +4,11 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.LearningPower;
 import com.ayundao.service.LearningPowerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -30,6 +32,7 @@ public class LearningPowerController {
      * @apiDescription 新增学习强国
      * @apiParamExample {json} 请求样例：
      *                /learning/add
+     * @apiParam {LearningPower} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -60,6 +63,7 @@ public class LearningPowerController {
      * @apiDescription 修改学习强国
      * @apiParamExample {json} 请求样例：
      *                 /learning/modify
+     * @apiParam {LearningPower} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -89,6 +93,8 @@ public class LearningPowerController {
      * @apiDescription
      * @apiParamExample {json} 请求样例：
      *                /learning/getlist
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -103,7 +109,9 @@ public class LearningPowerController {
      * }
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(learningPowerService.selectAll(pageable));
     }
 
@@ -114,10 +122,10 @@ public class LearningPowerController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /learning/selectbydepart
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -128,7 +136,9 @@ public class LearningPowerController {
      * }
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params, Pageable pageable) {
+    public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(learningPowerService.selectByDepart(params, pageable));
     }
 
@@ -139,10 +149,10 @@ public class LearningPowerController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /learning/selectbygroup
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -153,7 +163,9 @@ public class LearningPowerController {
      * }
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params, Pageable pageable) {
+    public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(learningPowerService.selectByGroup(params, pageable));
     }
 
@@ -164,10 +176,10 @@ public class LearningPowerController {
      * @apiDescription 根据机构查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /learning/selectbysubject
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -178,7 +190,9 @@ public class LearningPowerController {
      * }
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params, Pageable pageable) {
+    public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(learningPowerService.selectBySubject(params, pageable));
     }
 }

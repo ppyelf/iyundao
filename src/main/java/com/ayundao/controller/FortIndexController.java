@@ -1,14 +1,17 @@
 package com.ayundao.controller;
 
+import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.FortIndex;
 import com.ayundao.entity.PioneerIndex;
 import com.ayundao.service.FortIndexService;
 import com.ayundao.service.PioneerIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -20,7 +23,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/fortindex")
-public class FortIndexController {
+public class FortIndexController extends BaseController {
 
     @Autowired
     private FortIndexService pioneerService;
@@ -30,6 +33,7 @@ public class FortIndexController {
      * @apiGroup FortIndex
      * @apiVersion 1.0.0
      * @apiDescription 新增堡垒指数
+     * @apiParam {FortIndex} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiParamExample {json} 请求样例：
      *                /fortindex/add
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -60,6 +64,7 @@ public class FortIndexController {
      * @apiGroup FortIndex
      * @apiVersion 1.0.0
      * @apiDescription 修改堡垒指数
+     * @apiParam {FortIndex} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiParamExample {json} 请求样例：
      *                 /fortindex/modify
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -89,6 +94,8 @@ public class FortIndexController {
      * @apiGroup PioneerIndex
      * @apiVersion 1.0.0
      * @apiDescription
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
      *                /fortindex/getlist
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -105,7 +112,9 @@ public class FortIndexController {
      * }
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList( @RequestParam(defaultValue = "1") int page,
+                               @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(pioneerService.selectAll(pageable));
     }
 
@@ -116,6 +125,9 @@ public class FortIndexController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /fortindex/selectbydepart
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 600:参数异常</br>
@@ -130,7 +142,9 @@ public class FortIndexController {
      * }
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params, Pageable pageable) {
+    public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(pioneerService.selectByDepart(params, pageable));
     }
 
@@ -141,6 +155,9 @@ public class FortIndexController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /fortindex/selectbygroup
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 600:参数异常</br>
@@ -155,7 +172,9 @@ public class FortIndexController {
      * }
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params, Pageable pageable) {
+    public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(pioneerService.selectByGroup(params, pageable));
     }
 
@@ -166,6 +185,9 @@ public class FortIndexController {
      * @apiDescription 根据机构查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /fortindex/selectbysubject
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 600:参数异常</br>
@@ -180,7 +202,9 @@ public class FortIndexController {
      * }
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params, Pageable pageable) {
+    public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(pioneerService.selectBySubject(params, pageable));
     }
 

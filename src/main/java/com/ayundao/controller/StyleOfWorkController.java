@@ -5,11 +5,9 @@ import com.ayundao.entity.StyleOfWork;
 import com.ayundao.entity.StyleOfWorkRecord;
 import com.ayundao.service.StyleOfWorkService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -32,10 +30,8 @@ public class StyleOfWorkController {
      * @apiDescription 新增行风效能
      * @apiParamExample {json} 请求样例：
      * /style/add
+     * @apiParam {StyleOfWork} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -62,10 +58,9 @@ public class StyleOfWorkController {
      * @apiDescription 新增行风效能扣分记录
      * @apiParamExample {json} 请求样例：
      * /style/add1
+     * @apiParam {StyleOfWorkRecord} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,
+     *      \"styleOfWork\":,\"operationTime\":,\"cause\":,\"operatorId\":,\"operatorName\":,\"grade\":}
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -88,10 +83,8 @@ public class StyleOfWorkController {
      * @apiDescription 修改行风效能
      * @apiParamExample {json} 请求样例：
      * /style/modify
+     * @apiParam {StyleOfWork} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -117,10 +110,9 @@ public class StyleOfWorkController {
      * @apiDescription
      * @apiParamExample {json} 请求样例：
      * /style/getlist
-     * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
+     * @apiParam {int}  page
+     * @apiParam {int}  size
+     * @apiSuccess (200) {String} code 200:成功</br>>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -131,7 +123,9 @@ public class StyleOfWorkController {
      * }
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(styleOfWorkService.selectAll(pageable));
     }
 
@@ -142,10 +136,10 @@ public class StyleOfWorkController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /style/selectbydepart
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -156,7 +150,9 @@ public class StyleOfWorkController {
      * }
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params, Pageable pageable) {
+    public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(styleOfWorkService.selectByDepart(params, pageable));
     }
 
@@ -167,10 +163,10 @@ public class StyleOfWorkController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /style/selectbygroup
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -181,7 +177,9 @@ public class StyleOfWorkController {
      * }
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params, Pageable pageable) {
+    public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(styleOfWorkService.selectByGroup(params, pageable));
     }
 
@@ -192,10 +190,10 @@ public class StyleOfWorkController {
      * @apiDescription 根据机构查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /style/selectbysubject
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -206,7 +204,9 @@ public class StyleOfWorkController {
      * }
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params, Pageable pageable) {
+    public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(styleOfWorkService.selectBySubject(params, pageable));
     }
 
@@ -217,10 +217,8 @@ public class StyleOfWorkController {
      * @apiDescription 根据行风效能id查询扣分记录
      * @apiParamExample {json} 请求样例：
      * /style/findbyworkid
+     * @apiParam {String} params
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -231,8 +229,8 @@ public class StyleOfWorkController {
      * }
      */
     @PostMapping("/findbyworkid")
-    public JsonResult findByWorkId(String workId) {
-        return styleOfWorkService.findByWorkId(workId);
+    public JsonResult findByWorkId(String params) {
+        return styleOfWorkService.findByWorkId(params);
     }
 
     /**

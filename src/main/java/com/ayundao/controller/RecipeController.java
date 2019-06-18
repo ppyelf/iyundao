@@ -6,9 +6,11 @@ import com.ayundao.entity.Recipe;
 import com.ayundao.entity.RecipeRational;
 import com.ayundao.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -32,10 +34,8 @@ public class RecipeController extends BaseController {
      * @apiDescription 新增处方
      * @apiParamExample {json} 请求样例：
      * /recipe/add
+     * @apiParam {Recipe} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -62,6 +62,8 @@ public class RecipeController extends BaseController {
      * @apiDescription 新增点评
      * @apiParamExample {json} 请求样例：
      * /recipe/add
+     * @apiParam {RecipeRational} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,
+     *          \"recipe\":,\"rational\":,\"remark\":,\"user\":,\"remarkName\":}
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 801:传入数据为空</br>
@@ -88,10 +90,8 @@ public class RecipeController extends BaseController {
      * @apiDescription 修改药材预警
      * @apiParamExample {json} 请求样例：
      * /recipe/modify
+     * @apiParam {Recipe} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -117,6 +117,8 @@ public class RecipeController extends BaseController {
      * @apiDescription 修改药材预警
      * @apiParamExample {json} 请求样例：
      * /recipe/getlist
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 600:参数异常</br>
@@ -131,7 +133,9 @@ public class RecipeController extends BaseController {
      * }
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(recipeService.selectAll(pageable));
     }
 
@@ -142,10 +146,10 @@ public class RecipeController extends BaseController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /recipe/selectbydepart
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -156,7 +160,9 @@ public class RecipeController extends BaseController {
      * }
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params, Pageable pageable) {
+    public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(recipeService.selectByDepart(params, pageable));
     }
 
@@ -167,10 +173,10 @@ public class RecipeController extends BaseController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /recipe/selectbygroup
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -181,7 +187,9 @@ public class RecipeController extends BaseController {
      * }
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params, Pageable pageable) {
+    public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(recipeService.selectByGroup(params, pageable));
     }
 
@@ -192,10 +200,10 @@ public class RecipeController extends BaseController {
      * @apiDescription 根据机构查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /recipe/selectbysubject
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -206,7 +214,9 @@ public class RecipeController extends BaseController {
      * }
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params, Pageable pageable) {
+    public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(recipeService.selectBySubject(params, pageable));
     }
 
@@ -217,10 +227,8 @@ public class RecipeController extends BaseController {
      * @apiDescription 根据处方id查询点评
      * @apiParamExample {json} 请求样例：
      * /recipe/findbyrecipeid
+     * @apiParam {String} params
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -231,8 +239,8 @@ public class RecipeController extends BaseController {
      * }
      */
     @PostMapping("/findbyrecipeid")
-    public JsonResult findVyRecipeId(String recipeID) {
-        return recipeService.findByRecipeId(recipeID);
+    public JsonResult findVyRecipeId(String params) {
+        return recipeService.findByRecipeId(params);
     }
 
 }

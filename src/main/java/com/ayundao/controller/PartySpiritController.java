@@ -1,12 +1,15 @@
 package com.ayundao.controller;
 
+import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.PartySpirit;
 import com.ayundao.service.PartySpiritService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -18,7 +21,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/spirit")
-public class PartySpiritController {
+public class PartySpiritController extends BaseController {
 
     @Autowired
     private PartySpiritService partySpiritService;
@@ -30,6 +33,7 @@ public class PartySpiritController {
      * @apiDescription 新增党内精神
      * @apiParamExample {json} 请求样例：
      *                /spirit/add
+     * @apiParam {PartySpirit} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -60,6 +64,7 @@ public class PartySpiritController {
      * @apiDescription 修改党内精神
      * @apiParamExample {json} 请求样例：
      *                 /spirit/modify
+     * @apiParam {PartySpirit} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -89,6 +94,8 @@ public class PartySpiritController {
      * @apiDescription
      * @apiParamExample {json} 请求样例：
      *                /spirit/getlist
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -103,7 +110,9 @@ public class PartySpiritController {
      * }
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(partySpiritService.selectAll(pageable));
     }
 
@@ -114,10 +123,10 @@ public class PartySpiritController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /spirit/selectbydepart
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -128,7 +137,9 @@ public class PartySpiritController {
      * }
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params, Pageable pageable) {
+    public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(partySpiritService.selectByDepart(params, pageable));
     }
 
@@ -139,10 +150,10 @@ public class PartySpiritController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /spirit/selectbygroup
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -153,7 +164,9 @@ public class PartySpiritController {
      * }
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params, Pageable pageable) {
+    public JsonResult selectByGroup(String params,@RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(partySpiritService.selectByGroup(params, pageable));
     }
 
@@ -164,10 +177,10 @@ public class PartySpiritController {
      * @apiDescription 根据机构查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /spirit/selectbysubject
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -178,7 +191,9 @@ public class PartySpiritController {
      * }
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params, Pageable pageable) {
+    public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(partySpiritService.selectBySubject(params, pageable));
     }
 

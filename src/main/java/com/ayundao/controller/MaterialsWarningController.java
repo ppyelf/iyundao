@@ -1,13 +1,16 @@
 package com.ayundao.controller;
 
+import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.MaterialsRational;
 import com.ayundao.entity.MaterialsWarning;
 import com.ayundao.service.MaterialsWarningService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -19,7 +22,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/materials")
-public class MaterialsWarningController {
+public class MaterialsWarningController extends BaseController {
 
     @Autowired
     private MaterialsWarningService warningService;
@@ -31,10 +34,8 @@ public class MaterialsWarningController {
      * @apiDescription 新增耗材预警
      * @apiParamExample {json} 请求样例：
      * /materials/add
+     * @apiParam {MaterialsWarning} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -61,8 +62,9 @@ public class MaterialsWarningController {
      * @apiDescription 新增耗材点评
      * @apiParamExample {json} 请求样例：
      * /materials/add1
+     * @apiParam {MaterialsWarning} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,
+     *          \"materials\":,\"rational\":,\"remark\":,\"remarkId\":,\"remarkName\":}
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
      * 801:参数为空</br>
      * 802:异常</br>
      * @apiSuccess (200) {String} message 信息
@@ -88,10 +90,8 @@ public class MaterialsWarningController {
      * @apiDescription 修改耗材预警
      * @apiParamExample {json} 请求样例：
      * /materials/modify
+     * @apiParam {MaterialsWarning} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -117,6 +117,8 @@ public class MaterialsWarningController {
      * @apiDescription
      * @apiParamExample {json} 请求样例：
      * /materials/getlist
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 600:参数异常</br>
@@ -131,7 +133,9 @@ public class MaterialsWarningController {
      * }
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(warningService.selectAll(pageable));
     }
 
@@ -142,10 +146,10 @@ public class MaterialsWarningController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /materials/selectbydepart
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -156,7 +160,9 @@ public class MaterialsWarningController {
      * }
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params, Pageable pageable) {
+    public JsonResult selectByDepart(String params,@RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(warningService.selectByDepart(params, pageable));
     }
 
@@ -167,10 +173,10 @@ public class MaterialsWarningController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /materials/selectbygroup
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -181,7 +187,9 @@ public class MaterialsWarningController {
      * }
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params, Pageable pageable) {
+    public JsonResult selectByGroup(String params,@RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(warningService.selectByGroup(params, pageable));
     }
 
@@ -192,10 +200,10 @@ public class MaterialsWarningController {
      * @apiDescription 根据机构查询所有，分页
      * @apiParamExample {json} 请求样例：
      * /materials/selectbysubject
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -206,7 +214,9 @@ public class MaterialsWarningController {
      * }
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params, Pageable pageable) {
+    public JsonResult selectBySubject(String params,@RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(warningService.selectBySubject(params, pageable));
     }
 
@@ -217,10 +227,8 @@ public class MaterialsWarningController {
      * @apiDescription 根据耗材id查询点评
      * @apiParamExample {json} 请求样例：
      * /materials/findbymaterialsid
+     * @apiParam {String} params
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -231,7 +239,7 @@ public class MaterialsWarningController {
      * }
      */
     @PostMapping("/findbymaterialsid")
-    public JsonResult findByMaterialsId(String materialsId) {
-        return warningService.findByMaterialsId(materialsId);
+    public JsonResult findByMaterialsId(String params) {
+        return warningService.findByMaterialsId(params);
     }
 }

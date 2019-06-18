@@ -1,12 +1,15 @@
 package com.ayundao.controller;
 
+import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.EthicsRecord;
 import com.ayundao.service.EthicsRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -18,7 +21,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/ethics")
-public class EthicsRecordController {
+public class EthicsRecordController extends BaseController {
 
     @Autowired
     private EthicsRecordService ethicsRecordService;
@@ -30,6 +33,7 @@ public class EthicsRecordController {
      * @apiDescription 新增医德档案
      * @apiParamExample {json} 请求样例：
      *                /ethics/add
+     * @apiParam {EthicsRecord} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -60,6 +64,7 @@ public class EthicsRecordController {
      * @apiDescription 修改医德档案
      * @apiParamExample {json} 请求样例：
      *                 /ethics/modify
+     * @apiParam {EthicsRecord} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -89,6 +94,8 @@ public class EthicsRecordController {
      * @apiDescription
      * @apiParamExample {json} 请求样例：
      *                /ethics/getlist
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -103,7 +110,9 @@ public class EthicsRecordController {
      * }
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(ethicsRecordService.selectAll(pageable));
     }
 
@@ -114,6 +123,9 @@ public class EthicsRecordController {
      * @apiDescription 根据部门查询所有，分页
      * @apiParamExample {json} 请求样例：
      *                /ethics/selectbydepart
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -128,7 +140,9 @@ public class EthicsRecordController {
      * }
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params,Pageable pageable) {
+    public JsonResult selectByDepart(String params,@RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(ethicsRecordService.selectByDepart(params,pageable));
     }
 
@@ -139,6 +153,9 @@ public class EthicsRecordController {
      * @apiDescription 根据组织查询所有，分页
      * @apiParamExample {json} 请求样例：
      *                /ethics/selectbygroup
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -153,7 +170,9 @@ public class EthicsRecordController {
      * }
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params,Pageable pageable) {
+    public JsonResult selectByGroup(String params,@RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(ethicsRecordService.selectByGroup(params,pageable));
     }
 
@@ -164,6 +183,9 @@ public class EthicsRecordController {
      * @apiDescription 根据机构查询所有，分页
      * @apiParamExample {json} 请求样例：
      *                /ethics/selectbysubject
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -178,7 +200,9 @@ public class EthicsRecordController {
      * }
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params,Pageable pageable) {
+    public JsonResult selectBySubject(String params,@RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(ethicsRecordService.selectBySubject(params,pageable));
     }
 }
