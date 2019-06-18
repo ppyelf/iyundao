@@ -1,5 +1,7 @@
 package com.ayundao.base.utils;
 
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+
 import java.io.Serializable;
 
 /**
@@ -141,6 +143,10 @@ public class JsonResult implements Serializable {
 	}
 
 	public void setData(Object data) {
+		this.data = data;
+	}
+
+	public void setData(JSONArray data) {
 		this.data = data;
 	}
 

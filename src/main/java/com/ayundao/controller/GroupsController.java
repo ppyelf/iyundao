@@ -75,15 +75,11 @@ public class GroupsController extends BaseController {
             return JsonResult.notFound("请添加小组");
         }
         JSONArray arr = new JSONArray();
-        try {
-            for (Groups g :groups) {
-                JSONObject json = new JSONObject(JsonUtils.getJson(g));
-                json.remove("user");
-                json.remove("subject");
-                arr.put(json);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        for (Groups g :groups) {
+            JSONObject json = new JSONObject(JsonUtils.getJson(g));
+            json.remove("user");
+            json.remove("subject");
+            arr.put(json);
         }
         jsonResult.setData(JsonUtils.delString(arr.toString()));
         return jsonResult;
