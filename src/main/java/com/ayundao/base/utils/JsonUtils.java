@@ -1,7 +1,6 @@
 package com.ayundao.base.utils;
 
 import com.ayundao.base.BaseEntity;
-import com.ayundao.entity.Activity;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,20 +9,16 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonBooleanFormatVisitor;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.sun.media.jfxmedia.logging.Logger;
-import org.dom4j.tree.AbstractEntity;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.data.domain.Page;
+import com.alibaba.fastjson.*;
+import com.ayundao.base.Page;
 import org.springframework.util.Assert;
 
-import javax.persistence.ManyToOne;
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -88,55 +83,17 @@ public class JsonUtils {
         return json;
     }
 
-    public static String getPage(Page<?> page) {
-        String result = "";
-        try {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("total", page.getTotalElements());
-            jsonObject.put("page", page.getTotalPages());
-            JSONArray arr = new JSONArray();
-            for (Object o : page.getContent()) {
-                arr.put(getJson(o));
-            }
-            jsonObject.put("content", arr.toString());
-            result = delString(jsonObject.toString());
-            return result;
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public static com.alibaba.fastjson.JSONObject getPage(Page<?> page) {
+        //todo 需要再次封装,需要更加适合封装page
+        com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
+        com.alibaba.fastjson.JSONArray arr = new com.alibaba.fastjson.JSONArray();
+        for (Object o : page.getContent()) {
+            arr.add(getJson(o));
         }
-        return result;
-    }
-
-    /**
-     * 去掉字符串中的双引号
-     * @param s
-     * @return
-     */
-    public static String delString(String s) {
-        return s.replace("\\", "");
-    }
-
-    /**
-     * 将page对象转化成json对象
-     * @param page
-     * @return
-     */
-    public static String toJsonPage(Page<?> page) {
-        try {
-            JSONObject pageJson = new JSONObject();
-            pageJson.put("pages", page.getTotalElements());
-            pageJson.put("elements", page.getTotalElements());
-            JSONArray arr = new JSONArray();
-            for (Object entity : page.getContent()) {
-                JSONObject json = new JSONObject(getJson(entity));
-                arr.put(json);
-            }
-            pageJson.put("entity", arr);
-            return delString(pageJson.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return "";
+        jsonObject.put("total", page.getTotal());
+        jsonObject.put("page", page.getPageNumber());
+        jsonObject.put("content", arr);
+        return jsonObject;
     }
 
     /**

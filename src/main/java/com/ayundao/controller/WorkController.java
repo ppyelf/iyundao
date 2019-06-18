@@ -7,15 +7,13 @@ import com.ayundao.entity.Depart;
 import com.ayundao.entity.Groups;
 import com.ayundao.entity.Subject;
 import com.ayundao.service.SubjectService;
-import com.ayundao.service.UserRelationService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -68,7 +66,7 @@ public class WorkController extends BaseController {
                         JSONObject d = new JSONObject();
                         d.put("id", depart.getId());
                         d.put("name", depart.getName());
-                        departArr.put(d);
+                        departArr.add(d);
                     }
                     json.put("departs", departArr);
                 }
@@ -79,13 +77,13 @@ public class WorkController extends BaseController {
                         JSONObject g = new JSONObject();
                         g.put("id", group.getId());
                         g.put("name", group.getName());
-                        groupArr.put(g);
+                        groupArr.add(g);
                     }
                     json.put("groups", arr);
                 }
-                arr.put(json);
+                arr.add(json);
             }
-            jsonResult.setData(JsonUtils.delString(arr.toString()));
+            jsonResult.setData(arr);
         } catch (JSONException e) {
             e.printStackTrace();
         }

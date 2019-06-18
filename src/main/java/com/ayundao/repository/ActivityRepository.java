@@ -1,8 +1,8 @@
 package com.ayundao.repository;
 
 import com.ayundao.entity.Activity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

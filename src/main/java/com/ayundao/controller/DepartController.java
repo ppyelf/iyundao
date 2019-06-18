@@ -15,9 +15,8 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonBooleanFormatVisito
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,10 +82,10 @@ public class DepartController extends BaseController {
             JSONObject json = new JSONObject(JsonUtils.getJson(d));
             json.remove("user");
             json.remove("subject");
-            arr.put(json);
+            arr.add(json);
         }
         jsonResult = JsonResult.success();
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -127,8 +126,9 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 查看部门信息
+     * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
-     *                /depart/view
+     *                ?id=66d09d0417604cb9a52bff07dee7f408
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -138,7 +138,7 @@ public class DepartController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{"version":"1","id":"66d09d0417604cb9a52bff07dee7f408","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"分-部门","subject":"java.lang.String@726f3e8c[version=1,id=c72a2c6bd1e8428fac6706b217417831,lastModifiedDate=20190517111111,createdDate=20190517111111,name=分院,subjectType=part]","user":"java.lang.String@30193032[version=0,id=5cf0d3c3b0da4cbaad179e0d6d230d0c,lastModifiedDate=20190517111111,createdDate=20190517111111,name=测试用户,status=normal,password=b356a1a11a067620275401a5a3de04300bf0c47267071e06,account=test,remark=未填写,salt=3a10624a300f4670,sex=0,userType=normal]","father":""}"
+     *     "data": {"createdDate": "20190517111111","lastModifiedDate": "20190517111111","subject": {"createdDate": "20190517111111","lastModifiedDate": "20190517111111","name": "分院","id": "c72a2c6bd1e8428fac6706b217417831","version": "1","subjectType": "part"},"father": null,"name": "分-部门","id": "66d09d0417604cb9a52bff07dee7f408","version": "1","user": {"password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06","createdDate": "20190517111111","salt": "3a10624a300f4670","lastModifiedDate": "20190517111111","sex": "0","name": "测试用户","remark": "未填写","id": "5cf0d3c3b0da4cbaad179e0d6d230d0c","userType": "normal","version": "0","account": "test","status": "normal"}}
      * }
      */
     @PostMapping("/view")
@@ -150,18 +150,13 @@ public class DepartController extends BaseController {
         if (depart == null) {
             return JsonResult.notFound("未查询到此用户组");
         }
-        try {
-            JSONObject json = new JSONObject();
-            json.put("id", depart.getId());
-            json.put("name", depart.getName());
-            json.put("father", depart.getFather());
-            json.put("user", depart.getUser());
-            json.put("subject", depart.getSubject());
-//            jsonFather(userGroup, json);
-            jsonResult.setData(convertJson(depart));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JSONObject json = new JSONObject();
+        json.put("id", depart.getId());
+        json.put("name", depart.getName());
+        json.put("father", depart.getFather());
+        json.put("user", depart.getUser());
+        json.put("subject", depart.getSubject());
+        jsonResult.setData(convertJson(depart));
         return jsonResult;
     }
 
@@ -170,8 +165,12 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 新增部门
+     * @apiParam {String} name
+     * @apiParam {String} fatherId
+     * @apiParam {String} userId
+     * @apiParam {String} subjectId
      * @apiParamExample {json} 请求样例：
-     *                /depart/add
+     *                ?name=添加部门11&subjectId=402881f46afdef14016afe28796c000b
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -180,13 +179,16 @@ public class DepartController extends BaseController {
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
      * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {"version":"0","id":"402881f46afe9429016afeaf39e30006","lastModifiedDate":"20190528214417","createdDate":"20190528214417","name":"添加部门11","subject":{"version":"1","id":"402881f46afdef14016afe28796c000b","lastModifiedDate":"20190528193528","createdDate":"20190528191706","name":"修改机构","subjectType":"etc"}}
      * }
      */
     @PostMapping("/add")
-    public JsonResult add(String name, String fatherId, String userId, String subjectId) {
+    public JsonResult add(String name,
+                          String fatherId,
+                          String userId,
+                          String subjectId) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(subjectId)) {
             return JsonResult.paramError();
         } 
@@ -217,10 +219,15 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 修改部门信息
+     * @apiParam {String} id
+     * @apiParam {String} name
+     * @apiParam {String} fatherId
+     * @apiParam {String} userId
+     * @apiParam {String} subjectId
      * @apiParamExample {json} 请求样例：
-     *                /depart/modify
+     *                ?id=402881f46afdef14016afdf286170001&name=测试用户组2
      * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:未查询到此用户组</br>
+     *                                 404:此部门不存在</br>
      *                                 600:参数异常</br>
      *                                 601:此机构不存在</br>
      * @apiSuccess (200) {String} message 信息
@@ -229,17 +236,21 @@ public class DepartController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {"createdDate": "20190528213713","lastModifiedDate": "20190618095208","subject": {    "createdDate": "20190528191706",    "lastModifiedDate": "20190528193528",    "name": "修改机构",    "id": "402881f46afdef14016afe28796c000b",    "version": "1",    "subjectType": "etc"},"father": {    "name": "总-部门",    "id": "9b7678a607ef4199ad7a4018b892c49d"},"name": "测试修改","id": "402881f46afe9429016afea8c2570001","version": "2","user": {    "password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06",    "createdDate": "20190517111111",    "salt": "3a10624a300f4670",    "lastModifiedDate": "20190517111111",    "sex": "0",    "name": "管理员",    "remark": "未填写",    "id": "0a4179fc06cb49e3ac0db7bcc8cf0882",    "userType": "admin",    "version": "0",    "account": "admin",    "status": "normal"}}
      * }
      */
     @PostMapping("/modify")
-    public JsonResult modify(String id, String name, String fatherId, String userId, String subjectId) {
+    public JsonResult modify(String id,
+                             String name,
+                             String fatherId,
+                             String userId,
+                             String subjectId) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
         }
         Depart depart = departService.findById(id);
         if (depart == null) {
-            return JsonResult.notFound("未查询到此用户组");
+            return JsonResult.notFound("此部门不存在");
         }
         depart.setLastModifiedDate(new Date(System.currentTimeMillis()));
         depart.setName(name);
@@ -263,19 +274,14 @@ public class DepartController extends BaseController {
         return jsonResult;
     }
     
-    private String convertJson(Depart depart) {
-        try {
-            JSONObject json = new JSONObject(JsonUtils.getJson(depart));
-            json.put("id", depart.getId());
-            json.put("name", depart.getName());
-            json.put("subject", JsonUtils.getJson(depart.getSubject()));
-            json.put("father", depart.getFather() == null ? null : setFather(depart.getFather()));
-            json.put("user", depart.getUser() == null ? null : JsonUtils.getJson(depart.getUser()));
-            return JsonUtils.delString(json.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return "";
+    private JSONObject convertJson(Depart depart) {
+        JSONObject json = new JSONObject(JsonUtils.getJson(depart));
+        json.put("id", depart.getId());
+        json.put("name", depart.getName());
+        json.put("subject", JsonUtils.getJson(depart.getSubject()));
+        json.put("father", depart.getFather() == null ? null : setFather(depart.getFather()));
+        json.put("user", depart.getUser() == null ? null : JsonUtils.getJson(depart.getUser()));
+        return json;
     }
 
     /**
@@ -283,15 +289,10 @@ public class DepartController extends BaseController {
      * @param depart
      * @return
      */
-    private String setFather(Depart depart) {
-        try {
-            JSONObject json = new JSONObject();
-            json.put("id", depart.getId());
-            json.put("name", depart.getName());
-            return JsonUtils.delString(json.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return "";
+    private JSONObject setFather(Depart depart) {
+        JSONObject json = new JSONObject();
+        json.put("id", depart.getId());
+        json.put("name", depart.getName());
+        return json;
     }
 }

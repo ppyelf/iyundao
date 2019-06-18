@@ -10,12 +10,10 @@ import com.ayundao.service.SignService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -340,10 +338,10 @@ public class ActivityController extends BaseController {
     }
 
     /**
-     * @api {POST} /activity/del 删除
+     * @api {POST} /activity/modify 修改
      * @apiGroup Activity
      * @apiVersion 1.0.0
-     * @apiDescription 删除
+     * @apiDescription 修改
      * @apiParam {String} id 必填
      * @apiParam {String[]} attendanceIds
      * @apiParam {String[]} activityFileIds
@@ -357,7 +355,7 @@ public class ActivityController extends BaseController {
      * @apiParam {String} departId
      * @apiParam {String} groupId
      * @apiParamExample {json} 请求样例:
-     *                /activity/del?id=2c9ba3816b27cc90016b27cd24800000
+     *                ?id=402881916b2a3187016b2a3306ca0006&name=添加活动1111&content=测试内容个&number=13&total=100&type=2&attendanceIds=402881916b2a9588016b2b5dbc480010&attendanceIds=402881916b2a9588016b2b5f1c1c0011&activityFileIds=402881916b2a9588016b2abd6f300001&activityImageIds=402881916b2b9dd2016b2b9f15010002&subjectId=402881f46afdef14016afe28796c000b
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:活动不存在</br>
      *                                 601:type超出范围</br>
@@ -435,9 +433,9 @@ public class ActivityController extends BaseController {
         List<Activity> activities = activityService.findAll();
         JSONArray arr = new JSONArray();
         for (Activity activity : activities) {
-            arr.put(convertActivity(activity));
+            arr.add(convertActivity(activity));
         }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -482,13 +480,17 @@ public class ActivityController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{"total":7,"page":3,"content":"["{"id":"402881916b2a9588016b2b9a0ef10012","version":"0","lastModifiedDate":"20190606150405","createdDate":"20190606150405","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"402881916b2b9dd2016b2b9e77620000","version":"0","lastModifiedDate":"20190606150853","createdDate":"20190606150853","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"402881916b2b9dd2016b2b9f91f40003","version":"0","lastModifiedDate":"20190606151006","createdDate":"20190606151006","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}"]"}"
+     * }
      */
     @PostMapping("/page")
     public JsonResult page(@RequestParam(defaultValue = "1") int page,
                            @RequestParam(defaultValue = "10") int size,
                            String search) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Activity> activityPage = activityService.findAllForPage(pageable);
+        Page<Activity> activityPage = activityService.findAllForPage(new Pageable(page, size));
         jsonResult.setData(JsonUtils.getPage(activityPage));
         return jsonResult;
     }
@@ -498,35 +500,30 @@ public class ActivityController extends BaseController {
      * @param activity
      * @return
      */
-    private String convertActivity(Activity activity) {
-        try {
-            JSONObject json = new JSONObject(JsonUtils.getJson(activity));
-            JSONArray arr = new JSONArray();
-            if (CollectionUtils.isNotEmpty(activity.getAttendances())) {
-                for (Attendance attendance : activity.getAttendances()) {
-                    arr.put(JsonUtils.getJson(attendance));
-                }
-                json.put("attendances", arr);
-            } 
-            if (CollectionUtils.isNotEmpty(activity.getActivityFiles())) {
-                arr = new JSONArray();
-                for (ActivityFile file : activity.getActivityFiles()) {
-                    arr.put(JsonUtils.getJson(file));
-                }
-                json.put("activityFiles", arr);
-            } 
-            if (CollectionUtils.isNotEmpty(activity.getActivityImages())) {
-                arr = new JSONArray();
-                for (ActivityImage image : activity.getActivityImages()) {
-                    arr.put(image);
-                }
-                json.put("activityImages", arr);
+    private JSONObject convertActivity(Activity activity) {
+        JSONObject json = new JSONObject(JsonUtils.getJson(activity));
+        JSONArray arr = new JSONArray();
+        if (CollectionUtils.isNotEmpty(activity.getAttendances())) {
+            for (Attendance attendance : activity.getAttendances()) {
+                arr.add(JsonUtils.getJson(attendance));
             }
-            return JsonUtils.delString(json.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
+            json.put("attendances", arr);
         }
+        if (CollectionUtils.isNotEmpty(activity.getActivityFiles())) {
+            arr = new JSONArray();
+            for (ActivityFile file : activity.getActivityFiles()) {
+                arr.add(JsonUtils.getJson(file));
+            }
+            json.put("activityFiles", arr);
+        }
+        if (CollectionUtils.isNotEmpty(activity.getActivityImages())) {
+            arr = new JSONArray();
+            for (ActivityImage image : activity.getActivityImages()) {
+                arr.add(image);
+            }
+            json.put("activityImages", arr);
+        }
+        return json;
 
-        return "";
     }
 }

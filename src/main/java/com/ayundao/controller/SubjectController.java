@@ -42,7 +42,7 @@ public class SubjectController extends BaseController {
     private GroupsService groupsService;
 
     /**
-     * @api {POST} /subject/list 机构列表
+     * @api {GET} /subject/list 机构列表
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 机构列表
@@ -70,54 +70,65 @@ public class SubjectController extends BaseController {
             s.setUserRelations(null);
             arr.add(s);
         }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
     /**
-     * @api {get} /user_group/list 列表
+     * @api {GET} /user_group/manager_list 列表
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 列表
      * @apiParamExample {json} 请求样例：
-     *                /user_group/list
+     *                /user_group/manager_list
      * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
+     * {{
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "[{"id":"bd6886bc88e54ef0a36472efd95c744c","name":"总院","type":"总院"},{"id":"c72a2c6bd1e8428fac6706b217417831","name":"分院","type":"分院"}]"
+     *     "data": [
+     *         {
+     *             "name": "总院",
+     *             "id": "bd6886bc88e54ef0a36472efd95c744c",
+     *             "type": "总院"
+     *         },
+     *         {
+     *             "name": "分院",
+     *             "id": "c72a2c6bd1e8428fac6706b217417831",
+     *             "type": "分院"
+     *         },
+     *         {
+     *             "name": "修改机构",
+     *             "id": "402881f46afdef14016afe28796c000b",
+     *             "type": "其他"
+     *         }
+     *     ]
      * }
      */
     @GetMapping("/manager_list")
     public JsonResult managerList() {
         List<Subject> subjects = subjectService.findAll();
-        try {
-            JSONArray arr = new JSONArray();
-            for (Subject subject : subjects) {
-                JSONObject json =new JSONObject();
-                json.put("id", subject.getId());
-                json.put("name", subject.getName());
-                switch (subject.getSubjectType().ordinal()) {
-                    case  0:
-                        json.put("type", "总院");
-                         break;
-                    case  1:
-                        json.put("type", "分院");
-                         break;
-                    case  2:
-                        json.put("type", "其他");
-                         break;
-                }
-                arr.add(json);
+        JSONArray arr = new JSONArray();
+        for (Subject subject : subjects) {
+            JSONObject json =new JSONObject();
+            json.put("id", subject.getId());
+            json.put("name", subject.getName());
+            switch (subject.getSubjectType().ordinal()) {
+                case  0:
+                    json.put("type", "总院");
+                     break;
+                case  1:
+                    json.put("type", "分院");
+                     break;
+                case  2:
+                    json.put("type", "其他");
+                     break;
             }
-            jsonResult.setData(arr.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
+            arr.add(json);
         }
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -126,8 +137,9 @@ public class SubjectController extends BaseController {
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 查看机构
+     * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
-     *                /subject/view
+     *                ?id=402881f46afdef14016afe28796c000b
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此机构</br>
      *                                 600:参数异常</br>
@@ -137,7 +149,10 @@ public class SubjectController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "[{'id':'66aaab6db70b434ca60a753ad3e2bbf9','name':'小组2'},{'id':'813f15af1b1c402da17838e8a067ed68','name':'子小组','father':{'id':'66aaab6db70b434ca60a753ad3e2bbf9','name':'小组2'}},{'id':'8b568d0307c744cb9fedc2fe5b7f1238','name':'小组1'}]"
+     *     "data": {
+     *         "name": "修改机构",
+     *         "id": "402881f46afdef14016afe28796c000b"
+     *     }
      * }
      */
     @PostMapping("/view")
@@ -153,7 +168,7 @@ public class SubjectController extends BaseController {
             JSONObject json = new JSONObject();
             json.put("id", subject.getId());
             json.put("name", subject.getName());
-            jsonResult.setData(json.toString());
+            jsonResult.setData(json);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -161,12 +176,14 @@ public class SubjectController extends BaseController {
     }
 
     /**
-     * @api {post} /subject/add 新增机构
+     * @api {POST} /subject/add 新增机构
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 新增机构
+     * @apiParam {String} name
+     * @apiParam {int} type
      * @apiParamExample {json} 请求样例：
-     *                /subject/add
+     *                ?name=测试添加&type=1
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:已存在该机构</br>
      *                                 600:参数异常</br>
@@ -176,7 +193,14 @@ public class SubjectController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {
+     *         "createdDate": "20190618104404",
+     *         "lastModifiedDate": "20190618104404",
+     *         "name": "测试添加",
+     *         "id": "402881916b68611a016b687853650002",
+     *         "version": "0",
+     *         "subjectType": "分院"
+     *     }
      * }
      */
     @PostMapping("/add")
@@ -205,12 +229,15 @@ public class SubjectController extends BaseController {
     }
 
     /**
-     * @api {post} /subject/modify 修改机构
+     * @api {POST} /subject/modify 修改机构
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 修改机构
+     * @apiParam {String} id
+     * @apiParam {String} name
+     * @apiParam {int} type
      * @apiParamExample {json} 请求样例：
-     *                /subject/modify
+     *                ?id=402881f46afdef14016afe28796c000b&name=修改机构&type=2
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -220,7 +247,14 @@ public class SubjectController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"createdDate\":\"20190528191706\",\"lastModifiedDate\":\"20190528193528\",\"name\":\"修改机构\",\"subjectType\":\"其他\"}"
+     *     "data": {
+     *         "createdDate": "20190528191706",
+     *         "lastModifiedDate": "20190618104352",
+     *         "name": "修改机构",
+     *         "id": "402881f46afdef14016afe28796c000b",
+     *         "version": "1",
+     *         "subjectType": "其他"
+     *     }
      * }
      */
     @PostMapping("/modify")
@@ -247,49 +281,6 @@ public class SubjectController extends BaseController {
         return jsonResult;
     }
 
-    /**
-     * @api {post} /subject/getdeparts 获取未分配部门列表
-     * @apiGroup Subject
-     * @apiVersion 1.0.0
-     * @apiDescription 获取未分配部门列表
-     * @apiParamExample {json} 请求样例：
-     *                /subject/getdeparts
-     * @apiSuccess (200) {String} code 200:成功</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     */
-    public JsonResult getDepartList() {
-        List<Depart> departs = departService.findSubjectIsNull();
-        JSONArray arr = new JSONArray();
-        for (Depart depart : departs) {
-            arr.put(JsonUtils.getJson(depart));
-        }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /subject/getgroups 获取未分配的组织列表
-     * @apiGroup Subject
-     * @apiVersion 1.0.0
-     * @apiDescription 获取未分配的组织列表
-     * @apiParamExample {json} 请求样例：
-     *                /subject/getgroups
-     * @apiSuccess (200) {String} code 200:成功</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     */
-    public JsonResult getGroupsList() {
-        List<Groups> groups = groupsService.findSubjectIsNull();
-        JSONArray arr = new JSONArray();
-        for (Groups group : groups) {
-            arr.put(JsonUtils.getJson(group));
-        }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
-        return jsonResult;
-    }
 
     /**
      * @api {post} /subject/distribution 分配
@@ -308,7 +299,13 @@ public class SubjectController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *  "code": 200,
+     *  "message": "操作成功",
+     *  "data": "{}"
+     * }
      */
+    @PostMapping("/distribution")
     public JsonResult addDepartsAndGroups(String id,
                                           String[] departIds,
                                           String[] groupIds) {

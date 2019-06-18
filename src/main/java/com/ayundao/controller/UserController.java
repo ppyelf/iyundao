@@ -8,16 +8,17 @@ import com.ayundao.entity.*;
 import com.ayundao.service.UserService;
 import com.ayundao.service.ActivityService;
 import com.ayundao.service.AssessmentService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.data.domain.Page;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.Date;
 
 
@@ -71,17 +72,16 @@ public class UserController extends BaseController {
         if (StringUtils.isBlank(key)) {
             return JsonResult.paramError();
         }
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userService.findByKey(key, pageable);
-        if (userPage.getTotalElements() == 0) {
+        Page<User> userPage = userService.findByKey(key, new Pageable(page, size));
+        if (CollectionUtils.isEmpty(userPage.getContent())) {
             return JsonResult.notFound("不存在此用户");
         }
-        jsonResult.setData(JsonUtils.toJsonPage(userPage));
+        jsonResult.setData(JsonUtils.getPage(userPage));
         return jsonResult;
     }
 
     /**
-     * @api {POST} /user/search 新建用户
+     * @api {POST} /user/add 新建用户
      * @apiGroup User
      * @apiVersion 1.0.0
      * @apiDescription 新建用户
@@ -89,7 +89,7 @@ public class UserController extends BaseController {
      * @apiParam {int} page 页数(默认:1)
      * @apiParam {int} size 长度(默认:10)
      * @apiParamExample {json} 请求样例：
-     *                /user/search?key=张三&page=1&size=10
+     *                /user/add?key=张三&page=1&size=10
      * @apiSuccess (200) {int} code 200:成功</br>
      *                                 201:用户名密码错误</br>
      * @apiSuccess (200) {String} message 信息
@@ -201,56 +201,51 @@ public class UserController extends BaseController {
     @GetMapping("/list")
     public JsonResult list(@RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> pages = userService.findAllForPage(pageable);
+        Page<User> pages = userService.findAllForPage(new Pageable(page, size));
         JSONObject pageJson = new JSONObject();
         JSONArray pageArray = new JSONArray();
-        try {
-            pageJson.put("total", pages.getTotalElements());
-            for (User user : pages.getContent()) {
-                JSONObject json = new JSONObject();
-                json.put("id", user.getId());
-                json.put("account", user.getAccount());
-                json.put("sex", user.getSex() == 0 ? "男": "女");
-                switch (user.getUserType().ordinal()) {
-                    case  0:
-                        json.put("userType", "普通用户");
-                        break;
-                    case  1:
-                        json.put("userType", "管理员");
-                        break;
-                    case  2:
-                        json.put("userType", "负责人");
-                        break;
-                }
-                switch (user.getStatus().ordinal()) {
-                    case  0:
-                        json.put("status", "禁用");
-                         break;
-                    case  1:
-                        json.put("status", "锁定");
-                         break;
-                    case  2:
-                        json.put("status", "正常");
-                         break;
-                }
-                json.put("createdTime", user.getCreatedDate());
-                JSONArray arr = new JSONArray();
-                for (UserRelation relation : getUserRelation(user)) {
-                    String s = relation.getSubject() == null ? "无" : relation.getSubject().getName();
-                    String d = relation.getDepart() == null ? "无" : relation.getDepart().getName();
-                    String g = relation.getGroups() == null ? "无" : relation.getGroups().getName();
-                    arr.put(s + "-" + d + "-" + g);
-                }
-                json.put("relation", arr);
-                json.put("remark", user.getRemark());
-                pageArray.put(json);
+        pageJson.put("total", pages.getTotal());
+        for (User user : pages.getContent()) {
+            JSONObject json = new JSONObject();
+            json.put("id", user.getId());
+            json.put("account", user.getAccount());
+            json.put("sex", user.getSex() == 0 ? "男": "女");
+            switch (user.getUserType().ordinal()) {
+                case  0:
+                    json.put("userType", "普通用户");
+                    break;
+                case  1:
+                    json.put("userType", "管理员");
+                    break;
+                case  2:
+                    json.put("userType", "负责人");
+                    break;
             }
-            pageJson.put("content", pageArray);
-            jsonResult.setData(JsonUtils.delString(pageJson.toString()));
-        } catch (JSONException e) {
-            e.printStackTrace();
+            switch (user.getStatus().ordinal()) {
+                case  0:
+                    json.put("status", "禁用");
+                     break;
+                case  1:
+                    json.put("status", "锁定");
+                     break;
+                case  2:
+                    json.put("status", "正常");
+                     break;
+            }
+            json.put("createdTime", user.getCreatedDate());
+            JSONArray arr = new JSONArray();
+            for (UserRelation relation : getUserRelation(user)) {
+                String s = relation.getSubject() == null ? "无" : relation.getSubject().getName();
+                String d = relation.getDepart() == null ? "无" : relation.getDepart().getName();
+                String g = relation.getGroups() == null ? "无" : relation.getGroups().getName();
+                arr.add(s + "-" + d + "-" + g);
+            }
+            json.put("relation", arr);
+            json.put("remark", user.getRemark());
+            pageArray.add(json);
         }
+        pageJson.put("content", pageArray);
+        jsonResult.setData(pageJson);
         return jsonResult;
     }
 

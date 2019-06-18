@@ -2,8 +2,8 @@ package com.ayundao.service;
 
 
 import com.ayundao.entity.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 
 import java.util.List;
 
