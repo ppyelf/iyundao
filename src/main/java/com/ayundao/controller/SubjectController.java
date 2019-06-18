@@ -1,5 +1,8 @@
 package com.ayundao.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
@@ -8,11 +11,7 @@ import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
-import sun.rmi.server.DeserializationChecker;
 
 import java.util.Date;
 import java.util.List;
@@ -263,7 +262,7 @@ public class SubjectController extends BaseController {
         List<Depart> departs = departService.findSubjectIsNull();
         JSONArray arr = new JSONArray();
         for (Depart depart : departs) {
-            arr.put(JsonUtils.getJson(depart));
+            arr.add(JsonUtils.getJson(depart));
         }
         jsonResult.setData(JsonUtils.delString(arr.toString()));
         return jsonResult;
@@ -285,7 +284,7 @@ public class SubjectController extends BaseController {
         List<Groups> groups = groupsService.findSubjectIsNull();
         JSONArray arr = new JSONArray();
         for (Groups group : groups) {
-            arr.put(JsonUtils.getJson(group));
+            arr.add(JsonUtils.getJson(group));
         }
         jsonResult.setData(JsonUtils.delString(arr.toString()));
         return jsonResult;
