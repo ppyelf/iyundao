@@ -28,9 +28,9 @@ public class StyleOfWorkController {
      * @apiGroup StyleOfWork
      * @apiVersion 1.0.0
      * @apiDescription 新增行风效能
+     * @apiParam {StyleOfWork} params
      * @apiParamExample {json} 请求样例：
-     * /style/add
-     * @apiParam {StyleOfWork} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
+     *                       /style/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -56,10 +56,9 @@ public class StyleOfWorkController {
      * @apiGroup StyleOfWork
      * @apiVersion 1.0.0
      * @apiDescription 新增行风效能扣分记录
+     * @apiParam {StyleOfWorkRecord} params
      * @apiParamExample {json} 请求样例：
-     * /style/add1
-     * @apiParam {StyleOfWorkRecord} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,
-     *      \"styleOfWork\":,\"operationTime\":,\"cause\":,\"operatorId\":,\"operatorName\":,\"grade\":}
+     *          /style/add1?styleOfWork=StyleOfWork&operationTime=\"操作时间\"&cause=\"原因\"&operatorId=User&operatorName=User&grade=\"分数\"
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -81,9 +80,9 @@ public class StyleOfWorkController {
      * @apiGroup StyleOfWork
      * @apiVersion 1.0.0
      * @apiDescription 修改行风效能
+     * @apiParam {StyleOfWork} params
      * @apiParamExample {json} 请求样例：
-     * /style/modify
-     * @apiParam {StyleOfWork} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
+     *              /style/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -108,10 +107,10 @@ public class StyleOfWorkController {
      * @apiGroup StyleOfWork
      * @apiVersion 1.0.0
      * @apiDescription
-     * @apiParamExample {json} 请求样例：
-     * /style/getlist
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *              /style/getlist?page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -134,20 +133,16 @@ public class StyleOfWorkController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /style/selectbydepart
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *              /style/selectbydepart?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
@@ -161,20 +156,16 @@ public class StyleOfWorkController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /style/selectbygroup
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *          /style/selectbygroup?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbygroup")
     public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
@@ -188,20 +179,16 @@ public class StyleOfWorkController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /style/selectbysubject
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *                  /style/selectbysubject?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
@@ -215,18 +202,14 @@ public class StyleOfWorkController {
      * @apiGroup StyleOfWork
      * @apiVersion 1.0.0
      * @apiDescription 根据行风效能id查询扣分记录
-     * @apiParamExample {json} 请求样例：
-     * /style/findbyworkid
      * @apiParam {String} params
+     * @apiParamExample {json} 请求样例：
+     *          /style/findbyworkid?params=id
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/findbyworkid")
     public JsonResult findByWorkId(String params) {
@@ -239,7 +222,7 @@ public class StyleOfWorkController {
      * @apiVersion 1.0.0
      * @apiDescription 分组织统计科室行风效能平均分 倒序
      * @apiParamExample {json} 请求样例：
-     * /style/statistics
+     *          /style/statistics
      * @apiSuccess (200) {String} code 200:成功</br>
      * 802:异常</br>
      * @apiSuccess (200) {String} message 信息

@@ -32,9 +32,9 @@ public class RecipeController extends BaseController {
      * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 新增处方
+     * @apiParam {Recipe} params
      * @apiParamExample {json} 请求样例：
-     * /recipe/add
-     * @apiParam {Recipe} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
+     *              /recipe/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -60,10 +60,9 @@ public class RecipeController extends BaseController {
      * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 新增点评
+     * @apiParam {RecipeRational} params
      * @apiParamExample {json} 请求样例：
-     * /recipe/add
-     * @apiParam {RecipeRational} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,
-     *          \"recipe\":,\"rational\":,\"remark\":,\"user\":,\"remarkName\":}
+     *              /recipe/add?recipe=Recipe&rational=\"是否合理\"&remark=\"点评内容\"&user=User&remarkName=操作人姓名
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 801:传入数据为空</br>
@@ -88,9 +87,9 @@ public class RecipeController extends BaseController {
      * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 修改药材预警
+     * @apiParam {Recipe} params
      * @apiParamExample {json} 请求样例：
-     * /recipe/modify
-     * @apiParam {Recipe} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
+     *              /recipe/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -114,11 +113,11 @@ public class RecipeController extends BaseController {
      * @api {get} /recipe/getlist 分页查询所有
      * @apiGroup Recipe
      * @apiVersion 1.0.0
-     * @apiDescription 修改药材预警
-     * @apiParamExample {json} 请求样例：
-     * /recipe/getlist
+     * @apiDescription 分页查询所有
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *          /recipe/getlist?page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 600:参数异常</br>
@@ -126,11 +125,7 @@ public class RecipeController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
@@ -144,11 +139,11 @@ public class RecipeController extends BaseController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /recipe/selectbydepart
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *          /recipe/selectbydepart?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -171,20 +166,16 @@ public class RecipeController extends BaseController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /recipe/selectbygroup
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *          /recipe/selectbygroup?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbygroup")
     public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
@@ -198,20 +189,16 @@ public class RecipeController extends BaseController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /recipe/selectbysubject
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *          /recipe/selectbysubject?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
@@ -225,18 +212,14 @@ public class RecipeController extends BaseController {
      * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 根据处方id查询点评
-     * @apiParamExample {json} 请求样例：
-     * /recipe/findbyrecipeid
      * @apiParam {String} params
+     * @apiParamExample {json} 请求样例：
+     *              /recipe/findbyrecipeid?params=id
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/findbyrecipeid")
     public JsonResult findVyRecipeId(String params) {

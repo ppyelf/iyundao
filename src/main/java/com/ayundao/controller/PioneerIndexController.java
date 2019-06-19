@@ -32,9 +32,9 @@ public class PioneerIndexController {
      * @apiGroup PioneerIndex
      * @apiVersion 1.0.0
      * @apiDescription 新增先锋指数
+     * @apiParam {PioneerIndex} params
      * @apiParamExample {json} 请求样例：
-     *                /pioneerindex/add
-     * @apiParam {PioneerIndex} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
+     *                /pioneerindex/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -63,9 +63,9 @@ public class PioneerIndexController {
      * @apiGroup PioneerIndex
      * @apiVersion 1.0.0
      * @apiDescription 修改先锋指数
+     * @apiParam {PioneerIndex} params
      * @apiParamExample {json} 请求样例：
-     *                 /pioneerindex/modify
-     * @apiParam {PioneerIndex} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
+     *                 /pioneerindex/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -93,10 +93,10 @@ public class PioneerIndexController {
      * @apiGroup PioneerIndex
      * @apiVersion 1.0.0
      * @apiDescription
-     * @apiParamExample {json} 请求样例：
-     *                /pioneerindex/getlist
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *                /pioneerindex/getlist?page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -122,20 +122,16 @@ public class PioneerIndexController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /pioneerindex/selectbydepart
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *          /pioneerindex/selectbydepart?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
@@ -149,20 +145,16 @@ public class PioneerIndexController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /pioneerindex/selectbygroup
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *      /pioneerindex/selectbygroup?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbygroup")
     public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
@@ -176,11 +168,11 @@ public class PioneerIndexController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /pioneerindex/selectbysubject
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *          /pioneerindex/selectbysubject?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息

@@ -31,9 +31,9 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 新增先锋人物
+     * @apiParam {Pioneer} params
      * @apiParamExample {json} 请求样例：
-     * /pioneer/add
-     * @apiParam {Pioneer} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
+     *              /pioneer/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -59,10 +59,9 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 新增先锋人物类别
+     * @apiParam {PioneerType} params
      * @apiParamExample {json} 请求样例：
-     * /pioneer/add1
-     * @apiParam {Pioneer} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,
-     *              \"depart\":,\"group\":,\"subject\":,\"typeName\":}
+     *          /pioneer/add1?depart=Depart&group=Groups&subject=Subject&typeName=\"类别名称\"&flag=\"类别状态\"
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -84,9 +83,9 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 修改先锋人物
+     * @apiParam {Pioneer} params
      * @apiParamExample {json} 请求样例：
-     * /pioneer/modify
-     * @apiParam {Pioneer} params:{\"id\":,\"createdDate\":,\"lastModifiedDate\":,\"user\":,\"score\":,\"info\":,--,\"info25\":}
+     *                  /pioneer/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -111,19 +110,15 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription
-     * @apiParamExample {json} 请求样例：
-     * /pioneer/getlist
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *              /pioneer/getlist?page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
@@ -137,20 +132,16 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /pioneer/selectbydepart
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *                  /pioneer/selectbydepart?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
@@ -164,20 +155,16 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /pioneer/selectbygroup
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *              /pioneer/selectbygroup?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbygroup")
     public JsonResult selectByGroup(String params,  @RequestParam(defaultValue = "1") int page,
@@ -191,20 +178,16 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
-     * @apiParamExample {json} 请求样例：
-     * /pioneer/selectbysubject
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *              /pioneer/selectbysubject?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
@@ -218,18 +201,14 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询类别
-     * @apiParamExample {json} 请求样例：
-     * /pioneer/selecttypebysubject
      * @apiParam {String} params
+     * @apiParamExample {json} 请求样例：
+     *              /pioneer/selecttypebysubject?params=id
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selecttypebysubject")
     public JsonResult selectTypeBySubject(String params) {
@@ -241,18 +220,14 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 根据部门查询类别
-     * @apiParamExample {json} 请求样例：
-     * /pioneer/selecttypebysubject
      * @apiParam {String} params
+     * @apiParamExample {json} 请求样例：
+     *              /pioneer/selecttypebysubject?params=id
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selecttypebydepart")
     public JsonResult selectTypeByDepart(String params) {
@@ -264,18 +239,14 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询类别
-     * @apiParamExample {json} 请求样例：
-     * /pioneer/selecttypebygroup
      * @apiParam {String} params
+     * @apiParamExample {json} 请求样例：
+     *                  /pioneer/selecttypebygroup?params=id
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selecttypebygroup")
     public JsonResult selectTypeByGroup(String params) {
@@ -287,20 +258,16 @@ public class PioneerController {
      * @apiGroup Pioneer
      * @apiVersion 1.0.0
      * @apiDescription 根据类别查询
-     * @apiParamExample {json} 请求样例：
-     * /pioneer/selectbytype
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
+     * @apiParamExample {json} 请求样例：
+     *              /pioneer/selectbytype?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbytype")
     public JsonResult selectByType(String params,@RequestParam(defaultValue = "1") int page,

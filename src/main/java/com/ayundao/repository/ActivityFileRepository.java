@@ -12,7 +12,7 @@ import java.util.List;
  * @project: ayundao
  * @author: 念
  * @Date: 2019/6/6 10:57
- * @Description: 仓库 - 活动文件w
+ * @Description: 仓库 - 活动文件
  * @Version: V1.0
  */
 @Repository
