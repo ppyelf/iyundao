@@ -202,7 +202,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
         while (var3.hasNext()) {
             Field field = (Field) var3.next();
             Class<? extends Object> typeClazz = field.getType();
-            if (!AbstractEntity.class.isAssignableFrom(typeClazz) && !Collection.class.isAssignableFrom(typeClazz) && !Map.class.isAssignableFrom(typeClazz)) {
+            if (!BaseEntity.class.isAssignableFrom(typeClazz) && !Collection.class.isAssignableFrom(typeClazz) && !Map.class.isAssignableFrom(typeClazz)) {
                 int modifiers = field.getModifiers();
                 if (field.getName().indexOf(36) == -1 && !Modifier.isStatic(modifiers) && !Modifier.isTransient(modifiers)) {
                     builder.append(field.getName(), ClassUtils.forceGetProperty(this, field.getName()));

@@ -14,6 +14,7 @@ import com.ayundao.service.UserService;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonBooleanFormatVisitor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.util.SetOnce;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -279,20 +280,13 @@ public class DepartController extends BaseController {
         json.put("id", depart.getId());
         json.put("name", depart.getName());
         json.put("subject", JsonUtils.getJson(depart.getSubject()));
-        json.put("father", depart.getFather() == null ? null : setFather(depart.getFather()));
         json.put("user", depart.getUser() == null ? null : JsonUtils.getJson(depart.getUser()));
+        if (depart.getFather() != null) {
+            JSONObject father = JsonUtils.getJson(depart.getFather());
+            father.put("son", json);
+            return father;
+        }
         return json;
     }
 
-    /**
-     * 设置父级关系
-     * @param depart
-     * @return
-     */
-    private JSONObject setFather(Depart depart) {
-        JSONObject json = new JSONObject();
-        json.put("id", depart.getId());
-        json.put("name", depart.getName());
-        return json;
-    }
 }

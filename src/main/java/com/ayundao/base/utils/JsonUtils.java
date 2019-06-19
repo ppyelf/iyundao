@@ -17,11 +17,14 @@ import com.alibaba.fastjson.*;
 import com.ayundao.base.Page;
 import org.springframework.util.Assert;
 
+import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,12 +78,33 @@ public class JsonUtils {
             String key = entry.getKey();
             Field field = entry.getValue();
             Class cls = field.getType();
-            if (!BaseEntity.class.isAssignableFrom(cls) &&!Collection.class.isAssignableFrom(cls)
+            if (!BaseEntity.class.isAssignableFrom(cls) && !Collection.class.isAssignableFrom(cls)
                     && !Map.class.isAssignableFrom(cls)) {
                 json.put(key, ClassUtils.forceGetProperty(obj, field.getName()));
             }
         }
         return json;
+    }
+
+    /**
+     * 反向父子关系
+     * @param json
+     */
+    private static void reverseFather(com.alibaba.fastjson.JSONObject json) {
+        for (Map.Entry<String, Object> entry : json.entrySet()) {
+            String key = entry.getKey();
+            if (key.equals("father") && entry.getValue() != null) {
+                com.alibaba.fastjson.JSONObject sonJson = new com.alibaba.fastjson.JSONObject((Map<String, Object>) entry.getValue());
+                for (Map.Entry<String, Object> father : json.entrySet()) {
+                    String fatherKey = father.getKey();
+                    com.alibaba.fastjson.JSONObject fahterJson = new com.alibaba.fastjson.JSONObject((Map<String, Object>) father.getValue());
+                    if (fahterJson.get("id").equals(sonJson.get("id"))) {
+
+                    } 
+                }
+                json.remove(key);
+            }
+        }
     }
 
     public static com.alibaba.fastjson.JSONObject getPage(Page<?> page) {

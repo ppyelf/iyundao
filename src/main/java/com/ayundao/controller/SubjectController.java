@@ -68,7 +68,7 @@ public class SubjectController extends BaseController {
         JSONArray arr = new JSONArray();
         for (Subject s :subjects){
             s.setUserRelations(null);
-            arr.add(s);
+            arr.add(JsonUtils.getJson(s));
         }
         jsonResult.setData(arr);
         return jsonResult;
