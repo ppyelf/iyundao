@@ -1,12 +1,15 @@
 package com.ayundao.controller;
 
+import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.EthicsRecord;
 import com.ayundao.service.EthicsRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -18,7 +21,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/ethics")
-public class EthicsRecordController {
+public class EthicsRecordController extends BaseController {
 
     @Autowired
     private EthicsRecordService ethicsRecordService;
@@ -28,8 +31,9 @@ public class EthicsRecordController {
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
      * @apiDescription 新增医德档案
+     * @apiParam {EthicsRecord} params
      * @apiParamExample {json} 请求样例：
-     *                /ethics/add
+     *                /ethics/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -37,11 +41,7 @@ public class EthicsRecordController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/add")
     public JsonResult add(EthicsRecord params) {
@@ -58,8 +58,9 @@ public class EthicsRecordController {
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
      * @apiDescription 修改医德档案
+     * @apiParam {EthicsRecord} params
      * @apiParamExample {json} 请求样例：
-     *                 /ethics/modify
+     *                 /ethics/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -67,11 +68,7 @@ public class EthicsRecordController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/modify")
     public JsonResult modify(EthicsRecord params) {
@@ -87,8 +84,10 @@ public class EthicsRecordController {
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
      * @apiDescription
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
-     *                /ethics/getlist
+     *                /ethics/getlist?page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -96,14 +95,12 @@ public class EthicsRecordController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(ethicsRecordService.selectAll(pageable));
     }
 
@@ -112,8 +109,11 @@ public class EthicsRecordController {
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
      * @apiDescription 根据部门查询所有，分页
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
-     *                /ethics/selectbydepart
+     *                /ethics/selectbydepart?params=\"id\"&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -121,14 +121,12 @@ public class EthicsRecordController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params,Pageable pageable) {
+    public JsonResult selectByDepart(String params,@RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(ethicsRecordService.selectByDepart(params,pageable));
     }
 
@@ -137,8 +135,11 @@ public class EthicsRecordController {
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
-     *                /ethics/selectbygroup
+     *                /ethics/selectbygroup?params=\"id\"&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -146,14 +147,12 @@ public class EthicsRecordController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params,Pageable pageable) {
+    public JsonResult selectByGroup(String params,@RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(ethicsRecordService.selectByGroup(params,pageable));
     }
 
@@ -162,8 +161,11 @@ public class EthicsRecordController {
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
-     *                /ethics/selectbysubject
+     *                /ethics/selectbysubject?params=\"id\"&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -171,14 +173,12 @@ public class EthicsRecordController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params,Pageable pageable) {
+    public JsonResult selectBySubject(String params,@RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(ethicsRecordService.selectBySubject(params,pageable));
     }
 }

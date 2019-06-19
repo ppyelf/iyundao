@@ -118,13 +118,13 @@ public class SubjectController extends BaseController {
             switch (subject.getSubjectType().ordinal()) {
                 case  0:
                     json.put("type", "总院");
-                     break;
+                    break;
                 case  1:
                     json.put("type", "分院");
-                     break;
+                    break;
                 case  2:
                     json.put("type", "其他");
-                     break;
+                    break;
             }
             arr.add(json);
         }
@@ -211,17 +211,17 @@ public class SubjectController extends BaseController {
         subject.setCreatedDate(new Date(System.currentTimeMillis()));
         switch (type) {
             case 0 :
-                 subject.setSubjectType(Subject.SUBJECT_TYPE.head);
-                 break;
+                subject.setSubjectType(Subject.SUBJECT_TYPE.head);
+                break;
             case 1 :
-                 subject.setSubjectType(Subject.SUBJECT_TYPE.part);
-                 break;
+                subject.setSubjectType(Subject.SUBJECT_TYPE.part);
+                break;
             case 2 :
-                 subject.setSubjectType(Subject.SUBJECT_TYPE.etc);
-                 break;
+                subject.setSubjectType(Subject.SUBJECT_TYPE.etc);
+                break;
             default :
-                 subject.setSubjectType(Subject.SUBJECT_TYPE.head);
-                 break;
+                subject.setSubjectType(Subject.SUBJECT_TYPE.head);
+                break;
         }
         subject = subjectService.save(subject);
         jsonResult.setData(converType(subject));
@@ -273,9 +273,9 @@ public class SubjectController extends BaseController {
                 if (subjectType.ordinal() == type) {
                     subject.setSubjectType(subjectType);
                     break;
-                } 
+                }
             }
-        } 
+        }
         subject = subjectService.save(subject);
         jsonResult.setData(converType(subject));
         return jsonResult;

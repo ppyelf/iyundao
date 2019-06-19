@@ -48,4 +48,5 @@ public interface StyleOfWorkRepository extends BaseRepository<StyleOfWork, Strin
             "GROUP BY ur.DEPARTID " +
             "ORDER BY SUM(sf.SCORE)/COUNT(ur.USERID) DESC")
     List<StyleOfWorkStatistics> statistics();
+    
 }

@@ -6,9 +6,11 @@ import com.ayundao.entity.Recipe;
 import com.ayundao.entity.RecipeRational;
 import com.ayundao.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -30,12 +32,10 @@ public class RecipeController extends BaseController {
      * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 新增处方
+     * @apiParam {Recipe} params
      * @apiParamExample {json} 请求样例：
-     * /recipe/add
+     *              /recipe/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -60,8 +60,9 @@ public class RecipeController extends BaseController {
      * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 新增点评
+     * @apiParam {RecipeRational} params
      * @apiParamExample {json} 请求样例：
-     * /recipe/add
+     *              /recipe/add?recipe=Recipe&rational=\"是否合理\"&remark=\"点评内容\"&user=User&remarkName=操作人姓名
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 801:传入数据为空</br>
@@ -86,12 +87,10 @@ public class RecipeController extends BaseController {
      * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 修改药材预警
+     * @apiParam {Recipe} params
      * @apiParamExample {json} 请求样例：
-     * /recipe/modify
+     *              /recipe/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -114,9 +113,11 @@ public class RecipeController extends BaseController {
      * @api {get} /recipe/getlist 分页查询所有
      * @apiGroup Recipe
      * @apiVersion 1.0.0
-     * @apiDescription 修改药材预警
+     * @apiDescription 分页查询所有
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
-     * /recipe/getlist
+     *          /recipe/getlist?page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:未查询到此用户</br>
      * 600:参数异常</br>
@@ -124,14 +125,12 @@ public class RecipeController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/getlist")
-    public JsonResult getList(Pageable pageable) {
+    public JsonResult getList(@RequestParam(defaultValue = "1") int page,
+                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(recipeService.selectAll(pageable));
     }
 
@@ -140,12 +139,12 @@ public class RecipeController extends BaseController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
-     * /recipe/selectbydepart
+     *          /recipe/selectbydepart?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -156,7 +155,9 @@ public class RecipeController extends BaseController {
      * }
      */
     @PostMapping("/selectbydepart")
-    public JsonResult selectByDepart(String params, Pageable pageable) {
+    public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
+                                     @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(recipeService.selectByDepart(params, pageable));
     }
 
@@ -165,23 +166,21 @@ public class RecipeController extends BaseController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
-     * /recipe/selectbygroup
+     *          /recipe/selectbygroup?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbygroup")
-    public JsonResult selectByGroup(String params, Pageable pageable) {
+    public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(recipeService.selectByGroup(params, pageable));
     }
 
@@ -190,23 +189,21 @@ public class RecipeController extends BaseController {
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
+     * @apiParam {String} params
+     * @apiParam {int}  page
+     * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
-     * /recipe/selectbysubject
+     *          /recipe/selectbysubject?params=id&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/selectbysubject")
-    public JsonResult selectBySubject(String params, Pageable pageable) {
+    public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
         return JsonResult.success(recipeService.selectBySubject(params, pageable));
     }
 
@@ -215,24 +212,18 @@ public class RecipeController extends BaseController {
      * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 根据处方id查询点评
+     * @apiParam {String} params
      * @apiParamExample {json} 请求样例：
-     * /recipe/findbyrecipeid
+     *              /recipe/findbyrecipeid?params=id
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
-     * }
+     *
      */
     @PostMapping("/findbyrecipeid")
-    public JsonResult findVyRecipeId(String recipeID) {
-        return recipeService.findByRecipeId(recipeID);
+    public JsonResult findVyRecipeId(String params) {
+        return recipeService.findByRecipeId(params);
     }
 
 }
