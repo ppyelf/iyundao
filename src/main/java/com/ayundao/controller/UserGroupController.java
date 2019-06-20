@@ -9,9 +9,9 @@ import com.ayundao.service.UserGroupService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,19 +59,15 @@ public class UserGroupController extends BaseController {
     @GetMapping("/list")
     public JsonResult list() {
         List<UserGroup> userGroups = userGroupService.getList();
-        try {
-            JSONArray arr = new JSONArray();
-            for (UserGroup ug : userGroups) {
-                JSONObject json =new JSONObject();
-                json.put("id", ug.getId());
-                json.put("name", ug.getName());
-                jsonFather(ug, json);
-                arr.put(json);
-            }
-            jsonResult.setData(JsonUtils.delString(arr.toString()));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        JSONArray arr = new JSONArray();
+        for (UserGroup ug : userGroups) {
+            JSONObject json =new JSONObject();
+            json.put("id", ug.getId());
+            json.put("name", ug.getName());
+            jsonFather(ug, json);
+            arr.add(json);
         }
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -80,8 +76,9 @@ public class UserGroupController extends BaseController {
      * @apiGroup UserGroup
      * @apiVersion 1.0.0
      * @apiDescription 查看单个用户组
+     * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
-     *                /user_group/view
+     *                ?id=813f15af1b1c402da17838e8a067ed68
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -91,7 +88,13 @@ public class UserGroupController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "[{'id':'66aaab6db70b434ca60a753ad3e2bbf9','name':'小组2'},{'id':'813f15af1b1c402da17838e8a067ed68','name':'子小组','father':{'id':'66aaab6db70b434ca60a753ad3e2bbf9','name':'小组2'}},{'id':'8b568d0307c744cb9fedc2fe5b7f1238','name':'小组1'}]"
+     *     "data": {
+     *         "createdDate": "20190517111111",
+     *         "lastModifiedDate": "20190517111111",
+     *         "name": "子小组",
+     *         "id": "813f15af1b1c402da17838e8a067ed68",
+     *         "version": "1"
+     *     }
      * }
      */
     @PostMapping("/view")
@@ -103,15 +106,11 @@ public class UserGroupController extends BaseController {
         if (userGroup == null) {
             return JsonResult.notFound("未查询到此用户组");
         }
-        try {
-            JSONObject json = new JSONObject();
-            json.put("id", userGroup.getId());
-            json.put("name", userGroup.getName());
-            jsonFather(userGroup, json);
-            jsonResult.setData(JsonUtils.getJson(userGroup));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JSONObject json = new JSONObject();
+        json.put("id", userGroup.getId());
+        json.put("name", userGroup.getName());
+        jsonFather(userGroup, json);
+        jsonResult.setData(JsonUtils.getJson(userGroup));
         return jsonResult;
     }
 
@@ -120,8 +119,11 @@ public class UserGroupController extends BaseController {
      * @apiGroup UserGroup
      * @apiVersion 1.0.0
      * @apiDescription 查看单个用户组
+     * @apiParam {String} name
+     * @apiParam {String} fatherId
+     * @apiParam {String} userId
      * @apiParamExample {json} 请求样例：
-     *                /user_group/add
+     *                ?name=测试用户组1
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -131,7 +133,13 @@ public class UserGroupController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {
+     *         "createdDate": "20190618105849",
+     *         "lastModifiedDate": "20190618105849",
+     *         "name": "测试用户组1",
+     *         "id": "402881916b68611a016b6885d4fa0003",
+     *         "version": "0"
+     *     }
      * }
      */
     @PostMapping("/add")
@@ -158,8 +166,12 @@ public class UserGroupController extends BaseController {
      * @apiGroup UserGroup
      * @apiVersion 1.0.0
      * @apiDescription 修改个人用户组
+     * @apiParam {String} id
+     * @apiParam {String} name
+     * @apiParam {String} fatherId
+     * @apiParam {String} userId
      * @apiParamExample {json} 请求样例：
-     *                /user_group/modify
+     *                ?id=402881f46afdef14016afe0d13520005&name=修改用户组
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -169,7 +181,13 @@ public class UserGroupController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {
+     *         "createdDate": "20190528184710",
+     *         "lastModifiedDate": "20190618105820",
+     *         "name": "修改用户组",
+     *         "id": "402881f46afdef14016afe0d13520005",
+     *         "version": "3"
+     *     }
      * }
      */
     @PostMapping("/modify")
@@ -203,15 +221,11 @@ public class UserGroupController extends BaseController {
      * @param json
      */
     private void jsonFather(UserGroup userGroup, JSONObject json) {
-        try {
-            if (userGroup.getFather() != null) {
-                JSONObject father = new JSONObject();
-                father.put("id", userGroup.getFather().getId());
-                father.put("name", userGroup.getFather().getName());
-                json.put("father", father);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (userGroup.getFather() != null) {
+            JSONObject father = new JSONObject();
+            father.put("id", userGroup.getFather().getId());
+            father.put("name", userGroup.getFather().getName());
+            json.put("father", father);
         }
     }
 

@@ -11,9 +11,9 @@ import com.ayundao.service.UserGroupService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.plaf.synth.SynthScrollBarUI;
@@ -67,9 +67,9 @@ public class FieldController extends BaseController {
         List<Field> fields = fieldService.findAllForList();
         JSONArray arr = new JSONArray();
         for (Field field : fields) {
-            arr.put(JsonUtils.getJson(field));
+            arr.add(JsonUtils.getJson(field));
         }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -78,8 +78,9 @@ public class FieldController extends BaseController {
      * @apiGroup Field
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiParam id 必填
      * @apiParamExample {json} 请求样例：
-     *                /field/view
+     *                ?id=04b5fffcdba042e783d44667a5a823e0
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:字段不存在</br>
      * @apiSuccess (200) {String} message 信息
@@ -88,7 +89,8 @@ public class FieldController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{"page":"{"name":"","level":"","sort":"","uri":"","title":""}","fieldRoles":["{"version":"1","id":"47cc0f57e76a4e31bd34bb5e5f8fd5b1","createdDate":"20190517111111","lastModifiedDate":"20190517111111"}"],"buttons":["{"version":"1","id":"fe78513de3c64f859ccf349c8aeea7d7","createdDate":"20190517111111","lastModifiedDate":"20190517111111","name":"字段1按钮","sort":"0","uri":""}"]}"
+     *     "data": {"buttons": [    {        "createdDate": "20190517111111",        "lastModifiedDate": "20190517111111",        "level": "0",        "name": "字段1按钮",        "id": "fe78513de3c64f859ccf349c8aeea7d7",        "sort": "0",        "version": "1",        "uri": ""    }],"field": {    "createdDate": "20190517111111",    "lastModifiedDate": "20190517111111",    "level": "0",    "name": "分组1字段",    "id": "04b5fffcdba042e783d44667a5a823e0",    "sort": "0",    "version": "1"},"page": {    "level": "",    "name": "",    "sort": "",    "title": "",    "uri": ""},"fieldRoles": []
+     *     }
      * }
      */
     @PostMapping("/view")
@@ -236,27 +238,22 @@ public class FieldController extends BaseController {
         return JsonResult.success();
     }
 
-    private String converField(Field field) {
-        try {
-            JSONObject json = new JSONObject();
-            json.put("field", JsonUtils.getJson(field));
-            json.put("page", JsonUtils.getJson(field.getPage()));
-            JSONArray arr = new JSONArray();
-            for (FieldRole fr : field.getFieldRoles()) {
-                arr.put(JsonUtils.getJson(fr));
-            }
-            json.put("fieldRoles", arr);
-            arr = new JSONArray();
-            if (CollectionUtils.isNotEmpty(field.getButtons())) {
-                for (Button button : field.getButtons()) {
-                    arr.put(JsonUtils.getJson(button));
-                }
-                json.put("buttons", arr);
-            }
-            return JsonUtils.delString(json.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
+    private JSONObject converField(Field field) {
+        JSONObject json = new JSONObject();
+        json.put("field", JsonUtils.getJson(field));
+        json.put("page", JsonUtils.getJson(field.getPage()));
+        JSONArray arr = new JSONArray();
+        for (FieldRole fr : field.getFieldRoles()) {
+            arr.add(JsonUtils.getJson(fr));
         }
-        return null;
+        json.put("fieldRoles", arr);
+        arr = new JSONArray();
+        if (CollectionUtils.isNotEmpty(field.getButtons())) {
+            for (Button button : field.getButtons()) {
+                arr.add(JsonUtils.getJson(button));
+            }
+            json.put("buttons", arr);
+        }
+        return json;
     }
 }

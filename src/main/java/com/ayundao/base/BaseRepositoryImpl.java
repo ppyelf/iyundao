@@ -8,11 +8,13 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.provider.PersistenceProvider;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -108,13 +110,13 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional
     public void delete(T entity) {
         Assert.notNull(entity);
-        em.remove(em.merge(entity));
+        em.remove(em.contains(entity) ? entity : em.merge(entity));
     }
 
     @Override
-    @Transactional
     @SuppressWarnings("unchecked")
     public void deleteAll(Iterable<? extends T> entities) {
         Assert.notNull(entities);
@@ -136,6 +138,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     public List<T> findAll() {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(entityClass);
+        query.from(entityClass);
         TypedQuery<T> typedQuery = em.createQuery(query);
         List<T> list = typedQuery.getResultList();
         return CollectionUtils.isEmpty(list)
@@ -170,7 +173,10 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     public void deleteById(ID id) {
-
+        T t = find(id);
+        if (t != null) {
+            delete(t);
+        }
     }
 
     @Override
@@ -185,7 +191,11 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     public void flush() {
+        em.flush();
+    }
 
+    public void clear() {
+        em.clear();
     }
 
     @Override
@@ -210,6 +220,9 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     public List<T> findByIds(Iterable<ID> ids) {
+        if (ids == null) {
+            return new ArrayList<>();
+        } 
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(entityClass);
         Root<T> root = query.from(entityClass);
@@ -226,7 +239,22 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     public List<T> findByIds(String[] ids) {
-        return findByIds(ids);
+        if (ids == null) {
+            return new ArrayList<>();
+        }
+
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<T> query = builder.createQuery(entityClass);
+        Root<T> root = query.from(entityClass);
+        Path<Object> path = root.get("id");
+        CriteriaBuilder.In<Object> in = builder.in(path);
+        for (String id : ids) {
+            in.value(id);
+        }
+        Predicate condition = builder.and(in);
+        query.where(condition);
+        TypedQuery<T> typedQuery = em.createQuery(query);
+        return typedQuery.getResultList();
     }
 
     @Override

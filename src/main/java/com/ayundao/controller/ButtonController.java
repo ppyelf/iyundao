@@ -10,9 +10,8 @@ import com.ayundao.service.RoleService;
 import com.ayundao.service.UserGroupService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -57,7 +56,7 @@ public class ButtonController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "["{"button":"{"version":"1","id":"186c1f7b93d148dd81a119cda63dcb0c","createdDate":"20190517111111","lastModifiedDate":"20190517111111","name":"字段2按钮","sort":"0","uri":""}","field":"{"name":"","level":"","sort":""}","buttonRoles":[]}","{"button":"{"version":"1","id":"2d970b277d0a4a43a0a9eefc5af6acf5","createdDate":"20190517111111","lastModifiedDate":"20190517111111","name":"字段3按钮","sort":"0","uri":""}","field":"{"name":"","level":"","sort":""}","buttonRoles":[]}","{"button":"{"version":"1","id":"e7260b4718fa48618bb91859ff750099","createdDate":"20190517111111","lastModifiedDate":"20190517111111","name":"字段4按钮","sort":"0","uri":""}","field":"{"name":"","level":"","sort":""}","buttonRoles":[]}","{"button":"{"version":"1","id":"fe78513de3c64f859ccf349c8aeea7d7","createdDate":"20190517111111","lastModifiedDate":"20190517111111","name":"字段1按钮","sort":"0","uri":""}","field":"{"name":"","level":"","sort":""}","buttonRoles":[]}"]"
+     *     "data": [{    "button": {        "createdDate": "20190517111111",        "lastModifiedDate": "20190517111111",        "level": "0",        "name": "字段2按钮",        "id": "186c1f7b93d148dd81a119cda63dcb0c",        "sort": "0",        "version": "1",        "uri": ""    },    "buttonRoles": [],    "field": {        "level": "",        "name": "",        "sort": ""    }},{    "button": {        "createdDate": "20190517111111",        "lastModifiedDate": "20190517111111",        "level": "0",        "name": "字段3按钮",        "id": "2d970b277d0a4a43a0a9eefc5af6acf5",        "sort": "0",        "version": "1",        "uri": ""    },    "buttonRoles": [],    "field": {        "level": "",        "name": "",        "sort": ""    }},{    "button": {        "createdDate": "20190517111111",        "lastModifiedDate": "20190517111111",        "level": "0",        "name": "字段1按钮",        "id": "fe78513de3c64f859ccf349c8aeea7d7",        "sort": "0",        "version": "1",        "uri": ""    },    "buttonRoles": [],    "field": {        "level": "",        "name": "",        "sort": ""    }}]
      * }
      */
     @GetMapping("/list")
@@ -65,9 +64,9 @@ public class ButtonController extends BaseController {
         List<Button> buttons = buttonService.findAllList();
         JSONArray arr = new JSONArray();
         for (Button button : buttons) {
-            arr.put(convert(button));
+            arr.add(convert(button));
         }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -105,8 +104,15 @@ public class ButtonController extends BaseController {
      * @apiGroup Button
      * @apiVersion 1.0.0
      * @apiDescription 新增
+     * @apiParam {String} name
+     * @apiParam {String} fieldId
+     * @apiParam {String} uri
+     * @apiParam {String[]} userGroupIds
+     * @apiParam {String[]} roleIds
+     * @apiParam {int} sort
+     * @apiParam {int} level
      * @apiParamExample {json} 请求样例：
-     *                /button/add
+     *                ?name=添加按钮&fieldId=402881916b210d35016b2125086b0004&userGroupIds=402881f46afdef14016afe0d13520005&userGroupIds=66aaab6db70b434ca60a753ad3e2bbf9&roleIds=402881f46afe47db016afe562def0000
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 601:字段不存在</br>
      * @apiSuccess (200) {String} message 信息
@@ -151,8 +157,15 @@ public class ButtonController extends BaseController {
      * @apiGroup Button
      * @apiVersion 1.0.0
      * @apiDescription 修改
+     * @apiParam {String} id
+     * @apiParam {String} name
+     * @apiParam {String[]} fieldId
+     * @apiParam {String[]} userGroupIds
+     * @apiParam {String} roleIds
+     * @apiParam {int} sort
+     * @apiParam {int} level
      * @apiParamExample {json} 请求样例：
-     *                  button/modify?id=402881916b210d35016b2174dd750011&name=修改按钮11111&fieldId=39b22ac71cb9490584f3fa4c5cf5b940&userGroupIds=66aaab6db70b434ca60a753ad3e2bbf9&roleIds=402881f46afe47db016afe562def0000
+     *                  ?id=402881916b210d35016b2174dd750011&name=修改按钮11111&fieldId=39b22ac71cb9490584f3fa4c5cf5b940&userGroupIds=66aaab6db70b434ca60a753ad3e2bbf9&roleIds=402881f46afe47db016afe562def0000
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -224,21 +237,16 @@ public class ButtonController extends BaseController {
      * @param button
      * @return
      */
-    private String convert(Button button) {
-        try {
-            JSONObject json = new JSONObject();
-            json.put("button", JsonUtils.getJson(button));
-            json.put("field", JsonUtils.getJson(button.getField()));
-            JSONArray arr = new JSONArray();
-            for (ButtonRole br : button.getButtonRoles()) {
-                arr.put(JsonUtils.getJson(br));
-            }
-            json.put("buttonRoles", arr);
-            return JsonUtils.delString(json.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
+    private JSONObject convert(Button button) {
+        JSONObject json = new JSONObject();
+        json.put("button", JsonUtils.getJson(button));
+        json.put("field", JsonUtils.getJson(button.getField()));
+        JSONArray arr = new JSONArray();
+        for (ButtonRole br : button.getButtonRoles()) {
+            arr.add(JsonUtils.getJson(br));
         }
-        return null;
+        json.put("buttonRoles", arr);
+        return json;
     }
 
 }

@@ -13,9 +13,9 @@ import com.ayundao.service.UserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +65,7 @@ public class GroupsController extends BaseController {
      *     "data": "[{'version':'1','id':'ec0e291d5bfd4e98a33cd610c9b1d330','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'总-组织','remark':''}]"
      * }
      */
-    @PostMapping("list")
+    @PostMapping("/list")
     public JsonResult list(String subjectId) {
         if (StringUtils.isBlank(subjectId)) {
             return JsonResult.paramError();
@@ -79,9 +79,9 @@ public class GroupsController extends BaseController {
             JSONObject json = new JSONObject(JsonUtils.getJson(g));
             json.remove("user");
             json.remove("subject");
-            arr.put(json);
+            arr.add(json);
         }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -108,9 +108,9 @@ public class GroupsController extends BaseController {
         List<Groups> groups = groupsService.getList();
         JSONArray arr = new JSONArray();
         for (Groups group : groups) {
-            arr.put(convertJson(group));
+            arr.add(convertJson(group));
         }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -119,8 +119,9 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 查看小组信息
+     * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例：
-     *                /groups/view
+     *                ?id=813f15af1b1c402da17838e8a067ed68
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -130,7 +131,13 @@ public class GroupsController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"1\",\"id\":\"79daadcc0cb5402f9f97bf01eaa2da67\",\"lastModifiedDate\":\"20190517111111\",\"createdDate\":\"20190517111111\",\"name\":\"分-组织\",\"subject\":\"{\"version\":\"1\",\"id\":\"c72a2c6bd1e8428fac6706b217417831\",\"lastModifiedDate\":\"20190517111111\",\"createdDate\":\"20190517111111\",\"name\":\"分院\",\"subjectType\":\"part\"}\",\"user\":\"{\"version\":\"0\",\"id\":\"5cf0d3c3b0da4cbaad179e0d6d230d0c\",\"lastModifiedDate\":\"20190517111111\",\"createdDate\":\"20190517111111\",\"name\":\"测试用户\",\"status\":\"normal\",\"password\":\"b356a1a11a067620275401a5a3de04300bf0c47267071e06\",\"sex\":\"0\",\"account\":\"test\",\"remark\":\"未填写\",\"salt\":\"3a10624a300f4670\",\"userType\":\"normal\"}\",\"remark\":\"\"}"
+     *     "data": {
+     *         "createdDate": "20190517111111",
+     *         "lastModifiedDate": "20190517111111",
+     *         "name": "子小组",
+     *         "id": "813f15af1b1c402da17838e8a067ed68",
+     *         "version": "1"
+     *     }
      * }
      */
     @PostMapping("/view")
@@ -160,6 +167,9 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 新增部门
+     * @apiParam {String} name
+     * @apiParam {String} userId
+     * @apiParam {String} subjectId
      * @apiParamExample {json} 请求样例：
      *                /groups/add
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -170,13 +180,21 @@ public class GroupsController extends BaseController {
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
      * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {
+     *         "createdDate": "20190618102549",
+     *         "lastModifiedDate": "20190618102549",
+     *         "name": "测试用户组1",
+     *         "id": "402881916b68611a016b68679ca30000",
+     *         "version": "0"
+     *     }
      * }
      */
     @PostMapping("/add")
-    public JsonResult add(String name, String userId, String subjectId) {
+    public JsonResult add(String name,
+                          String userId,
+                          String subjectId) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(subjectId)) {
             return JsonResult.paramError();
         }
@@ -203,8 +221,12 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 修改小组信息
+     * @apiParam {String} id 必填
+     * @apiParam {String} name
+     * @apiParam {String} userId
+     * @apiParam {String} subjectId 必填
      * @apiParamExample {json} 请求样例：
-     *                /groups/modify
+     *                ?id=402881f46afdef14016afe0d13520005&name=修改用户组
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -215,11 +237,15 @@ public class GroupsController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"2\",\"id\":\"402881f46afef690016afefe9afe0000\",\"lastModifiedDate\":\"20190528231349\",\"createdDate\":\"20190528231059\",\"name\":\"11111\",\"subject\":\"{\"version\":\"1\",\"id\":\"c72a2c6bd1e8428fac6706b217417831\",\"lastModifiedDate\":\"20190517111111\",\"createdDate\":\"20190517111111\",\"name\":\"分院\",\"subjectType\":\"part\"}\",\"remark\":\"\"}"
+     *     "data": {"createdDate": "20190528184710","lastModifiedDate": "20190618102400","name": "修改用户组","id": "402881f46afdef14016afe0d13520005","version": "2"
+     *     }
      * }
      */
     @PostMapping("/modify")
-    public JsonResult modify(String id, String name, String userId, String subjectId) {
+    public JsonResult modify(String id,
+                             String name,
+                             String userId,
+                             String subjectId) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
         }
@@ -248,18 +274,13 @@ public class GroupsController extends BaseController {
      * @param groups
      * @return
      */
-    private String convertJson(Groups groups) {
-        try {
-            JSONObject json = new JSONObject(JsonUtils.getJson(groups));
-            json.put("id", groups.getId());
-            json.put("name", groups.getName());
-            json.put("subject", JsonUtils.getJson(groups.getSubject()));
-            json.put("user", groups.getUser() == null ? null : JsonUtils.getJson(groups.getUser()));
-            return JsonUtils.delString(json.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return "";
+    private JSONObject convertJson(Groups groups) {
+        JSONObject json = new JSONObject(JsonUtils.getJson(groups));
+        json.put("id", groups.getId());
+        json.put("name", groups.getName());
+        json.put("subject", JsonUtils.getJson(groups.getSubject()));
+        json.put("user", groups.getUser() == null ? null : JsonUtils.getJson(groups.getUser()));
+        return json;
     }
 
 }

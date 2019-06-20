@@ -11,12 +11,11 @@ import com.ayundao.service.AssessmentService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONException;
+import com.alibaba.fastjson.JSONObject;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,18 +44,25 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 分页
+     * @apiParam {int} page
+     * @apiParam {int} size
      * @apiParamExample {json} 请求样例：
-     *                /ass/page
+     *                ?page=0&size=10
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:活动不存在</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *    "code": 200,
+     *    "message": "成功",
+     *    "data": "{"total":7,"page":3,"content":"["{"id":"402881916b2a9588016b2b9a0ef10012","version":"0","lastModifiedDate":"20190606150405","createdDate":"20190606150405","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"402881916b2b9dd2016b2b9e77620000","version":"0","lastModifiedDate":"20190606150853","createdDate":"20190606150853","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"402881916b2b9dd2016b2b9f91f40003","version":"0","lastModifiedDate":"20190606151006","createdDate":"20190606151006","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}"]"}"
+     * }
      */
+    @PostMapping("/page")
     public JsonResult page(@RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Assessment> aPage = assessmentService.findAllForPage(pageable);
+        Page<Assessment> aPage = assessmentService.findAllForPage(new Pageable(page, size));
         jsonResult.setData(JsonUtils.getPage(aPage));
         return jsonResult;
     }
@@ -423,29 +429,23 @@ public class AssessmentController extends BaseController {
         return jsonResult;
     }
 
-    private String conver(Assessment ass) {
-        String reuslt = null;
-        try {
-            JSONObject json = new JSONObject(JsonUtils.getJson(ass));
-            JSONArray arr = new JSONArray();
-            if (CollectionUtils.isNotEmpty(ass.getAssessmentIndices())) {
-                for (AssessmentIndex index : ass.getAssessmentIndices()) {
-                    arr.put(JsonUtils.getJson(index));
-                }
-                json.put("assessmentIndices", arr);
-                arr = new JSONArray();
-            } 
-            if (CollectionUtils.isNotEmpty(ass.getAssessmentFiles())) {
-                for (AssessmentFile file : ass.getAssessmentFiles()) {
-                    arr.put(JsonUtils.getJson(file));
-                }
-                json.put("assessmentFiles", arr);
+    private JSONObject conver(Assessment ass) {
+        JSONObject json = new JSONObject(JsonUtils.getJson(ass));
+        JSONArray arr = new JSONArray();
+        if (CollectionUtils.isNotEmpty(ass.getAssessmentIndices())) {
+            for (AssessmentIndex index : ass.getAssessmentIndices()) {
+                arr.add(JsonUtils.getJson(index));
             }
-            reuslt = JsonUtils.delString(json.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
+            json.put("assessmentIndices", arr);
+            arr = new JSONArray();
         }
-        return reuslt;
+        if (CollectionUtils.isNotEmpty(ass.getAssessmentFiles())) {
+            for (AssessmentFile file : ass.getAssessmentFiles()) {
+                arr.add(JsonUtils.getJson(file));
+            }
+            json.put("assessmentFiles", arr);
+        }
+        return json;
     }
 
 }

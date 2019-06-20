@@ -1,12 +1,13 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.base.Pageable;
 import com.ayundao.entity.*;
 import com.ayundao.repository.*;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void save(User user, String subjectId, String departId, String groupsId) {
         if (StringUtils.isBlank(subjectId)
                  || StringUtils.isBlank(departId)

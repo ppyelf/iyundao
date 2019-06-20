@@ -5,19 +5,13 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.*;
-import org.apache.catalina.mbeans.UserMBean;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.FastHashMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.event.IIOReadProgressListener;
-import javax.swing.plaf.synth.SynthScrollBarUI;
-import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.List;
 
@@ -63,15 +57,20 @@ public class MenuController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "[{"id":"402881916b5a1eba016b5a1f33d60000","name":"测试账号"},{"id":"402881916b5a1eba016b5a1fafc70002","name":"测试账号11"}]"
+     * }
      */
     @GetMapping("/list")
     public JsonResult list() {
         List<Menu> menus = menuService.getList();
         JSONArray arr = new JSONArray();
         for (Menu m : menus) {
-            arr.put(JsonUtils.getJson(m));
+            arr.add(JsonUtils.getJson(m));
         }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -80,8 +79,9 @@ public class MenuController extends BaseController {
      * @apiGroup Menu
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例：
-     *                /menu/view
+     *                ?id=078fc9671e2a4b028bcf084f662c51d3
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -91,14 +91,12 @@ public class MenuController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"1\",\"id\":\"79daadcc0cb5402f9f97bf01eaa2da67\",\"lastModifiedDate\":\"20190517111111\",\"createdDate\":\"20190517111111\",\"name\":\"分-组织\",\"subject\":\"{\"version\":\"1\",\"id\":\"c72a2c6bd1e8428fac6706b217417831\",\"lastModifiedDate\":\"20190517111111\",\"createdDate\":\"20190517111111\",\"name\":\"分院\",\"subjectType\":\"part\"}\",\"user\":\"{\"version\":\"0\",\"id\":\"5cf0d3c3b0da4cbaad179e0d6d230d0c\",\"lastModifiedDate\":\"20190517111111\",\"createdDate\":\"20190517111111\",\"name\":\"测试用户\",\"status\":\"normal\",\"password\":\"b356a1a11a067620275401a5a3de04300bf0c47267071e06\",\"sex\":\"0\",\"account\":\"test\",\"remark\":\"未填写\",\"salt\":\"3a10624a300f4670\",\"userType\":\"normal\"}\",\"remark\":\"\"}"
+     *     "data": {"createdDate": "20190517111111","lastModifiedDate": "20190517111111","level": "0","father": {    "createdDate": "20190517111111",    "lastModifiedDate": "20190517111111",    "level": "0",    "name": "管理员菜单",    "remark": "",    "id": "da3bde893f544ae9af8ed99bbf788192",    "version": "1",    "uri": ""},"name": "用户菜单","remark": "","menuRelation": [    {        "createdDate": "20190517111111",        "role": {            "createdDate": "20190517111111",            "lastModifiedDate": "20190517111111",            "level": "0",            "name": "user",            "id": "b08a1e16dfe04d6c98e1599007c31490",            "version": "1"        },        "lastModifiedDate": "20190517111111",        "userRelation": {            "createdDate": "20190517111111",            "lastModifiedDate": "20190517111111",            "id": "366f02491fee40c68cc396ab7f8b78e3",            "version": "1"        },        "userGroupRelation": null,        "id": "59b7d2d638bf44faaee397faabfd36bc",        "version": "1"    }],"id": "078fc9671e2a4b028bcf084f662c51d3","version": "1","uri": ""
+     *     }
      * }
      */
     @PostMapping("/view")
     public JsonResult view(String id) {
-        if (isValid(id)) {
-            return JsonResult.paramError();
-        }
         jsonResult.setData(convertRelation(menuService.findById(id)));
         return jsonResult;
     }
@@ -207,6 +205,11 @@ public class MenuController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "[{"id":"402881916b5a1eba016b5a1f33d60000","name":"测试账号"},{"id":"402881916b5a1eba016b5a1fafc70002","name":"测试账号11"}]"
+     * }
      */
     @PostMapping("/modify")
     public JsonResult modify(String id,
@@ -249,7 +252,7 @@ public class MenuController extends BaseController {
             return JsonResult.failure(604, "角色不存在");
         }
         menu = menuService.modify(menu, userRelations, role, userGroupRelations);
-        jsonResult.setData(JsonUtils.delString(convertRelation(menu).toString()));
+        jsonResult.setData((convertRelation(menu)));
         return jsonResult;
     }
 
@@ -292,26 +295,21 @@ public class MenuController extends BaseController {
      * @return
      */
     private JSONObject convertRelation(Menu menu) {
-        try {
-            JSONObject json = new JSONObject(JsonUtils.getJson(menu));
+        JSONObject json = new JSONObject(JsonUtils.getJson(menu));
 
-            if (menu.getFather() != null) {
-                json.put("father", JsonUtils.getJson(menu.getFather()));
-            }
-            List<MenuRelation> menuRelations = menuRelationService.findByMenuId(menu.getId());
-            JSONArray arr = new JSONArray();
-            for (MenuRelation menuRelation : menuRelations) {
-                JSONObject j = new JSONObject(JsonUtils.getJson(menuRelation));
-                j.put("userRelation", menuRelation.getUserRelation() == null ? null : JsonUtils.getJson(menuRelation.getUserRelation()));
-                j.put("userGroupRelation", menuRelation.getUserGroupRelation() == null ? null : JsonUtils.getJson(menuRelation.getUserGroupRelation()));
-                j.put("role", menuRelation.getRole() == null ? null : JsonUtils.getJson(menuRelation.getRole()));
-                arr.put(j);
-            }
-            json.put("menuRelation", arr);
-            return json;
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (menu.getFather() != null) {
+            json.put("father", JsonUtils.getJson(menu.getFather()));
         }
-        return null;
+        List<MenuRelation> menuRelations = menuRelationService.findByMenuId(menu.getId());
+        JSONArray arr = new JSONArray();
+        for (MenuRelation menuRelation : menuRelations) {
+            JSONObject j = new JSONObject(JsonUtils.getJson(menuRelation));
+            j.put("userRelation", menuRelation.getUserRelation() == null ? null : JsonUtils.getJson(menuRelation.getUserRelation()));
+            j.put("userGroupRelation", menuRelation.getUserGroupRelation() == null ? null : JsonUtils.getJson(menuRelation.getUserGroupRelation()));
+            j.put("role", menuRelation.getRole() == null ? null : JsonUtils.getJson(menuRelation.getRole()));
+            arr.add(j);
+        }
+        json.put("menuRelation", arr);
+        return json;
     }
 }

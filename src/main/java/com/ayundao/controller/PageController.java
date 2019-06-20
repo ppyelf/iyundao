@@ -10,18 +10,12 @@ import com.ayundao.service.FieldService;
 import com.ayundao.service.MenuService;
 import com.ayundao.service.PageService;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
-import sun.security.util.Length;
 
-import javax.persistence.Id;
-import javax.rmi.CORBA.Tie;
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -58,15 +52,20 @@ public class PageController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *  "code": 200,
+     *  "message": "操作成功",
+     *  "data": "{}"
+     * }
      */
     @GetMapping("/list")
     public JsonResult list() {
         List<Page> pages = pageService.getAllForList();
         JSONArray arr = new JSONArray();
         for (Page page : pages) {
-            arr.put(JsonUtils.getJson(page));
+            arr.add(JsonUtils.getJson(page));
         }
-        jsonResult.setData(JsonUtils.delString(arr.toString()));
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -75,8 +74,9 @@ public class PageController extends BaseController {
      * @apiGroup Page
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例：
-     *                /page/view
+     *                ?id=2c4824f71b6f4de389e0b8b375636d94
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
@@ -86,7 +86,8 @@ public class PageController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "操作成功",
-     *     "data": "{"version":"1","id":"2c4824f71b6f4de389e0b8b375636d94","createdDate":"20190517111111","lastModifiedDate":"20190517111111","name":"测试分院页面","level":"0","sort":"0","title":"管理员页面","uri":"","fields":[{"version":"1","id":"39b22ac71cb9490584f3fa4c5cf5b940","createdDate":"20190517111111","lastModifiedDate":"20190517111111","name":"分组2字段","sort":"0"},{"version":"1","id":"bd5b0b97ba00400488c5a8aee29f9777","createdDate":"20190517111111","lastModifiedDate":"20190517111111","name":"分组1字段","sort":"0"}]}"
+     *     "data": {"createdDate": "20190517111111","lastModifiedDate": "20190517111111","level": "0","name": "测试分院页面","id": "2c4824f71b6f4de389e0b8b375636d94","sort": "0","title": "管理员页面","fields": [    {        "createdDate": "20190517111111",        "lastModifiedDate": "20190517111111",        "level": "0",        "name": "分组2字段",        "id": "39b22ac71cb9490584f3fa4c5cf5b940",        "sort": "0",        "version": "1"    },    {        "createdDate": "20190604142003",        "lastModifiedDate": "20190604142003",        "level": "0",        "name": "添加字段1",        "id": "402881916b210d35016b2125086b0004",        "sort": "0",        "version": "0"    },    {        "createdDate": "20190517111111",        "lastModifiedDate": "20190517111111",        "level": "0",        "name": "分组1字段",        "id": "bd5b0b97ba00400488c5a8aee29f9777",        "sort": "0",        "version": "1"    }],"version": "1","uri": ""
+     *     }
      * }
      */
     @PostMapping("/view")
@@ -101,8 +102,14 @@ public class PageController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 新增
      * @apiParam {String} name
+     * @apiParam {String} title
+     * @apiParam {String} uri
+     * @apiParam {int} level
+     * @apiParam {String} menuId
+     * @apiParam {String} fatherId
+     * @apiParam {int} sort
      * @apiParamExample {json} 请求样例：
-     *                /page/add
+     *                ?name=添加子页面&title=菜单标题&level=1&menuId=402881916b1ae347016b1c84de06000c&fatherId=402881916b1ae347016b1c8bfc63000e
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此菜单</br>
      *                                 600:参数异常</br>
@@ -111,8 +118,9 @@ public class PageController extends BaseController {
      * @apiSuccessExample {json} 返回样例:
      * {
      *     "code": 200,
-     *     "message": "操作成功",
-     *     "data": "{"version":"0","id":"402881916b1ae347016b1c8d344a000f","createdDate":"20190603165544","lastModifiedDate":"20190603165544","name":"添加子页面","level":"1","sort":"0","title":"菜单标题","uri":""}"
+     *     "message": "成功",
+     *     "data": {"createdDate": "20190618103025","lastModifiedDate": "20190618103025","level": "1","name": "添加子页面","id": "402881916b68611a016b686bd4610001","sort": "0","title": "菜单标题","version": "0","uri": ""
+     *     }
      * }
      */
     @PostMapping("/add")
@@ -122,8 +130,7 @@ public class PageController extends BaseController {
                           @RequestParam(defaultValue = "0") int level,
                           String menuId,
                           String fatherId,
-                          @RequestParam(defaultValue = "0") int sort
-                          ) {
+                          @RequestParam(defaultValue = "0") int sort) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(menuId)) {
             return JsonResult.paramError();
         } 
@@ -150,6 +157,14 @@ public class PageController extends BaseController {
      * @apiGroup Page
      * @apiVersion 1.0.0
      * @apiDescription 修改
+     * @apiParam {String} id 必填
+     * @apiParam {String} name
+     * @apiParam {String} title
+     * @apiParam {String} uri
+     * @apiParam {int} level
+     * @apiParam {String} menuId
+     * @apiParam {String} fatherId
+     * @apiParam {int} sort
      * @apiParamExample {json} 请求样例：
      *                /page/modify
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -163,7 +178,17 @@ public class PageController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "操作成功",
-     *     "data": "{"version":"2","id":"402881916b1ae347016b1c8d344a000f","createdDate":"20190603165544","lastModifiedDate":"20190603165544","name":"修改子11页面","level":"0","sort":"0","title":"","uri":""}"
+     *     "data": {
+     *         "createdDate": "20190517111111",
+     *         "lastModifiedDate": "20190517111111",
+     *         "level": "0",
+     *         "name": "修改子11页面",
+     *         "id": "2c4824f71b6f4de389e0b8b375636d94",
+     *         "sort": "0",
+     *         "title": "",
+     *         "version": "2",
+     *         "uri": ""
+     *     }
      * }
      */
     @PostMapping("/modify")
@@ -184,7 +209,7 @@ public class PageController extends BaseController {
             return JsonResult.failure(602, "菜单不存在");
         }
         Page father = StringUtils.isBlank(fatherId) ? page.getFather() : pageService.find(fatherId);
-        if (StringUtils.isBlank(fatherId) && father == null) {
+        if (StringUtils.isNotBlank(fatherId) && father == null) {
             return JsonResult.failure(603, "父级页面不存在");
         } 
         page.setName(name);
@@ -202,8 +227,9 @@ public class PageController extends BaseController {
      * @apiGroup Page
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例：
-     *                /page/del
+     *                ?id=2c4824f71b6f4de389e0b8b375636d94
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 600:参数异常</br>
      *                                 601:页面不存在</br>
@@ -213,7 +239,7 @@ public class PageController extends BaseController {
      * @apiSuccessExample {json} 返回样例:
      * {
      *     "code": 200,
-     *     "message": "操作成功",
+     *     "message": "成功",
      *     "data": "{}"
      * }
      */
@@ -241,27 +267,22 @@ public class PageController extends BaseController {
         if (page == null) {
             return JsonResult.paramError();
         } 
-        try {
-            JSONObject json = new JSONObject(JsonUtils.getJson(page));
-            if (page.getFather() != null) {
-                json.put("father", JsonUtils.getJson(page.getFather()));
-            }
-            List<Field> fields = fieldService.findByPageId(page.getId());
-            JSONArray arr = new JSONArray();
-            if (CollectionUtils.isNotEmpty(fields)) {
-                for (Field f : fields) {
-                    arr.put(new JSONObject(JsonUtils.getJson(f)));
-                }
-            }
-            json.put("fields", arr);
-            jsonResult.setCode(200);
-            jsonResult.setMessage("操作成功");
-            jsonResult.setData(JsonUtils.delString(json.toString()));
-            return jsonResult;
-        } catch (JSONException e) {
-            e.printStackTrace();
+        JSONObject json = new JSONObject(JsonUtils.getJson(page));
+        if (page.getFather() != null) {
+            json.put("father", JsonUtils.getJson(page.getFather()));
         }
-        return JsonResult.paramError();
+        List<Field> fields = fieldService.findByPageId(page.getId());
+        JSONArray arr = new JSONArray();
+        if (CollectionUtils.isNotEmpty(fields)) {
+            for (Field f : fields) {
+                arr.add(new JSONObject(JsonUtils.getJson(f)));
+            }
+        }
+        json.put("fields", arr);
+        jsonResult.setCode(200);
+        jsonResult.setMessage("操作成功");
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
 }

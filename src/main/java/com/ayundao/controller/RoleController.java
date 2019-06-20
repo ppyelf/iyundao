@@ -62,7 +62,7 @@ public class RoleController extends BaseController {
                 json.put("level", role.getLevel());
                 arr.put(json);
             }
-            jsonResult.setData(arr.toString());
+            jsonResult.setData(arr);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -74,8 +74,9 @@ public class RoleController extends BaseController {
      * @apiGroup Role
      * @apiVersion 1.0.0
      * @apiDescription 查看角色
+     * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
-     *                /role/view
+     *                ?id=b08a1e16dfe04d6c98e1599007c31490
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此角色</br>
      *                                 600:参数异常</br>
@@ -114,8 +115,10 @@ public class RoleController extends BaseController {
      * @apiGroup Role
      * @apiVersion 1.0.0
      * @apiDescription 新增角色
+     * @apiParam {String} name
+     * @apiParam {int} level
      * @apiParamExample {json} 请求样例：
-     *                /role/add
+     *                ?name=添加角色&level=1
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 600:参数异常</br>
      * @apiSuccess (200) {String} message 信息
@@ -147,8 +150,11 @@ public class RoleController extends BaseController {
      * @apiGroup Role
      * @apiVersion 1.0.0
      * @apiDescription 修改角色
+     * @apiParam {String} id
+     * @apiParam {String} name
+     * @apiParam {String} level
      * @apiParamExample {json} 请求样例：
-     *                /role/modify
+     *                ?id=402881f46afe47db016afe562def0000&name=修改角色11&level=3
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此角色</br>
      *                                 600:参数异常</br>
@@ -162,7 +168,9 @@ public class RoleController extends BaseController {
      * }
      */
     @PostMapping("/modify")
-    public JsonResult modify(String id, String name, @RequestParam(defaultValue = "10") int level) {
+    public JsonResult modify(String id,
+                             String name,
+                             @RequestParam(defaultValue = "10") int level) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
         }

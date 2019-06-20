@@ -1,5 +1,6 @@
 package com.ayundao.base;
 
+import com.alibaba.fastjson.JSONArray;
 import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
@@ -16,13 +17,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @ClassName: BaseController
@@ -53,6 +53,8 @@ public abstract class BaseController {
     private Validator validator;
     @Value("${server.salt}")
     private String salt;
+    @Value("${server.upload}")
+    public String uploadPath;
     @Autowired
     private RedisUtils redisUtils;
     @Autowired
@@ -267,6 +269,31 @@ public abstract class BaseController {
         return validator;
     }
 
+    /**
+     * 获取上传文件的json
+     * @param entity
+     * @return
+     */
+    public com.alibaba.fastjson.JSONObject getUploadJson(BaseEntity entity) {
+        com.alibaba.fastjson.JSONObject json = JsonUtils.getJson(entity);
+        json.put("url", uploadPath + json.get("url").toString());
+        return json;
+    }
+
+    /**
+     * 获取上传文件array
+     * @param entities
+     * @return
+     */
+    public JSONArray getUploadArr(Iterable<? extends BaseEntity> entities) {
+        JSONArray arr = new JSONArray();
+        for (BaseEntity entity : entities) {
+            com.alibaba.fastjson.JSONObject json = JsonUtils.getJson(entities);
+            json.put("url", uploadPath + json.get("url").toString());
+            arr.add(json);
+        }
+        return arr;
+    }
     public void setValidator(Validator validator) {
         this.validator = validator;
     }
