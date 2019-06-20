@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: WorkController
@@ -349,10 +350,7 @@ public class WorkController extends BaseController {
      *              ?id=402881916b6e4a53016b6e500b0e0003
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:指标不存在</br>
-     *                                 601:年份/月份不能为空</br>
-     *                                 602:指标ID不能为空</br>
-     *                                 603:部门ID/组织ID/用户ID必须三选一</br>
-     *                                 604:用户,部门,组织查询不存在</br>
+     *                                 601:上传失败</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -362,7 +360,15 @@ public class WorkController extends BaseController {
         IndicatorInfoFile indicatorInfoFile = new IndicatorInfoFile();
         indicatorInfoFile.setCreatedDate(new Date());
         indicatorInfoFile.setLastModifiedDate(new Date());
-        FileUtils.uploadFile(file, indicatorInfoFile);
+        Map<String, String> map = FileUtils.uploadFile(file, indicatorInfoFile, uploadPath);
+        if (map == null) {
+            return JsonResult.failure(601, "上传失败");
+        }
+        indicatorInfoFile.setUrl(map.get("url"));
+        indicatorInfoFile.setSuffix(map.get("suffix"));
+        indicatorInfoFile.setName(map.get("name"));
+        indicatorInfoFile = indicatorInfoFileService.create(indicatorInfoFile);
+        jsonResult.setData(getUploadJson(indicatorInfoFile));
         return jsonResult;
     }
 

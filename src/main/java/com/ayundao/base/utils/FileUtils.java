@@ -1,12 +1,8 @@
 package com.ayundao.base.utils;
 
-import com.ayundao.base.BaseEntity;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,47 +16,48 @@ import java.util.UUID;
  * @Description: 工具类 - 文件
  * @Version: V1.0
  */
-@Component
 public class FileUtils {
 
     /**
      * 文件标识符
      */
-    protected final static String FILE_IDENTIFIER = "\\.";
-
-    private static String path = "classpath:/META-INF/resources/upload/";
+    protected final static String FILE_IDENTIFIER = ".";
 
     /**
      * 上传文件
-     * @param file
-     * @param o
-     * @return
+     * @param file  文件
+     * @param o     实体对象
+     * @param path  配置的根路径
+     * @return  Map<String,String>
+     *     suffix 后缀名
+     *     name   文件名
+     *     url    相对路径
+     * </String,String>
      */
-    public static Map<String, String> uploadFile(MultipartFile file, Object o) {
+    public static Map<String, String> uploadFile(MultipartFile file, Object o, String path) {
         Map<String, String> map = new HashMap<>();
-        if (file.isEmpty()) {
-            return map;
+        if (file == null || file.isEmpty()) {
+            return null;
         }
         try {
-            String name = file.getOriginalFilename().split(FILE_IDENTIFIER)[1];
-            String filePath = path + o.getClass().getSimpleName() + "/" + UUID.randomUUID().toString().replace("-", "") + name;
+            String suffix = file.getOriginalFilename();
+            map.put("suffix", suffix.substring(suffix.lastIndexOf(FILE_IDENTIFIER)).replace(".", ""));
+            map.put("name", UUID.randomUUID().toString().replace("-", ""));
 
-            byte[] b = file.getBytes();
-            File newFile = new File(filePath);
-            if (newFile.exists()) {
-                newFile.mkdirs();
+            String filePath = o.getClass().getSimpleName().toLowerCase() + "/" + map.get("name") + "." + map.get("suffix");
+            map.put("url", filePath);
+
+            File newFile = new File(path+filePath);
+            if (!newFile.exists()) {
+                newFile.getParentFile().mkdirs();
             }
+            newFile.createNewFile();
+            file.transferTo(newFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return map;
     }
 
-    /**
-     * 写入文件
-     */
-    private boolean writeFile(byte[] bytes, String path) {
 
-        return false;
-    }
 }

@@ -26,4 +26,9 @@ public class IndicatorInfoFileServiceImpl implements IndicatorInfoFileService {
     public List<IndicatorInfoFile> findByIds(String[] fileIds) {
         return indicatorInfoFileRepository.findByIds(fileIds);
     }
+
+    @Override
+    public IndicatorInfoFile create(IndicatorInfoFile indicatorInfoFile) {
+        return indicatorInfoFileRepository.save(indicatorInfoFile);
+    }
 }

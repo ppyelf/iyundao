@@ -20,4 +20,10 @@ public interface IndicatorInfoFileService {
      * @return
      */
     List<IndicatorInfoFile> findByIds(String[] fileIds);
+
+    /**
+     *
+     * @param indicatorInfoFile
+     */
+    IndicatorInfoFile create(IndicatorInfoFile indicatorInfoFile);
 }
