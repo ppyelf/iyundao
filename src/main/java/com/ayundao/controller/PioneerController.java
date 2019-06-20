@@ -7,10 +7,7 @@ import com.ayundao.service.PioneerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -125,7 +122,7 @@ public class PioneerController {
      * }
      *
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -153,7 +150,7 @@ public class PioneerController {
      * }
      *
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -181,7 +178,7 @@ public class PioneerController {
      *
      *
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params,  @RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -209,7 +206,7 @@ public class PioneerController {
      * }
      *
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -235,7 +232,7 @@ public class PioneerController {
      * }
      *
      */
-    @PostMapping("/selecttypebysubject")
+    @GetMapping("/selecttypebysubject")
     public JsonResult selectTypeBySubject(String params) {
         return pioneerService.selectTypeBySubject(params);
     }
@@ -258,7 +255,7 @@ public class PioneerController {
      *     "data": ""
      * }
      */
-    @PostMapping("/selecttypebydepart")
+    @GetMapping("/selecttypebydepart")
     public JsonResult selectTypeByDepart(String params) {
         return pioneerService.selectTypeByDepart(params);
     }
@@ -282,7 +279,7 @@ public class PioneerController {
      * }
      *
      */
-    @PostMapping("/selecttypebygroup")
+    @GetMapping("/selecttypebygroup")
     public JsonResult selectTypeByGroup(String params) {
         return pioneerService.selectTypeByGroup(params);
     }
@@ -308,7 +305,7 @@ public class PioneerController {
      * }
      *
      */
-    @PostMapping("/selectbytype")
+    @GetMapping("/selectbytype")
     public JsonResult selectByType(String params,@RequestParam(defaultValue = "1") int page,
                                    @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);

@@ -7,10 +7,7 @@ import com.ayundao.service.EthicsRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -27,10 +24,10 @@ public class EthicsRecordController extends BaseController {
     private EthicsRecordService ethicsRecordService;
 
     /**
-     * @api {post} /ethics/add 新增医德档案
+     * @api {post} /ethics/add 新增 -- 医德档案
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
-     * @apiDescription 新增医德档案
+     * @apiDescription 新增 -- 医德档案
      * @apiParam {EthicsRecord} params
      * @apiParamExample {json} 请求样例：
      *                /ethics/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -59,10 +56,10 @@ public class EthicsRecordController extends BaseController {
     }
 
     /**
-     * @api {post} /ethics/modify 修改医德档案
+     * @api {post} /ethics/modify 修改 -- 医德档案
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
-     * @apiDescription 修改医德档案
+     * @apiDescription 修改 -- 医德档案
      * @apiParam {EthicsRecord} params
      * @apiParamExample {json} 请求样例：
      *                 /ethics/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -90,10 +87,10 @@ public class EthicsRecordController extends BaseController {
     }
 
     /**
-     * @api {get} /ethics/getlist 分页查询所有
+     * @api {get} /ethics/getlist 分页查询所有 -- 医德档案
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
-     * @apiDescription
+     * @apiDescription      分页查询所有 -- 医德档案
      * @apiParam {int}  page
      * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
@@ -112,7 +109,7 @@ public class EthicsRecordController extends BaseController {
      * }
      *
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -120,10 +117,10 @@ public class EthicsRecordController extends BaseController {
     }
 
     /**
-     * @api {get} /ethics/selectbydepart 根据部门查询所有，分页
+     * @api {get} /ethics/selectbydepart 根据部门查询所有 -- 医德档案 -- 分页
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
-     * @apiDescription 根据部门查询所有，分页
+     * @apiDescription 根据部门查询所有 -- 医德档案 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -143,7 +140,7 @@ public class EthicsRecordController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params,@RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -151,10 +148,10 @@ public class EthicsRecordController extends BaseController {
     }
 
     /**
-     * @api {get} /ethics/selectbygroup 根据组织查询所有，分页
+     * @api {get} /ethics/selectbygroup 根据组织查询所有 -- 医德档案 -- 分页
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据组织查询所有 -- 医德档案 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -174,7 +171,7 @@ public class EthicsRecordController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params,@RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -182,10 +179,10 @@ public class EthicsRecordController extends BaseController {
     }
 
     /**
-     * @api {get} /ethics/selectbysubject 根据机构查询所有，分页
+     * @api {get} /ethics/selectbysubject 根据机构查询所有 -- 医德档案 -- 分页
      * @apiGroup EthicsRecord
      * @apiVersion 1.0.0
-     * @apiDescription 根据机构查询所有，分页
+     * @apiDescription 根据机构查询所有 -- 医德档案 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -205,7 +202,7 @@ public class EthicsRecordController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params,@RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);

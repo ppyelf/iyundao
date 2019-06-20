@@ -121,7 +121,7 @@ public class StyleOfWorkController {
      * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
      * }
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -130,7 +130,7 @@ public class StyleOfWorkController {
 
     /**
      * @api {get} /style/selectbydepart 根据部门查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @apiGroup StyleOfWork
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
      * @apiParam {String} params
@@ -149,7 +149,7 @@ public class StyleOfWorkController {
      * }
      *
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -158,7 +158,7 @@ public class StyleOfWorkController {
 
     /**
      * @api {get} /style/selectbygroup 根据组织查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @apiGroup StyleOfWork
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
      * @apiParam {String} params
@@ -177,7 +177,7 @@ public class StyleOfWorkController {
      * }
      *
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -186,7 +186,7 @@ public class StyleOfWorkController {
 
     /**
      * @api {get} /style/selectbysubject 根据机构查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @apiGroup StyleOfWork
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
      * @apiParam {String} params
@@ -205,7 +205,7 @@ public class StyleOfWorkController {
      * }
      *
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -231,7 +231,7 @@ public class StyleOfWorkController {
      * }
      *
      */
-    @PostMapping("/findbyworkid")
+    @GetMapping("/findbyworkid")
     public JsonResult findByWorkId(String params) {
         return styleOfWorkService.findByWorkId(params);
     }

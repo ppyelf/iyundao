@@ -7,10 +7,7 @@ import com.ayundao.service.PartySpiritService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -27,10 +24,10 @@ public class PartySpiritController extends BaseController {
     private PartySpiritService partySpiritService;
 
     /**
-     * @api {post} /spirit/add 新增党内精神
+     * @api {post} /spirit/add 新增 -- 党内精神
      * @apiGroup PartySpirit
      * @apiVersion 1.0.0
-     * @apiDescription 新增党内精神
+     * @apiDescription 新增 -- 党内精神
      * @apiParam {PartySpirit} params
      * @apiParamExample {json} 请求样例：
      *                /spirit/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -58,10 +55,10 @@ public class PartySpiritController extends BaseController {
     }
 
     /**
-     * @api {post} /spirit/modify 修改党内精神
+     * @api {post} /spirit/modify 修改 -- 党内精神
      * @apiGroup PartySpirit
      * @apiVersion 1.0.0
-     * @apiDescription 修改党内精神
+     * @apiDescription 修改 -- 党内精神
      * @apiParam {PartySpirit} params
      * @apiParamExample {json} 请求样例：
      *                 /spirit/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -88,10 +85,10 @@ public class PartySpiritController extends BaseController {
     }
 
     /**
-     * @api {get} /spirit/getlist 分页查询所有
+     * @api {get} /spirit/getlist 分页查询所有 -- 党内精神
      * @apiGroup PartySpirit
      * @apiVersion 1.0.0
-     * @apiDescription
+     * @apiDescription      分页查询所有 -- 党内精神
      * @apiParam {int}  page
      * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
@@ -110,7 +107,7 @@ public class PartySpiritController extends BaseController {
      * }
      *
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -118,10 +115,10 @@ public class PartySpiritController extends BaseController {
     }
 
     /**
-     * @api {get} /spirit/selectbydepart 根据部门查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /spirit/selectbydepart 根据部门查询所有 -- 党内精神 -- 分页
+     * @apiGroup PartySpirit
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据组织查询所有 -- 党内精神 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -138,7 +135,7 @@ public class PartySpiritController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -146,10 +143,10 @@ public class PartySpiritController extends BaseController {
     }
 
     /**
-     * @api {get} /spirit/selectbygroup 根据组织查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /spirit/selectbygroup 根据组织查询所有 -- 党内精神 -- 分页
+     * @apiGroup PartySpirit
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据组织查询所有 -- 党内精神 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -166,7 +163,7 @@ public class PartySpiritController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params,@RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -174,10 +171,10 @@ public class PartySpiritController extends BaseController {
     }
 
     /**
-     * @api {get} /spirit/selectbysubject 根据机构查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /spirit/selectbysubject 根据机构查询所有 -- 党内精神 -- 分页
+     * @apiGroup PartySpirit
      * @apiVersion 1.0.0
-     * @apiDescription 根据机构查询所有，分页
+     * @apiDescription 根据机构查询所有 -- 党内精神 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -194,7 +191,7 @@ public class PartySpiritController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);

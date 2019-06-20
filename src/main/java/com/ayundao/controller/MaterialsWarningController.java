@@ -8,10 +8,7 @@ import com.ayundao.service.MaterialsWarningService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -28,10 +25,10 @@ public class MaterialsWarningController extends BaseController {
     private MaterialsWarningService warningService;
 
     /**
-     * @api {post} /materials/add 新增耗材预警
+     * @api {post} /materials/add 新增 -- 耗材预警
      * @apiGroup MaterialsWarning
      * @apiVersion 1.0.0
-     * @apiDescription 新增耗材预警
+     * @apiDescription 新增 -- 耗材预警
      * @apiParam {MaterialsWarning} params
      * @apiParamExample {json} 请求样例：
      *              /materials/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -57,11 +54,11 @@ public class MaterialsWarningController extends BaseController {
     }
 
     /**
-     * @api {post} /materials/add1 新增耗材点评
+     * @api {post} /materials/add1 新增 -- 耗材点评
      * @apiGroup MaterialsWarning
      * @apiVersion 1.0.0
-     * @apiDescription 新增耗材点评
-     * @apiParam {MaterialsWarning} params
+     * @apiDescription 新增 -- 耗材点评
+     * @apiParam {MaterialsRational} params
      * @apiParamExample {json} 请求样例：
      *          /materials/add1?materials=MaterialsWarning&rational=\"是否合理\"&remark=\"点评内容\"&remarkId=User&remarkName=User
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -84,10 +81,10 @@ public class MaterialsWarningController extends BaseController {
     }
 
     /**
-     * @api {post} /materials/modify 修改耗材预警
+     * @api {post} /materials/modify 修改 -- 耗材预警
      * @apiGroup MaterialsWarning
      * @apiVersion 1.0.0
-     * @apiDescription 修改耗材预警
+     * @apiDescription 修改 -- 耗材预警
      * @apiParam {MaterialsWarning} params
      * @apiParamExample {json} 请求样例：
      *              /materials/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -112,10 +109,10 @@ public class MaterialsWarningController extends BaseController {
     }
 
     /**
-     * @api {get} /materials/getlist 分页查询所有
+     * @api {get} /materials/getlist 分页查询所有 -- 耗材预警
      * @apiGroup MaterialsWarning
      * @apiVersion 1.0.0
-     * @apiDescription
+     * @apiDescription      分页查询所有 -- 耗材预警
      * @apiParam {int}  page
      * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
@@ -131,7 +128,7 @@ public class MaterialsWarningController extends BaseController {
      * }
      *
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -139,10 +136,10 @@ public class MaterialsWarningController extends BaseController {
     }
 
     /**
-     * @api {get} /materials/selectbydepart 根据部门查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /materials/selectbydepart 根据部门查询所有 -- 耗材预警 -- 分页
+     * @apiGroup MaterialsWarning
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据组织查询所有 -- 耗材预警 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -159,7 +156,7 @@ public class MaterialsWarningController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params,@RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -167,10 +164,10 @@ public class MaterialsWarningController extends BaseController {
     }
 
     /**
-     * @api {get} /materials/selectbygroup 根据组织查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /materials/selectbygroup 根据组织查询所有 -- 耗材预警 -- 分页
+     * @apiGroup MaterialsWarning
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据组织查询所有 -- 耗材预警 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -187,7 +184,7 @@ public class MaterialsWarningController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params,@RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -195,10 +192,10 @@ public class MaterialsWarningController extends BaseController {
     }
 
     /**
-     * @api {get} /materials/selectbysubject 根据机构查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /materials/selectbysubject 根据机构查询所有 -- 耗材预警 -- 分页
+     * @apiGroup MaterialsWarning
      * @apiVersion 1.0.0
-     * @apiDescription 根据机构查询所有，分页
+     * @apiDescription 根据机构查询所有 -- 耗材预警 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -215,7 +212,7 @@ public class MaterialsWarningController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params,@RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -224,7 +221,7 @@ public class MaterialsWarningController extends BaseController {
 
     /**
      * @api {get} /materials/findbymaterialsid 根据耗材id查询点评
-     * @apiGroup EducationOfCleanPolitics
+     * @apiGroup MaterialsWarning
      * @apiVersion 1.0.0
      * @apiDescription 根据耗材id查询点评
      * @apiParam {String} params
@@ -241,7 +238,7 @@ public class MaterialsWarningController extends BaseController {
      * }
      *
      */
-    @PostMapping("/findbymaterialsid")
+    @GetMapping("/findbymaterialsid")
     public JsonResult findByMaterialsId(String params) {
         return warningService.findByMaterialsId(params);
     }

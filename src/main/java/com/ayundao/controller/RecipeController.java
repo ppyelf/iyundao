@@ -8,10 +8,7 @@ import com.ayundao.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -132,7 +129,7 @@ public class RecipeController extends BaseController {
      * }
      *
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -141,7 +138,7 @@ public class RecipeController extends BaseController {
 
     /**
      * @api {get} /recipe/selectbydepart 根据部门查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
      * @apiParam {String} params
@@ -159,7 +156,7 @@ public class RecipeController extends BaseController {
      * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
      * }
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -168,7 +165,7 @@ public class RecipeController extends BaseController {
 
     /**
      * @api {get} /recipe/selectbygroup 根据组织查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
      * @apiParam {String} params
@@ -187,7 +184,7 @@ public class RecipeController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -196,7 +193,7 @@ public class RecipeController extends BaseController {
 
     /**
      * @api {get} /recipe/selectbysubject 根据机构查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @apiGroup Recipe
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
      * @apiParam {String} params
@@ -215,7 +212,7 @@ public class RecipeController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -241,7 +238,7 @@ public class RecipeController extends BaseController {
      * }
      *
      */
-    @PostMapping("/findbyrecipeid")
+    @GetMapping("/findbyrecipeid")
     public JsonResult findVyRecipeId(String params) {
         return recipeService.findByRecipeId(params);
     }

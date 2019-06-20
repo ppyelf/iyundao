@@ -8,10 +8,7 @@ import com.ayundao.service.EducationOfCleanPoliticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -28,10 +25,10 @@ public class EducationOfCleanPoliticsController extends BaseController {
     private EducationOfCleanPoliticsService cleanPoliticsService;
 
     /**
-     * @api {post} /education/add 新增廉政教育
+     * @api {post} /education/add 新增 -- 廉政教育
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
-     * @apiDescription 新增廉政教育
+     * @apiDescription 新增 -- 廉政教育
      * @apiParam {EducationOfCleanPolitics} params
      * @apiParamExample {json} 请求样例：
      *      /education/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -56,10 +53,10 @@ public class EducationOfCleanPoliticsController extends BaseController {
     }
 
     /**
-     * @api {post} /education/add1 新增廉政教育附件
+     * @api {post} /education/add1 新增 -- 廉政教育 -- 附件
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
-     * @apiDescription 新增廉政教育附件
+     * @apiDescription 新增 -- 廉政教育 -- 附件
      * @apiParam {EducationOfCleanPoliticsAccessory} params
      * @apiParamExample {json} 请求样例：
      *          /education/add1?education=EducationOfCleanPolitics&videoName=\"视频名称\"&videoUrl=\"视频路径\"&time=\"上传时间\"&userId=\"操作人id\"&userName=\"操作人姓名\"
@@ -80,10 +77,10 @@ public class EducationOfCleanPoliticsController extends BaseController {
     }
 
     /**
-     * @api {post} /education/modify 修改廉政教育
+     * @api {post} /education/modify 修改 -- 廉政教育
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
-     * @apiDescription 修改药材预警
+     * @apiDescription 修改 -- 药材预警
      * @apiParam {EducationOfCleanPolitics} params
      * @apiParamExample {json} 请求样例：
      *              /education/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -107,10 +104,10 @@ public class EducationOfCleanPoliticsController extends BaseController {
     }
 
     /**
-     * @api {get} /education/getlist 分页查询所有
+     * @api {get} /education/getlist 分页 -- 查询所有 -- 廉政教育
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
-     * @apiDescription 修改药材预警
+     * @apiDescription 分页 -- 查询所有 -- 廉政教育
      * @apiParam {int}  page
      * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
@@ -125,7 +122,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
      *     "data": ""
      * }
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -133,7 +130,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
     }
 
     /**
-     * @api {get} /education/selectbydepart 根据部门查询所有，分页
+     * @api {get} /education/selectbydepart 根据部门查询所有 -- 廉政教育 -- 分页
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
@@ -152,7 +149,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
      * }
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -160,7 +157,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
     }
 
     /**
-     * @api {get} /education/selectbygroup 根据组织查询所有，分页
+     * @api {get} /education/selectbygroup 根据组织查询所有 -- 廉政教育 -- 分页
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据组织查询所有，分页
@@ -179,7 +176,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
      * }
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -187,7 +184,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
     }
 
     /**
-     * @api {get} /education/selectbysubject 根据机构查询所有，分页
+     * @api {get} /education/selectbysubject 根据机构查询所有 -- 廉政教育 -- 分页
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
      * @apiDescription 根据机构查询所有，分页
@@ -206,7 +203,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
      * }
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params,  @RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -214,10 +211,10 @@ public class EducationOfCleanPoliticsController extends BaseController {
     }
 
     /**
-     * @api {get} /education/findbyeid 根据廉政教育id查询附件
+     * @api {get} /education/findbyeid 根据廉政教育id查询 -- 附件
      * @apiGroup EducationOfCleanPolitics
      * @apiVersion 1.0.0
-     * @apiDescription 根据廉政教育id查询附件
+     * @apiDescription 根据廉政教育id查询 -- 附件
      * @apiParam {String} params
      * @apiParamExample {json} 请求样例：
      *      /education/findbyeid?params=id
@@ -231,7 +228,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
      * }
      */
-    @PostMapping("/findbyeid")
+    @GetMapping("/findbyeid")
     public JsonResult findByEid(String params) {
         return cleanPoliticsService.findByEducationId(params);
     }

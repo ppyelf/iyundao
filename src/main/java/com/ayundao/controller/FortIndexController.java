@@ -9,10 +9,7 @@ import com.ayundao.service.PioneerIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -29,10 +26,10 @@ public class FortIndexController extends BaseController {
     private FortIndexService pioneerService;
 
     /**
-     * @api {post} /fortindex/add 新增堡垒指数
+     * @api {post} /fortindex/add 新增 -- 堡垒指数
      * @apiGroup FortIndex
      * @apiVersion 1.0.0
-     * @apiDescription 新增堡垒指数
+     * @apiDescription 新增 -- 堡垒指数
      * @apiParam {FortIndex} params
      * @apiParamExample {json} 请求样例：
      *                /fortindex/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -60,10 +57,10 @@ public class FortIndexController extends BaseController {
     }
 
     /**
-     * @api {post} /fortindex/modify 修改堡垒指数
+     * @api {post} /fortindex/modify 修改 -- 堡垒指数
      * @apiGroup FortIndex
      * @apiVersion 1.0.0
-     * @apiDescription 修改堡垒指数
+     * @apiDescription 修改 -- 堡垒指数
      * @apiParam {FortIndex} params
      * @apiParamExample {json} 请求样例：
      *                 /fortindex/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -91,10 +88,10 @@ public class FortIndexController extends BaseController {
     }
 
     /**
-     * @api {get} /fortindex/getlist 分页查询所有
-     * @apiGroup PioneerIndex
+     * @api {get} /fortindex/getlist 分页查询所有 -- 堡垒指数
+     * @apiGroup FortIndex
      * @apiVersion 1.0.0
-     * @apiDescription
+     * @apiDescription      分页查询所有 -- 堡垒指数
      * @apiParam {int}  page
      * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
@@ -110,7 +107,7 @@ public class FortIndexController extends BaseController {
      * }
      *
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList( @RequestParam(defaultValue = "1") int page,
                                @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -118,10 +115,10 @@ public class FortIndexController extends BaseController {
     }
 
     /**
-     * @api {get} /fortindex/selectbydepart 根据部门查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /fortindex/selectbydepart 根据部门查询所有 -- 堡垒指数 -- 分页
+     * @apiGroup FortIndex
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据组织查询所有 -- 堡垒指数 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -138,7 +135,7 @@ public class FortIndexController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -146,10 +143,10 @@ public class FortIndexController extends BaseController {
     }
 
     /**
-     * @api {get} /fortindex/selectbygroup 根据组织查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /fortindex/selectbygroup 根据组织查询所有 -- 堡垒指数 -- 分页
+     * @apiGroup FortIndex
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据组织查询所有 -- 堡垒指数 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -166,7 +163,7 @@ public class FortIndexController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -174,10 +171,10 @@ public class FortIndexController extends BaseController {
     }
 
     /**
-     * @api {get} /fortindex/selectbysubject 根据机构查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /fortindex/selectbysubject 根据机构查询所有 -- 堡垒指数 -- 分页
+     * @apiGroup FortIndex
      * @apiVersion 1.0.0
-     * @apiDescription 根据机构查询所有，分页
+     * @apiDescription 根据机构查询所有 -- 堡垒指数 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -194,7 +191,7 @@ public class FortIndexController extends BaseController {
      * }
      *
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);

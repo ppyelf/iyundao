@@ -6,10 +6,7 @@ import com.ayundao.service.LearningPowerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -26,10 +23,10 @@ public class LearningPowerController {
     private LearningPowerService learningPowerService;
 
     /**
-     * @api {post} /learning/add 新增学习强国
+     * @api {post} /learning/add 新增 -- 学习强国
      * @apiGroup LearningPower
      * @apiVersion 1.0.0
-     * @apiDescription 新增学习强国
+     * @apiDescription 新增 -- 学习强国
      * @apiParam {LearningPower} params
      * @apiParamExample {json} 请求样例：
      *                /learning/add?user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -58,10 +55,10 @@ public class LearningPowerController {
     }
 
     /**
-     * @api {post} /learning/modify 修改学习强国
+     * @api {post} /learning/modify 修改 -- 学习强国
      * @apiGroup LearningPower
      * @apiVersion 1.0.0
-     * @apiDescription 修改学习强国
+     * @apiDescription 修改 -- 学习强国
      * @apiParam {LearningPower} params
      * @apiParamExample {json} 请求样例：
      *                 /learning/modify?id=\"id\"&user=User&score=\"分数\"&info=\"备用字段\"&...&\"info25\"=\"备用字段\"
@@ -89,10 +86,10 @@ public class LearningPowerController {
     }
 
     /**
-     * @api {get} /learning/getlist 分页查询所有
+     * @api {get} /learning/getlist 分页查询所有 -- 学习强国
      * @apiGroup LearningPower
      * @apiVersion 1.0.0
-     * @apiDescription
+     * @apiDescription      分页查询所有 -- 学习强国
      * @apiParam {int}  page
      * @apiParam {int}  size
      * @apiParamExample {json} 请求样例：
@@ -111,7 +108,7 @@ public class LearningPowerController {
      * }
      *
      */
-    @PostMapping("/getlist")
+    @GetMapping("/getlist")
     public JsonResult getList(@RequestParam(defaultValue = "1") int page,
                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -119,10 +116,10 @@ public class LearningPowerController {
     }
 
     /**
-     * @api {get} /learning/selectbydepart 根据部门查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /learning/selectbydepart 根据部门查询所有 -- 学习强国 -- 分页
+     * @apiGroup LearningPower
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据部门查询所有 -- 学习强国 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -139,7 +136,7 @@ public class LearningPowerController {
      * }
      *
      */
-    @PostMapping("/selectbydepart")
+    @GetMapping("/selectbydepart")
     public JsonResult selectByDepart(String params, @RequestParam(defaultValue = "1") int page,
                                      @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -147,10 +144,10 @@ public class LearningPowerController {
     }
 
     /**
-     * @api {get} /learning/selectbygroup 根据组织查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /learning/selectbygroup 根据组织查询所有 -- 学习强国 -- 分页
+     * @apiGroup LearningPower
      * @apiVersion 1.0.0
-     * @apiDescription 根据组织查询所有，分页
+     * @apiDescription 根据组织查询所有 -- 学习强国 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -166,7 +163,7 @@ public class LearningPowerController {
      * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
      * }
      */
-    @PostMapping("/selectbygroup")
+    @GetMapping("/selectbygroup")
     public JsonResult selectByGroup(String params, @RequestParam(defaultValue = "1") int page,
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -174,10 +171,10 @@ public class LearningPowerController {
     }
 
     /**
-     * @api {get} /learning/selectbysubject 根据机构查询所有，分页
-     * @apiGroup EducationOfCleanPolitics
+     * @api {get} /learning/selectbysubject 根据机构查询所有 -- 学习强国 -- 分页
+     * @apiGroup LearningPower
      * @apiVersion 1.0.0
-     * @apiDescription 根据机构查询所有，分页
+     * @apiDescription 根据机构查询所有 -- 学习强国 -- 分页
      * @apiParam {String} params
      * @apiParam {int}  page
      * @apiParam {int}  size
@@ -193,7 +190,7 @@ public class LearningPowerController {
      *     "data": ""
      * }
      */
-    @PostMapping("/selectbysubject")
+    @GetMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
