@@ -39,6 +39,11 @@ public class MaterialsWarningController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/add")
@@ -90,6 +95,11 @@ public class MaterialsWarningController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/modify")
@@ -114,6 +124,11 @@ public class MaterialsWarningController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/getlist")
@@ -137,6 +152,11 @@ public class MaterialsWarningController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/selectbydepart")
@@ -160,6 +180,11 @@ public class MaterialsWarningController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/selectbygroup")
@@ -183,6 +208,11 @@ public class MaterialsWarningController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/selectbysubject")
@@ -204,6 +234,11 @@ public class MaterialsWarningController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/findbymaterialsid")

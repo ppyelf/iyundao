@@ -40,6 +40,11 @@ public class LearningPowerController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/add")
@@ -67,6 +72,11 @@ public class LearningPowerController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/modify")
@@ -94,6 +104,11 @@ public class LearningPowerController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/getlist")
@@ -117,6 +132,11 @@ public class LearningPowerController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/selectbydepart")
@@ -167,6 +187,11 @@ public class LearningPowerController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      */
     @PostMapping("/selectbysubject")
     public JsonResult selectBySubject(String params, @RequestParam(defaultValue = "1") int page,

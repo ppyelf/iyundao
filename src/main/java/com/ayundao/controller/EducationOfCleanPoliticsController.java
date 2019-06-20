@@ -39,7 +39,11 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
-     *
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      */
     @PostMapping("/add")
     public JsonResult add(EducationOfCleanPolitics params) {
@@ -63,6 +67,11 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      */
     @PostMapping("/add1")
     public JsonResult add1(EducationOfCleanPoliticsAccessory params) {
@@ -85,7 +94,7 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * {
      * "code": 200,
      * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
+     * "data": ""
      * }
      */
     @PostMapping("/modify")
@@ -111,9 +120,9 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
      * {
-     * "code": 200,
-     * "message": "成功",
-     * "data": "{\"version\":\"0\",\"id\":\"402881f46afe9429016afeaf39e30006\",\"lastModifiedDate\":\"20190528214417\",\"createdDate\":\"20190528214417\",\"name\":\"添加部门11\",\"subject\":\"{\"version\":\"1\",\"id\":\"402881f46afdef14016afe28796c000b\",\"lastModifiedDate\":\"20190528193528\",\"createdDate\":\"20190528191706\",\"name\":\"修改机构\",\"subjectType\":\"etc\"}\"}"
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
      * }
      */
     @PostMapping("/getlist")
@@ -134,9 +143,6 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * @apiParamExample {json} 请求样例：
      *      /education/selectbydepart?params=\"id\"&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -164,9 +170,6 @@ public class EducationOfCleanPoliticsController extends BaseController {
      * @apiParamExample {json} 请求样例：
      *          /education/selectbygroup?params=\"id\"&page=页数&size=条数
      * @apiSuccess (200) {String} code 200:成功</br>
-     * 404:未查询到此用户</br>
-     * 600:参数异常</br>
-     * 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:

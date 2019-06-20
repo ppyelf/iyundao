@@ -103,6 +103,11 @@ public class PartySpiritController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/getlist")
@@ -126,6 +131,11 @@ public class PartySpiritController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/selectbydepart")
@@ -149,6 +159,11 @@ public class PartySpiritController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/selectbygroup")
@@ -172,6 +187,11 @@ public class PartySpiritController extends BaseController {
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      *
      */
     @PostMapping("/selectbysubject")
