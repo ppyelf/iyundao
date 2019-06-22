@@ -4,14 +4,11 @@ import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.Role;
-import com.ayundao.entity.User;
-import com.ayundao.entity.UserGroup;
 import com.ayundao.service.RoleService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -53,19 +50,15 @@ public class RoleController extends BaseController {
     @GetMapping("/list")
     public JsonResult list() {
         List<Role> roles = roleService.getList();
-        try {
-            JSONArray arr = new JSONArray();
-            for (Role role : roles) {
-                JSONObject json = new JSONObject();
-                json.put("id", role.getId());
-                json.put("name", role.getName());
-                json.put("level", role.getLevel());
-                arr.put(json);
-            }
-            jsonResult.setData(arr);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        JSONArray arr = new JSONArray();
+        for (Role role : roles) {
+            JSONObject json = new JSONObject();
+            json.put("id", role.getId());
+            json.put("name", role.getName());
+            json.put("level", role.getLevel());
+            arr.add(json);
         }
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -98,15 +91,11 @@ public class RoleController extends BaseController {
         if (role == null) {
             return JsonResult.notFound("未查询到此角色");
         }
-        try {
-            JSONObject json = new JSONObject();
-            json.put("id", role.getId());
-            json.put("name", role.getName());
-            json.put("level", role.getLevel());
-            jsonResult.setData(json.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        JSONObject json = new JSONObject();
+        json.put("id", role.getId());
+        json.put("name", role.getName());
+        json.put("level", role.getLevel());
+        jsonResult.setData(json);
         return jsonResult;
     }
 

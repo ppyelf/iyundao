@@ -60,10 +60,10 @@ public class PageController extends BaseController {
      */
     @GetMapping("/list")
     public JsonResult list() {
-        List<Page> pages = pageService.getAllForList();
+        List<Page> pages = pageService.getPageByFatherIsNull();
         JSONArray arr = new JSONArray();
         for (Page page : pages) {
-            arr.add(JsonUtils.getJson(page));
+            arr.add(convertJson(page));
         }
         jsonResult.setData(arr);
         return jsonResult;
@@ -93,7 +93,8 @@ public class PageController extends BaseController {
     @PostMapping("/view")
     public JsonResult view(String id) {
         if (StringUtils.isBlank(id)) return JsonResult.paramError();
-        return converJson(pageService.find(id), jsonResult);
+        jsonResult.setData(convertJson(pageService.find(id)));
+        return jsonResult;
     }
 
     /**
@@ -101,11 +102,10 @@ public class PageController extends BaseController {
      * @apiGroup Page
      * @apiVersion 1.0.0
      * @apiDescription 新增
-     * @apiParam {String} name
+     * @apiParam {String} name 必填
      * @apiParam {String} title
-     * @apiParam {String} uri
-     * @apiParam {int} level
-     * @apiParam {String} menuId
+     * @apiParam {int} level 必填
+     * @apiParam {String} menuId 必填
      * @apiParam {String} fatherId
      * @apiParam {int} sort
      * @apiParamExample {json} 请求样例：
@@ -126,7 +126,6 @@ public class PageController extends BaseController {
     @PostMapping("/add")
     public JsonResult add(String name,
                           String title,
-                          String uri,
                           @RequestParam(defaultValue = "0") int level,
                           String menuId,
                           String fatherId,
@@ -139,7 +138,6 @@ public class PageController extends BaseController {
         page.setLastModifiedDate(new Date(System.currentTimeMillis()));
         page.setName(name);
         page.setTitle(title);
-        page.setUri(uri);
         page.setLevel(level);
         page.setSort(sort);
         Menu menu = menuService.findById(menuId);
@@ -214,7 +212,6 @@ public class PageController extends BaseController {
         } 
         page.setName(name);
         page.setTitle(title);
-        page.setUri(uri);
         page.setLevel(level);
         page.setSort(sort);
         page = pageService.save(page, menu, father);
@@ -258,31 +255,47 @@ public class PageController extends BaseController {
     }
 
     /**
+     * @api {post} /page/child 获取子集菜单
+     * @apiGroup Page
+     * @apiVersion 1.0.0
+     * @apiDescription 获取子集菜单
+     * @apiParam {String} id 菜单ID-必填
+     * @apiParamExample {json} 请求样例：
+     *                ?id=2c4824f71b6f4de389e0b8b375636d94
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{}"
+     * }
+     */
+    @PostMapping("/child")
+    public JsonResult child(String id) {
+        List<Page> childs = pageService.findSonsByFatherId(id);
+        JSONArray arr = new JSONArray();
+        for (Page child : childs) {
+            arr.add(convertJson(child));
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
      * 实体的集合字段信息转换
      * @param page
-     * @param jsonResult
      * @return
      */
-    private JsonResult converJson(Page page, JsonResult jsonResult) {
-        if (page == null) {
-            return JsonResult.paramError();
-        } 
+    private JSONObject convertJson(Page page) {
         JSONObject json = new JSONObject(JsonUtils.getJson(page));
-        if (page.getFather() != null) {
-            json.put("father", JsonUtils.getJson(page.getFather()));
-        }
-        List<Field> fields = fieldService.findByPageId(page.getId());
-        JSONArray arr = new JSONArray();
-        if (CollectionUtils.isNotEmpty(fields)) {
-            for (Field f : fields) {
-                arr.add(new JSONObject(JsonUtils.getJson(f)));
-            }
-        }
-        json.put("fields", arr);
-        jsonResult.setCode(200);
-        jsonResult.setMessage("操作成功");
-        jsonResult.setData(json);
-        return jsonResult;
+        Menu menu = page.getMenu();
+        JSONObject menuJson = new JSONObject();
+        menuJson.put("id", menu.getId());
+        menuJson.put("name", menu.getName());
+        json.put("menu", menuJson);
+        return json;
     }
 
 }

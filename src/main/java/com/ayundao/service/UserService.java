@@ -1,8 +1,13 @@
 package com.ayundao.service;
 
+import com.alibaba.fastjson.JSONObject;
+import com.ayundao.base.utils.JsonResult;
+import com.ayundao.entity.Role;
 import com.ayundao.entity.User;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
+
+import java.util.List;
 
 
 /**
@@ -35,10 +40,9 @@ public interface UserService {
 
     /**
      * 用户搜索
-     * @param key 查询条件
      * @return
      */
-    Page<User> findByKey(String key, Pageable pageable);
+    Page<User> findByKey(Pageable pageable);
 
     /**
      * 根据ID获取实体信息
@@ -58,11 +62,26 @@ public interface UserService {
      * 添加用户
      * @param user
      */
-    void save(User user, String subjectId, String departId, String groupsId);
+    JsonResult save(User user, String subjectId, String departId, String groupsId, List<Role> roles, JsonResult jsonResult);
 
     /**
-     * 查询用户分页
+     * 获取用户详情的json
+     * @param user
      * @return
      */
-    Page<User> findAllForPage(Pageable pageable);
+    JSONObject getUserInfoJson(User user);
+
+    List<User> findAll();
+
+    /**
+     * 查询组织用户分页
+     * @param pageable
+     * @return
+     */
+    org.springframework.data.domain. Page<User> findByGroupIdForPage(String groupId, org.springframework.data.domain.Pageable pageable);
+
+    /**
+     * 查询部门用户分页
+     */
+    Page<User> findByDepartIdForPage(String departId, org.springframework.data.domain.Pageable pageable);
 }

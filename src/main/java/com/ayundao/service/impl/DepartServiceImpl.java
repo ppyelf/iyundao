@@ -59,4 +59,14 @@ public class DepartServiceImpl implements DepartService {
         return departRepository.findSubjectIsNull();
     }
 
+    @Override
+    public List<Depart> findByFatherId(String id) {
+        return departRepository.findByFatherId(id);
+    }
+
+    @Override
+    public List<Depart> getListByFatherIdIsNull() {
+        return departRepository.getListByFatherIdIsNull();
+    }
+
 }

@@ -87,4 +87,10 @@ public interface PageService {
      * @return
      */
     List<Page> findByIds(String[] pageIds);
+
+    /**
+     * 获取没有父级的页面
+     * @return
+     */
+    List<Page> getPageByFatherIsNull();
 }

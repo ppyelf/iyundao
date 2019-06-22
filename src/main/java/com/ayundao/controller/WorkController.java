@@ -332,28 +332,61 @@ public class WorkController extends BaseController {
     }
 
     /**
-     * @api {POST} /work/addIndicatorInfo 添加指标详情
+     * @api {POST} /work/addImage 上传指标图片
      * @apiGroup Work
      * @apiVersion 1.0.0
-     * @apiDescription 添加指标详情
-     * @apiParam {String} year 必填
-     * @apiParam {String} month 必填
-     * @apiParam {String} completion
-     * @apiParam {String} intro
-     * @apiParam {String} indicatorId 必填
-     * @apiParam {String} departId (departId,groupId,userId三选其一)
-     * @apiParam {String} groupId
-     * @apiParam {String} userId
-     * @apiParam {String[]} fileIds
-     * @apiParam {String[]} imageIds
+     * @apiDescription 上传指标图片
+     * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
-     *              ?id=402881916b6e4a53016b6e500b0e0003
+     *                      /work/addImage
      * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:指标不存在</br>
      *                                 601:上传失败</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     *{
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
+     */
+    @PostMapping("/addImage")
+    public JsonResult addImage(MultipartFile file) {
+        IndicatorInfoImage image = new IndicatorInfoImage();
+        image.setCreatedDate(new Date());
+        image.setLastModifiedDate(new Date());
+        Map<String, String> map = FileUtils.uploadFile(file, image, uploadPath);
+        if (map == null) {
+            return JsonResult.failure(601, "上传失败");
+        }
+        image.setUrl(map.get("url"));
+        image.setSuffix(map.get("suffix"));
+        image.setName(map.get("name"));
+        image = indicatorInfoImageService.create(image);
+        jsonResult.setData(getUploadJson(image));
+        return jsonResult;
+    }
+
+
+
+    /**
+     * @api {POST} /work/addFile 上传指标详情附件
+     * @apiGroup Work
+     * @apiVersion 1.0.0
+     * @apiDescription 上传指标详情附件
+     * @apiParam {MultipartFile} file
+     * @apiParamExample {json} 请求示例:
+     *              /work/addFile
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:上传失败</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     *{
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
      */
     @PostMapping("/addFile")
     public JsonResult addFile(MultipartFile file) {
@@ -369,6 +402,33 @@ public class WorkController extends BaseController {
         indicatorInfoFile.setName(map.get("name"));
         indicatorInfoFile = indicatorInfoFileService.create(indicatorInfoFile);
         jsonResult.setData(getUploadJson(indicatorInfoFile));
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /work/delFile 上传指标详情附件
+     * @apiGroup Work
+     * @apiVersion 1.0.0
+     * @apiDescription 上传指标详情附件
+     * @apiParam {MultipartFile} file
+     * @apiParamExample {json} 请求示例:
+     *              /work/delFile
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:上传失败</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     *{
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
+     */
+    @PostMapping("/delFile")
+    public JsonResult delFile(String id) {
+        IndicatorInfoFile file = indicatorInfoFileService.find(id);
+        indicatorInfoFileService.delete(file);
+
         return jsonResult;
     }
 

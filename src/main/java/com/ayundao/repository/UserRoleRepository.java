@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Role;
 import com.ayundao.entity.User;
 import com.ayundao.entity.UserGroupRelation;
@@ -21,7 +22,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface UserRoleRepository extends CrudRepository<UserRole, String> {
+public interface UserRoleRepository extends BaseRepository<UserRole, String> {
 
     /**
      * 查找用户拥有的角色

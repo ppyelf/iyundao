@@ -1,6 +1,7 @@
 package com.ayundao.base.utils;
 
 import com.ayundao.base.BaseEntity;
+import com.ayundao.entity.*;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -86,35 +88,14 @@ public class JsonUtils {
         return json;
     }
 
-    /**
-     * 反向父子关系
-     * @param json
-     */
-    private static void reverseFather(com.alibaba.fastjson.JSONObject json) {
-        for (Map.Entry<String, Object> entry : json.entrySet()) {
-            String key = entry.getKey();
-            if (key.equals("father") && entry.getValue() != null) {
-                com.alibaba.fastjson.JSONObject sonJson = new com.alibaba.fastjson.JSONObject((Map<String, Object>) entry.getValue());
-                for (Map.Entry<String, Object> father : json.entrySet()) {
-                    String fatherKey = father.getKey();
-                    com.alibaba.fastjson.JSONObject fahterJson = new com.alibaba.fastjson.JSONObject((Map<String, Object>) father.getValue());
-                    if (fahterJson.get("id").equals(sonJson.get("id"))) {
-
-                    } 
-                }
-                json.remove(key);
-            }
-        }
-    }
-
     public static com.alibaba.fastjson.JSONObject getPage(Page<?> page) {
-        //todo 需要再次封装,需要更加适合封装page
         com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
         com.alibaba.fastjson.JSONArray arr = new com.alibaba.fastjson.JSONArray();
         for (Object o : page.getContent()) {
             arr.add(getJson(o));
         }
         jsonObject.put("total", page.getTotal());
+        jsonObject.put("totalPage", page.getTotalPages());
         jsonObject.put("page", page.getPageNumber());
         jsonObject.put("content", arr);
         return jsonObject;

@@ -36,4 +36,17 @@ public interface UserGroupService {
 
 
     List<UserGroup> findByIds(String[] userGroupIds);
+
+    /**
+     * 获取没有父级的集合
+     * @return
+     */
+    List<UserGroup> getListByFatherIsNull();
+
+    /**
+     * 根据父级ID获取实体集合
+     * @param id
+     * @return
+     */
+    List<UserGroup> findByFatherId(String id);
 }

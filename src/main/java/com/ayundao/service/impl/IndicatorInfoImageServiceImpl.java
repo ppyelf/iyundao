@@ -6,6 +6,7 @@ import com.ayundao.repository.IndicatorInfoImageRepository;
 import com.ayundao.service.IndicatorInfoImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,12 @@ public class IndicatorInfoImageServiceImpl implements IndicatorInfoImageService 
 
     @Autowired
     private IndicatorInfoImageRepository indicatorInfoImageRepository;
+
+    @Override
+    @Transactional
+    public IndicatorInfoImage create(IndicatorInfoImage image) {
+        return indicatorInfoImageRepository.save(image);
+    }
 
     @Override
     public List<IndicatorInfoImage> findByIds(String[] ids) {

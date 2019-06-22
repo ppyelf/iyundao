@@ -15,6 +15,13 @@ import java.util.List;
 public interface IndicatorInfoImageService {
 
     /**
+     * 保存实体
+     * @param image
+     * @return
+     */
+    IndicatorInfoImage create(IndicatorInfoImage image);
+
+    /**
      * 根据IDS查询实体集合
      * @param imageIds
      * @return

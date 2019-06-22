@@ -11,6 +11,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.hql.spi.id.inline.IdsClauseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.acl.Group;
 import java.util.HashSet;
@@ -48,11 +49,13 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    @Transactional
     public Subject save(Subject subject) {
         return subjectRepository.save(subject);
     }
 
     @Override
+    @Transactional
     public Subject saveDepartAndGroup(Subject subject, String[] departIds, String[] groupIds) {
         List<Depart> departs = departService.findByIds(departIds);
         List<Groups> groups = groupsService.findbyIds(groupIds);

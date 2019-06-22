@@ -124,16 +124,41 @@ public class Subject extends BaseEntity<String> {
         /**
          * 总院
          */
-        head,
+        head(0, "总院"),
 
         /**
          * 分院
          */
-        part,
+        part(1, "分院"),
 
         /**
          * 其他
          */
-        etc
+        etc(2, "其他");
+
+        private int index;
+
+        private String name;
+
+        SUBJECT_TYPE(int index, String name) {
+            this.index = index;
+            this.name = name;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

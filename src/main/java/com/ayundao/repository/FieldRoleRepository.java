@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,7 +17,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface FieldRoleRepository extends CrudRepository<FieldRole, String> {
+public interface FieldRoleRepository extends BaseRepository<FieldRole, String> {
 
     //根据用户组和角色集合获取字段信息
     @Query("select f from FieldRole f where f.userGroup in (?1) and f.role in (?2)")

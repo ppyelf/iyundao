@@ -29,4 +29,12 @@ public interface UserGroupRepository extends CrudRepository<UserGroup, String> {
     //根据IDS获取用户组集合
     @Query("select ug from UserGroup ug where ug.id in (?1)")
     List<UserGroup> findByIds(String[] userGroupIds);
+
+    //获取没有父级的集合
+    @Query("select ug from UserGroup ug where ug.father is null")
+    List<UserGroup> getListByFatherIsNull();
+
+    //根据父级ID获取实体集合
+    @Query("select ug from UserGroup ug where ug.father.id = (?1)")
+    List<UserGroup> findByFatherId(String id);
 }

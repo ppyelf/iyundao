@@ -266,11 +266,6 @@ public class User extends BaseEntity<String> {
         /**
          * 管理员
          */
-        admin,
-
-        /**
-         * 负责人
-         */
-       manager
+        admin
     }
 }

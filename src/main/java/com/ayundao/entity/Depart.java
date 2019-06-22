@@ -123,5 +123,4 @@ public class Depart extends BaseEntity<String> {
         this.userRelations = userRelations;
     }
 
-
 }

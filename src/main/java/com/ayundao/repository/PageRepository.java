@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Menu;
 import com.ayundao.entity.Page;
 import org.springframework.data.jpa.repository.Query;
@@ -18,7 +19,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface PageRepository extends CrudRepository<Page, String> {
+public interface PageRepository extends BaseRepository<Page, String> {
 
     //获取菜单所有的页面
     @Query("select p from Page p where p.menu in ?1")
@@ -49,4 +50,8 @@ public interface PageRepository extends CrudRepository<Page, String> {
     //根据IDS获取实体集合信息
     @Query("select p from Page p where p.id in (?1)")
     List<Page> findByIds(String[] pageIds);
+
+    //获取没有父级的菜单集合
+    @Query("select p from Page p where p.father is null")
+    List<Page> getPageByFatherIsNull();
 }
