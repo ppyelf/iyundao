@@ -106,7 +106,6 @@ public class ButtonController extends BaseController {
      * @apiDescription 新增
      * @apiParam {String} name
      * @apiParam {String} fieldId
-     * @apiParam {String} uri
      * @apiParam {String[]} userGroupIds
      * @apiParam {String[]} roleIds
      * @apiParam {int} sort
@@ -127,7 +126,6 @@ public class ButtonController extends BaseController {
     @PostMapping("/add")
     public JsonResult add(String name,
                           String fieldId,
-                          String uri,
                           String[] userGroupIds,
                           String[] roleIds,
                           @RequestParam(defaultValue = "0") int sort,
@@ -144,7 +142,6 @@ public class ButtonController extends BaseController {
         button.setLastModifiedDate(new Date());
         button.setName(name);
         button.setField(field);
-        button.setUri(uri);
         button.setSort(sort);
         button.setLevel(level);
         button = buttonService.save(button, userGroups, roles);
@@ -240,13 +237,45 @@ public class ButtonController extends BaseController {
     private JSONObject convert(Button button) {
         JSONObject json = new JSONObject();
         json.put("button", JsonUtils.getJson(button));
-        json.put("field", JsonUtils.getJson(button.getField()));
-        JSONArray arr = new JSONArray();
-        for (ButtonRole br : button.getButtonRoles()) {
-            arr.add(JsonUtils.getJson(br));
-        }
-        json.put("buttonRoles", arr);
+        json.put("field", fillField(button));
+        json.put("buttonRoles", fillButtonRoles(button));
         return json;
     }
 
+    /**
+     * 填充field的json信息
+     */
+    private JSONObject fillField(Button button) {
+        JSONObject json = new JSONObject();
+        json.put("id", button.getField().getId());
+        json.put("name", button.getField().getName());
+        json.put("level", button.getField().getLevel());
+        json.put("sort", button.getField().getSort());
+        return json;
+    }
+
+    /**
+     * 填充buttonRoles的json信息
+     */
+    private JSONArray fillButtonRoles(Button b) {
+        JSONArray arr = new JSONArray();
+        for (ButtonRole br : b.getButtonRoles()) {
+            JSONObject brJson = new JSONObject();
+            if (br.getRole() != null) {
+                JSONObject role = new JSONObject();
+                role.put("id", br.getRole().getId());
+                role.put("name", br.getRole().getName());
+                brJson.put("role", role);
+            } 
+            
+            if (br.getUserGroup() != null) {
+                JSONObject userGroup = new JSONObject();
+                userGroup.put("id", br.getUserGroup().getId());
+                userGroup.put("name", br.getUserGroup().getName());
+                brJson.put("userGroup", userGroup);
+            }
+            arr.add(brJson);
+        }
+        return arr;
+    }
 }

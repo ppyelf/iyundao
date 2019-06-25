@@ -216,6 +216,7 @@ public class UserController extends BaseController {
     public JsonResult groupUser(String groupId,
                            @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
+        //todo 需要整改小组用户的分页查询
         org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size);
         org.springframework.data.domain.Page<User> userPage = userService.findByGroupIdForPage(groupId, pageable);
         if (userPage == null) {
@@ -259,6 +260,7 @@ public class UserController extends BaseController {
     public JsonResult departUser(String departId,
                            @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
+        //todo 需要整改部门用户的分页查询
         org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userService.findByDepartIdForPage(departId, pageable);
         if (userPage == null) {

@@ -16,13 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Id;
-import javax.sound.midi.Soundbank;
 import java.util.Date;
 import java.util.List;
 
@@ -53,6 +48,7 @@ public class GroupsController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 小组列表
      * @apiParam {String} subjectId 机构id
+     * @apiParam {int} type 是否只选择父级组织(默认:0-不选择)
      * @apiParamExample {json} 请求样例：
      *                /groups/list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -68,11 +64,14 @@ public class GroupsController extends BaseController {
      * }
      */
     @PostMapping("/list")
-    public JsonResult list(String subjectId) {
+    public JsonResult list(String subjectId,
+                           @RequestParam(defaultValue = "0") int type) {
         if (StringUtils.isBlank(subjectId)) {
             return JsonResult.paramError();
         } 
-        List<Groups> groups = groupsService.findBySubjectId(subjectId);
+        List<Groups> groups = type != 0
+                ? groupsService.findBySubjectIdAndFatherIsNull(subjectId)
+                : groupsService.findBySubjectId(subjectId);
         if (CollectionUtils.isEmpty(groups)) {
             return JsonResult.notFound("请添加小组");
         }

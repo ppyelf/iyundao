@@ -72,4 +72,11 @@ public interface DepartService {
      * @return
      */
     List<Depart> getListByFatherIdIsNull();
+
+    /**
+     * 根据subjectId获取所有父级实体集合
+     * @param subjectId
+     * @return
+     */
+    List<Depart> findBySubjectIdAndFatherIsNull(String subjectId);
 }

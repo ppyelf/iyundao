@@ -81,4 +81,9 @@ public class SubjectServiceImpl implements SubjectService {
         subject = subjectRepository.save(subject);
         return subject;
     }
+
+    @Override
+    public boolean exists(String id) {
+        return subjectRepository.exists(id);
+    }
 }

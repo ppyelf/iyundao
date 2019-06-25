@@ -69,4 +69,11 @@ public interface GroupsService {
      * @return
      */
     List<Groups> getListByFatherIsNull();
+
+    /**
+     * 根据subjectId获取所有父级实体集合
+     * @param subjectId
+     * @return
+     */
+    List<Groups> findBySubjectIdAndFatherIsNull(String subjectId);
 }

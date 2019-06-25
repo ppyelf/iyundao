@@ -18,10 +18,7 @@ import org.apache.lucene.util.SetOnce;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Id;
 import java.util.Date;
@@ -56,6 +53,7 @@ public class DepartController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 部门列表
      * @apiParam {String} subjectId 机构id
+     * @apiParam {int} type 是否只选择父级部门(默认:0-不选择)
      * @apiExample {json} 请求样例
      *                ?subjectId=bd6886bc88e54ef0a36472efd95c744c
      * @apiSuccess {int} code 200:成功</br>
@@ -71,11 +69,14 @@ public class DepartController extends BaseController {
      * }
      */
     @PostMapping("/list")
-    public JsonResult list(String subjectId) {
+    public JsonResult list(String subjectId,
+                           @RequestParam(defaultValue = "0") int type) {
         if (StringUtils.isBlank(subjectId)) {
             return JsonResult.paramError();
         }
-        List<Depart> departs = departService.findBySubjectId(subjectId);
+        List<Depart> departs = type != 0
+                ? departService.findBySubjectIdAndFatherIsNull(subjectId)
+                : departService.findBySubjectId(subjectId);
         if (CollectionUtils.isEmpty(departs)) {
             return jsonResult.notFound("请添加部门");
         }

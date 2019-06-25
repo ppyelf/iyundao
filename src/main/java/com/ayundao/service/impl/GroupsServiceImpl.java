@@ -71,4 +71,9 @@ public class GroupsServiceImpl implements GroupsService {
     public List<Groups> getListByFatherIsNull() {
         return groupsRepository.getListByFatherIsNull();
     }
+
+    @Override
+    public List<Groups> findBySubjectIdAndFatherIsNull(String subjectId) {
+        return groupsRepository.findBySubjectIdAndFatherIsNull(subjectId);
+    }
 }

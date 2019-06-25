@@ -4,7 +4,6 @@ import com.ayundao.base.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @ClassName: User

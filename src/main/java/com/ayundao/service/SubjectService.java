@@ -42,4 +42,11 @@ public interface SubjectService {
      * @return
      */
     Subject saveDepartAndGroup(Subject subject, String[] departIds, String[] groupIds);
+
+    /**
+     * 检测对象是否存在
+     * @param id
+     * @return
+     */
+    boolean exists(String id);
 }
