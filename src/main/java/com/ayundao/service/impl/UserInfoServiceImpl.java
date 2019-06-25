@@ -7,6 +7,7 @@ import com.ayundao.entity.*;
 import com.ayundao.repository.*;
 import com.ayundao.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,10 @@ import java.util.*;
 @Service
 @Transactional
 public class UserInfoServiceImpl implements UserInfoService {
+
+    @Autowired
+    private UserRepository userRepository;
+
     @Autowired
     private UserInfoRepository userInfoRepository;
 
@@ -77,19 +82,17 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     private UserInfoWorkRepository userInfoWorkRepository;
 
-    @Override
-    @Transactional
-    public UserInfo save(UserInfo userInfo){
-        userInfoRepository.save(userInfo);
-        return userInfo;
-    }
 
     @Override
-    public JsonResult saveAll(UserInfo userInfo, UserInfoPersonnel userInfoPersonnel, JsonResult jsonResult) {
+    @Transactional
+    public JsonResult saveAll(User user,UserInfo userInfo, UserInfoPersonnel userInfoPersonnel, JsonResult jsonResult) {
+        user = userRepository.save(user);
+        userInfo.setUserid(user.getId());
         userInfo = userInfoRepository.save(userInfo);
         userInfoPersonnel.setUserinfoid(userInfo.getId());
         userInfoPersonnel = userInfoPersonnelRepository.save(userInfoPersonnel);
         JSONObject json = new JSONObject();
+        json.put("user",user);
         json.put("userinfo", userInfo);
         json.put("userInfoPersonnel",userInfoPersonnel);
         jsonResult.setData(json);
@@ -383,6 +386,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public List<UserInfoLtxlgb> findAllByLtxlgb() {
         return userInfoLtxlgbRepository.findAll();
+    }
+
+    @Override
+    public Map<String,Integer> countBySex() {
+        return userInfoRepository.countBySex();
     }
 
 

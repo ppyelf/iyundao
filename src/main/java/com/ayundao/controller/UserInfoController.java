@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+import java.util.zip.Inflater;
 
 /**
  * @ClassName: UserInfoController
@@ -35,23 +36,55 @@ public class UserInfoController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 新增用户详情
      * @apiParam {JSON}
-     *         "username":必填，
-     *         "password":必填，
-     *         "nuber":必填，
-     *         "name":必填,
-     *         "sex":必填，
-     *         "nation":必填，
-     *         "age":必填 0-100，
-     *         "place":必填，
-     *         "birthday":必填，
-     *         "education":必填，
-     *         "idcard":必填 18，
-     *         "phone":选填，
-     *         "officeTelephone":选填，
-     *         "wechat":选填，
-     *         "emall":选填，
-     *         "addr":选填，
-     *         "userid":必填
+     *
+     * {
+     *       		"userInfo":{
+     *              "username":"必填",
+     *               "password":"必填",
+     *               "nuber":"必填",
+     *               "name":"必填",
+     *               "branchName":"必填",
+     *               "sex":"必填",
+     *               "department":"必填",
+     *               "birthday":"必填",
+     *               "education":"必填",
+     *               "place":"必填",
+     *               "nation":"必填",
+     *               "post":"必填",
+     *               "title":"",
+     *               "idEntity":"",
+     *               "workDate":"",
+     *               "partyDate":"",
+     *               "correctionDate":"",
+     *               "phone":"",
+     *               "idcard":"",
+     *               "userid":""
+     *       		},
+     *       		"userInfoPersonnel":{
+     *       		"workyear":"12154",
+     *       		"workmonth":"",
+     *       		"partypost":"",
+     *       		"servingdate":"",
+     *       		"otherpost":"",
+     *       		"jianpingpost":"",
+     *       		"jianpingdate":"",
+     *       		"politicalappearance":"",
+     *       		"partydate":"",
+     *       		"branchname":"",
+     *       		"typeworker":"",
+     *       		"gradeworker":"",
+     *       		"appointmenttime":"",
+     *       		"maritalstatus":"",
+     *       		"hukounature":"",
+     *       		"hukouwhere":"",
+     *       		"beforecompany":"",
+     *       		"reserveleavedate":"",
+     *       		"firstcontractdate":"",
+     *       		"familyaddr":"",
+     *       		"personneltype":"",
+     *       		"fanpinenddate":""
+     *       		}
+     *       }
      * @apiParamExample {json} 请求样例：
      *                /userInfo/add
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -68,52 +101,20 @@ public class UserInfoController extends BaseController {
      */
     @PostMapping(value = "/add")
     public JsonResult add(@RequestBody Map<String,Object> map){
-        Map<String,Object> object = (Map<String,Object>)map.get("userInfo");
-        UserInfo userInfo = JSON.parseObject(JSON.toJSONString(object), UserInfo.class);
+        Map<String,Object> object = (Map<String,Object>)map.get("user");
+        User user = JSON.parseObject(JSON.toJSONString(object), User.class);
+        user.setCreatedDate(new Date());
+        user.setLastModifiedDate(new Date());
+        Map<String,Object> object1 = (Map<String,Object>)map.get("userInfo");
+        UserInfo userInfo = JSON.parseObject(JSON.toJSONString(object1), UserInfo.class);
         userInfo.setCreatedDate(new Date());
         userInfo.setLastModifiedDate(new Date());
-        Map<String,Object> object1 = (Map<String,Object>)map.get("userInfoPersonnel");
-        UserInfoPersonnel userInfoPersonnel = JSON.parseObject(JSON.toJSONString(object1), UserInfoPersonnel.class);
+        Map<String,Object> object2 = (Map<String,Object>)map.get("userInfoPersonnel");
+        UserInfoPersonnel userInfoPersonnel = JSON.parseObject(JSON.toJSONString(object2), UserInfoPersonnel.class);
         userInfoPersonnel.setCreatedDate(new Date());
         userInfoPersonnel.setLastModifiedDate(new Date());
-        return userInfoService.saveAll(userInfo,userInfoPersonnel, jsonResult);
+        return userInfoService.saveAll(user,userInfo,userInfoPersonnel, jsonResult);
     }
-//    public JsonResult add(String username,String password,
-//                          String number,String name,
-//                          String branchName,String sex,
-//                          String department,String birthday,
-//                          String education,String place,
-//                          String nation,String post,
-//                          String title,String idEntity,
-//                          String workDate,String partyDate,
-//                          String correctionDate,String phone,
-//                          String idcard,String userid) {
-//        UserInfo userInfo = new UserInfo();
-//        userInfo.setCreatedDate(new Date());
-//        userInfo.setLastModifiedDate(new Date());
-//        userInfo.setUsername(username);
-//        userInfo.setPassword(password);
-//        userInfo.setNumber(number);
-//        userInfo.setName(name);
-//        userInfo.setBranchName(branchName);
-//        userInfo.setSex(sex);
-//        userInfo.setDepartment(department);
-//        userInfo.setBirthday(birthday);
-//        userInfo.setEducation(education);
-//        userInfo.setPlace(place);
-//        userInfo.setNation(nation);
-//        userInfo.setPost(post);
-//        userInfo.setTitle(title);
-//        userInfo.setIdEntity(idEntity);
-//        userInfo.setWorkDate(workDate);
-//        userInfo.setPartyDate(partyDate);
-//        userInfo.setCorrectionDate(correctionDate);
-//        userInfo.setPhone(phone);
-//        userInfo.setIdcard(idcard);
-//        userInfo.setUserid(userid);
-//        userInfoService.save(userInfo);
-//        return jsonResult;
-//    }
 
     /**
      * @api {POST} /userInfo/upload_file 上传文件
@@ -193,297 +194,18 @@ public class UserInfoController extends BaseController {
     }
 
     /**
-     * @api {post} /userInfo/add_party 新增用户党建基础信息
-     * @apiGroup userInfoParty
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户党建信息
-     * @apiParam {JSON}
-     *         "type":必填，
-     *         "state":必填，
-     *         "partyPost":必填，
-     *         "partyBranch":必填,
-     *         "applyDate":必填，
-     *         "potDate":必填，
-     *         "activistDate":必填 0-100，
-     *         "readyDate":必填，
-     *         "partyDate":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_party
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
-    @PostMapping("/add_party")
-    public JsonResult add_party(int type,int state,
-                                String partyPost,String partyBranch,
-                                String applyDate,String potDate,
-                                String activistDate,String readyDate,
-                                String partyDate,String userinfoid) {
-        UserInfoParty userInfoParty = new UserInfoParty();
-        for (UserInfoParty.TYPE types : UserInfoParty.TYPE.values()) {
-            if(types.ordinal() == type){
-                userInfoParty.setType(types);
-                break;
-            }
-        }
-        for (UserInfoParty.STATE states : UserInfoParty.STATE.values()) {
-            if(states.ordinal() == state){
-                userInfoParty.setState(states);
-                break;
-            }
-        }
-        userInfoParty.setPartyPost(partyPost);
-        userInfoParty.setPartyBranch(partyBranch);
-        userInfoParty.setApplyDate(applyDate);
-        userInfoParty.setPotDate(potDate);
-        userInfoParty.setActivistDate(activistDate);
-        userInfoParty.setReadyDate(readyDate);
-        userInfoParty.setPartyDate(partyDate);
-        userInfoParty.setUserinfoid(userinfoid);
-        userInfoService.saveParty(userInfoParty);
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /userInfo/add_mzdp 新增用户民主党派基础信息
-     * @apiGroup userInfoMzdp
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户民主党派基础信息
-     * @apiParam {JSON}
-     *         "democraticparties":必填，
-     *         "time":必填，
-     *         "partyPost":必填，
-     *         "userid":必填,
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_mzdp
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
-    @PostMapping("/add_mzdp")
-    public JsonResult add_mzdp(int democraticparties,String time,
-                               String partyPost,String userinfoid) {
-        UserInfoMzdp userInfoMzdp = new UserInfoMzdp();
-        for (UserInfoMzdp.DEMOCRATICPARTIES democraticparties1 : UserInfoMzdp.DEMOCRATICPARTIES.values()) {
-            if(democraticparties1.ordinal() == democraticparties){
-                userInfoMzdp.setDemocraticparties(democraticparties1);
-                break;
-            }
-        }
-        userInfoMzdp.setTime(time);
-        userInfoMzdp.setPartyPost(partyPost);
-        userInfoMzdp.setUserinfoid(userinfoid);
-        userInfoService.saveMzdp(userInfoMzdp);
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /userInfo/add_gzqt 新增用户高知群体基础信息
-     * @apiGroup userInfoGzqt
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户高知群体基础信息
-     * @apiParam {JSON}
-     *         "education":必填，
-     *         "title":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_gzqt
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
-    @PostMapping("/add_gzqt")
-    public JsonResult add_gzqt(String education,String title,
-                               String userinfoid) {
-        UserInfoGzqt userInfoGzqt = new UserInfoGzqt();
-        userInfoGzqt.setCreatedDate(new Date());
-        userInfoGzqt.setLastModifiedDate(new Date());
-        userInfoGzqt.setEducation(education);
-        userInfoGzqt.setTitle(title);
-        userInfoGzqt.setUserinfoid(userinfoid);
-        userInfoService.saveGzqt(userInfoGzqt);
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /userInfo/add_gh 新增用户工会基础信息
-     * @apiGroup userInfoGh
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户工会基础信息
-     * @apiParam {JSON}
-     *         "post":必填，
-     *         "time":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_gh
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
-    @PostMapping("/add_gh")
-    public JsonResult add_gh(String post,String time,
-                               String userinfoid) {
-        UserInfoGh userInfoGh = new UserInfoGh();
-        userInfoGh.setCreatedDate(new Date());
-        userInfoGh.setLastModifiedDate(new Date());
-        userInfoGh.setPost(post);
-        userInfoGh.setTime(time);
-        userInfoGh.setUserinfoid(userinfoid);
-        userInfoService.saveGh(userInfoGh);
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /userInfo/add_tw 新增用团委基础信息
-     * @apiGroup userInfoTw
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用团委基础信息
-     * @apiParam {JSON}
-     *         "post":必填，
-     *         "time":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_tw
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
-    @PostMapping("/add_tw")
-    public JsonResult add_tw(String post,String time,
-                             String userinfoid) {
-        UserInfoTw userInfoTw = new UserInfoTw();
-        userInfoTw.setCreatedDate(new Date());
-        userInfoTw.setLastModifiedDate(new Date());
-        userInfoTw.setPost(post);
-        userInfoTw.setTime(time);
-        userInfoTw.setUserinfoid(userinfoid);
-        userInfoService.saveTw(userInfoTw);
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /userInfo/add_fdh 新增用户妇代会基础信息
-     * @apiGroup userInfoFdh
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户妇代会基础信息
-     * @apiParam {JSON}
-     *         "post":必填，
-     *         "time":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_fdh
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
-    @PostMapping("/add_fdh")
-    public JsonResult add_fdh(String post,String time,
-                             String userinfoid) {
-        UserInfoFdh userInfoFdh = new UserInfoFdh();
-        userInfoFdh.setCreatedDate(new Date());
-        userInfoFdh.setLastModifiedDate(new Date());
-        userInfoFdh.setPost(post);
-        userInfoFdh.setTime(time);
-        userInfoFdh.setUserinfoid(userinfoid);
-        userInfoService.saveFdh(userInfoFdh);
-        return jsonResult;
-    }
-
-    /**
-     * @api {post} /userInfo/add_ltxlgb 新增用户离退休老干部基础信息
-     * @apiGroup userInfoLtxlgb
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户离退休老干部基础信息
-     * @apiParam {JSON}
-     *         "post":必填，
-     *         "time":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_ltxlgb
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
-    @PostMapping("/add_ltxlgb")
-    public JsonResult add_ltxlgb(String post,String time,
-                              String userinfoid) {
-        UserInfoLtxlgb userInfoLtxlgb = new UserInfoLtxlgb();
-        userInfoLtxlgb.setCreatedDate(new Date());
-        userInfoLtxlgb.setLastModifiedDate(new Date());
-        userInfoLtxlgb.setPost(post);
-        userInfoLtxlgb.setTime(time);
-        userInfoLtxlgb.setUserinfoid(userinfoid);
-        userInfoService.saveLtxlgb(userInfoLtxlgb);
-        return jsonResult;
-    }
-    /**
-     * @api {post} /userInfo/add_basic 新增用户离退休老干部基础信息
+     * @api {post} /userInfo/add_basic 新增用户基础信息表
      * @apiGroup userInfoBasic
      * @apiVersion 1.0.0
-     * @apiDescription 新增用户离退休老干部基础信息
+     * @apiDescription 新增用户基础信息表
      * @apiParam {JSON}
+     *         {
      *         "post":必填，
      *         "time":必填，
      *         "userid":必填，
+     *         }
      * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_ltxlgb
+     *                /userInfo/add_basic
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:已存在该机构</br>
      *                                 600:参数异常</br>
@@ -747,7 +469,70 @@ public class UserInfoController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{'total':3,'content':[{'id':'0a4179fc06cb49e3ac0db7bcc8cf0882','account':'admin','sex':'男','userType':'管理员','status':'正常','createdTime':'20190517111111','relation':['总院-分-部门-无','分院-总-部门-无'],'remark':'未填写'},{'id':'5cf0d3c3b0da4cbaad179e0d6d230d0c','account':'test','sex':'男','userType':'普通用户','status':'正常','createdTime':'20190517111111','relation':['总院-总-部门-无'],'remark':'未填写'},{'id':'cd22e3407ace4d86bac92f92b9e9dd3e','account':'user','sex':'男','userType':'普通用户','status':'正常','createdTime':'20190517111111','relation':[],'remark':'未填写'}]}"
+     *     "data": [
+     *         {
+     *             "birthday": "1995-04-10",
+     *             "education": "本科",
+     *             "nation": "汉族",
+     *             "title": "专家",
+     *             "userid": "11213546546132151",
+     *             "number": "002",
+     *             "password": "123456",
+     *             "workDate": "40年",
+     *             "idEntity": "未知",
+     *             "post": "主治医生",
+     *             "id": "297e47e36b7821e5016b782294410000",
+     *             "place": "陕西省",
+     *             "department": "消化科",
+     *             "lastModifiedDate": "20190621114420",
+     *             "sex": "男",
+     *             "branchName": "第一支部",
+     *             "correctionDate": "2000-11-11",
+     *             "version": "0",
+     *             "partyDate": "2011-01-01",
+     *             "createdDate": "20190621114420",
+     *             "phone": "12124545121",
+     *             "idcard": "61052719950410181X",
+     *             "name": "测试",
+     *             "info1": "",
+     *             "info5": "",
+     *             "info4": "",
+     *             "info3": "",
+     *             "username": "管理员1",
+     *             "info2": ""
+     *         },
+     *         {
+     *             "birthday": "1995-04-10",
+     *             "education": "本科",
+     *             "nation": "汉族",
+     *             "title": "专家",
+     *             "userid": "11213546546132151",
+     *             "number": "003",
+     *             "password": "123",
+     *             "workDate": "40年",
+     *             "idEntity": "未知",
+     *             "post": "45514",
+     *             "id": "297e47e36b7edc64016b7edcaf540000",
+     *             "place": "陕西省",
+     *             "department": "消化科",
+     *             "lastModifiedDate": "20190622190520",
+     *             "sex": "男",
+     *             "branchName": "第一支部",
+     *             "correctionDate": "",
+     *             "version": "0",
+     *             "partyDate": "2011-01-01",
+     *             "createdDate": "20190622190520",
+     *             "phone": "12124545121",
+     *             "idcard": "61052719950410181X",
+     *             "name": "测试",
+     *             "info1": "",
+     *             "info5": "",
+     *             "info4": "",
+     *             "info3": "",
+     *             "username": "管理员44",
+     *             "info2": ""
+     *         }
+     *     ]
      * }
      */
     @GetMapping("/list")
@@ -762,5 +547,16 @@ public class UserInfoController extends BaseController {
         return jsonResult;
     }
 
+    @GetMapping("listSex")
+    public JsonResult listSex(){
+        Map<String,Integer> pages = userInfoService.countBySex();
+        JSONArray pageArray = new JSONArray();
+//        for (JSONObject json : pages) {
+//            JSONObject json = new JSONObject(JsonUtils.);
+//            pageArray.add(json);
+//        }
+        jsonResult.setData(pageArray);
 
+        return jsonResult;
+    }
 }

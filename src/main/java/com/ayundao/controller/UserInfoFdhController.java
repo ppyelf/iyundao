@@ -56,13 +56,13 @@ public class UserInfoFdhController extends BaseController {
      * }
      */
     @PostMapping("/add_fdh")
-    public JsonResult add_fdh(String post1,String time,
+    public JsonResult add_fdh(String post,String time,
                               String userinfoid) {
 
         UserInfoFdh userInfoFdh = new UserInfoFdh();
         userInfoFdh.setCreatedDate(new Date());
         userInfoFdh.setLastModifiedDate(new Date());
-        userInfoFdh.setPost(post1);
+        userInfoFdh.setPost(post);
         userInfoFdh.setTime(time);
         userInfoFdh.setUserinfoid(userinfoid);
         userInfoService.saveFdh(userInfoFdh);

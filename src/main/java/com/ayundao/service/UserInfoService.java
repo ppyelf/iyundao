@@ -7,6 +7,7 @@ import com.ayundao.entity.*;
 
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: UserInfoService
@@ -19,17 +20,10 @@ import java.util.List;
 public interface UserInfoService {
 
     /**
-     * 新增用户详情
-     * @param userInfo
-     * @return
-     */
-    UserInfo save(UserInfo userInfo);
-
-    /**
      * 人事新增
      * @return
      */
-    JsonResult saveAll(UserInfo userInfo,UserInfoPersonnel userInfoPersonnel,JsonResult jsonResult);
+    JsonResult saveAll(User user,UserInfo userInfo,UserInfoPersonnel userInfoPersonnel,JsonResult jsonResult);
 
     /**
      * 新增用户附件
@@ -246,6 +240,8 @@ public interface UserInfoService {
      * @return
      */
     List<UserInfoLtxlgb> findAllByLtxlgb();
+
+    Map<String,Integer> countBySex();
 
 
 }

@@ -12,9 +12,7 @@ import com.ayundao.entity.UserInfoParty;
 import com.ayundao.service.UserInfoService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +29,67 @@ import java.util.List;
 public class UserInfoPartyController extends BaseController {
     @Autowired
     private UserInfoService userInfoService;
+
+    /**
+     * @api {post} /userInfo/add_party 新增用户党建基础信息
+     * @apiGroup userInfoParty
+     * @apiVersion 1.0.0
+     * @apiDescription 新增用户党建信息
+     * @apiParam {JSON}
+     *         "type":必填，
+     *         "state":必填，
+     *         "partyPost":必填，
+     *         "partyBranch":必填,
+     *         "applyDate":必填，
+     *         "potDate":必填，
+     *         "activistDate":必填 0-100，
+     *         "readyDate":必填，
+     *         "partyDate":必填，
+     *         "userid":必填，
+     * @apiParamExample {json} 请求样例：
+     *                /userInfo/add_party
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:已存在该机构</br>
+     *                                 600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     * }
+     */
+    @PostMapping("/add_party")
+    public JsonResult add_party(int type,int state,String partyPost,
+                                String partyBranch,String applyDate,String potDate,
+                                String activistDate,String readyDate,String partyDate,
+                                String id) {
+        UserInfoParty userInfoParty = new UserInfoParty();
+        for (UserInfoParty.TYPE types : UserInfoParty.TYPE.values()) {
+            if(types.ordinal() == type){
+                userInfoParty.setType(types);
+                break;
+            }
+        }
+        for (UserInfoParty.STATE states : UserInfoParty.STATE.values()) {
+            if(states.ordinal() == state){
+                userInfoParty.setState(states);
+                break;
+            }
+        }
+        userInfoParty.setPartyPost(partyPost);
+        userInfoParty.setPartyBranch(partyBranch);
+        userInfoParty.setApplyDate(applyDate);
+        userInfoParty.setPotDate(potDate);
+        userInfoParty.setActivistDate(activistDate);
+        userInfoParty.setReadyDate(readyDate);
+        userInfoParty.setPartyDate(partyDate);
+        userInfoParty.setUserinfoid(id);
+        userInfoService.saveParty(userInfoParty);
+        return jsonResult;
+    }
+
 
     /**
      * @api {get} /userInfoParty/del 删除用户详情 -党建基础信息
