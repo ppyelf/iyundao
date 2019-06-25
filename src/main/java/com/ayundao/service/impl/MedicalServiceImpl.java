@@ -1,5 +1,7 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.FileUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
@@ -7,7 +9,6 @@ import com.ayundao.entity.*;
 import com.ayundao.repository.*;
 import com.ayundao.service.MedicalService;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.Mergeable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -135,4 +136,70 @@ public class MedicalServiceImpl implements MedicalService {
         return medicalRepository.save(medical);
     }
 
+    @Override
+    public Medical find(String id) {
+        return medicalRepository.find(id);
+    }
+
+    @Override
+    public void delete(Medical medical) {
+        if (medical == null) {
+            return ;
+        }
+        List<MedicalRange> medicalRanges = medicalRangeRepository.findByMedicalId(medical.getId());
+        List<MedicalFile> medicalFiles = medicalFileRepository.findByMedicalId(medical.getId());
+        List<MedicalIndex> medicalIndices = medicalIndexRepository.findByMedicalId(medical.getId());
+        List<MedicalUserIndex> medicalUserIndices = medicalUserIndexRepository.findByMedicalId(medical.getId());
+
+        medicalRangeRepository.deleteAll(medicalRanges);
+        medicalFileRepository.deleteAll(medicalFiles);
+        medicalIndexRepository.deleteAll(medicalIndices);
+        medicalUserIndexRepository.deleteAll(medicalUserIndices);
+        medicalRepository.delete(medical);
+    }
+
+    @Override
+    public Page<Medical> findPage(Pageable pageable) {
+        return medicalRepository.findPage(pageable);
+    }
+
+    @Override
+    public MedicalIndex findMedicalIndexById(String fatherId) {
+        return medicalIndexRepository.find(fatherId);
+    }
+
+    @Override
+    public MedicalIndex saveMedicalIndex(String name, String remark, MedicalIndex father, Medical medical) {
+        MedicalIndex index = new MedicalIndex();
+        index.setCreatedDate(new Date());
+        index.setLastModifiedDate(new Date());
+        index.setName(name);
+        index.setRemark(remark);
+        index.setMedical(medical);
+        if (father != null) {
+            index.setFather(father);
+        }
+        index.setCode(getIndexLastCode());
+        index = medicalIndexRepository.save(index);
+        return index;
+    }
+
+    @Override
+    public List<MedicalIndex> findMedicalIndexByFatherIsNullForList() {
+        return medicalIndexRepository.findMedicalIndexByFatherIsNullForList();
+    }
+
+    @Override
+    public List<MedicalIndex> findMedicalIndexChild(String id) {
+        return medicalIndexRepository.findMedicalIndexChild(id);
+    }
+
+
+    /**
+     * 获取code的最大值
+     * @return
+     */
+    private int getIndexLastCode() {
+        return medicalIndexRepository.getLastCode() + 1;
+    }
 }

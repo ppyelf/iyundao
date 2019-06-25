@@ -2,7 +2,10 @@ package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.MedicalRange;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @ClassName: MedicalRangeRepository
@@ -15,4 +18,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MedicalRangeRepository extends BaseRepository<MedicalRange, String> {
 
+    //根据医德档案ID获取医德范围列表
+    @Query("select mr from MedicalRange mr where mr.medical.id = (?1)")
+    List<MedicalRange> findByMedicalId(String id);
 }

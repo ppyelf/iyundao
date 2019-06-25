@@ -1,9 +1,5 @@
 package com.ayundao.base.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.persistence.Transient;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,9 +14,6 @@ import java.util.*;
  * @Version: V1.0
  */
 public class ClassUtils {
-
-    @Transient
-    private static final Logger logger = LoggerFactory.getLogger(ClassUtils.class);
 
     /**
      * 不可实例化
@@ -59,11 +52,8 @@ public class ClassUtils {
             }
         } catch (NullPointerException e) {
         } catch (NoSuchMethodException e) {
-            logger.error(e.getMessage());
         } catch (IllegalAccessException e) {
-            logger.error(e.getMessage());
         } catch (InvocationTargetException e) {
-            logger.error(e.getMessage());
         }
         return result;
     }

@@ -320,7 +320,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
         query.orderBy(orderList);
         long total = count(query, pageable);
         TypedQuery<T> typedQuery = em.createQuery(query);
-        typedQuery.setFirstResult(pageable.getPageNumber());
+        typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         typedQuery.setMaxResults(pageable.getPageSize());
         return new Page<T>(typedQuery.getResultList(), total, new Pageable());
     }

@@ -34,7 +34,8 @@ public class MedicalIndex extends BaseEntity<String> {
     /**
      * 父级指标
      */
-    @Column(name = "FATHERID",length = 50)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "FATHERID")
     private MedicalIndex father;
 
     /**
@@ -82,4 +83,92 @@ public class MedicalIndex extends BaseEntity<String> {
      */
     @Column(name = "INFO5")
     private String info5;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public MedicalIndex getFather() {
+        return father;
+    }
+
+    public void setFather(MedicalIndex father) {
+        this.father = father;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public Medical getMedical() {
+        return medical;
+    }
+
+    public void setMedical(Medical medical) {
+        this.medical = medical;
+    }
+
+    public Set<MedicalUserIndex> getMedicalUserIndices() {
+        return medicalUserIndices;
+    }
+
+    public void setMedicalUserIndices(Set<MedicalUserIndex> medicalUserIndices) {
+        this.medicalUserIndices = medicalUserIndices;
+    }
+
+    public String getInfo1() {
+        return info1;
+    }
+
+    public void setInfo1(String info1) {
+        this.info1 = info1;
+    }
+
+    public String getInfo2() {
+        return info2;
+    }
+
+    public void setInfo2(String info2) {
+        this.info2 = info2;
+    }
+
+    public String getInfo3() {
+        return info3;
+    }
+
+    public void setInfo3(String info3) {
+        this.info3 = info3;
+    }
+
+    public String getInfo4() {
+        return info4;
+    }
+
+    public void setInfo4(String info4) {
+        this.info4 = info4;
+    }
+
+    public String getInfo5() {
+        return info5;
+    }
+
+    public void setInfo5(String info5) {
+        this.info5 = info5;
+    }
 }
