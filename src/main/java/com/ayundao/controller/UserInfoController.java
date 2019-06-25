@@ -30,75 +30,6 @@ public class UserInfoController extends BaseController {
     @Autowired
     private UserInfoService userInfoService;
 
-    /**
-     * @api {post} /userInfo/add 新增用户详情
-     * @apiGroup userInfo
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户详情
-     * @apiParam {JSON}
-     *
-     * {
-     *       		"userInfo":{
-     *              "username":"必填",
-     *               "password":"必填",
-     *               "nuber":"必填",
-     *               "name":"必填",
-     *               "branchName":"必填",
-     *               "sex":"必填",
-     *               "department":"必填",
-     *               "birthday":"必填",
-     *               "education":"必填",
-     *               "place":"必填",
-     *               "nation":"必填",
-     *               "post":"必填",
-     *               "title":"",
-     *               "idEntity":"",
-     *               "workDate":"",
-     *               "partyDate":"",
-     *               "correctionDate":"",
-     *               "phone":"",
-     *               "idcard":"",
-     *               "userid":""
-     *       		},
-     *       		"userInfoPersonnel":{
-     *       		"workyear":"12154",
-     *       		"workmonth":"",
-     *       		"partypost":"",
-     *       		"servingdate":"",
-     *       		"otherpost":"",
-     *       		"jianpingpost":"",
-     *       		"jianpingdate":"",
-     *       		"politicalappearance":"",
-     *       		"partydate":"",
-     *       		"branchname":"",
-     *       		"typeworker":"",
-     *       		"gradeworker":"",
-     *       		"appointmenttime":"",
-     *       		"maritalstatus":"",
-     *       		"hukounature":"",
-     *       		"hukouwhere":"",
-     *       		"beforecompany":"",
-     *       		"reserveleavedate":"",
-     *       		"firstcontractdate":"",
-     *       		"familyaddr":"",
-     *       		"personneltype":"",
-     *       		"fanpinenddate":""
-     *       		}
-     *       }
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
     @PostMapping(value = "/add")
     public JsonResult add(@RequestBody Map<String,Object> map){
         Map<String,Object> object = (Map<String,Object>)map.get("user");
@@ -116,29 +47,6 @@ public class UserInfoController extends BaseController {
         return userInfoService.saveAll(user,userInfo,userInfoPersonnel, jsonResult);
     }
 
-    /**
-     * @api {POST} /userInfo/upload_file 上传文件
-     * @apiGroup UserInfo
-     * @apiVersion 1.0.0
-     * @apiDescription 上传文件
-     * @apiParam {String} name 必填
-     * @apiParam {String} url 必填
-     * @apiParam {String} format 必填
-     * @apiParam {String} userid 必填
-     * @apiParamExample {json} 请求样例:
-     *                ?name=上传文件1&url=1111111&suffix=jpg&userid=12313515
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 601:名称,路径或后缀名不能为空</br>
-     *                                 602:文件类型异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": {"version":"0","id":"402881916b2a9588016b2abd6f300001","createdDate":"20190606110236","lastModifiedDate":"20190606110236","name":"上传文件","type":"file","content":"测试内容","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
-     * }
-     */
     @PostMapping("/upload_file")
     public JsonResult uploadFile(String name,String url,
                                 String format,String userinfoid){
@@ -156,26 +64,6 @@ public class UserInfoController extends BaseController {
         return jsonResult;
     }
 
-    /**
-     * @api {POST} /userInfo/upload_image 上传图片
-     * @apiGroup UserInfoImage
-     * @apiVersion 1.0.0
-     * @apiDescription 上传图片
-     * @apiParam {String} url 必填
-     * @apiParam {String} format 必填
-     * @apiParamExample {json} 请求样例:
-     *                ?name=测试1&url=1111111&format=jpg&userid=121545452
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 601:名称,路径或后缀名不能为空</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": {"version":"0","id":"402881916b2a9588016b2adbe569000e","createdDate":"20190606113622","lastModifiedDate":"20190606113622","name":"上传图片","type":"text","content":"","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
-     * }
-     */
     @PostMapping("/upload_image")
     public JsonResult uploadImage(String name,String url,
                                   String format,String userinfoid) {
@@ -193,31 +81,6 @@ public class UserInfoController extends BaseController {
         return jsonResult;
     }
 
-    /**
-     * @api {post} /userInfo/add_basic 新增用户基础信息表
-     * @apiGroup userInfoBasic
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户基础信息表
-     * @apiParam {JSON}
-     *         {
-     *         "post":必填，
-     *         "time":必填，
-     *         "userid":必填，
-     *         }
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_basic
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
     @PostMapping("/add_basic")
     public JsonResult add_basic(String workerdate,String zhuanzhengdate,String wagesdate,
                                 String arrivedate,String workersnature, String workerscategory,
@@ -264,7 +127,7 @@ public class UserInfoController extends BaseController {
         return jsonResult;
     }
 
-    @PostMapping("/add_educationwork")
+    @PostMapping("/add_education_work")
     public JsonResult add_educationwork(String startdate,String enddate,String graduationschool,
                                         String major,String educationcategory,String education,
                                         String degree,String degreedate,String edusystem,
@@ -426,25 +289,6 @@ public class UserInfoController extends BaseController {
 
 
 
-    /**
-     * @api {get} /userInfo/del 删除用户详情
-     * @apiGroup UserInfo
-     * @apiVersion 1.0.0
-     * @apiDescription 删除
-     * @apiParam {String} id 用户ID
-     * @apiParamExample {json} 请求样例
-     *                ?id
-     * @apiSuccess (200) {int} code 200:成功</br>
-     *                                 201:用户名密码错误</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": ""
-     * }
-     */
     @GetMapping("/del")
     public JsonResult del(String id) {
         if (StringUtils.isBlank(id)) {
@@ -454,87 +298,6 @@ public class UserInfoController extends BaseController {
         return jsonResult;
     }
 
-    /**
-     * @api {get} /userInfo/list 用户分页
-     * @apiGroup UserInfo
-     * @apiVersion 1.0.0
-     * @apiDescription 用户分页
-     * @apiParamExample {json} 请求样例
-     *                ?page
-     * @apiSuccess (200) {int} code 200:成功</br>
-     *                              600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": [
-     *         {
-     *             "birthday": "1995-04-10",
-     *             "education": "本科",
-     *             "nation": "汉族",
-     *             "title": "专家",
-     *             "userid": "11213546546132151",
-     *             "number": "002",
-     *             "password": "123456",
-     *             "workDate": "40年",
-     *             "idEntity": "未知",
-     *             "post": "主治医生",
-     *             "id": "297e47e36b7821e5016b782294410000",
-     *             "place": "陕西省",
-     *             "department": "消化科",
-     *             "lastModifiedDate": "20190621114420",
-     *             "sex": "男",
-     *             "branchName": "第一支部",
-     *             "correctionDate": "2000-11-11",
-     *             "version": "0",
-     *             "partyDate": "2011-01-01",
-     *             "createdDate": "20190621114420",
-     *             "phone": "12124545121",
-     *             "idcard": "61052719950410181X",
-     *             "name": "测试",
-     *             "info1": "",
-     *             "info5": "",
-     *             "info4": "",
-     *             "info3": "",
-     *             "username": "管理员1",
-     *             "info2": ""
-     *         },
-     *         {
-     *             "birthday": "1995-04-10",
-     *             "education": "本科",
-     *             "nation": "汉族",
-     *             "title": "专家",
-     *             "userid": "11213546546132151",
-     *             "number": "003",
-     *             "password": "123",
-     *             "workDate": "40年",
-     *             "idEntity": "未知",
-     *             "post": "45514",
-     *             "id": "297e47e36b7edc64016b7edcaf540000",
-     *             "place": "陕西省",
-     *             "department": "消化科",
-     *             "lastModifiedDate": "20190622190520",
-     *             "sex": "男",
-     *             "branchName": "第一支部",
-     *             "correctionDate": "",
-     *             "version": "0",
-     *             "partyDate": "2011-01-01",
-     *             "createdDate": "20190622190520",
-     *             "phone": "12124545121",
-     *             "idcard": "61052719950410181X",
-     *             "name": "测试",
-     *             "info1": "",
-     *             "info5": "",
-     *             "info4": "",
-     *             "info3": "",
-     *             "username": "管理员44",
-     *             "info2": ""
-     *         }
-     *     ]
-     * }
-     */
     @GetMapping("/list")
     public JsonResult list(){
         List<UserInfo> pages = userInfoService.findAll();

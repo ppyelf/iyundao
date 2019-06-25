@@ -32,29 +32,6 @@ public class UserInfoFdhController extends BaseController {
     @Autowired
     private UserInfoService userInfoService;
 
-    /**
-     * @api {post} /userInfo/add_fdh 新增用户妇代会基础信息
-     * @apiGroup userInfoFdh
-     * @apiVersion 1.0.0
-     * @apiDescription 新增用户妇代会基础信息
-     * @apiParam {JSON}
-     *         "post":必填，
-     *         "time":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_fdh
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 404:已存在该机构</br>
-     *                                 600:参数异常</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
-     * }
-     */
     @PostMapping("/add_fdh")
     public JsonResult add_fdh(String post,String time,
                               String userinfoid) {
