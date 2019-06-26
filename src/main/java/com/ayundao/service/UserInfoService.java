@@ -30,63 +30,63 @@ public interface UserInfoService {
      * @param file
      * @return
      */
-    UserInfoFile saveFile(UserInfoFile file);
+    JsonResult saveFile(UserInfoFile file,JsonResult jsonResult);
 
     /**
      * 新增用户图片
      * @param image
      * @return
      */
-    UserInfoImage saveImage(UserInfoImage image);
+    JsonResult saveImage(UserInfoImage image,JsonResult jsonResult);
 
     /**
      * 新增党建信息
-     * @param party
+     * @param userInfoParty
      * @return
      */
-    UserInfoParty saveParty(UserInfoParty party);
+    JsonResult saveParty(UserInfoParty userInfoParty,JsonResult jsonResult);
 
     /**
      * 新增民主党派信息
      * @param userInfoMzdp
      * @return
      */
-    UserInfoMzdp saveMzdp(UserInfoMzdp userInfoMzdp);
+    JsonResult saveMzdp(UserInfoMzdp userInfoMzdp,JsonResult jsonResult);
 
     /**
      * 新增高知群体信息
      * @param userInfoGzqt
      * @return
      */
-    UserInfoGzqt saveGzqt(UserInfoGzqt userInfoGzqt);
+    JsonResult saveGzqt(UserInfoGzqt userInfoGzqt,JsonResult jsonResult);
 
     /**
      * 新增工会信息
      * @param userInfoGh
      * @return
      */
-    UserInfoGh saveGh(UserInfoGh userInfoGh);
+    JsonResult saveGh(UserInfoGh userInfoGh,JsonResult jsonResult);
 
     /**
      * 新增团委信息
      * @param userInfoTw
      * @return
      */
-    UserInfoTw saveTw(UserInfoTw userInfoTw);
+    JsonResult saveTw(UserInfoTw userInfoTw, JsonResult jsonResult);
 
     /**
      * 新增妇代会信息
      * @param userInfoFdh
      * @return
      */
-    UserInfoFdh saveFdh(UserInfoFdh userInfoFdh);
+    JsonResult saveFdh(UserInfoFdh userInfoFdh,JsonResult jsonResult);
 
     /**
      * 新增离退休老干部信息
      * @param userInfoLtxlgb
      * @return
      */
-    UserInfoLtxlgb saveLtxlgb(UserInfoLtxlgb userInfoLtxlgb);
+    JsonResult saveLtxlgb(UserInfoLtxlgb userInfoLtxlgb,JsonResult jsonResult);
 
     /**
      * 新增基础信息表
@@ -241,7 +241,13 @@ public interface UserInfoService {
      */
     List<UserInfoLtxlgb> findAllByLtxlgb();
 
-    Map<String,Integer> countBySex();
+    Map<String,Object> countBySex();
+
+    Map<String,Object> countByEducation();
+
+    Map<String,Object> countByIdcard();
+
+    Map<String,Object> countByDepartment();
 
 
 }

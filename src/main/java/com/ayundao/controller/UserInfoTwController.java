@@ -34,16 +34,15 @@ public class UserInfoTwController extends BaseController {
     private UserInfoService userInfoService;
 
     /**
-     * @api {post} /userInfo/add_tw 新增用团委基础信息
+     * @api {post} /userInfoTw/add_tw 新增用团委基础信息
      * @apiGroup userInfoTw
      * @apiVersion 1.0.0
      * @apiDescription 新增用团委基础信息
-     * @apiParam {JSON}
-     *         "post":必填，
-     *         "time":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_tw
+     * @apiParam {String} post
+     * @apiParam {String} title
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例
+     *          ?post=&title=&id=
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:已存在该机构</br>
      *                                 600:参数异常</br>
@@ -53,28 +52,40 @@ public class UserInfoTwController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {
+     *         "userInfoTw": {
+     *             "id": "297e47e36b8d58dd016b8d59108f0000",
+     *             "post": "主席",
+     *             "time": "2010-11-11",
+     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
+     *             "info1": null,
+     *             "info2": null,
+     *             "info3": null,
+     *             "info4": null,
+     *             "info5": null,
+     *             "new": false
+     *         }
+     *     }
      * }
      */
     @PostMapping("/add_tw")
     public JsonResult add_tw(String post,String time,
-                             String userinfoid) {
+                             String id) {
         UserInfoTw userInfoTw = new UserInfoTw();
         userInfoTw.setCreatedDate(new Date());
         userInfoTw.setLastModifiedDate(new Date());
         userInfoTw.setPost(post);
         userInfoTw.setTime(time);
-        userInfoTw.setUserinfoid(userinfoid);
-        userInfoService.saveTw(userInfoTw);
-        return jsonResult;
+        userInfoTw.setUserinfoid(id);
+        return userInfoService.saveTw(userInfoTw,jsonResult);
     }
 
     /**
-     * @api {get} /userInfoGzqt/del 删除用户详情 -高知群体
+     * @api {get} /userInfoGzqt/del 删除用户详情 -团委基础信息
      * @apiGroup UserInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 删除
-     * @apiParam {String} id 用户详情ID
+     * @apiParam {String} id 团委基础信息ID
      * @apiParamExample {json} 请求样例
      *                ?id
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -98,10 +109,10 @@ public class UserInfoTwController extends BaseController {
     }
 
     /**
-     * @api {get} /userInfoFdh/list 用户详情 -妇代会信息
+     * @api {get} /userInfoFdh/list 用户详情 -团委基础信息
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
-     * @apiDescription 妇代会信息分页
+     * @apiDescription 团委基础信息
      * @apiParamExample {json} 请求样例
      *                /userInfoFdh/list
      * @apiSuccess (200) {int} code 200:成功</br>

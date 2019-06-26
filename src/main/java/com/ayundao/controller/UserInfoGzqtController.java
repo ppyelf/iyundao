@@ -34,16 +34,15 @@ public class UserInfoGzqtController extends BaseController {
     private UserInfoService userInfoService;
 
     /**
-     * @api {post} /userInfo/add_gzqt 新增用户高知群体基础信息
+     * @api {post} /userInfoGzqt/add_gzqt 新增用户高知群体基础信息
      * @apiGroup userInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 新增用户高知群体基础信息
-     * @apiParam {JSON}
-     *         "education":必填，
-     *         "title":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_gzqt
+     * @apiParam {String} education
+     * @apiParam {String} title
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例
+     *          ?education=&title=&id=
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:已存在该机构</br>
      *                                 600:参数异常</br>
@@ -53,20 +52,32 @@ public class UserInfoGzqtController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {
+     *         "userInfoGzqt": {
+     *             "id": "297e47e36b8d653c016b8d6a1f6a0001",
+     *             "education": "本科",
+     *             "title": "博士",
+     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
+     *             "info1": null,
+     *             "info2": null,
+     *             "info3": null,
+     *             "info4": null,
+     *             "info5": null,
+     *             "new": false
+     *         }
+     *     }
      * }
      */
     @PostMapping("/add_gzqt")
     public JsonResult add_gzqt(String education,String title,
-                               String userinfoid) {
+                               String id) {
         UserInfoGzqt userInfoGzqt = new UserInfoGzqt();
         userInfoGzqt.setCreatedDate(new Date());
         userInfoGzqt.setLastModifiedDate(new Date());
         userInfoGzqt.setEducation(education);
         userInfoGzqt.setTitle(title);
-        userInfoGzqt.setUserinfoid(userinfoid);
-        userInfoService.saveGzqt(userInfoGzqt);
-        return jsonResult;
+        userInfoGzqt.setUserinfoid(id);
+        return userInfoService.saveGzqt(userInfoGzqt,jsonResult);
     }
 
     /**

@@ -6,14 +6,13 @@ import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.UserInfo;
-import com.ayundao.entity.UserInfoFdh;
-import com.ayundao.entity.UserInfoMzdp;
 import com.ayundao.entity.UserInfoParty;
 import com.ayundao.service.UserInfoService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,17 +34,17 @@ public class UserInfoPartyController extends BaseController {
      * @apiGroup userInfoParty
      * @apiVersion 1.0.0
      * @apiDescription 新增用户党建信息
-     * @apiParam {JSON}
-     *         "type":必填，
-     *         "state":必填，
-     *         "partyPost":必填，
-     *         "partyBranch":必填,
-     *         "applyDate":必填，
-     *         "potDate":必填，
-     *         "activistDate":必填 0-100，
-     *         "readyDate":必填，
-     *         "partyDate":必填，
-     *         "userid":必填，
+     * @apiParam {int} type
+     * @apiParam {int} state
+     * @apiParam {String} partyPost
+     * @apiParam {String} partyBranch
+     * @apiParam {int} applyDate
+     * @apiParam {int} potDate
+     * @apiParam {String} activistDate
+     * @apiParam {String} readyDate
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例
+     *       ?type= &state= &partyPost= &partyBranch= &applyDate= &potDate= &activistDate= &readyDate=&partyDate= &id=
      * @apiParamExample {json} 请求样例：
      *                /userInfo/add_party
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -57,7 +56,27 @@ public class UserInfoPartyController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {
+     *         "userInfoParty": {
+     *             "id": "297e47e36b8d41fb016b8d4643360000",
+     *             "type": "PARTY",
+     *             "state": "NORMAL",
+     *             "partyPost": "部长",
+     *             "partyBranch": "第一支部",
+     *             "applyDate": "2002-11-11",
+     *             "potDate": "2003-4-10",
+     *             "activistDate": "2003-11-11",
+     *             "readyDate": "2004-1-1",
+     *             "partyDate": "2004-11-11",
+     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
+     *             "info1": null,
+     *             "info2": null,
+     *             "info3": null,
+     *             "info4": null,
+     *             "info5": null,
+     *             "new": false
+     *         }
+     *     }
      * }
      */
     @PostMapping("/add_party")
@@ -66,6 +85,8 @@ public class UserInfoPartyController extends BaseController {
                                 String activistDate,String readyDate,String partyDate,
                                 String id) {
         UserInfoParty userInfoParty = new UserInfoParty();
+        userInfoParty.setCreatedDate(new Date());
+        userInfoParty.setLastModifiedDate(new Date());
         for (UserInfoParty.TYPE types : UserInfoParty.TYPE.values()) {
             if(types.ordinal() == type){
                 userInfoParty.setType(types);
@@ -86,8 +107,7 @@ public class UserInfoPartyController extends BaseController {
         userInfoParty.setReadyDate(readyDate);
         userInfoParty.setPartyDate(partyDate);
         userInfoParty.setUserinfoid(id);
-        userInfoService.saveParty(userInfoParty);
-        return jsonResult;
+        return userInfoService.saveParty(userInfoParty,jsonResult);
     }
 
 

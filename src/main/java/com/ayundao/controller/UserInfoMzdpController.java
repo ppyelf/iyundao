@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,17 +34,16 @@ public class UserInfoMzdpController extends BaseController {
     private UserInfoService userInfoService;
 
     /**
-     * @api {post} /userInfo/add_mzdp 新增用户民主党派基础信息
+     * @api {post} /userInfoMzdp/add_mzdp 新增用户民主党派基础信息
      * @apiGroup userInfoMzdp
      * @apiVersion 1.0.0
      * @apiDescription 新增用户民主党派基础信息
-     * @apiParam {JSON}
-     *         "democraticparties":必填，
-     *         "time":必填，
-     *         "partyPost":必填，
-     *         "userid":必填,
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_mzdp
+     * @apiParam {String} democraticparties
+     * @apiParam {String} time
+     * @apiParam {String} partyPost
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例
+     *        ?democraticparties= &time= &partyPost=&id=
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:已存在该机构</br>
      *                                 600:参数异常</br>
@@ -53,13 +53,29 @@ public class UserInfoMzdpController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {
+     *         "userInfoMzdp": {
+     *             "id": "297e47e36b8d653c016b8d65e6b30000",
+     *             "democraticparties": "MINZHUJIANGUOHUI",
+     *             "time": "2010-11-11",
+     *             "partyPost": "主席",
+     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
+     *             "info1": null,
+     *             "info2": null,
+     *             "info3": null,
+     *             "info4": null,
+     *             "info5": null,
+     *             "new": false
+     *         }
+     *     }
      * }
      */
     @PostMapping("/add_mzdp")
     public JsonResult add_mzdp(int democraticparties,String time,
-                               String partyPost,String userinfoid) {
+                               String partyPost,String id) {
         UserInfoMzdp userInfoMzdp = new UserInfoMzdp();
+        userInfoMzdp.setCreatedDate(new Date());
+        userInfoMzdp.setLastModifiedDate(new Date());
         for (UserInfoMzdp.DEMOCRATICPARTIES democraticparties1 : UserInfoMzdp.DEMOCRATICPARTIES.values()) {
             if(democraticparties1.ordinal() == democraticparties){
                 userInfoMzdp.setDemocraticparties(democraticparties1);
@@ -68,9 +84,8 @@ public class UserInfoMzdpController extends BaseController {
         }
         userInfoMzdp.setTime(time);
         userInfoMzdp.setPartyPost(partyPost);
-        userInfoMzdp.setUserinfoid(userinfoid);
-        userInfoService.saveMzdp(userInfoMzdp);
-        return jsonResult;
+        userInfoMzdp.setUserinfoid(id);
+        return userInfoService.saveMzdp(userInfoMzdp,jsonResult);
     }
 
     /**

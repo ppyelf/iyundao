@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.Id;
 import java.util.Date;
 import java.util.List;
 
@@ -34,16 +35,15 @@ public class UserInfoLtxlgbController extends BaseController {
     private UserInfoService userInfoService;
 
     /**
-     * @api {post} /userInfo/add_ltxlgb 新增用户离退休老干部基础信息
+     * @api {post} /userInfoLtxlgb/add_ltxlgb 新增用户离退休老干部基础信息
      * @apiGroup userInfoLtxlgb
      * @apiVersion 1.0.0
      * @apiDescription 新增用户离退休老干部基础信息
-     * @apiParam {JSON}
-     *         "post":必填，
-     *         "time":必填，
-     *         "userid":必填，
-     * @apiParamExample {json} 请求样例：
-     *                /userInfo/add_ltxlgb
+     * @apiParam {String} post
+     * @apiParam {String} time
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例
+     *         ?post=""&time=""&id=""
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:已存在该机构</br>
      *                                 600:参数异常</br>
@@ -53,20 +53,32 @@ public class UserInfoLtxlgbController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
+     *     "data": {
+     *         "userInfoLtxlgb": {
+     *             "id": "297e47e36b8d58dd016b8d6126f10003",
+     *             "post": "主席",
+     *             "time": "2010-11-11",
+     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
+     *             "info1": null,
+     *             "info2": null,
+     *             "info3": null,
+     *             "info4": null,
+     *             "info5": null,
+     *             "new": false
+     *         }
+     *     }
      * }
      */
     @PostMapping("/add_ltxlgb")
     public JsonResult add_ltxlgb(String post,String time,
-                                 String userinfoid) {
+                                 String id) {
         UserInfoLtxlgb userInfoLtxlgb = new UserInfoLtxlgb();
         userInfoLtxlgb.setCreatedDate(new Date());
         userInfoLtxlgb.setLastModifiedDate(new Date());
         userInfoLtxlgb.setPost(post);
         userInfoLtxlgb.setTime(time);
-        userInfoLtxlgb.setUserinfoid(userinfoid);
-        userInfoService.saveLtxlgb(userInfoLtxlgb);
-        return jsonResult;
+        userInfoLtxlgb.setUserinfoid(id);
+        return userInfoService.saveLtxlgb(userInfoLtxlgb,jsonResult);
     }
 
     /**
