@@ -3,61 +3,45 @@ package com.ayundao.entity;
 import com.ayundao.base.BaseEntity;
 
 import javax.persistence.*;
-import java.util.Set;
 
 /**
- * @ClassName: Groups
+ * @ClassName: MedicalFile
  * @project: ayundao
  * @author: 念
- * @Date: 2019/5/16 14:44
- * @Description: 小组(组织)实体
+ * @Date: 2019/6/24 14:21
+ * @Description: 实体 - 医德附件
  * @Version: V1.0
  */
 @Entity
-@Table(name = "t_groups")
-public class Groups extends BaseEntity<String> {
+@Table(name = "t_medical_file")
+public class MedicalFile extends BaseEntity<String> {
 
-    private static final long serialVerisonUID = -10927349812794379L;
+    private final static long serialVersionUID = -120312938091283010L;
 
     /**
      * 名称
      */
-    @Column(name = "NAME", length = 50)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     /**
-     * 描述
+     * url
      */
-    @Column(name = "REMARK", length = 500)
-    private String remark;
+    @Column(name = "URL", nullable = false , length = 100)
+    private String url;
 
     /**
-     * 父级--部门
+     * 所属考核项目
      */
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "FATHERID")
-    private Groups father;
-
-
-    /**
-     * 所属机构
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "SUBJECTID")
-    private Subject subject;
+    @JoinColumn(name = "MEDICALID")
+    private Medical medical;
 
     /**
-     * 负责人
+     * 后缀名
      */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "USERID")
-    private User user;
-
-    /**
-     * 组织/小组关系
-     */
-    @OneToMany(mappedBy = "groups", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserRelation> userRelations;
+    @Column(name = "SUFFIX", length = 4, nullable = false)
+    private String suffix;
 
     /**
      * 备用字段1
@@ -97,44 +81,28 @@ public class Groups extends BaseEntity<String> {
         this.name = name;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getUrl() {
+        return url;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public Groups getFather() {
-        return father;
+    public Medical getMedical() {
+        return medical;
     }
 
-    public void setFather(Groups father) {
-        this.father = father;
+    public void setMedical(Medical medical) {
+        this.medical = medical;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public String getSuffix() {
+        return suffix;
     }
 
-    public void setSubject(Subject subject) {
-        this.subject = subject;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Set<UserRelation> getUserRelations() {
-        return userRelations;
-    }
-
-    public void setUserRelations(Set<UserRelation> userRelations) {
-        this.userRelations = userRelations;
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 
     public String getInfo1() {

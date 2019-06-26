@@ -256,14 +256,6 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     }
 
     /**
-     * 获取json--主要用于处理级联抓取时需要处理大量json的转换工作
-     */
-    public JSONObject getJson(Object obj, String[] ignores) {
-        //TODO 主要用于处理级联抓取时需要处理大量json的转换工作
-        return null;
-    }
-
-    /**
      * 保存验证组
      */
     public interface Save extends Default {

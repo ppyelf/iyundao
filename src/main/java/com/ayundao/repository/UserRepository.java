@@ -1,11 +1,15 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.User;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @ClassName: UserRepository
@@ -16,7 +20,7 @@ import org.springframework.stereotype.Repository;
  * @Version: V1.0
  */
 @Repository
-public interface UserRepository extends CrudRepository<User, String> {
+public interface UserRepository extends BaseRepository<User, String> {
 
     /**
      * 查询用户名是否存在
@@ -49,11 +53,11 @@ public interface UserRepository extends CrudRepository<User, String> {
     @Query("select u from User u where u.id = ?1")
     User findByUserId(String id);
 
-    /**
-     * 查询所有用户分页
-     * @param pageable
-     * @return
-     */
-    @Query("select u from User u")
-    Page<User> findAllForPage(Pageable pageable);
+    //组织用户分页
+    @Query(value = "SELECT u.* from t_user u left join t_user_relations ur on ur.USERID = u.ID where ur.GROUPSID = (?1)", nativeQuery = true)
+    org.springframework.data.domain.Page<User> findByGroupIdForPage(String groupId, org.springframework.data.domain.Pageable pageable);
+
+    //部门用户分页
+    @Query(value = "select u from User u left outer join fetch u.userRelations ur left outer join fetch ur.depart d where d.id = :departId")
+    Page<User> findByDepartIdForPage(@Param("departId") String departId);
 }

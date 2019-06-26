@@ -2,9 +2,11 @@ package com.ayundao.controller;
 
 
 import com.ayundao.base.BaseController;
+import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
+import com.ayundao.service.RoleService;
 import com.ayundao.service.UserService;
 import com.ayundao.service.ActivityService;
 import com.ayundao.service.AssessmentService;
@@ -17,9 +19,11 @@ import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+import sun.security.util.Password;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -43,6 +47,9 @@ public class UserController extends BaseController {
     @Autowired
     private AssessmentService assessmentService;
 
+    @Autowired
+    private RoleService roleService;
+
     /**
      * @api {POST} /user/search 用户搜索
      * @apiName search
@@ -50,6 +57,7 @@ public class UserController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 用户搜索
      * @apiParam {String} key 搜索条件
+     * @apiParam {String} value 查询值
      * @apiParam {int} page 页数(默认:1)
      * @apiParam {int} size 长度(默认:10)
      * @apiParamExample {json} 请求样例
@@ -67,12 +75,16 @@ public class UserController extends BaseController {
      */
     @PostMapping("/search")
     public JsonResult search(String key,
+                             String value,
                              @RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "10") int size) {
         if (StringUtils.isBlank(key)) {
             return JsonResult.paramError();
         }
-        Page<User> userPage = userService.findByKey(key, new Pageable(page, size));
+        Pageable pageable = new Pageable(page, size);
+        pageable.setSearchProperty(key);
+        pageable.setSearchValue(value);
+        Page<User> userPage = userService.findByKey(pageable);
         if (CollectionUtils.isEmpty(userPage.getContent())) {
             return JsonResult.notFound("不存在此用户");
         }
@@ -85,76 +97,74 @@ public class UserController extends BaseController {
      * @apiGroup User
      * @apiVersion 1.0.0
      * @apiDescription 新建用户
-     * @apiParam {String} key 搜索条件
-     * @apiParam {int} page 页数(默认:1)
-     * @apiParam {int} size 长度(默认:10)
+     * @apiParam {String} account 账号
+     * @apiParam {String} name 姓名
+     * @apiParam {int} sex 性别
+     * @apiParam {int} userType 用户类型
+     * @apiParam {String} subjectId 机构ID
+     * @apiParam {String} departId 部门ID
+     * @apiParam {String} groupsId 组织ID
+     * @apiParam {String} remark 描述
+     * @apiParam {String} password 密码
+     * @apiParam {String[]} roleIds 角色IDS
      * @apiParamExample {json} 请求样例：
      *                /user/add?key=张三&page=1&size=10
      * @apiSuccess (200) {int} code 200:成功</br>
      *                                 201:用户名密码错误</br>
+     *                                 601:用户必须有所属的机构/部门/组织</br>
+     *                                 602:用户类型设置异常</br>
+     *                                 603:部门/组织不存在</br>
+     *                                 604:机构不存在</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
      * {
-     * 	"code": 200,
-     * 	"message": "登录成功",
-     * 	"data": "{}"
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {"salt": "45a1d914886d4a92b6835a181b2a20d8","lastModifiedDate": "20190621102140","sex": "0","remark": "","version": "0","userRoles": [    {        "createdDate": "20190517111111",        "lastModifiedDate": "20190517111111",        "level": "0",        "name": "user",        "id": "b08a1e16dfe04d6c98e1599007c31490",        "version": "1"    },    {        "createdDate": "20190517111111",        "lastModifiedDate": "20190620141259",        "level": "1",        "name": "admin",        "id": "c7717f9578b64a819cbfcf75848fcc2a",        "version": "4"    }],"password": "B07EEB8D7F62FBD7","createdDate": "20190621102140","userRelations": [    {        "subject": {            "createdDate": "20190517111111",            "lastModifiedDate": "20190517111111",            "name": "总院",            "id": "bd6886bc88e54ef0a36472efd95c744c",            "version": "1",            "subjectType": "head"        },        "groups": {            "createdDate": "20190517111111",            "lastModifiedDate": "20190517111111",            "name": "总-组织",            "info1": "",            "remark": "",            "id": "ec0e291d5bfd4e98a33cd610c9b1d330",            "info5": "",            "version": "1",            "info4": "",            "info3": "",            "info2": ""        }    }],"name": "测试账号","id": "402881916b77bff1016b77d6e37a002e","userType": "admin","account": "a4","status": ""
+     *     }
      * }
      */
     @PostMapping("/add")
     public JsonResult add(String account,
                           String name,
-                          int sex,
-                          int userType,
+                          @RequestParam(defaultValue = "0") int sex,
+                          @RequestParam(defaultValue = "0") int userType,
                           String subjectId,
                           String departId,
                           String groupsId,
-                          String remark) {
+                          String remark,
+                          String password,
+                          String[] roleIds) {
+        if (StringUtils.isBlank(account)
+                || StringUtils.isBlank(name)
+                || StringUtils.isBlank(password)) {
+            return JsonResult.failure(603, "用户名/账号/密码不能为空");
+        } 
         User user = new User();
+        user.setCreatedDate(new Date());
+        user.setLastModifiedDate(new Date());
         user.setAccount(account);
         user.setName(name);
         user.setSex(sex);
+        user.setSalt(getSalt());
+        user.setPassword(setPassword(password));
         for (User.USER_TYPE type : User.USER_TYPE.values()) {
             if (type.ordinal() == userType) {
                 user.setUserType(type);
                 break;
             } 
         }
-        user.setRemark(remark);
-        userService.save(user, subjectId, departId, groupsId);
-        return jsonResult;
-    }
-
-    /**
-     * @api {get} /user/del 删除用户
-     * @apiGroup User
-     * @apiVersion 1.0.0
-     * @apiDescription 删除
-     * @apiParam {String} id 用户ID
-     * @apiParamExample {json} 请求样例
-     *                ?id
-     * @apiSuccess (200) {int} code 200:成功</br>
-     *                                 201:用户名密码错误</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     * 	"code": 200,
-     * 	"message": "成功",
-     * 	"data": ""
-     * }
-     */
-    @GetMapping("/del")
-    public JsonResult del(String id) {
-        if (StringUtils.isBlank(id)) {
-            return JsonResult.paramError();
+        if (user.getUserType() == null) {
+            return JsonResult.failure(602, "用户类型设置异常");
         }
-        userService.delete(id);
-        return jsonResult;
+        List<Role> roles = roleService.findByRoleIds(roleIds);
+        user.setRemark(remark);
+        return userService.save(user, subjectId, departId, groupsId, roles, jsonResult);
     }
 
     /**
-     * @api {get} /user/view 查看用户
+     * @api {POST} /user/view 查看用户
      * @apiGroup User
      * @apiVersion 1.0.0
      * @apiDescription 查看
@@ -162,29 +172,33 @@ public class UserController extends BaseController {
      * @apiParamExample {json} 请求样例
      *                ?id=0a4179fc06cb49e3ac0db7bcc8cf0882
      * @apiSuccess (200) {int} code 200:成功</br>
-     *                              600:参数异常</br>
+     *                              404:此用户不存在</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": "{'version':'0','id':'0a4179fc06cb49e3ac0db7bcc8cf0882','lastModifiedDate':'20190517111111','createdDate':'20190517111111','name':'管理员','password':'b356a1a11a067620275401a5a3de04300bf0c47267071e06','status':'normal','sex':'0','remark':'未填写','salt':'3a10624a300f4670','account':'admin','userType':'amdin'}"
+     *     "data": {"salt": "45a1d914886d4a92b6835a181b2a20d8","lastModifiedDate": "20190621102140","sex": "0","remark": "","version": "0","userRoles": [    {        "level": 0,        "name": "user",        "id": "b08a1e16dfe04d6c98e1599007c31490"    },    {        "level": 1,        "name": "admin",        "id": "c7717f9578b64a819cbfcf75848fcc2a"    }],"password": "B07EEB8D7F62FBD7","createdDate": "20190621102140","userRelations": [    {        "subject": {            "name": "总院",            "id": "bd6886bc88e54ef0a36472efd95c744c"        },        "groups": {            "name": "总-组织",            "id": "ec0e291d5bfd4e98a33cd610c9b1d330"        }    }],"name": "测试账号","id": "402881916b77bff1016b77d6e37a002e","userType": "admin","account": "a4","status": ""
+     *     }
      * }
      */
-    @GetMapping("/view")
+    @PostMapping("/view")
     public JsonResult view(String id) {
         User user = userService.findById(id);
-        if (user == null) return JsonResult.paramError();
-        jsonResult.setData(JsonUtils.getJson(user));
+        if (user == null) return JsonResult.notFound("此用户不存在");
+        jsonResult.setData(userService.getUserInfoJson(user));
         return jsonResult;
     }
 
     /**
-     * @api {get} /user/list 用户分页
+     * @api {post} /user/groupUser 组织用户分页
      * @apiGroup User
      * @apiVersion 1.0.0
-     * @apiDescription 用户分页
+     * @apiDescription 组织用户分页
+     * @apiParam {String} groupId 组织ID
+     * @apiParam {int} page 页数
+     * @apiParam {int} size 长度
      * @apiParamExample {json} 请求样例
      *                ?page
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -198,51 +212,67 @@ public class UserController extends BaseController {
      *     "data": "{'total':3,'content':[{'id':'0a4179fc06cb49e3ac0db7bcc8cf0882','account':'admin','sex':'男','userType':'管理员','status':'正常','createdTime':'20190517111111','relation':['总院-分-部门-无','分院-总-部门-无'],'remark':'未填写'},{'id':'5cf0d3c3b0da4cbaad179e0d6d230d0c','account':'test','sex':'男','userType':'普通用户','status':'正常','createdTime':'20190517111111','relation':['总院-总-部门-无'],'remark':'未填写'},{'id':'cd22e3407ace4d86bac92f92b9e9dd3e','account':'user','sex':'男','userType':'普通用户','status':'正常','createdTime':'20190517111111','relation':[],'remark':'未填写'}]}"
      * }
      */
-    @GetMapping("/list")
-    public JsonResult list(@RequestParam(defaultValue = "0") int page,
+    @PostMapping("/groupUser")
+    public JsonResult groupUser(String groupId,
+                           @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
-        Page<User> pages = userService.findAllForPage(new Pageable(page, size));
+        //todo 需要整改小组用户的分页查询
+        org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size);
+        org.springframework.data.domain.Page<User> userPage = userService.findByGroupIdForPage(groupId, pageable);
+        if (userPage == null) {
+            return JsonResult.success();
+        } 
         JSONObject pageJson = new JSONObject();
         JSONArray pageArray = new JSONArray();
-        pageJson.put("total", pages.getTotal());
-        for (User user : pages.getContent()) {
-            JSONObject json = new JSONObject();
-            json.put("id", user.getId());
-            json.put("account", user.getAccount());
-            json.put("sex", user.getSex() == 0 ? "男": "女");
-            switch (user.getUserType().ordinal()) {
-                case  0:
-                    json.put("userType", "普通用户");
-                    break;
-                case  1:
-                    json.put("userType", "管理员");
-                    break;
-                case  2:
-                    json.put("userType", "负责人");
-                    break;
-            }
-            switch (user.getStatus().ordinal()) {
-                case  0:
-                    json.put("status", "禁用");
-                     break;
-                case  1:
-                    json.put("status", "锁定");
-                     break;
-                case  2:
-                    json.put("status", "正常");
-                     break;
-            }
-            json.put("createdTime", user.getCreatedDate());
-            JSONArray arr = new JSONArray();
-            for (UserRelation relation : getUserRelation(user)) {
-                String s = relation.getSubject() == null ? "无" : relation.getSubject().getName();
-                String d = relation.getDepart() == null ? "无" : relation.getDepart().getName();
-                String g = relation.getGroups() == null ? "无" : relation.getGroups().getName();
-                arr.add(s + "-" + d + "-" + g);
-            }
-            json.put("relation", arr);
-            json.put("remark", user.getRemark());
-            pageArray.add(json);
+        pageJson.put("total", userPage.getTotalElements());
+        pageJson.put("totalPage", userPage.getTotalPages());
+        pageJson.put("page", userPage.getNumber());
+        for (User user : userPage.getContent()) {
+            pageArray.add(convertUser(user));
+        }
+        pageJson.put("content", pageArray);
+        jsonResult.setData(pageJson);
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /user/departUser 部门用户分页
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     * @apiDescription 部门用户分页
+     * @apiParam {String} departId 部门ID
+     * @apiParam {int} page 页数
+     * @apiParam {int} size 长度
+     * @apiParamExample {json} 请求样例
+     *                ?page
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "{'total':3,'content':[{'id':'0a4179fc06cb49e3ac0db7bcc8cf0882','account':'admin','sex':'男','userType':'管理员','status':'正常','createdTime':'20190517111111','relation':['总院-分-部门-无','分院-总-部门-无'],'remark':'未填写'},{'id':'5cf0d3c3b0da4cbaad179e0d6d230d0c','account':'test','sex':'男','userType':'普通用户','status':'正常','createdTime':'20190517111111','relation':['总院-总-部门-无'],'remark':'未填写'},{'id':'cd22e3407ace4d86bac92f92b9e9dd3e','account':'user','sex':'男','userType':'普通用户','status':'正常','createdTime':'20190517111111','relation':[],'remark':'未填写'}]}"
+     * }
+     */
+    @PostMapping("/departUser")
+    public JsonResult departUser(String departId,
+                           @RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "10") int size) {
+        //todo 需要整改部门用户的分页查询
+        org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userService.findByDepartIdForPage(departId, pageable);
+        if (userPage == null) {
+            return JsonResult.success();
+        }
+        JSONObject pageJson = new JSONObject();
+        JSONArray pageArray = new JSONArray();
+//        pageJson.put("total", ((Page) userPage).getTotal());
+//        pageJson.put("totalPage", userPage.getTotalPages());
+//        pageJson.put("page", userPage.getNumber());
+        for (User user : userPage.getContent()) {
+            pageArray.add(convertUser(user));
         }
         pageJson.put("content", pageArray);
         jsonResult.setData(pageJson);
@@ -371,4 +401,56 @@ public class UserController extends BaseController {
         return jsonResult;
     }
 
+    private JSONObject convertUser(User user) {
+        JSONObject json = JsonUtils.getJson(user);
+        if (user.getUserType() != null) {
+            switch (user.getUserType().ordinal()) {
+                case  0:
+                    json.put("userType", "普通用户");
+                    break;
+                case  1:
+                    json.put("userType", "管理员");
+                    break;
+                case  2:
+                    json.put("userType", "负责人");
+                    break;
+            }
+        }
+        if (user.getStatus() != null) {
+            switch (user.getStatus().ordinal()) {
+                case  0:
+                    json.put("status", "禁用");
+                    break;
+                case  1:
+                    json.put("status", "锁定");
+                    break;
+                case  2:
+                    json.put("status", "正常");
+                    break;
+            }
+        }
+        if (CollectionUtils.isNotEmpty(user.getUserRelations())) {
+            JSONArray arr = new JSONArray();
+            for (UserRelation ur : user.getUserRelations()) {
+                JSONObject j = new JSONObject();
+                if (ur.getSubject() == null) {
+                    continue;
+                }
+                j.put("subjectId", ur.getSubject().getId());
+                j.put("subjectName", ur.getSubject().getName());
+                if (ur.getDepart() != null) {
+                    j.put("departId", ur.getDepart().getId());
+                    j.put("departName", ur.getDepart().getName());
+                }
+                if (ur.getGroups() != null) {
+
+                    j.put("groupsId", ur.getGroups().getId());
+                    j.put("groupsName", ur.getGroups().getName());
+                }
+                arr.add(j);
+            }
+            json.put("userRelation", arr);
+        }
+        return json;
+    }
 }

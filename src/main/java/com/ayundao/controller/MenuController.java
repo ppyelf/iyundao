@@ -232,6 +232,7 @@ public class MenuController extends BaseController {
         menu.setRemark(remark);
         menu.setPublic(isPublic);
         menu.setUri(uri);
+        menu.setLevel(level);
         Menu father = StringUtils.isBlank(fatherId) ? menu.getFather() : menuService.findById(fatherId);
         if (StringUtils.isNotBlank(fatherId) && father == null) {
             return JsonResult.failure(603, "父级菜单不存在");

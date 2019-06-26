@@ -22,9 +22,8 @@ import javax.persistence.criteria.*;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * @ClassName: BaseRepositoryImpl
@@ -32,7 +31,7 @@ import java.util.Optional;
  * @author: 念
  * @Date: 2019/6/5 11:37
  * @Description: 基类
- * @Version: V1.0
+ * @Version: V1.1
  */
 @Repository
 @Transactional(readOnly = true)
@@ -132,7 +131,6 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
             delete(t);
         }
     }
-
 
     @Override
     public List<T> findAll() {
@@ -263,11 +261,6 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
-    public Page<T> findPage() {
-        return findPage(new Pageable());
-    }
-
-    @Override
     public List<T> findList(Pageable pageable) {
         Assert.notNull(pageable);
 
@@ -332,6 +325,43 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
         return new Page<T>(typedQuery.getResultList(), total, new Pageable());
     }
 
+    @Override
+    public Page<T> fetchPage(Map<String, String> map,  Pageable pageable) {
+        Assert.notNull(map);
+        Assert.notNull(pageable);
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery query = cb.createQuery(entityClass);
+        Root<T> root = query.from(entityClass);
+
+        Predicate predicate = query.getRestriction() == null
+                ? cb.conjunction()
+                : query.getRestriction();
+        List<Path<T>> paths = new ArrayList<>();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            List<String> joinList = Arrays.asList(entry.getKey().split("."));
+            String value = entry.getValue();
+            if (!CollectionUtils.isEmpty(joinList)) {
+                String fetchName = "";
+                for (int i = 0; i < joinList.size(); i++) {
+                    if ((i + 1) == joinList.size()) {
+                        break;
+                    }
+                    fetchName = joinList.get(i) + ATTRIBUTE_SEPARATOR + joinList.get(i + 1);
+                    root.fetch(fetchName);
+                }
+            }
+        }
+        return null;
+    }
+    
+    private <X> Path<X> recurionPath(Path<?> path, String name) {
+        if (path == null || StringUtils.isEmpty(name)) {
+            return (Path<X>) path;
+        }
+        return getPath(path.get(StringUtils.substringBefore(name, ATTRIBUTE_SEPARATOR)), StringUtils.substringAfter(name, ATTRIBUTE_SEPARATOR));
+    }
+
     private long count(CriteriaQuery<T> query, Pageable pageable) {
         Assert.notNull(query);
 
@@ -355,25 +385,6 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
         }
         return em.createQuery(countQuery).getSingleResult();
     }
-
-
-	/**
-	 * 拷贝Fetch
-	 *
-	 * @param from
-	 *            源
-	 * @param to
-	 *            目标
-	 */
-	private void copyFetches(Fetch<?, ?> from, Fetch<?, ?> to) {
-		Assert.notNull(from);
-		Assert.notNull(to);
-
-		for (Fetch<?, ?> fromFetch : from.getFetches()) {
-			Fetch<?, ?> toFetch = to.fetch(fromFetch.getAttribute().getName());
-			copyFetches(fromFetch, toFetch);
-		}
-	}
 
     /**
      * 转换为Order

@@ -27,7 +27,7 @@ public class IndicatorInfoFile extends BaseEntity<String> {
     /**
      * URL
      */
-    @Column(name = "URL", length = 50, nullable = false)
+    @Column(name = "URL", length = 100, nullable = false)
     private String url;
 
     /**

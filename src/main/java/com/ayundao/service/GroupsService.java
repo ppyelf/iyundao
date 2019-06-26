@@ -56,4 +56,24 @@ public interface GroupsService {
      * @return
      */
     List<Groups> findSubjectIsNull();
+
+    /**
+     * 获取子集小组
+     * @param id
+     * @return
+     */
+    List<Groups> findByFatherId(String id);
+
+    /**
+     * 获取没有父级的机构列表
+     * @return
+     */
+    List<Groups> getListByFatherIsNull();
+
+    /**
+     * 根据subjectId获取所有父级实体集合
+     * @param subjectId
+     * @return
+     */
+    List<Groups> findBySubjectIdAndFatherIsNull(String subjectId);
 }

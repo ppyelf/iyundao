@@ -26,4 +26,17 @@ public interface IndicatorInfoFileService {
      * @param indicatorInfoFile
      */
     IndicatorInfoFile create(IndicatorInfoFile indicatorInfoFile);
+
+    /**
+     * 根据ID查询实体
+     * @param id
+     * @return
+     */
+    IndicatorInfoFile find(String id);
+
+    /**
+     * 删除实体
+     * @param file
+     */
+    void delete(IndicatorInfoFile file);
 }

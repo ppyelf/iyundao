@@ -29,12 +29,6 @@ public class Page extends BaseEntity<String> {
     private String title;
 
     /**
-     * 路径
-     */
-    @Column(name = "URI", length = 10, unique = true)
-    private String uri;
-
-    /**
      * 所属菜单
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,7 +64,7 @@ public class Page extends BaseEntity<String> {
     /**
      * 等级
      */
-    @Column(name = "LEVEL", columnDefinition = "tinyint default 0")
+    @Column(name = "LEVEL", columnDefinition = "tinyint default 0", nullable = false)
     private int level;
 
     /**
@@ -109,14 +103,6 @@ public class Page extends BaseEntity<String> {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
     public Menu getMenu() {

@@ -4,7 +4,6 @@ import com.ayundao.base.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @ClassName: User
@@ -266,11 +265,6 @@ public class User extends BaseEntity<String> {
         /**
          * 管理员
          */
-        admin,
-
-        /**
-         * 负责人
-         */
-       manager
+        admin
     }
 }

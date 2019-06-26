@@ -49,4 +49,14 @@ public class UserGroupServiceImpl implements UserGroupService {
                 : userGroups;
     }
 
+    @Override
+    public List<UserGroup> getListByFatherIsNull() {
+        return userGroupRepository.getListByFatherIsNull();
+    }
+
+    @Override
+    public List<UserGroup> findByFatherId(String id) {
+        return userGroupRepository.findByFatherId(id);
+    }
+
 }

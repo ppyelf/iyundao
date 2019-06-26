@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -51,6 +48,7 @@ public class GroupsController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 小组列表
      * @apiParam {String} subjectId 机构id
+     * @apiParam {int} type 是否只选择父级组织(默认:0-不选择)
      * @apiParamExample {json} 请求样例：
      *                /groups/list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -66,20 +64,20 @@ public class GroupsController extends BaseController {
      * }
      */
     @PostMapping("/list")
-    public JsonResult list(String subjectId) {
+    public JsonResult list(String subjectId,
+                           @RequestParam(defaultValue = "0") int type) {
         if (StringUtils.isBlank(subjectId)) {
             return JsonResult.paramError();
         } 
-        List<Groups> groups = groupsService.findBySubjectId(subjectId);
+        List<Groups> groups = type != 0
+                ? groupsService.findBySubjectIdAndFatherIsNull(subjectId)
+                : groupsService.findBySubjectId(subjectId);
         if (CollectionUtils.isEmpty(groups)) {
             return JsonResult.notFound("请添加小组");
         }
         JSONArray arr = new JSONArray();
         for (Groups g :groups) {
-            JSONObject json = new JSONObject(JsonUtils.getJson(g));
-            json.remove("user");
-            json.remove("subject");
-            arr.add(json);
+            arr.add(convertJson(g));
         }
         jsonResult.setData(arr);
         return jsonResult;
@@ -105,7 +103,7 @@ public class GroupsController extends BaseController {
      */
     @GetMapping("/manager_list")
     public JsonResult managerList() {
-        List<Groups> groups = groupsService.getList();
+        List<Groups> groups = groupsService.getListByFatherIsNull();
         JSONArray arr = new JSONArray();
         for (Groups group : groups) {
             arr.add(convertJson(group));
@@ -170,6 +168,7 @@ public class GroupsController extends BaseController {
      * @apiParam {String} name
      * @apiParam {String} userId
      * @apiParam {String} subjectId
+     * @apiParam {String} remark
      * @apiParamExample {json} 请求样例：
      *                /groups/add
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -194,12 +193,15 @@ public class GroupsController extends BaseController {
     @PostMapping("/add")
     public JsonResult add(String name,
                           String userId,
-                          String subjectId) {
+                          String subjectId,
+                          String fatherId,
+                          String remark) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(subjectId)) {
             return JsonResult.paramError();
         }
         Groups groups = new Groups();
         groups.setName(name);
+        groups.setRemark(remark);
         groups.setLastModifiedDate(new Date(System.currentTimeMillis()));
         groups.setCreatedDate(new Date(System.currentTimeMillis()));
         Subject subject = subjectService.find(subjectId);
@@ -210,6 +212,12 @@ public class GroupsController extends BaseController {
         if (StringUtils.isNotBlank(userId)) {
             User user = userService.findById(userId);
             groups.setUser(user == null ? null : user);
+        }
+        if (StringUtils.isNotBlank(fatherId)) {
+            Groups father = groupsService.findById(fatherId);
+            if (father != null) {
+                groups.setFather(father);
+            }
         }
         groups = groupsService.save(groups);
         jsonResult.setData(convertJson(groups));
@@ -225,12 +233,14 @@ public class GroupsController extends BaseController {
      * @apiParam {String} name
      * @apiParam {String} userId
      * @apiParam {String} subjectId 必填
+     * @apiParam {String} fatherId 必填
      * @apiParamExample {json} 请求样例：
      *                ?id=402881f46afdef14016afe0d13520005&name=修改用户组
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户组</br>
      *                                 600:参数异常</br>
      *                                 601:此机构不存在</br>
+     *                                 602:无法设置自己为父级</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -245,7 +255,8 @@ public class GroupsController extends BaseController {
     public JsonResult modify(String id,
                              String name,
                              String userId,
-                             String subjectId) {
+                             String subjectId,
+                             String fatherId) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
         }
@@ -264,8 +275,76 @@ public class GroupsController extends BaseController {
             User user = userService.findById(userId);
             groups.setUser(user);
         }
+        if (StringUtils.isNotBlank(fatherId)) {
+            if (fatherId.equals(groups.getId())) {
+                return JsonResult.failure(602, "无法设置自己为父级");
+            }
+            Groups father = groupsService.findById(fatherId);
+            if (father != null) {
+                groups.setFather(father);
+            }
+        }
         groups = groupsService.save(groups);
         jsonResult.setData(convertJson(groups));
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /groups/childs 获取子集小组
+     * @apiGroup Groups
+     * @apiVersion 1.0.0
+     * @apiDescription 获取子集小组
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例：
+     *                ?id=9b7678a607ef4199ad7a4018b892c49d
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": [{    "createdDate": "20190619100709",    "lastModifiedDate": "20190620110819",    "subject": {        "createdDate": "20190620095534",        "lastModifiedDate": "20190620095920",        "name": "测试添加",        "id": "402881916b726258016b7298a5bf0006",        "version": "1",        "subjectType": "etc"    },    "name": "添加部门2",    "id": "402881916b6d5385016b6d7ce3d30000",    "version": "2",    "user": {        "password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06",        "createdDate": "20190517111111",        "salt": "3a10624a300f4670",        "lastModifiedDate": "20190517111111",        "sex": "0",        "name": "管理员",        "remark": "未填写",        "id": "0a4179fc06cb49e3ac0db7bcc8cf0882",        "userType": "admin",        "version": "0",        "account": "admin",        "status": "normal"    }},{    "createdDate": "20190619102419",    "lastModifiedDate": "20190619102419",    "subject": {        "createdDate": "20190528191706",        "lastModifiedDate": "20190528193528",        "name": "修改机构",        "id": "402881f46afdef14016afe28796c000b",        "version": "1",        "subjectType": "etc"    },    "name": "添加部门2",    "id": "402881916b6d5385016b6d8c9b3a0001",    "version": "0",    "user": null},{    "createdDate": "20190619102500",    "lastModifiedDate": "20190619102500",    "subject": {        "createdDate": "20190528191706",        "lastModifiedDate": "20190528193528",        "name": "修改机构",        "id": "402881f46afdef14016afe28796c000b",        "version": "1",        "subjectType": "etc"    },    "name": "添加部门2",    "id": "402881916b6d5385016b6d8d3c1d0002",    "version": "0",    "user": null},{    "createdDate": "20190528213713",    "lastModifiedDate": "20190618095208",    "subject": {        "createdDate": "20190528191706",        "lastModifiedDate": "20190528193528",        "name": "修改机构",        "id": "402881f46afdef14016afe28796c000b",        "version": "1",        "subjectType": "etc"    },    "name": "测试修改",    "id": "402881f46afe9429016afea8c2570001",    "version": "2",    "user": {        "password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06",        "createdDate": "20190517111111",        "salt": "3a10624a300f4670",        "lastModifiedDate": "20190517111111",        "sex": "0",        "name": "管理员",        "remark": "未填写",        "id": "0a4179fc06cb49e3ac0db7bcc8cf0882",        "userType": "admin",        "version": "0",        "account": "admin",        "status": "normal"    },    "childs": [        {            "createdDate": "20190620114515",            "lastModifiedDate": "20190620114515",            "name": "测试部门",            "id": "402881916b726258016b72fd0df00015",            "version": "0"        }    ]}
+     *     ]
+     * }
+     */
+    @PostMapping("/childs")
+    public JsonResult child(String id) {
+        List<Groups> groups = groupsService.findByFatherId(id);
+        JSONArray arr = new JSONArray();
+        for (Groups group : groups) {
+            arr.add(convertJson(group));
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {get} /groups/all 获取所有组织集合
+     * @apiGroup Groups
+     * @apiVersion 1.0.0
+     * @apiDescription 获取所有组织集合
+     * @apiParamExample {json} 请求样例：
+     *                /groups/all
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": [{    "createdDate": "20190619100709",    "lastModifiedDate": "20190620110819",    "subject": {        "createdDate": "20190620095534",        "lastModifiedDate": "20190620095920",        "name": "测试添加",        "id": "402881916b726258016b7298a5bf0006",        "version": "1",        "subjectType": "etc"    },    "name": "添加部门2",    "id": "402881916b6d5385016b6d7ce3d30000",    "version": "2",    "user": {        "password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06",        "createdDate": "20190517111111",        "salt": "3a10624a300f4670",        "lastModifiedDate": "20190517111111",        "sex": "0",        "name": "管理员",        "remark": "未填写",        "id": "0a4179fc06cb49e3ac0db7bcc8cf0882",        "userType": "admin",        "version": "0",        "account": "admin",        "status": "normal"    }},{    "createdDate": "20190619102419",    "lastModifiedDate": "20190619102419",    "subject": {        "createdDate": "20190528191706",        "lastModifiedDate": "20190528193528",        "name": "修改机构",        "id": "402881f46afdef14016afe28796c000b",        "version": "1",        "subjectType": "etc"    },    "name": "添加部门2",    "id": "402881916b6d5385016b6d8c9b3a0001",    "version": "0",    "user": null},{    "createdDate": "20190619102500",    "lastModifiedDate": "20190619102500",    "subject": {        "createdDate": "20190528191706",        "lastModifiedDate": "20190528193528",        "name": "修改机构",        "id": "402881f46afdef14016afe28796c000b",        "version": "1",        "subjectType": "etc"    },    "name": "添加部门2",    "id": "402881916b6d5385016b6d8d3c1d0002",    "version": "0",    "user": null},{    "createdDate": "20190528213713",    "lastModifiedDate": "20190618095208",    "subject": {        "createdDate": "20190528191706",        "lastModifiedDate": "20190528193528",        "name": "修改机构",        "id": "402881f46afdef14016afe28796c000b",        "version": "1",        "subjectType": "etc"    },    "name": "测试修改",    "id": "402881f46afe9429016afea8c2570001",    "version": "2",    "user": {        "password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06",        "createdDate": "20190517111111",        "salt": "3a10624a300f4670",        "lastModifiedDate": "20190517111111",        "sex": "0",        "name": "管理员",        "remark": "未填写",        "id": "0a4179fc06cb49e3ac0db7bcc8cf0882",        "userType": "admin",        "version": "0",        "account": "admin",        "status": "normal"    },    "childs": [        {            "createdDate": "20190620114515",            "lastModifiedDate": "20190620114515",            "name": "测试部门",            "id": "402881916b726258016b72fd0df00015",            "version": "0"        }    ]}
+     *     ]
+     * }
+     */
+    @GetMapping("/all")
+    public JsonResult all() {
+        List<Groups> groups = groupsService.getList();
+        JSONArray arr = new JSONArray();
+        for (Groups group : groups) {
+            arr.add(convertJson(group));
+        }
+        jsonResult.setData(arr);
         return jsonResult;
     }
 

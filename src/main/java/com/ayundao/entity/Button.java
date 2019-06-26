@@ -35,12 +35,6 @@ public class Button extends BaseEntity<String> {
     private Field field;
 
     /**
-     * 执行路径
-     */
-    @Column(name = "URI", length = 10)
-    private String uri;
-
-    /**
      * 排序
      */
     @Max(2)
@@ -103,14 +97,6 @@ public class Button extends BaseEntity<String> {
 
     public void setField(Field field) {
         this.field = field;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
     public int getSort() {

@@ -5,6 +5,7 @@ import com.ayundao.repository.IndicatorInfoFileRepository;
 import com.ayundao.service.IndicatorInfoFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,7 +29,18 @@ public class IndicatorInfoFileServiceImpl implements IndicatorInfoFileService {
     }
 
     @Override
+    @Transactional
     public IndicatorInfoFile create(IndicatorInfoFile indicatorInfoFile) {
         return indicatorInfoFileRepository.save(indicatorInfoFile);
+    }
+
+    @Override
+    public IndicatorInfoFile find(String id) {
+        return indicatorInfoFileRepository.find(id);
+    }
+
+    @Override
+    public void delete(IndicatorInfoFile file) {
+        indicatorInfoFileRepository.delete(file);
     }
 }

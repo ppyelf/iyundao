@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.support.JpaRepositoryImplementati
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: BaseRepository
@@ -11,7 +12,7 @@ import java.util.List;
  * @author: 念
  * @Date: 2019/6/5 11:30
  * @Description: 基类 - 仓库
- * @Version: V1.0
+ * @Version: V1.1
  */
 @NoRepositoryBean
 public interface BaseRepository<T, ID> extends JpaRepositoryImplementation<T, ID> {
@@ -24,11 +25,11 @@ public interface BaseRepository<T, ID> extends JpaRepositoryImplementation<T, ID
 
     List<T> findList();
 
-    Page<T> findPage();
-
     List<T> findList(Pageable pageable);
 
     Page<T> findPage(Pageable pageable);
+
+    Page<T> fetchPage(Map<String, String> map, Pageable pageable);
 
     @Override
     <S extends T> S save(S entity);

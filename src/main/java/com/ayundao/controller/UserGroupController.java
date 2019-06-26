@@ -58,14 +58,10 @@ public class UserGroupController extends BaseController {
      */
     @GetMapping("/list")
     public JsonResult list() {
-        List<UserGroup> userGroups = userGroupService.getList();
+        List<UserGroup> userGroups = userGroupService.getListByFatherIsNull();
         JSONArray arr = new JSONArray();
         for (UserGroup ug : userGroups) {
-            JSONObject json =new JSONObject();
-            json.put("id", ug.getId());
-            json.put("name", ug.getName());
-            jsonFather(ug, json);
-            arr.add(json);
+            arr.add(JsonUtils.getJson(ug));
         }
         jsonResult.setData(arr);
         return jsonResult;
@@ -106,10 +102,6 @@ public class UserGroupController extends BaseController {
         if (userGroup == null) {
             return JsonResult.notFound("未查询到此用户组");
         }
-        JSONObject json = new JSONObject();
-        json.put("id", userGroup.getId());
-        json.put("name", userGroup.getName());
-        jsonFather(userGroup, json);
         jsonResult.setData(JsonUtils.getJson(userGroup));
         return jsonResult;
     }
@@ -214,20 +206,43 @@ public class UserGroupController extends BaseController {
         return jsonResult;
     }
 
-
     /**
-     * 简要获取父级关系
-     * @param userGroup
-     * @param json
+     * @api {post} /user_group/child 查看单个用户组
+     * @apiGroup UserGroup
+     * @apiVersion 1.0.0
+     * @apiDescription 查看单个用户组
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例：
+     *                ?id=813f15af1b1c402da17838e8a067ed68
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:未查询到此用户组</br>
+     *                                 600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {
+     *         "createdDate": "20190517111111",
+     *         "lastModifiedDate": "20190517111111",
+     *         "name": "子小组",
+     *         "id": "813f15af1b1c402da17838e8a067ed68",
+     *         "version": "1"
+     *     }
+     * }
      */
-    private void jsonFather(UserGroup userGroup, JSONObject json) {
-        if (userGroup.getFather() != null) {
-            JSONObject father = new JSONObject();
-            father.put("id", userGroup.getFather().getId());
-            father.put("name", userGroup.getFather().getName());
-            json.put("father", father);
+    @PostMapping("/child")
+    public JsonResult child(String id) {
+        if (StringUtils.isBlank(id)) {
+            return JsonResult.paramError();
         }
+        List<UserGroup> userGroup = userGroupService.findByFatherId(id);
+        JSONArray arr = new JSONArray();
+        for (UserGroup ug : userGroup) {
+            arr.add(JsonUtils.getJson(ug));
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
     }
-
-
 }

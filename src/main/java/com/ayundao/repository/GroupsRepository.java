@@ -40,4 +40,16 @@ public interface GroupsRepository extends BaseRepository<Groups, String> {
 
     @Query("select g from Groups g where g.subject is null")
     List<Groups> findSubjectIsNull();
+
+    //获取子集
+    @Query("select g from Groups g where g.father.id = (?1)")
+    List<Groups> findByFatherId(String id);
+
+    //获取没有父级的集合
+    @Query("select g from Groups g where g.father is null")
+    List<Groups> getListByFatherIsNull();
+
+    //根据subjectId获取所有父级实体集合
+    @Query("select g from Groups g where g.subject.id = ?1 and g.father is null")
+    List<Groups> findBySubjectIdAndFatherIsNull(String subjectId);
 }

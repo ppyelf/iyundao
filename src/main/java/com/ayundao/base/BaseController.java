@@ -20,6 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.sound.midi.Soundbank;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.*;
@@ -132,7 +133,7 @@ public abstract class BaseController {
     public User setCurrentUser(HttpServletRequest req, User user) {
         //用户信息
         account = user.getAccount();
-        account = EncryptUtils.DESencode(account, salt);
+        account = EncryptUtils.DESencode(user.getPassword(), salt);
         req.setAttribute(account, account);
         String[] ids = null;
 
@@ -140,6 +141,15 @@ public abstract class BaseController {
         redisUtils.set(account+USER_INFO, JsonUtils.getJson(user));
         req.getSession().setAttribute("i-YunDao-account", account);
         return this.user;
+    }
+
+    /**
+     * 设置用户密码
+     * @param password
+     * @return
+     */
+    public String setPassword(String password) {
+        return EncryptUtils.DESencode(password, salt);
     }
 
     /**
@@ -296,5 +306,9 @@ public abstract class BaseController {
     }
     public void setValidator(Validator validator) {
         this.validator = validator;
+    }
+
+    public String getSalt() {
+        return salt;
     }
 }

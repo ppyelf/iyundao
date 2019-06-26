@@ -44,7 +44,7 @@ public class FileUtils {
             map.put("suffix", suffix.substring(suffix.lastIndexOf(FILE_IDENTIFIER)).replace(".", ""));
             map.put("name", UUID.randomUUID().toString().replace("-", ""));
 
-            String filePath = o.getClass().getSimpleName().toLowerCase() + "/" + map.get("name") + "." + map.get("suffix");
+            String filePath = o.getClass().getSimpleName().toLowerCase() + "\\" + map.get("name") + "." + map.get("suffix");
             map.put("url", filePath);
 
             File newFile = new File(path+filePath);
@@ -59,5 +59,14 @@ public class FileUtils {
         return map;
     }
 
-
+    /**
+     * 删除文件
+     * @param path 文件路径
+     * @return
+     */
+    public static boolean deleteFile(String path) {
+        File file = new File(path);
+        file.delete();
+        return false;
+    }
 }

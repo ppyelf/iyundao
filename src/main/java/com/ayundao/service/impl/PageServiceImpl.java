@@ -77,6 +77,7 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
+    @Transactional
     public Page save(Page page, Menu menu, Page father) {
         if (father != null) {
             page.setFather(father);
@@ -92,6 +93,7 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
+    @Transactional
     public void delete(String id) {
         pageRepository.deleteById(id);
     }
@@ -107,5 +109,10 @@ public class PageServiceImpl implements PageService {
         return CollectionUtils.isEmpty(pages)
                 ? new ArrayList<>()
                 : pages;
+    }
+
+    @Override
+    public List<Page> getPageByFatherIsNull() {
+        return pageRepository.getPageByFatherIsNull();
     }
 }

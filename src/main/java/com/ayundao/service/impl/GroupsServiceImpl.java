@@ -41,6 +41,7 @@ public class GroupsServiceImpl implements GroupsService {
     }
 
     @Override
+    @Transactional
     public Groups save(Groups groups) {
         return groupsRepository.save(groups);
     }
@@ -51,6 +52,7 @@ public class GroupsServiceImpl implements GroupsService {
     }
 
     @Override
+    @Transactional
     public List<Groups> saveAll(List<Groups> groups) {
         return groupsRepository.saveAll(groups);
     }
@@ -58,5 +60,20 @@ public class GroupsServiceImpl implements GroupsService {
     @Override
     public List<Groups> findSubjectIsNull() {
         return groupsRepository.findSubjectIsNull();
+    }
+
+    @Override
+    public List<Groups> findByFatherId(String id) {
+        return groupsRepository.findByFatherId(id);
+    }
+
+    @Override
+    public List<Groups> getListByFatherIsNull() {
+        return groupsRepository.getListByFatherIsNull();
+    }
+
+    @Override
+    public List<Groups> findBySubjectIdAndFatherIsNull(String subjectId) {
+        return groupsRepository.findBySubjectIdAndFatherIsNull(subjectId);
     }
 }

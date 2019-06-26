@@ -37,7 +37,6 @@ public class DefaultConfig implements WebMvcConfigurer {
     @Override
     public Validator getValidator() {
         LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
-        //TODO 消息拦截器
         localValidatorFactoryBean.setMessageInterpolator(new MessageInterpolator());
         return localValidatorFactoryBean;
     }

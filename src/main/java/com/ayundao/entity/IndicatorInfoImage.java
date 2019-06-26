@@ -27,7 +27,7 @@ public class IndicatorInfoImage extends BaseEntity<String> {
     /**
      * URL
      */
-    @Column(name = "URL", length = 50, nullable = false)
+    @Column(name = "URL", length = 100, nullable = false)
     private String url;
 
     /**
@@ -46,7 +46,7 @@ public class IndicatorInfoImage extends BaseEntity<String> {
      * 工作详情
      */
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "INDICATORINFOID", nullable = false)
+    @JoinColumn(name = "INDICATORINFOID")
     private IndicatorInfo indicatorInfo;
 
     public String getName() {

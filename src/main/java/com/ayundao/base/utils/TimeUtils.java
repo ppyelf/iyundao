@@ -65,6 +65,11 @@ public class TimeUtils {
        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date(System.currentTimeMillis()));
     }
 
+    /**
+     * 检测时间格式是否符合yyyyMMddHHmmss
+     * @param date
+     * @return
+     */
     public static boolean isyyyyMMddHHmmss(String date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         try {
@@ -72,18 +77,6 @@ public class TimeUtils {
             return true;
         } catch (ParseException e) {
             return false;
-        }
-    }
-
-    public static void main(String[] args) {
-        String date = "201906061111111";
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
-        System.out.println(isyyyyMMddHHmmss(date));
-        format.setLenient(false);
-        try {
-            System.out.println(format.parse(date));
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
     }
 }
