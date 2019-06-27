@@ -28,8 +28,21 @@ public class ClassUtils {
      * @return
      */
     public static String forceGetProperty(Object obj, String name) {
+        return reflectObject(obj, new String[]{"id", "version", "createdDate", "lastModifiedDate"}, name);
+    }
+
+    /**
+     * 强制获取字段的value
+     * @param obj
+     * @param name
+     * @return
+     */
+    public static String getBrieflyProperty(Object obj, String name) {
+        return reflectObject(obj, new String[]{"id"}, name);
+    }
+    
+    private static String reflectObject(Object obj, String[] fieldNames, String name) {
         Class<?> cls = obj.getClass();
-        String[] fieldNames = new String[]{"id", "version", "createdDate", "lastModifiedDate"};
         String result = "";
         String mn = "";
         Method method = null;
@@ -39,7 +52,7 @@ public class ClassUtils {
                 if (name.equals(s)) {
                     fields = obj.getClass().getSuperclass().getDeclaredFields();
                     break;
-                } 
+                }
             }
             for (Field field : fields) {
                 if (field.getName().equals(name)) {
@@ -113,8 +126,7 @@ public class ClassUtils {
         }
         return methods;
     }
-
-
+    
     /**
      * 首字母大写
      * @param name

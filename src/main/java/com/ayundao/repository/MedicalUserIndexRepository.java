@@ -1,7 +1,6 @@
 package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
-import com.ayundao.entity.MedicalRange;
 import com.ayundao.entity.MedicalUserIndex;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

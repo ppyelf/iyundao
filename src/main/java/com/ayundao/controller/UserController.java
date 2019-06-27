@@ -51,6 +51,30 @@ public class UserController extends BaseController {
     private RoleService roleService;
 
     /**
+     * @api {POST} /subject/checkCode 检测code
+     * @apiGroup Subject
+     * @apiVersion 1.0.0
+     * @apiDescription 检测编号是否存在
+     * @apiParam {String} code
+     * @apiParamExample {json} 请求样例：
+     *                ?code=1234
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "可以使用"
+     * }
+     */
+    @PostMapping("/checkCode")
+    public JsonResult existCode(String code) {
+        jsonResult.setData(userService.existsCode(code) ? "已存在" : "可以使用");
+        return jsonResult;
+    }
+
+    /**
      * @api {POST} /user/search 用户搜索
      * @apiName search
      * @apiGroup User
@@ -99,6 +123,7 @@ public class UserController extends BaseController {
      * @apiDescription 新建用户
      * @apiParam {String} account 账号
      * @apiParam {String} name 姓名
+     * @apiParam {String} code 编号
      * @apiParam {int} sex 性别
      * @apiParam {int} userType 用户类型
      * @apiParam {String} subjectId 机构ID
@@ -128,6 +153,7 @@ public class UserController extends BaseController {
     @PostMapping("/add")
     public JsonResult add(String account,
                           String name,
+                          String code,
                           @RequestParam(defaultValue = "0") int sex,
                           @RequestParam(defaultValue = "0") int userType,
                           String subjectId,
@@ -146,6 +172,7 @@ public class UserController extends BaseController {
         user.setLastModifiedDate(new Date());
         user.setAccount(account);
         user.setName(name);
+        user.setCode(code);
         user.setSex(sex);
         user.setSalt(getSalt());
         user.setPassword(setPassword(password));
@@ -262,7 +289,7 @@ public class UserController extends BaseController {
                            @RequestParam(defaultValue = "10") int size) {
         //todo 需要整改部门用户的分页查询
         org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userService.findByDepartIdForPage(departId, pageable);
+        List<User> userPage = userService.findByDepartIdForPage(departId);
         if (userPage == null) {
             return JsonResult.success();
         }
@@ -271,9 +298,6 @@ public class UserController extends BaseController {
 //        pageJson.put("total", ((Page) userPage).getTotal());
 //        pageJson.put("totalPage", userPage.getTotalPages());
 //        pageJson.put("page", userPage.getNumber());
-        for (User user : userPage.getContent()) {
-            pageArray.add(convertUser(user));
-        }
         pageJson.put("content", pageArray);
         jsonResult.setData(pageJson);
         return jsonResult;

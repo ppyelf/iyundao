@@ -6,8 +6,9 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import java.beans.PropertyEditorSupport;
+import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @ClassName: UserController
@@ -97,5 +98,7 @@ public class DateEditor extends PropertyEditorSupport {
 			setValue(null);
 		}
 	}
+
+
 
 }

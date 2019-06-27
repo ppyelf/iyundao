@@ -37,12 +37,6 @@ public class Menu extends BaseEntity<String> {
     private String remark;
 
     /**
-     * 是否公开
-     */
-    @Column(name = "ISPUBLIC", columnDefinition = "boolean default false")
-    private boolean isPublic;
-
-    /**
      * 路径
      */
     @Column(name = "URI", length = 10)
@@ -118,14 +112,6 @@ public class Menu extends BaseEntity<String> {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public boolean isPublic() {
-        return isPublic;
-    }
-
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
     }
 
     public String getUri() {

@@ -26,6 +26,12 @@ public class Groups extends BaseEntity<String> {
     private String name;
 
     /**
+     * 编号
+     */
+    @Column(name = "CODE", nullable = false, length = 10, unique = true)
+    private String code;
+
+    /**
      * 描述
      */
     @Column(name = "REMARK", length = 500)
@@ -175,5 +181,13 @@ public class Groups extends BaseEntity<String> {
 
     public void setInfo5(String info5) {
         this.info5 = info5;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

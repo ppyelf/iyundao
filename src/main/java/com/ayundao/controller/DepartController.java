@@ -163,6 +163,7 @@ public class DepartController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 新增部门
      * @apiParam {String} name
+     * @apiParam {String} code
      * @apiParam {String} fatherId
      * @apiParam {String} userId
      * @apiParam {String} subjectId
@@ -183,6 +184,7 @@ public class DepartController extends BaseController {
      */
     @PostMapping("/add")
     public JsonResult add(String name,
+                          String code,
                           String fatherId,
                           String userId,
                           String subjectId) {
@@ -191,6 +193,7 @@ public class DepartController extends BaseController {
         } 
         Depart depart = new Depart();
         depart.setName(name);
+        depart.setCode(code);
         depart.setLastModifiedDate(new Date(System.currentTimeMillis()));
         depart.setCreatedDate(new Date(System.currentTimeMillis()));
         Subject subject = subjectService.find(subjectId);
@@ -218,6 +221,7 @@ public class DepartController extends BaseController {
      * @apiDescription 修改部门信息
      * @apiParam {String} id
      * @apiParam {String} name
+     * @apiParam {String} code
      * @apiParam {String} fatherId
      * @apiParam {String} userId
      * @apiParam {String} subjectId
@@ -239,6 +243,7 @@ public class DepartController extends BaseController {
     @PostMapping("/modify")
     public JsonResult modify(String id,
                              String name,
+                             String code,
                              String fatherId,
                              String userId,
                              String subjectId) {
@@ -251,6 +256,7 @@ public class DepartController extends BaseController {
         }
         depart.setLastModifiedDate(new Date(System.currentTimeMillis()));
         depart.setName(name);
+        depart.setCode(code);
         if (StringUtils.isNotBlank(subjectId)) {
             Subject subject = subjectService.find(subjectId);
             if (subject == null) {
@@ -327,6 +333,30 @@ public class DepartController extends BaseController {
             arr.add(convertJson(depart));
         }
         jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /subject/checkCode 检测code
+     * @apiGroup Subject
+     * @apiVersion 1.0.0
+     * @apiDescription 检测编号是否存在
+     * @apiParam {String} code
+     * @apiParamExample {json} 请求样例：
+     *                ?code=1234
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "可以使用"
+     * }
+     */
+    @PostMapping("/checkCode")
+    public JsonResult existCode(String code) {
+        jsonResult.setData(departService.existsCode(code) ? "已存在" : "可以使用");
         return jsonResult;
     }
     

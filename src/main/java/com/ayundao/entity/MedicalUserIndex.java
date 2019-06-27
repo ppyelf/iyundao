@@ -45,12 +45,6 @@ public class MedicalUserIndex extends BaseEntity<String> {
     private String userId;
 
     /**
-     * 完成时间
-     */
-    @Column(name = "FINISHTIME", nullable = false, length = 50)
-    private String finishTime;
-
-    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -110,14 +104,6 @@ public class MedicalUserIndex extends BaseEntity<String> {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getFinishTime() {
-        return finishTime;
-    }
-
-    public void setFinishTime(String finishTime) {
-        this.finishTime = finishTime;
     }
 
     public String getInfo1() {

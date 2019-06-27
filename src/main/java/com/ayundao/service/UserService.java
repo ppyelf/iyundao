@@ -83,5 +83,17 @@ public interface UserService {
     /**
      * 查询部门用户分页
      */
-    Page<User> findByDepartIdForPage(String departId, org.springframework.data.domain.Pageable pageable);
+    List<User> findByDepartIdForPage(String departId);
+
+    /**
+     * 检测编号是否存在
+     * @param code
+     * @return
+     */
+    boolean existsCode(String code);
+
+    /**
+     * 根据编号查询实体
+     */
+    User findByCode(String code);
 }

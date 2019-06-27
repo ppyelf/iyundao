@@ -284,7 +284,7 @@ public abstract class BaseController {
      * @param entity
      * @return
      */
-    public com.alibaba.fastjson.JSONObject getUploadJson(BaseEntity entity) {
+    public com.alibaba.fastjson.JSONObject getUploadJson(Object entity) {
         com.alibaba.fastjson.JSONObject json = JsonUtils.getJson(entity);
         json.put("url", uploadPath + json.get("url").toString());
         return json;

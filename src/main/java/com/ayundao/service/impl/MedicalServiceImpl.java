@@ -181,6 +181,8 @@ public class MedicalServiceImpl implements MedicalService {
         }
         index.setCode(getIndexLastCode());
         index = medicalIndexRepository.save(index);
+
+
         return index;
     }
 
@@ -194,6 +196,18 @@ public class MedicalServiceImpl implements MedicalService {
         return medicalIndexRepository.findMedicalIndexChild(id);
     }
 
+    @Override
+    public MedicalUserIndex saveMedicalUserIndex(MedicalIndex index, User user, Medical medical, int score) {
+        MedicalUserIndex userIndex = new MedicalUserIndex();
+        userIndex.setCreatedDate(new Date());
+        userIndex.setLastModifiedDate(new Date());
+        userIndex.setMedical(medical);
+        userIndex.setMedicalIndex(index);
+        userIndex.setUserId(user.getId());
+        userIndex.setScore(score);
+        userIndex = medicalUserIndexRepository.save(userIndex);
+        return userIndex;
+    }
 
     /**
      * 获取code的最大值
@@ -202,4 +216,5 @@ public class MedicalServiceImpl implements MedicalService {
     private int getIndexLastCode() {
         return medicalIndexRepository.getLastCode() + 1;
     }
+
 }

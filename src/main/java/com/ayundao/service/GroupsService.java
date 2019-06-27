@@ -76,4 +76,16 @@ public interface GroupsService {
      * @return
      */
     List<Groups> findBySubjectIdAndFatherIsNull(String subjectId);
+
+    /**
+     * 检测编号是否存在
+     * @param code
+     * @return
+     */
+    boolean existsCode(String code);
+
+    /**
+     * 根据编号查询实体
+     */
+    Groups findByCode(String code);
 }

@@ -79,4 +79,16 @@ public interface DepartService {
      * @return
      */
     List<Depart> findBySubjectIdAndFatherIsNull(String subjectId);
+
+    /**
+     * 检测编号是否存在
+     * @param code
+     * @return
+     */
+    boolean existsCode(String code);
+
+    /**
+     * 根据编号查询实体
+     */
+    Depart findByCode(String code);
 }

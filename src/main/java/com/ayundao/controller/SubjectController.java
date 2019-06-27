@@ -183,12 +183,14 @@ public class SubjectController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 新增机构
      * @apiParam {String} name
+     * @apiParam {String} code
      * @apiParam {int} type
      * @apiParamExample {json} 请求样例：
      *                ?name=测试添加&type=1
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:已存在该机构</br>
      *                                 600:参数异常</br>
+     *                                 601:机构名称/编号不能为空</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -206,9 +208,13 @@ public class SubjectController extends BaseController {
      * }
      */
     @PostMapping("/add")
-    public JsonResult add(String name, @RequestParam(defaultValue = "0") int type) {
+    public JsonResult add(String name, String code, @RequestParam(defaultValue = "0") int type) {
+        if (StringUtils.isBlank(name) || StringUtils.isBlank(code)) {
+            return JsonResult.failure(601, "机构名称/编号不能为空");
+        }
         Subject subject = new Subject();
         subject.setName(name);
+        subject.setCode(code);
         subject.setLastModifiedDate(new Date(System.currentTimeMillis()));
         subject.setCreatedDate(new Date(System.currentTimeMillis()));
         switch (type) {
@@ -237,6 +243,7 @@ public class SubjectController extends BaseController {
      * @apiDescription 修改机构
      * @apiParam {String} id
      * @apiParam {String} name
+     * @apiParam {String} code
      * @apiParam {int} type
      * @apiParamExample {json} 请求样例：
      *                ?id=402881f46afdef14016afe28796c000b&name=修改机构&type=2
@@ -260,7 +267,7 @@ public class SubjectController extends BaseController {
      * }
      */
     @PostMapping("/modify")
-    public JsonResult modify(String id, String name, @RequestParam(defaultValue = "3") int type) {
+    public JsonResult modify(String id, String name, String code, @RequestParam(defaultValue = "3") int type) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
         }
@@ -280,6 +287,30 @@ public class SubjectController extends BaseController {
         }
         subject = subjectService.save(subject);
         jsonResult.setData(converType(subject));
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /subject/checkCode 检测code
+     * @apiGroup Subject
+     * @apiVersion 1.0.0
+     * @apiDescription 检测编号是否存在
+     * @apiParam {String} code
+     * @apiParamExample {json} 请求样例：
+     *                ?code=1234
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "可以使用"
+     * }
+     */
+    @PostMapping("/checkCode")
+    public JsonResult existCode(String code) {
+        jsonResult.setData(subjectService.existsCode(code) ? "已存在" : "可以使用");
         return jsonResult;
     }
 

@@ -16,11 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubjectRepository extends BaseRepository<Subject, String> {
 
-    /**
-     * 根据ID获取实体
-     * @param subjectId
-     * @return
-     */
-    @Query("select s from Subject s where s.id = ?1")
-    Subject findBySubjectId(String subjectId);
+    //根据code查询实体
+    @Query("select s from Subject s where s.code = (?1)")
+    Subject findByCode(String code);
 }

@@ -3,11 +3,9 @@ package com.ayundao.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
-import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
-import com.ayundao.base.utils.TimeUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -16,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Set;
 
@@ -178,7 +177,7 @@ public class MedicalController extends BaseController {
      * @apiParam {int} page 页数(默认:0)
      * @apiParam {int} size 长度(默认:10)
      * @apiParamExample {json} 请求示例:
-     *              ?id
+     *              ?key=name&value=11
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 601:医德档案名称不能为空</br>
      * @apiSuccess (200) {String} message 信息
@@ -211,12 +210,18 @@ public class MedicalController extends BaseController {
      * @apiDescription 查看
      * @apiParam {String} id 查看文档的字段
      * @apiParamExample {json} 请求示例:
-     *              ?id
+     *              ?id=402881916b8c5340016b8c5418e50001
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:医德档案不存在或者ID为空</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {"total": "0","createdDate": "20190625095050","lastModifiedDate": "20190625095050","year": "2019","name": "添加医德","remark": "医德描述","id": "402881916b8c5340016b8c5418e50001","version": "0"
+     *     }
+     * }
      */
     @PostMapping("/view")
     public JsonResult view(String id) {
@@ -239,11 +244,6 @@ public class MedicalController extends BaseController {
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916b8c5340016b8cab74340015
      * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 601:医德档案名称不能为空</br>
-     *                                 602:机构不存在或ID为空</br>
-     *                                 603:部门ID/组织ID不能都为空</br>
-     *                                 604:用户不存在或者ID为空</br>
-     *                                 605:部门/组织下无用户,添加失败</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -307,12 +307,58 @@ public class MedicalController extends BaseController {
     }
 
     /**
-     * @api {POST} /medical/indexList 指标列表
+     * @api {POST} /medical/addUserIndex 评价指标
+     * @apiGroup Medical
+     * @apiVersion 1.0.0
+     * @apiDescription 评价指标
+     * @apiParam {String} medicalIndexId 名称(必填)
+     * @apiParam {String} userId 描述
+     * @apiParam {String} medicalId 父级指标ID
+     * @apiParam {int} score 医德档案ID(必填)
+     * @apiParamExample {json} 请求示例:
+     *              ?name=添加子指标&remark=子指标描述&fatherId=402881916b8d4f49016b8d5359c50005&medicalId=402881916b8d4f49016b8d501b1d0001
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:指标不存在或者指标ID为空</br>
+     *                                 602:用户不存在或者用户ID为空</br>
+     *                                 603:医德档案不存在或者医德ID为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {"createdDate": "20190625143204","code": "1","lastModifiedDate": "20190625143204","name": "添加子指标","info1": "","remark": "子指标描述","id": "402881916b8d4f49016b8d5594a00007","info5": "","version": "0","info4": "","info3": "","info2": ""
+     *     }
+     * }
+     */
+    @PostMapping("/addUserIndex")
+    public JsonResult addIndex(String medicalIndexId,
+                               String userId,
+                               String medicalId,
+                               @RequestParam(defaultValue = "0") int score) {
+        MedicalIndex index = medicalService.findMedicalIndexById(medicalIndexId);
+        if (index == null) {
+            return JsonResult.failure(601, "指标不存在或者指标ID为空");
+        }
+        User user = userService.findById(userId);
+        if (user == null) {
+            return JsonResult.failure(602, "用户不存在或者用户ID为空");
+        }
+        Medical medical = medicalService.find(medicalId);
+        if (medical == null) {
+            return JsonResult.failure(603, "医德档案不存在或者医德ID为空");
+        }
+        MedicalUserIndex userIndex = medicalService.saveMedicalUserIndex(index, user, medical, score);
+        jsonResult.setData(JsonUtils.getJson(userIndex));
+        return jsonResult;
+    }
+    /**
+     * @api {GET} /medical/indexList 指标列表
      * @apiGroup Medical
      * @apiVersion 1.0.0
      * @apiDescription 指标列表
      * @apiParamExample {json} 请求示例:
-     *              ?id
+     *              ?id=402881916b8c5340016b8c5418e50001
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -368,13 +414,34 @@ public class MedicalController extends BaseController {
     }
 
     /**
+     * @api {POST} /medical/downloadExcel 下载模板
+     * @apiGroup Medical
+     * @apiVersion 1.0.0
+     * @apiDescription 下载模板
+     * @apiParamExample {json} 请求示例:
+     *                      /medical/downloadExcel
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @PostMapping("/downloadExcel")
+    public JsonResult downloadExcel(HttpServletResponse resp) {
+        return null;
+    }
+
+    /**
      * 转化医德档案
      * @param medical
      * @return
      */
     private JSONObject convertMedical(Medical medical) {
-        JSONObject json = JsonUtils.getJson(medical);
-        return json;
+        return JsonUtils.getJson(medical);
     }
 
     /**

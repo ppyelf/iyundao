@@ -108,7 +108,6 @@ public class MenuController extends BaseController {
      * @apiDescription 新增
      * @apiParam {String} name (必填)
      * @apiParam {String} remark
-     * @apiParam {boolean} isPublic
      * @apiParam {String} fatherId
      * @apiParam {number} level
      * @apiParam {String} subjectId (必填)
@@ -134,7 +133,6 @@ public class MenuController extends BaseController {
     @PostMapping(value = "/add")
     public JsonResult add(String name,
                           String remark,
-                          boolean isPublic,
                           String uri,
                           String fatherId,
                           @RequestParam(defaultValue = "0") int level,
@@ -160,7 +158,6 @@ public class MenuController extends BaseController {
         Menu menu = new Menu();
         menu.setCreatedDate(new Date(System.currentTimeMillis()));
         menu.setLastModifiedDate(new Date(System.currentTimeMillis()));
-        menu.setPublic(isPublic);
         menu.setName(name);
         menu.setRemark(remark);
         menu.setUri(uri);
@@ -182,9 +179,9 @@ public class MenuController extends BaseController {
      * @apiGroup Menu
      * @apiVersion 1.0.0
      * @apiDescription 修改
+     * @apiParam {String} id (必填)
      * @apiParam {String} name (必填)
      * @apiParam {String} remark
-     * @apiParam {boolean} isPublic
      * @apiParam {String} fatherId
      * @apiParam {number} level
      * @apiParam {String} subjectId (必填)
@@ -215,7 +212,6 @@ public class MenuController extends BaseController {
     public JsonResult modify(String id,
                              String name,
                              String remark,
-                             boolean isPublic,
                              String uri,
                              String fatherId,
                              @RequestParam(defaultValue = "0") int level,
@@ -230,7 +226,6 @@ public class MenuController extends BaseController {
         }
         menu.setName(name);
         menu.setRemark(remark);
-        menu.setPublic(isPublic);
         menu.setUri(uri);
         menu.setLevel(level);
         Menu father = StringUtils.isBlank(fatherId) ? menu.getFather() : menuService.findById(fatherId);

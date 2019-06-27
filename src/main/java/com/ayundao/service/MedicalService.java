@@ -95,4 +95,15 @@ public interface MedicalService {
      * @return
      */
     List<MedicalIndex> findMedicalIndexChild(String id);
+
+    /**
+     * 保存医德指标评价
+     * @param index
+     * @param user
+     * @param medical
+     * @param score
+     * @return
+     */
+    MedicalUserIndex saveMedicalUserIndex(MedicalIndex index, User user, Medical medical, int score);
+
 }

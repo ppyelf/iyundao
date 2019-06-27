@@ -46,7 +46,7 @@ public class IndicatorInfoFile extends BaseEntity<String> {
      * 工作详情
      */
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "INDICATORINFOID", nullable = false)
+    @JoinColumn(name = "INDICATORINFOID")
     private IndicatorInfo indicatorInfo;
 
     public String getName() {

@@ -50,7 +50,7 @@ public class UserRelationServiceImpl implements UserRelationService {
 
     @Override
     public UserRelation findByUserIdAndSubject(User user, String subject) {
-        Subject s = subjectRepository.findBySubjectId(subject);
+        Subject s = subjectRepository.find(subject);
         return userRelationRepository.findByUserIdAndSubject(user.getId(), s.getId());
     }
 

@@ -382,8 +382,6 @@ public class WorkController extends BaseController {
         return jsonResult;
     }
 
-
-
     /**
      * @api {POST} /work/addFile 上传指标详情附件
      * @apiGroup Work
@@ -443,8 +441,7 @@ public class WorkController extends BaseController {
     public JsonResult delFile(String id) {
         IndicatorInfoFile file = indicatorInfoFileService.find(id);
         indicatorInfoFileService.delete(file);
-
-        return jsonResult;
+        return JsonResult.success();
     }
 
     /**

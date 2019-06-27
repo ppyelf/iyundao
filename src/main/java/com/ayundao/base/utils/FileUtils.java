@@ -1,8 +1,11 @@
 package com.ayundao.base.utils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +21,7 @@ import java.util.UUID;
  */
 public class FileUtils {
 
+    protected final static Log logger = LogFactory.getLog(FileUtils.class);
     /**
      * 文件标识符
      */

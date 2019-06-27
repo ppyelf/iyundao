@@ -48,4 +48,8 @@ public interface DepartRepository extends BaseRepository<Depart, String> {
     //获取机构的部门列表
     @Query(value = "select d from Depart d  where d.subject.id = ?1 and d.father is null")
     List<Depart> findBySubjectIdAndFatherIsNull(String subjectId);
+
+    //根据编号查询实体
+    @Query("select d from Depart d where d.code = ?1")
+    Depart findByCode(String code);
 }

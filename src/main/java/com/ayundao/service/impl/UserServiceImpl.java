@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
                     || StringUtils.isBlank(groupsId)) {
             JsonResult.failure(601, "用户必须有所属的机构/部门/组织");
         }
-        Subject subject = subjectRepository.findBySubjectId(subjectId);
+        Subject subject = subjectRepository.find(subjectId);
         Depart depart = departRepository.findByDepartId(departId);
         Groups groups = groupsRepository.findByGroupsId(groupsId);
         if (subject == null) {
@@ -188,7 +188,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findByDepartIdForPage(String departId, org.springframework.data.domain.Pageable pageable) {
+    public List<User> findByDepartIdForPage(String departId) {
         return userRepository.findByDepartIdForPage(departId);
+    }
+
+    @Override
+    public boolean existsCode(String code) {
+        User user = userRepository.findByCode(code);
+        return user == null ? false : true;
+    }
+
+    @Override
+    public User findByCode(String code) {
+        return userRepository.findByCode(code);
     }
 }

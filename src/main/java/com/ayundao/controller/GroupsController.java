@@ -166,6 +166,7 @@ public class GroupsController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 新增部门
      * @apiParam {String} name
+     * @apiParam {String} code
      * @apiParam {String} userId
      * @apiParam {String} subjectId
      * @apiParam {String} remark
@@ -192,6 +193,7 @@ public class GroupsController extends BaseController {
      */
     @PostMapping("/add")
     public JsonResult add(String name,
+                          String code,
                           String userId,
                           String subjectId,
                           String fatherId,
@@ -200,6 +202,7 @@ public class GroupsController extends BaseController {
             return JsonResult.paramError();
         }
         Groups groups = new Groups();
+        groups.setCode(code);
         groups.setName(name);
         groups.setRemark(remark);
         groups.setLastModifiedDate(new Date(System.currentTimeMillis()));
@@ -231,6 +234,7 @@ public class GroupsController extends BaseController {
      * @apiDescription 修改小组信息
      * @apiParam {String} id 必填
      * @apiParam {String} name
+     * @apiParam {String} code
      * @apiParam {String} userId
      * @apiParam {String} subjectId 必填
      * @apiParam {String} fatherId 必填
@@ -254,6 +258,7 @@ public class GroupsController extends BaseController {
     @PostMapping("/modify")
     public JsonResult modify(String id,
                              String name,
+                             String code,
                              String userId,
                              String subjectId,
                              String fatherId) {
@@ -266,6 +271,7 @@ public class GroupsController extends BaseController {
         }
         groups.setLastModifiedDate(new Date(System.currentTimeMillis()));
         groups.setName(StringUtils.isBlank(name) ? groups.getName() : name);
+        groups.setCode(code);
         if (StringUtils.isNotBlank(subjectId)) {
             Subject subject = subjectService.find(subjectId);
             if (subject == null)   return JsonResult.notFound("此机构不存在");
@@ -345,6 +351,30 @@ public class GroupsController extends BaseController {
             arr.add(convertJson(group));
         }
         jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /subject/checkCode 检测code
+     * @apiGroup Subject
+     * @apiVersion 1.0.0
+     * @apiDescription 检测编号是否存在
+     * @apiParam {String} code
+     * @apiParamExample {json} 请求样例：
+     *                ?code=1234
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "可以使用"
+     * }
+     */
+    @PostMapping("/checkCode")
+    public JsonResult existCode(String code) {
+        jsonResult.setData(groupsService.existsCode(code) ? "已存在" : "可以使用");
         return jsonResult;
     }
 

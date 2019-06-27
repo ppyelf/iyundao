@@ -86,4 +86,15 @@ public class SubjectServiceImpl implements SubjectService {
     public boolean exists(String id) {
         return subjectRepository.exists(id);
     }
+
+    @Override
+    public boolean existsCode(String code) {
+        Subject subject = subjectRepository.findByCode(code);
+        return subject == null ? false : true;
+    }
+
+    @Override
+    public Subject findByCode(String code) {
+        return subjectRepository.findByCode(code);
+    }
 }

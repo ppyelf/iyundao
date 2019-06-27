@@ -82,7 +82,36 @@ public class JsonUtils {
             Class cls = field.getType();
             if (!BaseEntity.class.isAssignableFrom(cls) && !Collection.class.isAssignableFrom(cls)
                     && !Map.class.isAssignableFrom(cls)) {
-                json.put(key, ClassUtils.forceGetProperty(obj, field.getName()));
+                json.put(key, ClassUtils.getBrieflyProperty(obj, field.getName()));
+            }
+        }
+        json.remove("createdDate");
+        json.remove("lastModifiedDate");
+        json.remove("version");
+        json.remove("info1");
+        json.remove("info2");
+        json.remove("info3");
+        json.remove("info4");
+        json.remove("info5");
+        return json;
+    }
+
+    /**
+     * 将Entity转化为Json字符串
+     * @param obj
+     * @return
+     * @author 念
+     */
+    public static com.alibaba.fastjson.JSONObject getSimpleJson(Object obj, String[] names) {
+        Map<String, Field> map = ClassUtils.getDeclaredFieldsWithSuper(obj.getClass());
+        com.alibaba.fastjson.JSONObject json = new com.alibaba.fastjson.JSONObject();
+        for (Map.Entry<String, Field> entry : map.entrySet()) {
+            String key = entry.getKey();
+            Field field = entry.getValue();
+            for (String name : names) {
+                if (name.equals(key)) {
+                    json.put(key, ClassUtils.getBrieflyProperty(obj, field.getName()));
+                }
             }
         }
         return json;

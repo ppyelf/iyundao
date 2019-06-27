@@ -79,28 +79,6 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     public BaseEntity() {
     }
 
-    public static Object toEntity(String str, Object obj) {
-        Class cls = obj.getClass();
-        String[] arr = str.substring(str.indexOf("[") + 1, str.length() - 1).split(",");
-        Map<String, String> map = new HashMap<>();
-        for (String s : arr) {
-            String[] strArr = s.split("=");
-            map.put(strArr[0], strArr[1]);
-        }
-        Iterator var = ClassUtils.getDeclaredFieldsWithSuper(cls).values().iterator();
-        while (var.hasNext()) {
-            Field field = (Field) var.next();
-            Class<? extends Object> typeClazz = field.getType();
-            if (!AbstractEntity.class.isAssignableFrom(typeClazz) && !Collection.class.isAssignableFrom(typeClazz) && !Map.class.isAssignableFrom(typeClazz)) {
-                int modifiers = field.getModifiers();
-                if (field.getName().indexOf(36) == -1 && !Modifier.isStatic(modifiers) && !Modifier.isTransient(modifiers)) {
-
-                }
-            }
-        }
-        return obj;
-    }
-
     /**
      * 获取ID
      *

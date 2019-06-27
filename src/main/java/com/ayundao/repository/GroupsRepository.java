@@ -52,4 +52,8 @@ public interface GroupsRepository extends BaseRepository<Groups, String> {
     //根据subjectId获取所有父级实体集合
     @Query("select g from Groups g where g.subject.id = ?1 and g.father is null")
     List<Groups> findBySubjectIdAndFatherIsNull(String subjectId);
+
+    //根据CODE查询实体
+    @Query("select g from Groups g where g.code = ?1")
+    Groups findByCode(String code);
 }

@@ -74,4 +74,15 @@ public class DepartServiceImpl implements DepartService {
         return departRepository.findBySubjectIdAndFatherIsNull(subjectId);
     }
 
+    @Override
+    public boolean existsCode(String code) {
+        Depart depart = departRepository.findByCode(code);
+        return depart == null ? false : true;
+    }
+
+    @Override
+    public Depart findByCode(String code) {
+        return departRepository.findByCode(code);
+    }
+
 }

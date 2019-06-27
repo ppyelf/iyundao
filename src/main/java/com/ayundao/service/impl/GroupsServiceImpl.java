@@ -76,4 +76,15 @@ public class GroupsServiceImpl implements GroupsService {
     public List<Groups> findBySubjectIdAndFatherIsNull(String subjectId) {
         return groupsRepository.findBySubjectIdAndFatherIsNull(subjectId);
     }
+
+    @Override
+    public boolean existsCode(String code) {
+        Groups groups = groupsRepository.findByCode(code);
+        return groups == null ? false : true;
+    }
+
+    @Override
+    public Groups findByCode(String code) {
+        return groupsRepository.findByCode(code);
+    }
 }
