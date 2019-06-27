@@ -100,49 +100,86 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public UserInfoFile saveFile(UserInfoFile file) {
-        return userInfoFileRepository.save(file);
+    public JsonResult saveFile(UserInfoFile file,JsonResult jsonResult) {
+        file = userInfoFileRepository.save(file);
+        JSONObject json = new JSONObject();
+        json.put("userInfoFile",file);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoImage saveImage(UserInfoImage image) {
-        return userInfoImageRepository.save(image);
-    }
-
-    @Override
-    public UserInfoParty saveParty(UserInfoParty party) {
-        return userInfoPartyRepository.save(party);
-    }
-
-    @Override
-    public UserInfoMzdp saveMzdp(UserInfoMzdp userInfoMzdp) {
-        return userInfoMzdpRepository.save(userInfoMzdp);
-    }
-
-    @Override
-    public UserInfoGzqt saveGzqt(UserInfoGzqt userInfoGzqt) {
-        return userInfoGzqtRepository.save(userInfoGzqt);
-    }
-
-    @Override
-    public UserInfoGh saveGh(UserInfoGh userInfoGh) {
-        return userInfoGhRepository.save(userInfoGh);
-    }
-
-    @Override
-    public UserInfoTw saveTw(UserInfoTw userInfoTw) {
-        return userInfoTwRepository.save(userInfoTw);
+    public JsonResult saveImage(UserInfoImage image,JsonResult jsonResult) {
+        image = userInfoImageRepository.save(image);
+        JSONObject json = new JSONObject();
+        json.put("userInfoImage",image);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
     @Transactional
-    public UserInfoFdh saveFdh(UserInfoFdh userInfoFdh) {
-        return userInfoFdhRepository.save(userInfoFdh);
+    public JsonResult saveParty(UserInfoParty userInfoParty,JsonResult jsonResult) {
+        userInfoParty = userInfoPartyRepository.save(userInfoParty);
+        JSONObject json = new JSONObject();
+        json.put("userInfoParty",userInfoParty);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoLtxlgb saveLtxlgb(UserInfoLtxlgb userInfoLtxlgb) {
-        return userInfoLtxlgbRepository.save(userInfoLtxlgb);
+    public JsonResult saveMzdp(UserInfoMzdp userInfoMzdp,JsonResult jsonResult) {
+        userInfoMzdp = userInfoMzdpRepository.save(userInfoMzdp);
+        JSONObject json =new JSONObject();
+        json.put("userInfoMzdp",userInfoMzdp);
+        jsonResult.setData(json);
+        return jsonResult;
+    }
+
+    @Override
+    public JsonResult saveGzqt(UserInfoGzqt userInfoGzqt,JsonResult jsonResult) {
+        userInfoGzqt = userInfoGzqtRepository.save(userInfoGzqt);
+        JSONObject json =new JSONObject();
+        json.put("userInfoGzqt",userInfoGzqt);
+        jsonResult.setData(json);
+        return jsonResult;
+    }
+
+    @Override
+    public JsonResult saveGh(UserInfoGh userInfoGh,JsonResult jsonResult) {
+        userInfoGh = userInfoGhRepository.save(userInfoGh);
+        JSONObject json =new JSONObject();
+        json.put("userInfoGh",userInfoGh);
+        jsonResult.setData(json);
+        return jsonResult;
+    }
+
+    @Override
+    public JsonResult saveTw(UserInfoTw userInfoTw,JsonResult jsonResult) {
+        userInfoTw = userInfoTwRepository.save(userInfoTw);
+        JSONObject json =new JSONObject();
+        json.put("userInfoTw",userInfoTw);
+        jsonResult.setData(json);
+        return jsonResult;
+    }
+
+    @Override
+    @Transactional
+    public JsonResult saveFdh(UserInfoFdh userInfoFdh,JsonResult jsonResult) {
+        userInfoFdh = userInfoFdhRepository.save(userInfoFdh);
+        JSONObject json =new JSONObject();
+        json.put("userInfoFdh",userInfoFdh);
+        jsonResult.setData(json);
+        return jsonResult;
+    }
+
+    @Override
+    public JsonResult saveLtxlgb(UserInfoLtxlgb userInfoLtxlgb,JsonResult jsonResult) {
+        userInfoLtxlgb = userInfoLtxlgbRepository.save(userInfoLtxlgb);
+        JSONObject json =new JSONObject();
+        json.put("userInfoLtxlgb",userInfoLtxlgb);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
@@ -389,9 +426,23 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public Map<String,Integer> countBySex() {
+    public Map<String,Object> countBySex() {
         return userInfoRepository.countBySex();
     }
 
+    @Override
+    public Map<String, Object> countByEducation() {
+        return userInfoRepository.countByEducation();
+    }
+
+    @Override
+    public Map<String, Object> countByIdcard() {
+        return userInfoRepository.countByIdcard();
+    }
+
+    @Override
+    public Map<String,Object> countByDepartment(){
+        return userInfoRepository.countByDepartment();
+    }
 
 }

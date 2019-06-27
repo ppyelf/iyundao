@@ -33,17 +33,51 @@ public class UserInfoGhController extends BaseController {
     @Autowired
     private UserInfoService userInfoService;
 
+    /**
+     * @api {post} /userInfo/add_gh 新增用户工会基础信息
+     * @apiGroup userInfoGh
+     * @apiVersion 1.0.0
+     * @apiDescription 新增用户工会基础信息
+     * @apiParam {String} post
+     * @apiParam {String} time
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例
+     *         ?post=""&time=""&id=""
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:已存在该机构</br>
+     *                                 600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {
+     *         "userInfoGh": {
+     *             "id": "297e47e36b8d58dd016b8d5fa3640002",
+     *             "post": "主席",
+     *             "time": "2010-11-11",
+     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
+     *             "info1": null,
+     *             "info2": null,
+     *             "info3": null,
+     *             "info4": null,
+     *             "info5": null,
+     *             "new": false
+     *         }
+     *     }
+     * }
+     */
     @PostMapping("/add_gh")
     public JsonResult add_gh(String post,String time,
-                             String userinfoid) {
+                             String id) {
         UserInfoGh userInfoGh = new UserInfoGh();
         userInfoGh.setCreatedDate(new Date());
         userInfoGh.setLastModifiedDate(new Date());
         userInfoGh.setPost(post);
         userInfoGh.setTime(time);
-        userInfoGh.setUserinfoid(userinfoid);
-        userInfoService.saveGh(userInfoGh);
-        return jsonResult;
+        userInfoGh.setUserinfoid(id);
+        return userInfoService.saveGh(userInfoGh,jsonResult);
     }
 
     /**

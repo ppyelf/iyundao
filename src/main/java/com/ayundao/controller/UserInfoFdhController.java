@@ -32,18 +32,53 @@ public class UserInfoFdhController extends BaseController {
     @Autowired
     private UserInfoService userInfoService;
 
+    /**
+     * @api {post} /userInfoFdh/add_fdh 新增用户妇代会基础信息
+     * @apiGroup userInfoFdh
+     * @apiVersion 1.0.0
+     * @apiDescription 新增用户妇代会基础信息
+     * @apiParam {String} post
+     * @apiParam {String} time
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求样例
+     *         ?post=""&time=""&id=""
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:已存在该机构</br>
+     *                                 600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {
+     *         "userInfoFdh": {
+     *             "id": "297e47e36b8d58dd016b8d5eac8d0001",
+     *             "post": "主席",
+     *             "time": "2010-11-11",
+     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
+     *             "info1": null,
+     *             "info2": null,
+     *             "info3": null,
+     *             "info4": null,
+     *             "info5": null,
+     *             "userInfo": null,
+     *             "new": false
+     *         }
+     *     }
+     * }
+     */
     @PostMapping("/add_fdh")
     public JsonResult add_fdh(String post,String time,
-                              String userinfoid) {
+                              String id) {
 
         UserInfoFdh userInfoFdh = new UserInfoFdh();
         userInfoFdh.setCreatedDate(new Date());
         userInfoFdh.setLastModifiedDate(new Date());
         userInfoFdh.setPost(post);
         userInfoFdh.setTime(time);
-        userInfoFdh.setUserinfoid(userinfoid);
-        userInfoService.saveFdh(userInfoFdh);
-        return jsonResult;
+        userInfoFdh.setUserinfoid(id);
+        return userInfoService.saveFdh(userInfoFdh,jsonResult);
     }
 
     /**
