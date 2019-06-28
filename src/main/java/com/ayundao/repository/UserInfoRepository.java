@@ -29,6 +29,16 @@ public interface UserInfoRepository extends BaseRepository<UserInfo,String> {
     UserInfo findByUserInfoId(String id);
 
     /**
+     * 条件查询
+     * @param name
+     * @param number
+     * @param department
+     * @return
+     */
+    @Query("select ui from UserInfo ui where ui.name like ?1 or ui.number like ?2 or ui.department like ?3")
+    List<UserInfo> findByNameOrNumberOrDepartmentLike(String name,String number, String department);
+
+    /**
      * 查询党建用户详情男女比例
      */
     @Query(value = "select count(case when ui.sex = '男' then 1 else null end ) as man," +
@@ -37,7 +47,7 @@ public interface UserInfoRepository extends BaseRepository<UserInfo,String> {
     Map<String,Object> countBySex();
 
     /**
-     * 查询用户详情学历比例
+     * 查询党建用户详情学历比例
      */
     @Query(value = "SELECT COUNT(CASE WHEN ui.`EDUCATION` = '高中' THEN 1 ELSE NULL END ) AS highSchool,\n" +
             "       COUNT(CASE WHEN ui.`EDUCATION` = '专科' THEN 1 ELSE NULL END) AS specialty,\n" +
@@ -47,19 +57,18 @@ public interface UserInfoRepository extends BaseRepository<UserInfo,String> {
             "       FROM t_user_info ui\n" +
             "       INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
     Map<String,Object> countByEducation();
-//
-//    /**
-//     * 查询用户详情职称比例
-//     */
-//    @Query("select count(ui.title) from UserInfo ui where ui.title = ?1")
-//    Integer countByTitle(String title);
-//
-//    /**
-//     * 查询用户详情支部比例
-//     */
-//    @Query("select count(ui.branchName) from UserInfo ui where ui.branchName = ?1")
-//    Integer countByBranchName(String branchName);
-//
+
+    /**
+     * 查询用户详情年龄比例
+     */
+    @Query(value = "SELECT COUNT(CASE WHEN (YEAR(NOW())- SUBSTRING(ui.`IDCARD`,7,4)) <=25 THEN 1 ELSE NULL END ) AS '25周岁以下',\n" +
+            "            COUNT(CASE WHEN (YEAR(NOW())- SUBSTRING(ui.`IDCARD`,7,4)) BETWEEN 25 AND 35 THEN 1 ELSE NULL END ) AS '25-35周岁',\n" +
+            "            COUNT(CASE WHEN (YEAR(NOW())- SUBSTRING(ui.`IDCARD`,7,4)) BETWEEN 35 AND 45 THEN 1 ELSE NULL END ) AS '35-45以下',\n" +
+            "            COUNT(CASE WHEN 45<=(YEAR(NOW())- SUBSTRING(ui.`IDCARD`,7,4)) THEN 1 ELSE NULL END ) AS '45周岁以上'\n" +
+            "                  FROM t_user_info ui\n" +
+            "                   INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
+    Map<String,Object> countByIdcard();
+
     /**
      * 查询用户详情科室比例
      */
@@ -71,22 +80,54 @@ public interface UserInfoRepository extends BaseRepository<UserInfo,String> {
             "FROM t_user_info ui INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
     Map<String,Object> countByDepartment();
 
-//    /**
-//     * 查询用户详情党龄比例
-//     */
-//    @Query(value = "",nativeQuery = true)
-//    Map<String,Object> countByPartyDate();
+    /**
+     * 查询用户详情党龄比例
+     */
+    @Query(value = "SELECT COUNT(CASE WHEN (YEAR(NOW()) - SUBSTRING(ui.`PARTYDATE`,1,4)) <=2 THEN 1 ELSE NULL END ) AS '2年以下',\n" +
+            "            COUNT(CASE WHEN (YEAR(NOW()) - SUBSTRING(ui.`PARTYDATE`,1,4)) BETWEEN 2 AND 5 THEN 1 ELSE NULL END ) AS '2-5年',\n" +
+            "            COUNT(CASE WHEN (YEAR(NOW()) - SUBSTRING(ui.`PARTYDATE`,1,4)) BETWEEN 5 AND 10 THEN 1 ELSE NULL END ) AS '5-10年',\n" +
+            "            COUNT(CASE WHEN 10<=(YEAR(NOW()) - SUBSTRING(ui.`PARTYDATE`,1,4)) THEN 1 ELSE NULL END ) AS '10年以上'\n" +
+            "            FROM t_user_info ui INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'\n",nativeQuery = true)
+    Map<String,Object> countByPartyAge();
 
     /**
-     * 查询用户详情年龄比例
+     * 查询用户详情职称比例
      */
-    @Query(value = "SELECT COUNT(CASE WHEN (YEAR(NOW())- SUBSTRING(ui.`IDCARD`,7,4)) <=25 THEN 1 ELSE NULL END ) AS '25周岁以下',\n" +
-            "COUNT(CASE WHEN 25<(YEAR(NOW())- SUBSTRING(ui.`IDCARD`,7,4))<=35 THEN 1 ELSE NULL END ) AS '25-35周岁',\n" +
-            "COUNT(CASE WHEN 35<(YEAR(NOW())- SUBSTRING(ui.`IDCARD`,7,4))<=45 THEN 1 ELSE NULL END ) AS '35-45以下',\n" +
-            "COUNT(CASE WHEN 45<(YEAR(NOW())- SUBSTRING(ui.`IDCARD`,7,4)) THEN 1 ELSE NULL END ) AS '45周岁以上'      \n" +
-            "       FROM t_user_info ui\n" +
-            "       INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
-    Map<String,Object> countByIdcard();
+    @Query(value = "SELECT COUNT(CASE WHEN ui.`TITLE` = '主任医师' THEN 1 ELSE NULL END ) AS chiefPhysician,\n" +
+            "       COUNT(CASE WHEN ui.`TITLE` = '副主任医师' THEN 1 ELSE NULL END) AS deputyChiefPhysician,\n" +
+            "       COUNT(CASE WHEN ui.`TITLE` = '主治医师' THEN 1 ELSE NULL END) AS attendingDoctor,\n" +
+            "       COUNT(CASE WHEN ui.`TITLE` = '住院医师' THEN 1 ELSE NULL END) AS residents,\n" +
+            "       COUNT(CASE WHEN ui.`TITLE` = '医师' THEN 1 ELSE NULL END) AS doctor\n" +
+            "       FROM t_user_info ui INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
+    Map<String,Object> countByTitle();
+
+    /**
+     * 查询用户详情支部比例
+     */
+    @Query(value = "SELECT COUNT(CASE WHEN ui.`BRANCHNAME` = '第一党支部' THEN 1 ELSE NULL END ) AS ONE,\n" +
+            "       COUNT(CASE WHEN ui.`BRANCHNAME` = '第二党支部' THEN 1 ELSE NULL END) AS two,\n" +
+            "       COUNT(CASE WHEN ui.`BRANCHNAME` = '第三党支部' THEN 1 ELSE NULL END) AS three,\n" +
+            "       COUNT(CASE WHEN ui.`BRANCHNAME` = '第四党支部' THEN 1 ELSE NULL END) AS four,\n" +
+            "       COUNT(CASE WHEN ui.`BRANCHNAME` = '第五党支部' THEN 1 ELSE NULL END) AS five\n" +
+            "       FROM t_user_info ui INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
+    Map<String,Object> countByBranch();
+
+    /**
+     * 党建籍贯比例
+     */
+    @Query(value = "SELECT COUNT(CASE WHEN ui.`PLACE` LIKE '%杭州%' THEN 1 ELSE NULL END ) AS yes,\n" +
+            "       COUNT(CASE WHEN ui.`PLACE` NOT LIKE '%杭州%' THEN 1 ELSE NULL END ) AS NO     \n" +
+            "       FROM t_user_info ui INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
+    Map<String,Object> countByPlace();
+
+    /**
+     * 党建身份比例
+     */
+    @Query(value = "SELECT COUNT(CASE WHEN ui.`IDENTITY`='干部' THEN 1 ELSE NULL END ) AS cadre,\n" +
+                    "COUNT(CASE WHEN ui.`IDENTITY`='群众' THEN 1 ELSE NULL END ) AS masses\n" +
+                    " FROM t_user_info ui INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
+    Map<String,Object> countByIdentity();
+
 }
 
 

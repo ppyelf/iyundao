@@ -23,22 +23,21 @@ public interface UserInfoService {
      * 人事新增
      * @return
      */
-    JsonResult saveAll(User user,UserInfo userInfo,UserInfoPersonnel userInfoPersonnel,JsonResult jsonResult);
+    JsonResult saveAll(String imageids,List<String> fileids,UserInfo userInfo,UserInfoPersonnel userInfoPersonnel,JsonResult jsonResult);
 
     /**
      * 新增用户附件
      * @param file
      * @return
      */
-    JsonResult saveFile(UserInfoFile file,JsonResult jsonResult);
+    UserInfoFile saveFile(UserInfoFile file);
 
     /**
      * 新增用户图片
      * @param image
      * @return
      */
-    JsonResult saveImage(UserInfoImage image,JsonResult jsonResult);
-
+    UserInfoImage saveImage(UserInfoImage image);
     /**
      * 新增党建信息
      * @param userInfoParty
@@ -93,62 +92,110 @@ public interface UserInfoService {
      * @param userInfoBasic
      * @return
      */
-    UserInfoBasic saveBasic(UserInfoBasic userInfoBasic);
+    JsonResult saveBasic(JsonResult jsonResult,UserInfoBasic userInfoBasic);
 
     /**
      * 新增合同信息表
      * @param userInfoContract
      * @return
      */
-    UserInfoContract saveContract(UserInfoContract userInfoContract);
+    JsonResult saveContract(JsonResult jsonResult,UserInfoContract userInfoContract);
 
     /**
      * 新增教育工作表
      * @param userInfoEducationWork
      * @return
      */
-    UserInfoEducationWork saveEducationWork(UserInfoEducationWork userInfoEducationWork);
+    JsonResult saveEducationWork(JsonResult jsonResult,UserInfoEducationWork userInfoEducationWork);
 
     /**
      * 新增医务护理b表
      * @param userInfoMedicalCare
      * @return
      */
-    UserInfoMedicalCare saveMedicalCare(UserInfoMedicalCare userInfoMedicalCare);
+    JsonResult saveMedicalCare(JsonResult jsonResult,UserInfoMedicalCare userInfoMedicalCare);
 
     /**
      * 新增其他基础表
      * @param userInfoOther
      * @return
      */
-    UserInfoOther saveOther(UserInfoOther userInfoOther);
+    JsonResult saveOther(JsonResult jsonResult,UserInfoOther userInfoOther);
 
     /**
      * 新增人事信息表
      * @param userInfoPersonnel
      * @return
      */
-    UserInfoPersonnel savePersonnel(UserInfoPersonnel userInfoPersonnel);
+    JsonResult savePersonnel(JsonResult jsonResult,UserInfoPersonnel userInfoPersonnel);
 
     /**
      * 新增职务职称表
      * @param userInfoTitleaPost
      * @return
      */
-    UserInfoTitleaPost saveTitleaPost(UserInfoTitleaPost userInfoTitleaPost);
+    JsonResult saveTitleaPost(JsonResult jsonResult,UserInfoTitleaPost userInfoTitleaPost);
 
     /**
      * 新增工作经历表
      * @param userInfoWork
      * @return
      */
-    UserInfoWork saveWork(UserInfoWork userInfoWork);
+    JsonResult saveWork(JsonResult jsonResult,UserInfoWork userInfoWork);
 
     /**
      * 删除用户详情
      * @param id
      */
     void delete(String id);
+
+    /**
+     * 删除用户详情 --个人基础信息
+     * @param id
+     */
+    void deleteBsaic(String id);
+
+    /**
+     * 删除用户详情 --个人合同信息
+     * @param id
+     */
+    void deleteContract(String id);
+
+    /**
+     * 删除用户详情 --个人教育工作
+     * @param id
+     */
+    void deleteEducationWork(String id);
+
+    /**
+     * 删除用户详情 --医务护理表
+     * @param id
+     */
+    void deleteMedicalCare(String id);
+
+    /**
+     * 删除用户详情 --其他表
+     * @param id
+     */
+    void deleteOther(String id);
+
+    /**
+     * 删除用户详情 --人事信息
+     * @param id
+     */
+    void deletePersonnel(String id);
+
+    /**
+     * 删除用户详情 -职称职务
+     * @param id
+     */
+    void deleteTitleaPost(String id);
+
+    /**
+     * 删除用户详情
+     * @param id
+     */
+    void deleteWork(String id);
 
     /**
      * 删除用户详情 -妇代会信息
@@ -193,6 +240,21 @@ public interface UserInfoService {
     void deleteLtxlgb(String id);
 
     /**
+     * 查询单个用户详情
+     * @param id
+     * @return
+     */
+    UserInfo findByUserInfoId(String id);
+
+    /**
+     * 条件查询
+     * @param name
+     * @param number
+     * @param department
+     * @return
+     */
+    List<UserInfo> findByNameOrNumberOrDepartmentLike(String name,String number,String department);
+    /**
      * 查询用户详情
      * @return
      */
@@ -214,7 +276,7 @@ public interface UserInfoService {
      * 查询用户详情 -党建基础
      * @return
      */
-    List<UserInfoParty> findAllByParty();
+    List<UserInfoParty> findAllByParty(String type);
 
     /**
      * 查询用户详情 -民主党派
@@ -241,13 +303,129 @@ public interface UserInfoService {
      */
     List<UserInfoLtxlgb> findAllByLtxlgb();
 
+    /**
+     * 查询用户详情 -基本信息表
+     * @param userinfoid
+     * @return
+     */
+    UserInfoBasic findByUserInfoBasicUserId(String userinfoid);
+
+    /**
+     * 查询用户详情 -附属文件表
+     * @param userinfoid
+     * @return
+     */
+    List<UserInfoFile> findByUserInfoFileUserid(String userinfoid);
+
+    /**
+     * 查询用户详情 -图片表
+     * @param userinfoid
+     * @return
+     */
+    UserInfoImage findByUserInfoImageUserid(String userinfoid);
+    /**
+     * 查询用户详情 -合同信息表
+     * @param userinfoid
+     * @return
+     */
+    List<UserInfoContract> findByUserInfoContractUserid(String userinfoid);
+
+    /**
+     * 查询用户详情 -教育工作表
+     * @param userinfoid
+     * @return
+     */
+    List<UserInfoEducationWork> findByUserInfoEducationWorkUserid(String userinfoid);
+
+    /**
+     * 查询用户详情 -医务护理表
+     * @param userinfoid
+     * @return
+     */
+    UserInfoMedicalCare findByUserInfoMedicalCareUserid(String userinfoid);
+
+    /**
+     * 查询用户详情 -其他表
+     * @param userinfoid
+     * @return
+     */
+    UserInfoOther findByUserInfoOtherUserid(String userinfoid);
+
+    /**
+     * 查询用户详情 -人事信息表
+     * @param userinfoid
+     * @return
+     */
+    UserInfoPersonnel findByUserInfoPersonnelUserid(String userinfoid);
+
+    /**
+     * 查询用户详情 -职称职务表
+     * @param userinfoid
+     * @return
+     */
+    UserInfoTitleaPost findByUserInfoTitleaPostUserid(String userinfoid);
+
+    /**
+     * 查询用户详情 -工作经历表
+     * @param userinfoid
+     * @return
+     */
+    List<UserInfoWork> findByUserInfoWorkUserid(String userinfoid);
+
+    /**
+     * 党建男女比例
+     * @return
+     */
     Map<String,Object> countBySex();
 
+    /**
+     * 党建学历比例
+     * @return
+     */
     Map<String,Object> countByEducation();
 
+    /**
+     * 党建人员年龄比例
+     * @return
+     */
     Map<String,Object> countByIdcard();
 
+    /**
+     * 党建科室比例
+     * @return
+     */
     Map<String,Object> countByDepartment();
+
+    /**
+     * 党建党龄比例
+     * @return
+     */
+    Map<String,Object> countByPartyAge();
+
+    /**
+     * 党建职称比例
+     * @return
+     */
+    Map<String,Object> countByTitle();
+
+    /**
+     * 党建支部比例
+     * @return
+     */
+    Map<String,Object> countByBranch();
+
+    /**
+     * 党建籍贯比例
+     * @return
+     */
+    Map<String,Object> countByPlace();
+
+    /**
+     * 党建身份比例
+     * @return
+     */
+    Map<String,Object> countByIdentity();
+
 
 
 }

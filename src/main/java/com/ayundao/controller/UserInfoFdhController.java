@@ -34,14 +34,14 @@ public class UserInfoFdhController extends BaseController {
 
     /**
      * @api {post} /userInfoFdh/add_fdh 新增用户妇代会基础信息
-     * @apiGroup userInfoFdh
+     * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
      * @apiDescription 新增用户妇代会基础信息
-     * @apiParam {String} post
-     * @apiParam {String} time
-     * @apiParam {String} id
+     * @apiParam {String} post 职称
+     * @apiParam {String} time 任职时间
+     * @apiParam {String} userinfoid
      * @apiParamExample {json} 请求样例
-     *         ?post=""&time=""&id=""
+     *         ?post=""&time=""&userinfoid=""
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:已存在该机构</br>
      *                                 600:参数异常</br>
@@ -70,19 +70,19 @@ public class UserInfoFdhController extends BaseController {
      */
     @PostMapping("/add_fdh")
     public JsonResult add_fdh(String post,String time,
-                              String id) {
+                              String userinfoid) {
 
         UserInfoFdh userInfoFdh = new UserInfoFdh();
         userInfoFdh.setCreatedDate(new Date());
         userInfoFdh.setLastModifiedDate(new Date());
         userInfoFdh.setPost(post);
         userInfoFdh.setTime(time);
-        userInfoFdh.setUserinfoid(id);
+        userInfoFdh.setUserinfoid(userinfoid);
         return userInfoService.saveFdh(userInfoFdh,jsonResult);
     }
 
     /**
-     * @api {get} /userInfoFdh/del 删除用户详情 -妇代会
+     * @api {post} /userInfoFdh/del 删除用户详情 -妇代会
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
      * @apiDescription 删除
@@ -100,7 +100,7 @@ public class UserInfoFdhController extends BaseController {
      * 	"data": ""
      * }
      */
-    @GetMapping("/del")
+    @PostMapping("/del")
     public JsonResult del(String id) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
@@ -186,13 +186,90 @@ public class UserInfoFdhController extends BaseController {
                     JSONObject json1 = new JSONObject(JsonUtils.getJson(userInfo));
                     JSONObject json2 = new JSONObject(JsonUtils.getJson(userInfoFdh));
                     JSONObject json = new JSONObject();
-                    json.put("userInfo",json1);
-                    json.put("userInfoFdh",json2);
+                    json.putAll(json1);
+                    json.putAll(json2);
                     pageArray.add(json);
                 }
             }
         }
 
+        jsonResult.setData(pageArray);
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /userInfoFdh/findByLike 用户条件查询
+     * @apiGroup UserInfoFdh
+     * @apiVersion 1.0.0
+     * @apiDescription 用户条件查询
+     * @apiParam {String} name 姓名
+     * @apiParam {String} number 编号
+     * @apiParam {String} department 科室
+     * @apiParamExample {json} 请求样例
+     *                /userInfoFdh/findByLike?name= (or number or department)
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": [
+     *         {
+     *             "birthday": "1984-11-11",
+     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
+     *             "education": "本科",
+     *             "nation": "汉族",
+     *             "title": "主治医师",
+     *             "userid": "297e47e36b8cbecd016b8cbf239b0000",
+     *             "number": "002",
+     *             "idEntity": "干部",
+     *             "workDate": "2004-11-11",
+     *             "post": "主席",
+     *             "id": "297e47e36b8d58dd016b8d5eac8d0001",
+     *             "place": "浙江杭州",
+     *             "department": "内科",
+     *             "lastModifiedDate": "20190625144200",
+     *             "sex": "男",
+     *             "branchName": "第一党支部",
+     *             "correctionDate": "2007-11-11",
+     *             "version": "0",
+     *             "partyDate": "2004-11-11",
+     *             "createdDate": "20190625144200",
+     *             "phone": "19822222222",
+     *             "idcard": "315247198811111811",
+     *             "name": "测试1",
+     *             "info1": "",
+     *             "time": "2010-11-11",
+     *             "info5": "",
+     *             "info4": "",
+     *             "info3": "",
+     *             "info2": ""
+     *         }
+     *     ]
+     * }
+     */
+    @PostMapping("/findByLike")
+    public JsonResult findByLike(String name,String number,String department){
+        String s = "%" + name + "%";
+        String s1 = "%" + number + "%";
+        String s2 = "%" + department + "%";
+        List<UserInfo> pages  =userInfoService.findByNameOrNumberOrDepartmentLike(s,s1,s2);
+        List<UserInfoFdh> pages1 = userInfoService.findAllByFdh();
+        JSONArray pageArray = new JSONArray();
+        for (UserInfo userInfo : pages) {
+            for (UserInfoFdh userInfoFdh : pages1) {
+                if (userInfo.getId().equals(userInfoFdh.getUserinfoid())){
+                    JSONObject json1 = new JSONObject(JsonUtils.getJson(userInfo));
+                    JSONObject json2 = new JSONObject(JsonUtils.getJson(userInfoFdh));
+                    JSONObject json = new JSONObject();
+                    json.putAll(json1);
+                    json.putAll(json2);
+                    pageArray.add(json);
+                }
+            }
+        }
         jsonResult.setData(pageArray);
         return jsonResult;
     }

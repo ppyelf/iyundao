@@ -1,6 +1,8 @@
 package com.ayundao.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
@@ -85,14 +87,26 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     @Transactional
-    public JsonResult saveAll(User user,UserInfo userInfo, UserInfoPersonnel userInfoPersonnel, JsonResult jsonResult) {
-        user = userRepository.save(user);
-        userInfo.setUserid(user.getId());
+    public JsonResult saveAll(String imageids,List<String> fileids,UserInfo userInfo, UserInfoPersonnel userInfoPersonnel, JsonResult jsonResult) {
         userInfo = userInfoRepository.save(userInfo);
         userInfoPersonnel.setUserinfoid(userInfo.getId());
         userInfoPersonnel = userInfoPersonnelRepository.save(userInfoPersonnel);
         JSONObject json = new JSONObject();
-        json.put("user",user);
+        for (String fileid : fileids) {
+            UserInfoFile userInfoFile = userInfoFileRepository.find(fileid);
+            if(userInfoFile != null){
+                userInfoFile.setUserinfoid(userInfo.getId());
+                userInfoFile = userInfoFileRepository.save(userInfoFile);
+            }
+            json.put("userInfoFile",userInfoFile);
+        }
+        UserInfoImage userInfoImage = userInfoImageRepository.find(imageids);
+        if(userInfoImage != null){
+            userInfoImage.setUserinfoid(userInfo.getId());
+            userInfoImage = userInfoImageRepository.save(userInfoImage);
+            json.put("userInfoImage",userInfoImage);
+        }
+
         json.put("userinfo", userInfo);
         json.put("userInfoPersonnel",userInfoPersonnel);
         jsonResult.setData(json);
@@ -100,21 +114,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public JsonResult saveFile(UserInfoFile file,JsonResult jsonResult) {
-        file = userInfoFileRepository.save(file);
-        JSONObject json = new JSONObject();
-        json.put("userInfoFile",file);
-        jsonResult.setData(json);
-        return jsonResult;
+    public UserInfoFile saveFile(UserInfoFile file) {
+        return userInfoFileRepository.save(file);
     }
 
     @Override
-    public JsonResult saveImage(UserInfoImage image,JsonResult jsonResult) {
-        image = userInfoImageRepository.save(image);
-        JSONObject json = new JSONObject();
-        json.put("userInfoImage",image);
-        jsonResult.setData(json);
-        return jsonResult;
+    @Transactional
+    public UserInfoImage saveImage(UserInfoImage image) {
+        return userInfoImageRepository.save(image);
     }
 
     @Override
@@ -183,43 +190,75 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public UserInfoBasic saveBasic(UserInfoBasic userInfoBasic) {
-        return userInfoBasicRepository.save(userInfoBasic);
+    public JsonResult saveBasic(JsonResult jsonResult,UserInfoBasic userInfoBasic) {
+        userInfoBasic = userInfoBasicRepository.save(userInfoBasic);
+        JSONObject json =new JSONObject();
+        json.put("userInfoBasic",userInfoBasic);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoContract saveContract(UserInfoContract userInfoContract) {
-        return userInfoContractRepository.save(userInfoContract);
+    public JsonResult saveContract(JsonResult jsonResult,UserInfoContract userInfoContract) {
+        userInfoContract = userInfoContractRepository.save(userInfoContract);
+        JSONObject json =new JSONObject();
+        json.put("userInfoContract",userInfoContract);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoEducationWork saveEducationWork(UserInfoEducationWork userInfoEducationWork) {
-        return userInfoEducationWorkRepository.save(userInfoEducationWork);
+    public JsonResult saveEducationWork(JsonResult jsonResult,UserInfoEducationWork userInfoEducationWork) {
+        userInfoEducationWork = userInfoEducationWorkRepository.save(userInfoEducationWork);
+        JSONObject json =new JSONObject();
+        json.put("userInfoEducationWork",userInfoEducationWork);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoMedicalCare saveMedicalCare(UserInfoMedicalCare userInfoMedicalCare) {
-        return userInfoMedicalCareRepository.save(userInfoMedicalCare);
+    public JsonResult saveMedicalCare(JsonResult jsonResult,UserInfoMedicalCare userInfoMedicalCare) {
+        userInfoMedicalCare = userInfoMedicalCareRepository.save(userInfoMedicalCare);
+        JSONObject json =new JSONObject();
+        json.put("userInfoMedicalCare",userInfoMedicalCare);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoOther saveOther(UserInfoOther userInfoOther) {
-        return userInfoOtherRepository.save(userInfoOther);
+    public JsonResult saveOther(JsonResult jsonResult,UserInfoOther userInfoOther) {
+        userInfoOther = userInfoOtherRepository.save(userInfoOther);
+        JSONObject json =new JSONObject();
+        json.put("userInfoOther",userInfoOther);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoPersonnel savePersonnel(UserInfoPersonnel userInfoPersonnel) {
-        return null;
+    public JsonResult savePersonnel(JsonResult jsonResult,UserInfoPersonnel userInfoPersonnel) {
+        userInfoPersonnel = userInfoPersonnelRepository.save(userInfoPersonnel);
+        JSONObject json =new JSONObject();
+        json.put("userInfoPersonnel",userInfoPersonnel);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoTitleaPost saveTitleaPost(UserInfoTitleaPost userInfoTitleaPost) {
-        return userInfoTitleaPostRepository.save(userInfoTitleaPost);
+    public JsonResult saveTitleaPost(JsonResult jsonResult,UserInfoTitleaPost userInfoTitleaPost) {
+        userInfoTitleaPost = userInfoTitleaPostRepository.save(userInfoTitleaPost);
+        JSONObject json =new JSONObject();
+        json.put("userInfoTitleaPost",userInfoTitleaPost);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     @Override
-    public UserInfoWork saveWork(UserInfoWork userInfoWork) {
-        return userInfoWorkRepository.save(userInfoWork);
+    public JsonResult saveWork(JsonResult jsonResult,UserInfoWork userInfoWork) {
+        userInfoWork = userInfoWorkRepository.save(userInfoWork);
+        JSONObject json =new JSONObject();
+        json.put("userInfoWork",userInfoWork);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     /**
@@ -246,9 +285,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         if (userInfoGh != null){
             userInfoGhRepository.delete(userInfoGh);
         }
-        UserInfoFile userInfoFile = userInfoFileRepository.findByUserInfoFileUserid(id);
+        List<UserInfoFile> userInfoFile = userInfoFileRepository.findByUserInfoFileUserid(id);
         if(userInfoFile != null){
-            userInfoFileRepository.delete(userInfoFile);
+            for (UserInfoFile file : userInfoFile) {
+                userInfoFileRepository.delete(file);
+            }
         }
         UserInfoImage userInfoImage = userInfoImageRepository.findByUserInfoImageUserid(id);
         if(userInfoImage != null){
@@ -270,9 +311,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(userInfoBasic != null){
             userInfoBasicRepository.delete(userInfoBasic);
         }
-        UserInfoWork userInfoWork = userInfoWorkRepository.findByUserInfoWorkUserid(id);
+        List<UserInfoWork> userInfoWork = userInfoWorkRepository.findByUserInfoWorkUserid(id);
         if(userInfoWork != null){
-            userInfoWorkRepository.delete(userInfoWork);
+            for (UserInfoWork infoWork : userInfoWork) {
+                userInfoWorkRepository.delete(infoWork);
+            }
         }
         UserInfoOther userInfoOther = userInfoOtherRepository.findByUserInfoOtherUserid(id);
         if(userInfoOther != null){
@@ -290,15 +333,84 @@ public class UserInfoServiceImpl implements UserInfoService {
         if(userInfoMedicalCare != null){
             userInfoMedicalCareRepository.delete(userInfoMedicalCare);
         }
-        UserInfoEducationWork userInfoEducationWork = userInfoEducationWorkRepository.findByUserInfoEducationWorkUserid(id);
+        List<UserInfoEducationWork> userInfoEducationWork = userInfoEducationWorkRepository.findByUserInfoEducationWorkUserid(id);
         if(userInfoEducationWork != null){
-            userInfoEducationWorkRepository.delete(userInfoEducationWork);
+            for (UserInfoEducationWork infoEducationWork : userInfoEducationWork) {
+                userInfoEducationWorkRepository.delete(infoEducationWork);
+            }
+
         }
-        UserInfoContract userInfoContract = userInfoContractRepository.findByUserInfoContractUserid(id);
+        List<UserInfoContract> userInfoContract = userInfoContractRepository.findByUserInfoContractUserid(id);
+        if(userInfoContract != null){
+            for (UserInfoContract infoContract : userInfoContract) {
+                userInfoContractRepository.delete(infoContract);
+            }
+        }
+
+    }
+
+    @Override
+    public void deleteBsaic(String id) {
+        UserInfoBasic userInfoBasic = userInfoBasicRepository.find(id);
+        if(userInfoBasic != null){
+            userInfoBasicRepository.delete(userInfoBasic);
+        }
+    }
+
+    @Override
+    public void deleteContract(String id) {
+        UserInfoContract userInfoContract = userInfoContractRepository.find(id);
         if(userInfoContract != null){
             userInfoContractRepository.delete(userInfoContract);
         }
+    }
 
+    @Override
+    public void deleteEducationWork(String id) {
+        UserInfoEducationWork userInfoEducationWork = userInfoEducationWorkRepository.find(id);
+        if(userInfoEducationWork != null){
+                userInfoEducationWorkRepository.delete(userInfoEducationWork);
+        }
+    }
+
+    @Override
+    public void deleteMedicalCare(String id) {
+        UserInfoMedicalCare userInfoMedicalCare = userInfoMedicalCareRepository.find(id);
+        if(userInfoMedicalCare != null){
+            userInfoMedicalCareRepository.delete(userInfoMedicalCare);
+        }
+    }
+
+    @Override
+    public void deleteOther(String id) {
+        UserInfoOther userInfoOther = userInfoOtherRepository.find(id);
+        if(userInfoOther != null){
+            userInfoOtherRepository.delete(userInfoOther);
+        }
+    }
+
+    @Override
+    public void deletePersonnel(String id) {
+        UserInfoPersonnel userInfoPersonnel = userInfoPersonnelRepository.find(id);
+        if(userInfoPersonnel != null){
+            userInfoPersonnelRepository.delete(userInfoPersonnel);
+        }
+    }
+
+    @Override
+    public void deleteTitleaPost(String id) {
+        UserInfoTitleaPost userInfoTitleaPost = userInfoTitleaPostRepository.find(id);
+        if(userInfoTitleaPost != null){
+            userInfoTitleaPostRepository.delete(userInfoTitleaPost);
+        }
+    }
+
+    @Override
+    public void deleteWork(String id) {
+        UserInfoWork userInfoWork = userInfoWorkRepository.find(id);
+        if(userInfoWork != null){
+                userInfoWorkRepository.delete(userInfoWork);
+            }
     }
 
     /**
@@ -386,6 +498,16 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    public UserInfo findByUserInfoId(String id) {
+        return userInfoRepository.findByUserInfoId(id);
+    }
+
+    @Override
+    public List<UserInfo> findByNameOrNumberOrDepartmentLike(String name,String number,String department){
+        return userInfoRepository.findByNameOrNumberOrDepartmentLike(name,number,department);
+    }
+
+    @Override
     public List<UserInfo> findAll() {
         return userInfoRepository.findAll();
     }
@@ -401,8 +523,13 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public List<UserInfoParty> findAllByParty() {
-        return userInfoPartyRepository.findAll();
+    public List<UserInfoParty> findAllByParty(String type) {
+        for (UserInfoParty.TYPE value : UserInfoParty.TYPE.values()) {
+            if (value.getName().equals(type)) {
+                return userInfoPartyRepository.findByType(value);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -426,6 +553,56 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
+    public UserInfoBasic findByUserInfoBasicUserId(String userinfoid) {
+        return userInfoBasicRepository.findByUserInfoBasicUserId(userinfoid);
+    }
+
+    @Override
+    public List<UserInfoFile> findByUserInfoFileUserid(String userinfoid) {
+        return userInfoFileRepository.findByUserInfoFileUserid(userinfoid);
+    }
+
+    @Override
+    public UserInfoImage findByUserInfoImageUserid(String userinfoid) {
+        return userInfoImageRepository.findByUserInfoImageUserid(userinfoid);
+    }
+
+    @Override
+    public List<UserInfoContract> findByUserInfoContractUserid(String userinfoid) {
+        return userInfoContractRepository.findByUserInfoContractUserid(userinfoid);
+    }
+
+    @Override
+    public List<UserInfoEducationWork> findByUserInfoEducationWorkUserid(String userinfoid) {
+        return userInfoEducationWorkRepository.findByUserInfoEducationWorkUserid(userinfoid);
+    }
+
+    @Override
+    public UserInfoMedicalCare findByUserInfoMedicalCareUserid(String userinfoid) {
+        return userInfoMedicalCareRepository.findByUserInfoMedicalCareUserid(userinfoid);
+    }
+
+    @Override
+    public UserInfoOther findByUserInfoOtherUserid(String userinfoid) {
+        return userInfoOtherRepository.findByUserInfoOtherUserid(userinfoid);
+    }
+
+    @Override
+    public UserInfoPersonnel findByUserInfoPersonnelUserid(String userinfoid) {
+        return userInfoPersonnelRepository.findByUserInfoPersonnelUserid(userinfoid);
+    }
+
+    @Override
+    public UserInfoTitleaPost findByUserInfoTitleaPostUserid(String userinfoid) {
+        return userInfoTitleaPostRepository.findByUserInfoTitleaPostUserid(userinfoid);
+    }
+
+    @Override
+    public List<UserInfoWork> findByUserInfoWorkUserid(String userinfoid) {
+        return userInfoWorkRepository.findByUserInfoWorkUserid(userinfoid);
+    }
+
+    @Override
     public Map<String,Object> countBySex() {
         return userInfoRepository.countBySex();
     }
@@ -443,6 +620,31 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public Map<String,Object> countByDepartment(){
         return userInfoRepository.countByDepartment();
+    }
+
+    @Override
+    public Map<String, Object> countByPartyAge() {
+        return userInfoRepository.countByPartyAge();
+    }
+
+    @Override
+    public Map<String, Object> countByTitle() {
+        return userInfoRepository.countByTitle();
+    }
+
+    @Override
+    public Map<String, Object> countByBranch() {
+        return userInfoRepository.countByBranch();
+    }
+
+    @Override
+    public Map<String, Object> countByPlace() {
+        return userInfoRepository.countByPlace();
+    }
+
+    @Override
+    public Map<String, Object> countByIdentity() {
+        return userInfoRepository.countByIdentity();
     }
 
 }

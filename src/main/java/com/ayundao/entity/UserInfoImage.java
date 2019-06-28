@@ -32,13 +32,13 @@ public class UserInfoImage extends BaseEntity<String> {
     /**
      * 图片类型后缀
      */
-    @Column(name = "FORMAT",nullable = false)
-    private String format;
+    @Column(name = "SUFFIX",nullable = false)
+    private String suffix;
 
     /**
      * 用户详情ID
      */
-    @Column(name = "USERINFOID",nullable = false,length = 50)
+    @Column(name = "USERINFOID",length = 50)
     private String userinfoid;
 
     /**
@@ -91,12 +91,12 @@ public class UserInfoImage extends BaseEntity<String> {
         this.url = url;
     }
 
-    public String getFormat() {
-        return format;
+    public String getSuffix() {
+        return suffix;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 
     public String getUserinfoid() {

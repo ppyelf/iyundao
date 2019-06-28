@@ -6,6 +6,8 @@ import com.ayundao.entity.UserInfoParty;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @ClassName: UserInfoPartyRepository
  * @project: ayundao
@@ -24,4 +26,7 @@ public interface UserInfoPartyRepository extends BaseRepository<UserInfoParty,St
      */
     @Query("select ui from UserInfoParty ui where ui.userinfoid=?1")
     UserInfoParty findByUserInfoPartyUserid(String userinfoid);
+
+    @Query("select ui from UserInfoParty ui where ui.type=?1")
+    List<UserInfoParty> findByType(UserInfoParty.TYPE type);
 }

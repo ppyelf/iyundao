@@ -23,8 +23,9 @@ public class UserInfoParty extends BaseEntity<String> {
       * 0 -未入党
       * 1 -党员
       * 2 -入党申请人
-      * 3 -入党积极分子
-      * 4 -预备党员
+      * 3 -建档对象
+      * 4 -入党积极分子
+      * 5 -预备党员
       */
     @Enumerated(value = EnumType.ORDINAL)
     @Column(name = "TYPE",length = 11)
@@ -259,13 +260,17 @@ public class UserInfoParty extends BaseEntity<String> {
         APPALPARTY(2, "入党申请人"),
 
         /**
-         * 3 -入党积极分子
+         * 3 -建档对象
          */
-        POSITIVEPARTY(3, "入党积极分子"),
+        ARCHIVINGOBJECT(3,"建档对象"),
         /**
-         * 4 -预备党员
+         * 4 -入党积极分子
          */
-        READYPARTY(4, "预备党员");
+        POSITIVEPARTY(4, "入党积极分子"),
+        /**
+         * 5 -预备党员
+         */
+        READYPARTY(5, "预备党员");
 
         private int index;
         private String name;

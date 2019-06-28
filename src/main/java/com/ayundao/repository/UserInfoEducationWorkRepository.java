@@ -5,6 +5,8 @@ import com.ayundao.entity.UserInfoEducationWork;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @ClassName: UserInfoEducationWorkRepository
  * @project: ayundao
@@ -22,5 +24,5 @@ public interface UserInfoEducationWorkRepository extends BaseRepository<UserInfo
      * @return
      */
     @Query("select uie from UserInfoEducationWork uie where uie.userinfoid = ?1")
-    UserInfoEducationWork findByUserInfoEducationWorkUserid(String userinfoid);
+    List<UserInfoEducationWork> findByUserInfoEducationWorkUserid(String userinfoid);
 }

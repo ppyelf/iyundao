@@ -33,6 +33,12 @@ public class UserInfoContract extends BaseEntity<String> {
     private String contracttype;
 
     /**
+     * 合同编号
+     */
+    @Column(name = "CONTRACTNUMBER",length = 50)
+    private String contractnumber;
+
+    /**
      * 合同开始时间
      */
     @Column(name = "CONTRACTSTARTTIME",length = 50)
@@ -61,12 +67,6 @@ public class UserInfoContract extends BaseEntity<String> {
      */
     @Column(name = "FREQUENCY",length = 50)
     private String frequency;
-
-    /**
-     * 注册时间
-     */
-    @Column(name = "REGISTRATIONTIME",length = 50)
-    private String registrationtime;
 
     /**
      * 用户详情ID
@@ -128,6 +128,14 @@ public class UserInfoContract extends BaseEntity<String> {
         return contractstarttime;
     }
 
+    public String getContractnumber() {
+        return contractnumber;
+    }
+
+    public void setContractnumber(String contractnumber) {
+        this.contractnumber = contractnumber;
+    }
+
     public void setContractstarttime(String contractstarttime) {
         this.contractstarttime = contractstarttime;
     }
@@ -162,14 +170,6 @@ public class UserInfoContract extends BaseEntity<String> {
 
     public void setFrequency(String frequency) {
         this.frequency = frequency;
-    }
-
-    public String getRegistrationtime() {
-        return registrationtime;
-    }
-
-    public void setRegistrationtime(String registrationtime) {
-        this.registrationtime = registrationtime;
     }
 
     public String getUserinfoid() {

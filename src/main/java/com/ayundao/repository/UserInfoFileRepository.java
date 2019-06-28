@@ -5,6 +5,8 @@ import com.ayundao.entity.UserInfoFile;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @ClassName: UserInfoFileRepository
  * @project: ayundao
@@ -22,5 +24,5 @@ public interface UserInfoFileRepository extends BaseRepository<UserInfoFile,Stri
      * @return
      */
     @Query("select uif from UserInfoFile uif where uif.userinfoid=?1")
-    UserInfoFile findByUserInfoFileUserid(String userinfoid);
+    List<UserInfoFile> findByUserInfoFileUserid(String userinfoid);
 }

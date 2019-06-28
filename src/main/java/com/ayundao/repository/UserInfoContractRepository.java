@@ -5,6 +5,8 @@ import com.ayundao.entity.UserInfoContract;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @ClassName: UserInfoContractRepository
  * @project: ayundao
@@ -22,5 +24,5 @@ public interface UserInfoContractRepository extends BaseRepository<UserInfoContr
      * @return
      */
     @Query("select uic from UserInfoContract uic where uic.userinfoid = ?1")
-    UserInfoContract findByUserInfoContractUserid(String userinfoid);
+    List<UserInfoContract> findByUserInfoContractUserid(String userinfoid);
 }
