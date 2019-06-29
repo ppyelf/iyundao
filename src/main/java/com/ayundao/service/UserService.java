@@ -75,10 +75,9 @@ public interface UserService {
 
     /**
      * 查询组织用户分页
-     * @param pageable
      * @return
      */
-    org.springframework.data.domain. Page<User> findByGroupIdForPage(String groupId, org.springframework.data.domain.Pageable pageable);
+    List<User> findByGroupIdForPage(String groupId);
 
     /**
      * 查询部门用户分页

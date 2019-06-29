@@ -283,9 +283,9 @@ public class SpiritController extends BaseController {
         }
         if (!TimeUtils.isyyyyMMddHHmmss(time)) {
             return JsonResult.failure(603, "时间格式不为:yyyyMMddHHmmss");
-        } 
-        List<SpiritFile> spiritFiles = spiritService.findFileByIds(fileIds);
-        List<SpiritImage> spiritImages = spiritService.findImageByIds(imageIds);
+        }
+        List<SpiritFile> spiritFiles = spiritService.findFileByIds(fileIds == null ? null : fileIds);
+        List<SpiritImage> spiritImages = spiritService.findImageByIds(imageIds == null ? null : imageIds);
         Subject subject = null;
         Depart depart = null;
         Groups groups = null;
@@ -365,6 +365,7 @@ public class SpiritController extends BaseController {
             pageable.setSearchValue(value);
         }
         Page<Spirit> spiritPage = spiritService.findPage(pageable);
+        jsonResult.setData(JsonUtils.getPage(spiritPage));
         return jsonResult;
     }
 
@@ -422,7 +423,5 @@ public class SpiritController extends BaseController {
         json.put("content", s.getSpiritContent().getContent());
         return json;
     }
-
-
 
 }

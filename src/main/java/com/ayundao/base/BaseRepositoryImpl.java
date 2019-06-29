@@ -241,6 +241,9 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
             return new ArrayList<>();
         }
 
+        if (ids.length == 0) {
+            return new ArrayList<>();
+        }
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(entityClass);
         Root<T> root = query.from(entityClass);

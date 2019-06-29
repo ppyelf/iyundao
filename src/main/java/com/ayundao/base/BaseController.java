@@ -134,11 +134,9 @@ public abstract class BaseController {
         //用户信息
         account = user.getAccount();
         account = EncryptUtils.DESencode(user.getPassword(), salt);
-        req.setAttribute(account, account);
-        String[] ids = null;
 
         setUser(user);
-        redisUtils.set(account+USER_INFO, JsonUtils.getJson(user));
+        redisUtils.set(account+USER_INFO, JsonUtils.getJson(user).toString());
         req.getSession().setAttribute("i-YunDao-account", account);
         return this.user;
     }
@@ -178,6 +176,9 @@ public abstract class BaseController {
         user = redisUtils.get(account+USER_INFO) != null
                 ? toUser(redisUtils.get(account+USER_INFO).toString())
                 : null;
+        if (user == null) {
+            return null;
+        } 
         if (StringUtils.isBlank(user.getId())) {
             user = userService.findByAccount(EncryptUtils.DESdecode(account, salt));
         }

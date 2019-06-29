@@ -244,21 +244,12 @@ public class UserController extends BaseController {
                            @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
         //todo 需要整改小组用户的分页查询
-        org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size);
-        org.springframework.data.domain.Page<User> userPage = userService.findByGroupIdForPage(groupId, pageable);
-        if (userPage == null) {
-            return JsonResult.success();
-        } 
-        JSONObject pageJson = new JSONObject();
+        List<User> userPage = userService.findByGroupIdForPage(groupId);
         JSONArray pageArray = new JSONArray();
-        pageJson.put("total", userPage.getTotalElements());
-        pageJson.put("totalPage", userPage.getTotalPages());
-        pageJson.put("page", userPage.getNumber());
-        for (User user : userPage.getContent()) {
+        for (User user : userPage) {
             pageArray.add(convertUser(user));
         }
-        pageJson.put("content", pageArray);
-        jsonResult.setData(pageJson);
+        jsonResult.setData(pageArray);
         return jsonResult;
     }
 

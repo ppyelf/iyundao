@@ -183,8 +183,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public org.springframework.data.domain.Page<User> findByGroupIdForPage(String groupId, org.springframework.data.domain.Pageable pageable) {
-        return userRepository.findByGroupIdForPage(groupId, pageable);
+    public List<User> findByGroupIdForPage(String groupId) {
+        return userRepository.findByGroupIdForPage(groupId);
     }
 
     @Override

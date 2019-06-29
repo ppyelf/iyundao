@@ -55,7 +55,7 @@ public interface UserRepository extends BaseRepository<User, String> {
 
     //组织用户分页
     @Query(value = "SELECT u.* from t_user u left join t_user_relations ur on ur.USERID = u.ID where ur.GROUPSID = (?1)", nativeQuery = true)
-    org.springframework.data.domain.Page<User> findByGroupIdForPage(String groupId, org.springframework.data.domain.Pageable pageable);
+    List<User> findByGroupIdForPage(String groupId);
 
     //部门用户分页
     @Query(value = "select u from User u left outer join fetch u.userRelations ur left outer join fetch ur.depart d where d.id = :departId")
