@@ -22,4 +22,8 @@ public interface SpiritContentRepository extends BaseRepository<SpiritContent, S
     //根据党内精神ID查询实体
     @Query("select sc from SpiritContent sc where sc.spirit.id = (?1)")
     SpiritContent findBySpiritId(String id);
+
+    //获取正文的部分信息
+    @Query("select substring(sc.content, 1, 10) from SpiritContent sc where sc.spirit.id = (?1)")
+    String getContentBySpiritId(String id);
 }

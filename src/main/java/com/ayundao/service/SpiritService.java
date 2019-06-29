@@ -86,4 +86,11 @@ public interface SpiritService {
     void deleteSpiritById(String id);
 
     Page<Spirit> findPage(Pageable pageable);
+
+    /**
+     * 获取正文信息
+     * @param id
+     * @return
+     */
+    String getContentBySpiritId(String id);
 }

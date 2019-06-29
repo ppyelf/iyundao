@@ -365,7 +365,16 @@ public class SpiritController extends BaseController {
             pageable.setSearchValue(value);
         }
         Page<Spirit> spiritPage = spiritService.findPage(pageable);
-        jsonResult.setData(JsonUtils.getPage(spiritPage));
+        JSONArray arr = new JSONArray();
+        JSONObject json = new JSONObject();
+        for (Spirit spirit : spiritPage.getContent()) {
+            arr.add(convert(spirit));
+        }
+        json.put("total", spiritPage.getTotal());
+        json.put("totalPage", spiritPage.getTotalPages());
+        json.put("page", spiritPage.getPageNumber());
+        json.put("content", arr);
+        jsonResult.setData(json);
         return jsonResult;
     }
 
@@ -420,7 +429,7 @@ public class SpiritController extends BaseController {
             }
             json.put("spiritImages", arr);
         }
-        json.put("content", s.getSpiritContent().getContent());
+        json.put("content", spiritService.getContentBySpiritId(s.getId()));
         return json;
     }
 

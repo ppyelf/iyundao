@@ -148,4 +148,9 @@ public class SpiritServiceImpl implements SpiritService {
     public Page<Spirit> findPage(Pageable pageable) {
         return spiritRepository.findPage(pageable);
     }
+
+    @Override
+    public String getContentBySpiritId(String id) {
+        return spiritContentRepository.getContentBySpiritId(id);
+    }
 }

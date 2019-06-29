@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import sun.security.util.Password;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -51,8 +52,8 @@ public class UserController extends BaseController {
     private RoleService roleService;
 
     /**
-     * @api {POST} /subject/checkCode 检测code
-     * @apiGroup Subject
+     * @api {POST} /user/checkCode 检测code
+     * @apiGroup User
      * @apiVersion 1.0.0
      * @apiDescription 检测编号是否存在
      * @apiParam {String} code
@@ -71,6 +72,30 @@ public class UserController extends BaseController {
     @PostMapping("/checkCode")
     public JsonResult existCode(String code) {
         jsonResult.setData(userService.existsCode(code) ? "已存在" : "可以使用");
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /user/checkAccount 检测账号
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     * @apiDescription 检测账号是否存在
+     * @apiParam {String} code
+     * @apiParamExample {json} 请求样例：
+     *                ?code=1234
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": "可以使用"
+     * }
+     */
+    @PostMapping("/checkAccount")
+    public JsonResult checkAccount(String account) {
+        jsonResult.setData(userService.findByAccount(account) != null ? "已存在" : "可以使用");
         return jsonResult;
     }
 
