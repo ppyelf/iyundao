@@ -63,9 +63,10 @@ public class IndexController extends BaseController {
      */
     @PostMapping("/login")
     public JsonResult login(String account, String password, HttpServletRequest req, HttpServletResponse resp) {
+//        out(account);
         User user = getUser();
         JsonResult jsonResult = JsonResult.success();
-        if (user != null) {
+        if (user != null && user.getAccount().equals(account)) {
             jsonResult.setCode(200);
             jsonResult.setMessage("登录成功");
             jsonResult.setData(JsonUtils.getJson(user));
@@ -78,8 +79,7 @@ public class IndexController extends BaseController {
                 jsonResult.setMessage("用户名/密码不正确");
                 return jsonResult;
             }
-            password = EncryptUtils.getSaltMD5(password, user.getSalt());
-            if (password.equals(user.getPassword())) {
+            if (EncryptUtils.getSaltverifyMD5(password, user.getPassword())) {
                 //封装用户
                 setCurrentUser(req, user);
                 jsonResult.setCode(200);

@@ -25,6 +25,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -200,7 +201,7 @@ public class UserController extends BaseController {
         user.setCode(code);
         user.setSex(sex);
         user.setSalt(getSalt());
-        user.setPassword(setPassword(password));
+        user.setPassword(setPassword(password, user.getSalt()));
         for (User.USER_TYPE type : User.USER_TYPE.values()) {
             if (type.ordinal() == userType) {
                 user.setUserType(type);

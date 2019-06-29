@@ -146,8 +146,8 @@ public abstract class BaseController {
      * @param password
      * @return
      */
-    public String setPassword(String password) {
-        return EncryptUtils.DESencode(password, salt);
+    public String setPassword(String password, String salt) {
+        return EncryptUtils.getSaltMD5(password, salt);
     }
 
     /**
@@ -310,6 +310,6 @@ public abstract class BaseController {
     }
 
     public String getSalt() {
-        return salt;
+        return EncryptUtils.getSalt();
     }
 }

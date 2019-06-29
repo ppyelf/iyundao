@@ -11,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -299,85 +300,32 @@ public class EncryptUtils {
     }
 
     /**
-     * 普通MD5加密 01
+     * byte[]字节数组 转换成 十六进制字符串
+     *
+     * @param arr 要转换的byte[]字节数组
+     *
+     * @return  String 返回十六进制字符串
      */
-    public static String getStrMD5(String inStr) {
-        // 获取MD5实例
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            System.out.println(e.toString());
-            return "";
-        }
-
-        // 将加密字符串转换为字符数组
-        char[] charArray = inStr.toCharArray();
-        byte[] byteArray = new byte[charArray.length];
-
-        // 开始加密
-        for (int i = 0; i < charArray.length; i++)
-            byteArray[i] = (byte) charArray[i];
-        byte[] digest = md5.digest(byteArray);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < digest.length; i++) {
-            int var = digest[i] & 0xff;
-            if (var < 16)
-                sb.append("0");
-            sb.append(Integer.toHexString(var));
+    private static String hex(byte[] arr) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < arr.length; ++i) {
+            sb.append(Integer.toHexString((arr[i] & 0xFF) | 0x100).substring(1, 3));
         }
         return sb.toString();
     }
 
     /**
-     * 普通MD5加密 02
-     * @Title : getStrrMD5
+     * MD5加密,并把结果由字节数组转换成十六进制字符串
+     *
+     * @param str 要加密的内容
+     *
+     * @return String 返回加密后的十六进制字符串
      */
-    public static String getStrrMD5(String password) {
-
-        char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-        try {
-            byte strTemp[] = password.getBytes("UTF-8");
-            MessageDigest mdTemp = MessageDigest.getInstance("MD5");
-            mdTemp.update(strTemp);
-            byte md[] = mdTemp.digest();
-            int j = md.length;
-            char str[] = new char[j * 2];
-            int k = 0;
-            for (int i = 0; i < j; i++) {
-                byte byte0 = md[i];
-                str[k++] = hexDigits[byte0 >>> 4 & 15];
-                str[k++] = hexDigits[byte0 & 15];
-            }
-
-            return new String(str);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * MD5双重解密
-     */
-    public static String getconvertMD5(String inStr) {
-        char[] charArray = inStr.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            charArray[i] = (char) (charArray[i] ^ 't');
-        }
-        String str = String.valueOf(charArray);
-        return str;
-    }
-
-    /**
-     * 使用Apache的Hex类实现Hex(16进制字符串和)和字节数组的互转
-     */
-    @SuppressWarnings("unused")
     private static String md5Hex(String str) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] digest = md.digest(str.getBytes());
-            return new String(new Hex().encode(digest));
+            return hex(digest);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e.toString());
@@ -386,7 +334,11 @@ public class EncryptUtils {
     }
 
     /**
-     * 加盐MD5加密
+     * 生成含有随机盐的密码
+     *
+     * @param password 要加密的密码
+     *
+     * @return String 含有随机盐的密码
      */
     public static String getSaltMD5(String password, String salt) {
         password = md5Hex(password + salt);
@@ -398,6 +350,20 @@ public class EncryptUtils {
             cs[i + 2] = password.charAt(i / 3 * 2 + 1);
         }
         return String.valueOf(cs);
+    }
+
+    public static String getSalt() {
+        // 生成一个16位的随机数
+        Random random = new Random();
+        StringBuilder sBuilder = new StringBuilder(16);
+        sBuilder.append(random.nextInt(99999999)).append(random.nextInt(99999999));
+        int len = sBuilder.length();
+        if (len < 16) {
+            for (int i = 0; i < 16 - len; i++) {
+                sBuilder.append("0");
+            }
+        }
+        return sBuilder.toString();
     }
 
     /**
