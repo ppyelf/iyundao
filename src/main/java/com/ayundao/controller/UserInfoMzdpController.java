@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
+import com.ayundao.entity.User;
 import com.ayundao.entity.UserInfo;
 import com.ayundao.entity.UserInfoFdh;
 import com.ayundao.entity.UserInfoMzdp;
 import com.ayundao.service.UserInfoService;
+import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,9 @@ import java.util.List;
 public class UserInfoMzdpController extends BaseController {
     @Autowired
     private UserInfoService userInfoService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * @api {post} /userInfoMzdp/add_mzdp 新增用户民主党派基础信息
@@ -151,6 +156,105 @@ public class UserInfoMzdpController extends BaseController {
                 }
             }
         }
+
+        jsonResult.setData(pageArray);
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /userInfoMzdp/listDepart 用户分页 -根据组织查询
+     * @apiGroup UserInfoMzdp
+     * @apiVersion 1.0.0
+     * @apiDescription 用户分页
+     * @apiParam {String} departId 组织id
+     * @apiParamExample {json} 请求样例
+     *                /userInfoMzdp/listDepart
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     *{
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
+     */
+    @PostMapping("/listDepart")
+    public JsonResult listDepart(String departId){
+        List<User> pages = userService.findByDepartIdForPage(departId);
+        List<UserInfo> pages1 = userInfoService.findAll();
+        List<UserInfoMzdp> pages2 = userInfoService.findAllByMzdp();
+        JSONArray pageArray = new JSONArray();
+        for (User user : pages) {
+
+            for (UserInfo userInfo : pages1) {
+                for (UserInfoMzdp userInfoMzdp : pages2) {
+                    if (user.getId().equals(userInfo.getUserid())) {
+                        if (userInfo.getId().equals(userInfoMzdp.getUserinfoid())) {
+                            JSONObject json1 = new JSONObject(JsonUtils.getJson(user));
+                            JSONObject json2 = new JSONObject(JsonUtils.getJson(userInfo));
+                            JSONObject json3 = new JSONObject(JsonUtils.getJson(userInfoMzdp));
+                            JSONObject json = new JSONObject();
+                            json.putAll(json1);
+                            json.putAll(json2);
+                            json.putAll(json3);
+                            pageArray.add(json);
+                        }
+                    }
+                }
+            }
+        }
+
+        jsonResult.setData(pageArray);
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /userInfoMzdp/listGroupId 用户分页 -根据部门查询
+     * @apiGroup UserInfoMzdp
+     * @apiVersion 1.0.0
+     * @apiDescription 用户分页
+     * @apiParam {String} groupId 部门id
+     * @apiParamExample {json} 请求样例
+     *                /userInfoMzdp/listDepart
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     *{
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
+     */
+    @PostMapping("/listGroupId")
+    public JsonResult listGroupId(String groupId){
+        List<User> pages = userService.findByGroupIdForPage(groupId);
+        List<UserInfo> pages1 = userInfoService.findAll();
+        List<UserInfoMzdp> pages2 = userInfoService.findAllByMzdp();
+        JSONArray pageArray = new JSONArray();
+        for (User user : pages) {
+
+            for (UserInfo userInfo : pages1) {
+                for (UserInfoMzdp userInfoMzdp : pages2) {
+                    if (user.getId().equals(userInfo.getUserid())) {
+                        if (userInfo.getId().equals(userInfoMzdp.getUserinfoid())) {
+                            JSONObject json1 = new JSONObject(JsonUtils.getJson(user));
+                            JSONObject json2 = new JSONObject(JsonUtils.getJson(userInfo));
+                            JSONObject json3 = new JSONObject(JsonUtils.getJson(userInfoMzdp));
+                            JSONObject json = new JSONObject();
+                            json.putAll(json1);
+                            json.putAll(json2);
+                            json.putAll(json3);
+                            pageArray.add(json);
+                        }
+                    }
+                }
+            }
+        }
+
 
         jsonResult.setData(pageArray);
         return jsonResult;

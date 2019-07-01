@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
+import com.ayundao.entity.User;
 import com.ayundao.entity.UserInfo;
 import com.ayundao.entity.UserInfoFdh;
 import com.ayundao.entity.UserInfoGzqt;
 import com.ayundao.service.UserInfoService;
+import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,9 @@ import java.util.List;
 public class UserInfoGzqtController extends BaseController {
     @Autowired
     private UserInfoService userInfoService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * @api {post} /userInfoGzqt/add_gzqt 新增用户高知群体基础信息
@@ -143,6 +148,104 @@ public class UserInfoGzqtController extends BaseController {
                 }
             }
         }
+        jsonResult.setData(pageArray);
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /userInfoGzqt/listDepart 用户分页 -根据组织查询
+     * @apiGroup UserInfoGzqt
+     * @apiVersion 1.0.0
+     * @apiDescription 用户分页
+     * @apiParam {String} departId 组织id
+     * @apiParamExample {json} 请求样例
+     *                /userInfoGzqt/listDepart
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     *{
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
+     */
+    @PostMapping("/listDepart")
+    public JsonResult listDepart(String departId){
+        List<User> pages = userService.findByDepartIdForPage(departId);
+        List<UserInfo> pages1 = userInfoService.findAll();
+        List<UserInfoGzqt> pages2 = userInfoService.findAllByGzqt();
+        JSONArray pageArray = new JSONArray();
+        for (User user : pages) {
+
+            for (UserInfo userInfo : pages1) {
+                for (UserInfoGzqt userInfoGzqt : pages2) {
+                    if (user.getId().equals(userInfo.getUserid())) {
+                        if (userInfo.getId().equals(userInfoGzqt.getUserinfoid())) {
+                            JSONObject json1 = new JSONObject(JsonUtils.getJson(user));
+                            JSONObject json2 = new JSONObject(JsonUtils.getJson(userInfo));
+                            JSONObject json3 = new JSONObject(JsonUtils.getJson(userInfoGzqt));
+                            JSONObject json = new JSONObject();
+                            json.putAll(json1);
+                            json.putAll(json2);
+                            json.putAll(json3);
+                            pageArray.add(json);
+                        }
+                    }
+                }
+            }
+        }
+
+        jsonResult.setData(pageArray);
+        return jsonResult;
+    }
+
+    /**
+     * @api {post} /userInfoGzqt/listGroupId 用户分页 -根据部门查询
+     * @apiGroup UserInfoGzqt
+     * @apiVersion 1.0.0
+     * @apiDescription 用户分页
+     * @apiParam {String} groupId 部门id
+     * @apiParamExample {json} 请求样例
+     *                /userInfoGzqt/listDepart
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     *{
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
+     */
+    @PostMapping("/listGroupId")
+    public JsonResult listGroupId(String groupId){
+        List<User> pages = userService.findByGroupIdForPage(groupId);
+        List<UserInfo> pages1 = userInfoService.findAll();
+        List<UserInfoGzqt> pages2 = userInfoService.findAllByGzqt();
+        JSONArray pageArray = new JSONArray();
+        for (User user : pages) {
+
+            for (UserInfo userInfo : pages1) {
+                for (UserInfoGzqt userInfoGzqt : pages2) {
+                    if (user.getId().equals(userInfo.getUserid())) {
+                        if (userInfo.getId().equals(userInfoGzqt.getUserinfoid())) {
+                            JSONObject json1 = new JSONObject(JsonUtils.getJson(user));
+                            JSONObject json2 = new JSONObject(JsonUtils.getJson(userInfo));
+                            JSONObject json3 = new JSONObject(JsonUtils.getJson(userInfoGzqt));
+                            JSONObject json = new JSONObject();
+                            json.putAll(json1);
+                            json.putAll(json2);
+                            json.putAll(json3);
+                            pageArray.add(json);
+                        }
+                    }
+                }
+            }
+        }
+
 
         jsonResult.setData(pageArray);
         return jsonResult;
