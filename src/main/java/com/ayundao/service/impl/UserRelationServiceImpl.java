@@ -74,4 +74,9 @@ public class UserRelationServiceImpl implements UserRelationService {
                 ? new ArrayList<>()
                 : userRelations;
     }
+
+    @Override
+    public UserRelation findByUserIdAndDepartIdOrGroupId(String userId, String departId, String groupsId) {
+        return userRelationRepository.findByUserIdAndDepartIdOrGroupId(userId, departId, groupsId);
+    }
 }

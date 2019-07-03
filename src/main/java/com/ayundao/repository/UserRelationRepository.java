@@ -64,5 +64,7 @@ public interface UserRelationRepository extends CrudRepository<UserRelation, Str
     @Query("select t.id from UserRelation t where t.subject.id = ?1")
     List<String> selectBySubjectId(String subjectId);
 
-
+    //根据用户ID和所属机构/组织ID查询所属关系
+    @Query("select ur from UserRelation ur where ur.user.id = ?1 and (ur.depart.id = ?2 or ur.groups.id = ?3)")
+    UserRelation findByUserIdAndDepartIdOrGroupId(String userId, String departId, String groupsId);
 }

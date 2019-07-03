@@ -1,5 +1,6 @@
 package com.ayundao.base.utils;
 
+import com.ayundao.base.BaseComponent;
 import com.ayundao.base.BaseEntity;
 import com.ayundao.entity.*;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -77,7 +78,9 @@ public class JsonUtils {
             String key = entry.getKey();
             Field field = entry.getValue();
             Class cls = field.getType();
-            if (!BaseEntity.class.isAssignableFrom(cls) && !Collection.class.isAssignableFrom(cls)
+            if (!BaseComponent.class.isAssignableFrom(cls)
+                    && !BaseEntity.class.isAssignableFrom(cls)
+                    && !Collection.class.isAssignableFrom(cls)
                     && !Map.class.isAssignableFrom(cls)) {
                 json.put(key, ClassUtils.getBrieflyProperty(obj, field.getName()));
             }
