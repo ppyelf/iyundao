@@ -101,9 +101,10 @@ public interface ExamineService {
     /**
      * 查询用户的请假审批
      * @param userId
+     * @param type
      * @return
      */
-    List<ExamineProcess> findProcessByUserId(String userId);
+    List<ExamineProcess> findProcessByUserIdAndType(String userId, int type);
 
     /**
      * 添加请示批复
@@ -118,4 +119,30 @@ public interface ExamineService {
      * @return
      */
     Examine saveReply(UserRelation userRelation, List<UserRelation> list, List<UserRelation> cList, Examine.REASON reason, String cause, String detail, List<ExamineImage> images, List<ExamineFile> files);
+
+    /**
+     * 根据审核ID和用户ID查询实体
+     * @param id
+     * @param userId
+     * @return
+     */
+    ExamineProcess findProcessByExamineIdAndUserId(String id, String userId);
+
+    /**
+     * 检测前一级是否审核通过
+     * @param id
+     * @param level
+     * @param agree
+     * @return
+     */
+    boolean checkPreviousStatus(String id, int level, ExamineProcess.PROCESS_STATUS agree);
+
+    /**
+     * 审核流程
+     * @param ep
+     * @param status
+     * @param comment
+     * @return
+     */
+    ExamineProcess apply(ExamineProcess ep, ExamineProcess.PROCESS_STATUS status, String comment);
 }

@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -255,6 +252,7 @@ public class ExamineController extends BaseController {
      *                                 606:审批人ID与审批人组织/部门ID长度不符</br>
      *                                 607:审批人与所属部门/机构不符</br>
      *                                 608:type类型异常</br>
+     *                                 610:自己无法作为审核人</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -302,6 +300,9 @@ public class ExamineController extends BaseController {
         } 
         List<UserRelation> list = new LinkedList<>();
         for (int i = 0; i < examinerIds.length; i++) {
+            if (examinerIds[i].equals(userId)) {
+                return JsonResult.failure(610, "自己无法作为审核人");
+            }
             UserRelation ur = userRelationService.findByUserIdAndDepartIdOrGroupId(examinerIds[i], examinerOriginIds[i], examinerOriginIds[i]);
             if (ur == null) {
                 return JsonResult.failure(607, "审批人与所属部门/机构不符");
@@ -342,6 +343,7 @@ public class ExamineController extends BaseController {
      * @apiParamExample {json} 请求示例:
      *              ?
      * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 100:审核人最多为3级</br>
      *                                 404:用户不存在或者用户ID为空</br>
      *                                 601:时间格式不符</br>
      *                                 602:请假事由不能为空</br>
@@ -352,6 +354,8 @@ public class ExamineController extends BaseController {
      *                                 607:审批人与所属部门/组织不符</br>
      *                                 608:type类型异常</br>
      *                                 609:抄送人与部门/组织不符</br>
+     *                                 610:自己无法作为审核人</br>
+     *                                 611:自己无法作为抄送人</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -400,9 +404,24 @@ public class ExamineController extends BaseController {
         if (CollectionUtils.isEmpty(list)) {
             return JsonResult.failure(607, "审批人与所属部门/组织不符");
         }
+        if (list.size() > 3) {
+            return JsonResult.failure(100, "审核人最多为3级");
+        }
         List<UserRelation> cList = copierIds == null ? null : checkUserRelation(new ArrayList(){}, copierIds, copierOriginIds);
         if (CollectionUtils.isEmpty(cList) && copierIds != null) {
             return jsonResult.failure(609, "抄送人与部门/组织不符");
+        }
+        for (UserRelation relation : list) {
+            if (relation.getUser().getId().equals(userId)) {
+                return JsonResult.failure(610, "自己无法作为审核人");
+            } 
+        }
+        if (CollectionUtils.isNotEmpty(cList)) {
+            for (UserRelation relation : cList) {
+                if (relation.getUser().getId().equals(userId)) {
+                    return JsonResult.failure(611, "自己无法作为抄送人");
+                }
+            }
         } 
         List<ExamineImage> images = examineService.findImageByIds(imageIds);
         List<ExamineFile> files = examineService.findFileByIds(fileIds);
@@ -487,11 +506,12 @@ public class ExamineController extends BaseController {
 
 
     /**
-     * @api {POST} /examine/list 请假列表
+     * @api {POST} /examine/list 列表
      * @apiGroup Examine
      * @apiVersion 1.0.0
-     * @apiDescription 请假列表
+     * @apiDescription 列表
      * @apiParam {String} userId 用户ID,必填
+     * @apiParam {int} type 列表类型,必填,0-请假列表,1请示列表
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916bb19747016bb197bdd50000
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -506,15 +526,80 @@ public class ExamineController extends BaseController {
      * }
      */
     @PostMapping("/list")
-    public JsonResult listLeave(String userId) {
-        List<ExamineProcess> examines = examineService.findProcessByUserId(userId);
+    public JsonResult list(String userId,
+                                @RequestParam(defaultValue = "0") int type) {
+        List<ExamineProcess> examines = examineService.findProcessByUserIdAndType(userId, type);
         JSONArray arr = new JSONArray();
         for (ExamineProcess ep : examines) {
             JSONObject json = convert(ep.getExamine());
-            json.put("examineProcess", convertExamineProcesses(ep.getExamine().getExamineProcesses(), null));
+            json.put("examineProcess", convertExamineProcesses(ep.getExamine().getExamineProcesses(), userId));
             arr.add(json);
         }
         jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /examine/apply 审核
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 审核
+     * @apiParam {String} id 请假ID,必填
+     * @apiParamExample {json} 请求示例:
+     *              ?id=402881916bb19747016bb197bdd50000
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:审核不存在或者审核ID为空</br>
+     *                                 601:审核态度类型异常</br>
+     *                                 100: 上级审核未通过</br>
+     *                                 101:拒绝必须填写拒绝理由</br>
+     *                                 102:只有审核人才有审核流程</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @PostMapping("/apply")
+    public JsonResult examineEntity(String id,
+                                    String userId,
+                                    @RequestParam(defaultValue = "1") int status,
+                                    String comment) {
+        Examine examine = examineService.find(id);
+        if (examine == null) {
+            return jsonResult.failure(404, "审核不存在或者审核ID为空");
+        }
+        ExamineProcess.PROCESS_STATUS statusType = null;
+        for (ExamineProcess.PROCESS_STATUS type : ExamineProcess.PROCESS_STATUS.values()) {
+            if (type.ordinal() == status) {
+                statusType = type;
+                break;
+            } 
+        }
+        if (statusType == null) {
+            return jsonResult.failure(601, "审核态度类型异常");
+        } 
+        ExamineProcess ep = examineService.findProcessByExamineIdAndUserId(id, userId);
+        if (ep.getType() != ExamineProcess.PERSON_TYPE.Examiner) {
+            return JsonResult.failure(102, "只有审核人才有审核流程");
+        } 
+        int level = ep.getLevel() == 1 ? 1 : ep.getLevel() - 1;
+        //检测上一级审核是否通过
+        if (level != 1 && examineService.checkPreviousStatus(id, level, ExamineProcess.PROCESS_STATUS.Audit_in_progress)) {
+            return JsonResult.failure(100, "上级审核未通过");
+        }
+        if (status != 1 && StringUtils.isBlank(comment)) {
+            return jsonResult.failure(101, "拒绝必须填写拒绝理由");
+        }
+
+        ep = examineService.apply(ep, statusType, comment);
+        JSONObject json = convert(ep.getExamine());
+        Set<ExamineProcess> set = new HashSet<>();
+        set.add(ep);
+        json.put("examineProcess", convertExamineProcesses(set, userId));
+        jsonResult.setData(json);
         return jsonResult;
     }
 
@@ -542,14 +627,14 @@ public class ExamineController extends BaseController {
             j.put("type", ExamineProcess.PERSON_TYPE.valueOf(ep.getType().name()).getName());
             j.put("status", ExamineProcess.PROCESS_STATUS.valueOf(ep.getStatus().name()).getName());
             j.put("level", ep.getLevel());
+            j.put("comment", ep.getComment());
             arr.add(j);
             if (StringUtils.isNotBlank(userId) && userId.equals(ep.getUser().getId())) {
                 arr = new JSONArray();
                 arr.add(j);
-                break;
+                return arr;
             }
         }
-
         return arr;
     }
 }

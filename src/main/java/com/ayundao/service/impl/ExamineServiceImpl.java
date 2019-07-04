@@ -1,7 +1,6 @@
 package com.ayundao.service.impl;
 
 import com.ayundao.base.BaseComponent;
-import com.ayundao.base.BaseEntity;
 import com.ayundao.base.utils.FileUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
@@ -229,15 +228,55 @@ public class ExamineServiceImpl implements ExamineService {
 
         //审核人
         int level = 1;
-        saveExamineProcess(list, level++, examine, epSet, ExamineProcess.PERSON_TYPE.Examiner);
+        saveExamineProcess(list, level, examine, epSet, ExamineProcess.PERSON_TYPE.Examiner);
 
         //抄送人
         if (CollectionUtils.isNotEmpty(cList)) {
-            saveExamineProcess(cList, level++, examine, epSet, ExamineProcess.PERSON_TYPE.Copier);
+            saveExamineProcess(cList, level, examine, epSet, ExamineProcess.PERSON_TYPE.Copier);
         }
 
         examine.setExamineProcesses(epSet);
         return examineRepository.save(examine);
+    }
+
+    @Override
+    public ExamineProcess findProcessByExamineIdAndUserId(String id, String userId) {
+        return examineProcessRepository.findProcessByExamineIdAndUserId(id, userId);
+    }
+
+    @Override
+    public boolean checkPreviousStatus(String id, int level, ExamineProcess.PROCESS_STATUS status) {
+        ExamineProcess ep = examineProcessRepository.findByExamineIdAndLevel(id, level, status);
+        return ep == null ? false : true;
+    }
+
+    @Override
+    public ExamineProcess apply(ExamineProcess ep, ExamineProcess.PROCESS_STATUS status, String comment) {
+        ep.setStatus(status);
+        ep.setComment(comment);
+        Examine examine = ep.getExamine();
+        List<ExamineProcess> list = examineProcessRepository.findByExamineIdExcludeCurrent(examine.getId(), ep.getId());
+        switch (status.getIndex()) {
+            case  1://同意
+                if (ep.getLevel() == examineProcessRepository.maxLevel(examine.getId())) {
+                    for (ExamineProcess examineProcess : list) {
+                        if (examineProcess.getLevel() == 0 || ExamineProcess.PERSON_TYPE.Copier == examineProcess.getType()) {
+                            examineProcess.setStatus(ExamineProcess.PROCESS_STATUS.pass);
+                        }
+                    }
+                    examineProcessRepository.saveAll(list);
+                }
+                break;
+            case  2://拒绝
+                for (ExamineProcess examineProcess : list) {
+                    if (examineProcess.getLevel() == 0 || ep.getLevel() < examineProcess.getLevel()) {
+                        examineProcess.setStatus(ExamineProcess.PROCESS_STATUS.refuse);
+                    }
+                }
+                examineProcessRepository.saveAll(list);
+                break;
+        }
+        return examineProcessRepository.save(ep);
     }
 
     /**
@@ -259,9 +298,9 @@ public class ExamineServiceImpl implements ExamineService {
             eep.setUser(new BaseComponent(r.getUser().getId(), r.getUser().getName()));
             eep.setExamine(examine);
             eep.setType(type);
-            eep.setStatus(ExamineProcess.PROCESS_STATUS.Audit_in_progress);
+            eep.setStatus(type.equals(ExamineProcess.PERSON_TYPE.Copier) ? ExamineProcess.PROCESS_STATUS.view : ExamineProcess.PROCESS_STATUS.Audit_in_progress);
             eep.setComment(null);
-            eep.setLevel(level);
+            eep.setLevel(level++);
             eep = examineProcessRepository.save(eep);
             set.add(eep);
         }
@@ -286,8 +325,8 @@ public class ExamineServiceImpl implements ExamineService {
     }
 
     @Override
-    public List<ExamineProcess> findProcessByUserId(String userId) {
-        return examineProcessRepository.findByUserId(userId);
+    public List<ExamineProcess> findProcessByUserIdAndType(String userId, int type) {
+        return examineProcessRepository.findProcessByUserIdAndType(userId, type);
     }
 
 }

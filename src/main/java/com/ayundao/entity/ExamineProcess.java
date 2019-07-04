@@ -77,7 +77,7 @@ public class ExamineProcess extends BaseEntity<String> {
      * 审核状态:0-审核中,1-同意,2-拒绝
      */
     @Enumerated
-    @Column(name = "TYPE", nullable = false, length = 1)
+    @Column(name = "STATUS", nullable = false, length = 1)
     private PROCESS_STATUS status;
 
     /**
@@ -290,7 +290,17 @@ public class ExamineProcess extends BaseEntity<String> {
         /**
          * 拒绝
          */
-        refuse(2, "拒绝");
+        refuse(2, "拒绝"),
+
+        /**
+         * 查看
+         */
+        view(3, "查看"),
+
+        /**
+         * 通过
+         */
+        pass(4, "通过");
 
         private int index;
 
