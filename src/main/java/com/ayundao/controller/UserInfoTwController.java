@@ -9,6 +9,7 @@ import com.ayundao.entity.User;
 import com.ayundao.entity.UserInfo;
 import com.ayundao.entity.UserInfoFdh;
 import com.ayundao.entity.UserInfoTw;
+import com.ayundao.service.UserInfoPowerService;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: UserInfoTwController
@@ -37,6 +39,9 @@ public class UserInfoTwController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserInfoPowerService userInfoPowerService;
 
     /**
      * @api {post} /userInfoTw/add_tw 新增用团委基础信息
@@ -327,6 +332,97 @@ public class UserInfoTwController extends BaseController {
             }
         }
 
+        jsonResult.setData(pageArray);
+        return jsonResult;
+    }
+
+    /**
+     * @api {get} /userInfoTw/listSex 团委图形比例
+     * @apiGroup UserInfoTw
+     * @apiVersion 1.0.0
+     * @apiDescription 团委图形比例
+     * @apiParamExample {json} 请求样例
+     *                /userInfoTw/listPower
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": [
+     *         {
+     *             "education": {
+     *                 "doctor": 0,
+     *                 "specialty": 0,
+     *                 "postgraduate": 0,
+     *                 "undergraduate": 8,
+     *                 "highSchool": 3
+     *             },
+     *             "identity": {
+     *                 "cadre": 11,
+     *                 "masses": 0
+     *             },
+     *             "sex": {
+     *                 "man": 11,
+     *                 "woman": 0
+     *             },
+     *             "partyAge": {
+     *                 "10年以上": 10,
+     *                 "2年以下": 0,
+     *                 "5-10年": 1,
+     *                 "2-5年": 0
+     *             },
+     *             "place": {
+     *                 "NO": 0,
+     *                 "yes": 11
+     *             },
+     *             "department": {
+     *                 "eye": 0,
+     *                 "chinese": 0,
+     *                 "nternal": 11,
+     *                 "emergency": 0,
+     *                 "surgery": 0
+     *             },
+     *             "title": {
+     *                 "doctor": 0,
+     *                 "deputyChiefPhysician": 0,
+     *                 "residents": 0,
+     *                 "chiefPhysician": 3,
+     *                 "attendingDoctor": 8
+     *             },
+     *             "age": {
+     *                 "25周岁以下": 3,
+     *                 "45周岁以上": 0,
+     *                 "25-35周岁": 8,
+     *                 "35-45以下": 0
+     *             }
+     *         }
+     *     ]
+     * }
+     */
+    @GetMapping("/listPower")
+    public JsonResult listSex(){
+        Map<String,Object> pages = userInfoPowerService.countBySexTw();
+        Map<String,Object> pages1 = userInfoPowerService.countByEducationTw();
+        Map<String,Object> pages2 = userInfoPowerService.countByIdcardTw();
+        Map<String,Object> pages3 = userInfoPowerService.countByDepartmentTw();
+        Map<String,Object> pages4 = userInfoPowerService.countByPartyAgeTw();
+        Map<String,Object> pages5 = userInfoPowerService.countByPlaceTw();
+        Map<String,Object> pages6 = userInfoPowerService.countByTitleTw();
+        Map<String,Object> pages7 = userInfoPowerService.countByIdentityTw();
+        JSONArray pageArray = new JSONArray();
+        JSONObject json = new JSONObject();
+        json.put("sex",pages);
+        json.put("education",pages1);
+        json.put("age",pages2);
+        json.put("department",pages3);
+        json.put("partyAge",pages4);
+        json.put("place",pages5);
+        json.put("title",pages6);
+        json.put("identity",pages7);
+        pageArray.add(json);
         jsonResult.setData(pageArray);
         return jsonResult;
     }

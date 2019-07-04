@@ -9,6 +9,7 @@ import com.ayundao.entity.User;
 import com.ayundao.entity.UserInfo;
 import com.ayundao.entity.UserInfoFdh;
 import com.ayundao.entity.UserInfoMzdp;
+import com.ayundao.service.UserInfoPowerService;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: UserInfoMzdpController
@@ -37,6 +39,9 @@ public class UserInfoMzdpController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserInfoPowerService userInfoPowerService;
 
     /**
      * @api {post} /userInfoMzdp/add_mzdp 新增用户民主党派基础信息
@@ -333,6 +338,101 @@ public class UserInfoMzdpController extends BaseController {
                 }
             }
         }
+        jsonResult.setData(pageArray);
+        return jsonResult;
+    }
+
+    /**
+     * @api {get} /userInfoMzdp/listPower 民主党派图形比例
+     * @apiGroup UserInfoMzdp
+     * @apiVersion 1.0.0
+     * @apiDescription 民主党派图形比例
+     * @apiParamExample {json} 请求样例
+     *                /userInfoMzdp/listPower
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": [
+     *         {
+     *             "education": {
+     *                 "doctor": 0,
+     *                 "specialty": 0,
+     *                 "postgraduate": 0,
+     *                 "highSchool": 0,
+     *                 "undergraduate": 2
+     *             },
+     *             "identity": {
+     *                 "cadre": 2,
+     *                 "masses": 0
+     *             },
+     *             "sex": {
+     *                 "woman": 0,
+     *                 "man": 2
+     *             },
+     *             "partyAge": {
+     *                 "中国民主同盟": 0,
+     *                 "台湾民主自治同盟": 0,
+     *                 "中国民主建国会": 1,
+     *                 "中国致公党": 0,
+     *                 "中国国民党革命委员会": 0,
+     *                 "中国民主促进会": 0,
+     *                 "九三学社": 0,
+     *                 "中国农工民主党": 1
+     *             },
+     *             "place": {
+     *                 "NO": 0,
+     *                 "yes": 2
+     *             },
+     *             "department": {
+     *                 "nternal": 2,
+     *                 "eye": 0,
+     *                 "chinese": 0,
+     *                 "emergency": 0,
+     *                 "surgery": 0
+     *             },
+     *             "title": {
+     *                 "attendingDoctor": 2,
+     *                 "doctor": 0,
+     *                 "deputyChiefPhysician": 0,
+     *                 "chiefPhysician": 0,
+     *                 "residents": 0
+     *             },
+     *             "age": {
+     *                 "25周岁以下": 0,
+     *                 "25-35周岁": 2,
+     *                 "45周岁以上": 0,
+     *                 "35-45以下": 0
+     *             }
+     *         }
+     *     ]
+     * }
+     */
+    @GetMapping("/listPower")
+    public JsonResult listSex(){
+        Map<String,Object> pages = userInfoPowerService.countBySexMzdp();
+        Map<String,Object> pages1 = userInfoPowerService.countByEducationMzdp();
+        Map<String,Object> pages2 = userInfoPowerService.countByIdcardMzdp();
+        Map<String,Object> pages3 = userInfoPowerService.countByDepartmentMzdp();
+        Map<String,Object> pages4 = userInfoPowerService.countByPartyAgeMzdp();
+        Map<String,Object> pages5 = userInfoPowerService.countByPlaceMzdp();
+        Map<String,Object> pages6 = userInfoPowerService.countByTitleMzdp();
+        Map<String,Object> pages7 = userInfoPowerService.countByIdentityMzdp();
+        JSONArray pageArray = new JSONArray();
+        JSONObject json = new JSONObject();
+        json.put("sex",pages);
+        json.put("education",pages1);
+        json.put("age",pages2);
+        json.put("department",pages3);
+        json.put("partyAge",pages4);
+        json.put("place",pages5);
+        json.put("title",pages6);
+        json.put("identity",pages7);
+        pageArray.add(json);
         jsonResult.setData(pageArray);
         return jsonResult;
     }

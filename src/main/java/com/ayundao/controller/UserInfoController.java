@@ -1580,12 +1580,12 @@ public class UserInfoController extends BaseController {
     }
 
     /**
-     * @api {get} /userInfo/listSex 党建组织图形比例
+     * @api {get} /userInfo/listPower 党建组织图形比例
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
      * @apiDescription 党建组织图形比例
      * @apiParamExample {json} 请求样例
-     *                /userInfo/listSex
+     *                /userInfo/listPower
      * @apiSuccess (200) {int} code 200:成功</br>
      *                              600:参数异常</br>
      * @apiSuccess (200) {String} message 信息
@@ -1652,7 +1652,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
-    @GetMapping("/listSex")
+    @GetMapping("/listPower")
     public JsonResult listSex(){
         Map<String,Object> pages = userInfoService.countBySex();
         Map<String,Object> pages1 = userInfoService.countByEducation();
