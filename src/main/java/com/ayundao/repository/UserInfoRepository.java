@@ -38,6 +38,19 @@ public interface UserInfoRepository extends BaseRepository<UserInfo,String> {
     @Query("select ui from UserInfo ui where ui.name like ?1 or ui.number like ?2 or ui.department like ?3")
     List<UserInfo> findByNameOrNumberOrDepartmentLike(String name,String number, String department);
 
+//    /**
+//     * 根据部门id查询
+//     * @param id 部门id
+//     * @return
+//     */
+//    @Query(value = "select ui.* from t_user_info ui left join t_user u on ui.userid = u.id " +
+//                   "left join t_user_relations ur on u.id=ur.userid where ur=#{ur.id}}",nativeQuery = true)
+//    List<UserInfo> findByUserid(String id);
+//
+////    @Query(value = "select ui.* from t_user_info ui left join t_user u on ui.userid = u.id" +
+////                   "left join t_user_relations ur on u.id=ur.userid where ur=#{ur.id}}",nativeQuery = true)
+
+
     /**
      * 查询党建用户详情男女比例
      */
