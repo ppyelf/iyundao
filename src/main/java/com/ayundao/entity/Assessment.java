@@ -11,8 +11,8 @@ import java.util.Set;
 /**
  * @ClassName: Assessment
  * @project: ayundao
- * @author: 念
- * @Date: 2019/6/5 9:27
+ * @author: king
+ * @Date: 2019/7/4 9:27
  * @Description: 实体 - 考核
  * @Version: V1.0
  */
@@ -21,6 +21,12 @@ import java.util.Set;
 public class Assessment extends BaseEntity<String> {
 
     private final static long serialVersionUID = -4812084302184098321L;
+
+    /**
+     * 编号
+     */
+    @Column(name = "NUMBER",nullable = false,length = 50)
+    private String number;
 
     /**
      * 名称
@@ -66,10 +72,17 @@ public class Assessment extends BaseEntity<String> {
     private Set<AssessmentFile> assessmentFiles;
 
     /**
-     * 指标
+     * 考核指标
      */
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<AssessmentIndex> assessmentIndices;
+
+    /**
+     * 考核范围
+     */
+    @OneToMany(mappedBy = "assessment",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private Set<AssessmentRange> assessmentRanges;
+
     /**
      * 备用字段1
      */
@@ -96,6 +109,18 @@ public class Assessment extends BaseEntity<String> {
     @Column(name = "INFO5")
     private String info5;
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
     public String getName() {
         return name;
     }
@@ -121,25 +146,19 @@ public class Assessment extends BaseEntity<String> {
     }
 
     public String getStartTime() {
-        if (StringUtils.isBlank(this.startTime)) {
-            this.startTime = TimeUtils.nowTime();
-        }
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = TimeUtils.convertTime(startTime, "yyyyMMddHHmmss");
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     public String getEndTime() {
-        if (StringUtils.isBlank(this.endTime)) {
-            this.endTime = TimeUtils.nowTime();
-        }
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = TimeUtils.convertTime(endTime, "yyyyMMddHHmmss");
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public String getRemark() {
@@ -165,6 +184,14 @@ public class Assessment extends BaseEntity<String> {
     public void setAssessmentIndices(Set<AssessmentIndex> assessmentIndices) {
         this.assessmentIndices = assessmentIndices;
     }
+
+//    public Set<AssessmentRange> getAssessmentRanges() {
+//        return assessmentRanges;
+//    }
+//
+//    public void setAssessmentRanges(Set<AssessmentRange> assessmentRanges) {
+//        this.assessmentRanges = assessmentRanges;
+//    }
 
     public String getInfo1() {
         return info1;
@@ -208,18 +235,46 @@ public class Assessment extends BaseEntity<String> {
 
     public enum ASSESSMENT_TYPE{
         /**
-         * 支部考核
+         * 0 -个人考核
          */
-        branch,
+        personnel(0,"个人考核"),
 
         /**
-         * 标准
+         * 1 -支部考核
          */
-        standard,
+        branch(1,"支部考核"),
 
         /**
-         * 其他
+         * 2 -行政考核
          */
-        etc
+        standard(2,"行政考核"),
+
+        /**
+         * 3 -机构考核
+         */
+        etc(3,"机构考核");
+        private int index;
+
+        private String name;
+        private ASSESSMENT_TYPE (int index,String name){
+            this.index=index;
+            this.name=name;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 }

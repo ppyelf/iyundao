@@ -7,8 +7,8 @@ import javax.persistence.*;
 /**
  * @ClassName: AssessmentFile
  * @project: ayundao
- * @author: 念
- * @Date: 2019/6/5 10:12
+ * @author: king
+ * @Date: 2019/7/4 10:12
  * @Description: 实体 - 考核文件
  * @Version: V1.0
  */

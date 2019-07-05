@@ -7,8 +7,8 @@ import javax.persistence.*;
 /**
  * @ClassName: AssessmentIndex
  * @project: ayundao
- * @author: 念
- * @Date: 2019/6/5 10:18
+ * @author: king
+ * @Date: 2019/7/4 10:18
  * @Description: 实体 - 考核指标
  * @Version: V1.0
  */
@@ -18,29 +18,71 @@ public class AssessmentIndex extends BaseEntity<String> {
 
     private final static long serialVersionUID = -1083240120981024309L;
 
-    /**
-     * 名称
-     */
-    @Column(name = "NAME", nullable = false, length = 50)
-    private String name;
+//    /**
+//     * 名称
+//     */
+//    @Column(name = "NAME", nullable = false, length = 50)
+//    private String name;
+//
+//    /**
+//     * 描述
+//     */
+//    @Column(name = "REMARK", length = 500)
+//    private String remark;
+//
+//    /**
+//     * 父级指标
+//     */
+//    @Column(name = "FATHERID",length = 50)
+//    private AssessmentIndex father;
+//
+//    /**
+//     * 编码
+//     */
+//    @Column(name = "CODE", length = 10, unique = true)
+//    private int code;
 
     /**
-     * 描述
+     * 节点ID
      */
-    @Column(name = "REMARK", length = 500)
-    private String remark;
-
-    /**
-     * 父级指标
-     */
-    @Column(name = "FATHERID",length = 50)
-    private AssessmentIndex father;
+    @Column(name = "SORTEDID",length = 50,unique = true)
+    private String sortedId;
 
     /**
      * 编码
      */
-    @Column(name = "CODE", length = 10, unique = true)
-    private int code;
+    @Column(name = "SORTEDCODE",length = 50)
+    private String sortedCode;
+
+    /**
+     * 名称全称
+     */
+    @Column(name = "LNAME",length = 50)
+    private String lname;
+
+    /**
+     * 名称缩写
+     */
+    @Column(name = "SNAME",length = 50)
+    private String sname;
+
+    /**
+     * 父节点
+     */
+    @Column(name = "PARCODE",length = 50)
+    private String parcode;
+
+    /**
+     * 排序
+     */
+    @Column(name = "NORDER",length = 50)
+    private String norder;
+
+    /**
+     * 是否使用
+     */
+    @Column(name = "ISUSE",length = 50)
+    private String isuse;
 
     /**
      * 所属考核ID
@@ -79,36 +121,64 @@ public class AssessmentIndex extends BaseEntity<String> {
     @Column(name = "INFO5")
     private String info5;
 
-    public String getName() {
-        return name;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getSortedId() {
+        return sortedId;
     }
 
-    public String getRemark() {
-        return remark;
+    public void setSortedId(String sortedId) {
+        this.sortedId = sortedId;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public String getSortedCode() {
+        return sortedCode;
     }
 
-    public AssessmentIndex getFather() {
-        return father;
+    public void setSortedCode(String sortedCode) {
+        this.sortedCode = sortedCode;
     }
 
-    public void setFather(AssessmentIndex father) {
-        this.father = father;
+    public String getLname() {
+        return lname;
     }
 
-    public int getCode() {
-        return code;
+    public void setLname(String lname) {
+        this.lname = lname;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public String getSname() {
+        return sname;
+    }
+
+    public void setSname(String sname) {
+        this.sname = sname;
+    }
+
+    public String getParcode() {
+        return parcode;
+    }
+
+    public void setParcode(String parcode) {
+        this.parcode = parcode;
+    }
+
+    public String getNorder() {
+        return norder;
+    }
+
+    public void setNorder(String norder) {
+        this.norder = norder;
+    }
+
+    public String getIsuse() {
+        return isuse;
+    }
+
+    public void setIsuse(String isuse) {
+        this.isuse = isuse;
     }
 
     public Assessment getAssessment() {
@@ -158,6 +228,4 @@ public class AssessmentIndex extends BaseEntity<String> {
     public void setInfo5(String info5) {
         this.info5 = info5;
     }
-
-
 }
