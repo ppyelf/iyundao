@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 
@@ -40,16 +42,10 @@ public class ExamineController extends BaseController {
     private UserService userService;
 
     @Autowired
-    private SubjectService subjectService;
-
-    @Autowired
-    private DepartService departService;
-
-    @Autowired
-    private GroupsService groupsService;
-
-    @Autowired
     private UserRelationService userRelationService;
+
+    @Autowired
+    private UserFileService userFileService;
 
     /**
      * 审核类型阈值
@@ -77,12 +73,14 @@ public class ExamineController extends BaseController {
      */
     @GetMapping("/getLeaveTypes")
     public JsonResult getLeaveTypes() {
-        JSONObject json = new JSONObject();
+        JSONArray arr = new JSONArray();
         for (Examine.REASON type : Examine.REASON.values()) {
             if (type.ordinal() <= typeIndex) continue;
+            JSONObject json = new JSONObject();
             json.put(type.getIndex() + "", type.getName());
+            arr.add(json);
         }
-        jsonResult.setData(json);
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -109,12 +107,14 @@ public class ExamineController extends BaseController {
      */
     @GetMapping("/getReplyTypes")
     public JsonResult getReplyTypes() {
-        JSONObject json = new JSONObject();
+        JSONArray arr = new JSONArray();
         for (Examine.REASON type : Examine.REASON.values()) {
+            JSONObject json = new JSONObject();
             if (type.ordinal() > typeIndex) continue;
             json.put(type.getIndex() + "", type.getName());
+            arr.add(json);
         }
-        jsonResult.setData(json);
+        jsonResult.setData(arr);
         return jsonResult;
     }
 
@@ -545,6 +545,9 @@ public class ExamineController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 审核
      * @apiParam {String} id 请假ID,必填
+     * @apiParam {String} userId ,必填
+     * @apiParam {int} status 审核态度,必填,1-同意(默认),2-拒绝
+     * @apiParam {String} comment 评语(拒绝必须填写)
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916bb19747016bb197bdd50000
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -604,6 +607,300 @@ public class ExamineController extends BaseController {
     }
 
     /**
+     * @api {GET} /examine/userFileType 资料类型列表
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 资料类型列表
+     * @apiParam {MultipartFile} file 文件
+     * @apiParam {int} type 文件类型
+     * @apiParamExample {json} 请求示例:
+     *              ?id=402881916bb19747016bb197bdd50000
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:上传失败</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @GetMapping("/userFileType")
+    public JsonResult userFileType() {
+        JSONArray arr = new JSONArray();
+        for (UserFile.TYPE type : UserFile.TYPE.values()) {
+            JSONObject json = new JSONObject();
+            json.put(type.getIndex() + "", type.getName());
+            arr.add(json);
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /examine/uploadUserFile 上传个人资料
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 上传个人资料
+     * @apiParam {MultipartFile} file 文件
+     * @apiParam {int} type 文件类型
+     * @apiParamExample {json} 请求示例:
+     *              ?id=402881916bb19747016bb197bdd50000
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:用户不存在或者ID为空</br>
+     *                                 601:上传失败</br>
+     *                                 602:文件类型异常</br>
+     *                                 603:用户所属机构关系为空或shareUserIds为空</br>
+     *                                 604:共享资料必须有分享人或者机构</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @PostMapping("/uploadUserFile")
+    public JsonResult uploadUserFile(MultipartFile file,
+                                     @RequestParam(defaultValue = "0") int type,
+                                     String userId,
+                                     @RequestParam(defaultValue = "false") boolean isPublic,
+                                     String[] shareUserIds) {
+        UserFile.TYPE userType = null;
+        for (UserFile.TYPE t : UserFile.TYPE.values()) {
+            if (t.ordinal() == type) {
+                userType = t;
+                break;
+            } 
+        }
+        if (userType == null) {
+            return JsonResult.failure(602, "文件类型异常");
+        }
+        User user = userService.findById(userId);
+        if (user == null) {
+            return JsonResult.notFound("用户不存在或者ID为空");
+        }
+        //检测分享
+        List<UserRelation> userRelations = new ArrayList<>();
+        if (isPublic) {
+            if (shareUserIds == null) {
+                return jsonResult.failure(604, "共享资料必须有分享人或者机构");
+            } 
+            userRelations = userRelationService.findByUserIds(shareUserIds);
+            if (CollectionUtils.isEmpty(userRelations)) {
+                return JsonResult.failure(603, "用户所属机构关系为空或shareUserIds为空");
+            } 
+        } 
+        return userFileService.save(file, userType, user, isPublic, userRelations, jsonResult);
+    }
+
+    /**
+     * @api {GET} /examine/downloadUserFile 下载个人资料
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 下载个人资料
+     * @apiParam {String} id 文件ID
+     * @apiParamExample {json} 请求示例:
+     *              ?id=402881916bc15971016bc17be44c0004
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:文件不存在或者文件id为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @GetMapping("/downloadUserFile")
+    public JsonResult downloadUserFile(String id, HttpServletRequest req, HttpServletResponse resp) {
+        UserFile userFile = userFileService.find(id);
+        if (userFile == null) {
+            return JsonResult.notFound("文件不存在或者文件id为空");
+        }
+        userFileService.download(userFile, req, resp);
+        return JsonResult.success();
+    }
+
+    /**
+     * @api {POST} /examine/delUserFile 删除个人资料
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 删除个人资料
+     * @apiParam {String} id 文件ID
+     * @apiParamExample {json} 请求示例:
+     *              ?id=402881916bc15971016bc17be44c0004
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:文件不存在或者文件id为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @PostMapping("/delUserFile")
+    public JsonResult delUserFile(String id) {
+        UserFile userFile = userFileService.find(id);
+        if (userFile == null) {
+            return JsonResult.notFound("文件不存在或者文件id为空");
+        }
+        userFileService.delete(userFile);
+        return JsonResult.success();
+    }
+
+    /**
+     * @api {POST} /examine/myselfList 个人资料列表
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 个人资料列表
+     * @apiParam {String} userId 用户ID
+     * @apiParamExample {json} 请求示例:
+     *              ?id=402881916bc15971016bc17be44c0004
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:用户不存在或者用户ID为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @PostMapping("/myselfList")
+    public JsonResult userFileList(String userId) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return JsonResult.notFound("用户不存在或者用户ID为空");
+        }
+        List<UserFile> userFiles = userFileService.getMySelfList(user.getId());
+        JSONArray arr = new JSONArray();
+        for (UserFile userFile : userFiles) {
+
+            arr.add(convertUserFile(userFile));
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {GET} /examine/shareList 资料分享列表
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 资料分享列表
+     * @apiParamExample {json} 请求示例:
+     *              /examine/shareList
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 100:只有管理员和资料审核人可以查看该列表
+     *                                 404:用户不存在或者用户ID为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @GetMapping("/shareList")
+    public JsonResult userFileShareList() {
+        List<UserFile> userFiles = userFileService.getShareList();
+        JSONArray arr = new JSONArray();
+        for (UserFile userFile : userFiles) {
+            JSONObject json = convertUserFile(userFile);
+            json.put("to", convertFileTo(userFile.getUserFileTo()));
+            arr.add(json);
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {GET} /examine/examineList 资料审核列表
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 资料审核列表
+     * @apiParam {String} userId 用户ID
+     * @apiParamExample {json} 请求示例:
+     *              ?id=402881916bc15971016bc17be44c0004
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 100:只有管理员和资料审核人可以查看该列表
+     *                                 404:用户不存在或者用户ID为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @GetMapping("/examineList")
+    public JsonResult userFileExamineList(String userId) {
+        User user = userService.findById(userId);
+        if (user == null) {
+            return jsonResult.notFound("用户不存在或者用户ID为空");
+        } 
+        if (user.getUserType().ordinal() != 1 && user.getUserType().ordinal() != 2) {
+            return JsonResult.failure(100,"只有管理员和资料审核人可以查看该列表");
+        }
+        List<UserFile> userFiles = userFileService.findByStatusIsWaiting();
+        JSONArray arr = new JSONArray();
+        for (UserFile userFile : userFiles) {
+            JSONObject json = convertUserFile(userFile);
+            json.put("to", convertFileTo(userFile.getUserFileTo()));
+            arr.add(json);
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {GET} /examine/examineFile 审核文件
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 审核文件
+     * @apiParam {String} id 资源文件ID
+     * @apiparam {int} status 审核态度 1-分享,3-拒绝分享
+     * @apiParamExample {json} 请求示例:
+     *              ?id=402881916bc15971016bc17be44c0004
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 100:只有管理员和资料审核人可以查看该列表
+     *                                 404:资源文件不存在或者ID为空</br>
+     *                                 601:审核态度参数异常
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": []
+     * }
+     */
+    @PostMapping("/examineFile")
+    public JsonResult examineUserFile(String id, @RequestParam(defaultValue = "0") int status) {
+        UserFile userFile = userFileService.find(id);
+        if (userFile == null) {
+            return jsonResult.notFound("资源文件不存在或者ID为空");
+        }
+        if (status != 1 && status != 3) {
+            return JsonResult.failure(601, "审核态度参数异常");
+        }
+
+        userFile = userFileService.examineUserFile(userFile, status);
+        JSONObject json = JsonUtils.getJson(userFile);
+        json.put("to", userFile.getUserFileTo());
+        jsonResult.setData(json);
+        return jsonResult;
+    }
+
+    /**
      * 转换Examine
      * @param examine
      * @return
@@ -616,6 +913,12 @@ public class ExamineController extends BaseController {
         return json;
     }
 
+    /**
+     * 转化审核流程
+     * @param examineProcesses
+     * @param userId
+     * @return
+     */
     private JSONArray convertExamineProcesses(Set<ExamineProcess> examineProcesses, String userId) {
         JSONArray arr = new JSONArray();
         for (ExamineProcess ep : examineProcesses) {
@@ -634,6 +937,31 @@ public class ExamineController extends BaseController {
                 arr.add(j);
                 return arr;
             }
+        }
+        return arr;
+    }
+
+    /**
+     * 转换userFile
+     * @param userFile
+     * @return
+     */
+    private JSONObject convertUserFile(UserFile userFile) {
+        JSONObject json = JsonUtils.getJson(userFile);
+        json.put("type", userFile.getType().getName());
+        json.put("status", userFile.getStatus().getName());
+        return json;
+    }
+
+    private JSONArray convertFileTo(Set<UserFileTo> to) {
+        JSONArray arr = new JSONArray();
+        for (UserFileTo t : to) {
+            JSONObject json = JsonUtils.getJson(t);
+            json.put("subject", JsonUtils.getJson(t.getSubject()));
+            json.put("depart", t.getDepart() == null ? null : JsonUtils.getJson(t.getDepart()));
+            json.put("group", t.getGroup() == null ? null : JsonUtils.getJson(t.getGroup()));
+            json.put("user", JsonUtils.getJson(t.getUser()));
+            arr.add(json);
         }
         return arr;
     }

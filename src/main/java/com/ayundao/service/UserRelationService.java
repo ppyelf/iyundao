@@ -69,4 +69,11 @@ public interface UserRelationService {
      * @return
      */
     UserRelation findByUserIdAndDepartIdOrGroupId(String userId, String departId, String groupsId);
+
+    /**
+     * 根据用户ID
+     * @param shareUserIds
+     * @return
+     */
+    List<UserRelation> findByUserIds(String[] shareUserIds);
 }

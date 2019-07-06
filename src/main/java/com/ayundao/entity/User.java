@@ -264,14 +264,19 @@ public class User extends BaseEntity<String> {
      */
     public enum USER_TYPE {
         /**
-         * 普通用户
+         * 普通用户w
          */
         normal,
 
         /**
          * 管理员
          */
-        admin
+        admin,
+
+        /**
+         * 资料审核
+         */
+        shareFile
     }
 
     public String getCode() {
