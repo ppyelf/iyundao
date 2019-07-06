@@ -645,8 +645,11 @@ public class ExamineController extends BaseController {
      * @apiDescription 上传个人资料
      * @apiParam {MultipartFile} file 文件
      * @apiParam {int} type 文件类型
+     * @apiParam {String} userId 用户ID
+     * @apiParam {boolean} isPublic 是否公开
+     * @apiParam {String[]} shareUserIds 分享用户ID集合
      * @apiParamExample {json} 请求示例:
-     *              ?id=402881916bb19747016bb197bdd50000
+     *              ?type=0&serId&402881916ba275d7016ba277b20d0000&isPublic=true&shareUserIds=402881916bb1827c016bb19005190001&shareUserIds=402881916bba7802016bbb169ed60000
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:用户不存在或者ID为空</br>
      *                                 601:上传失败</br>
