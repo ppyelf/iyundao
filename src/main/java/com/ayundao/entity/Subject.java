@@ -57,6 +57,24 @@ public class Subject extends BaseEntity<String> {
     private Set<Groups> groups;
 
     /**
+     * 考试部门组织详情表机构id
+     */
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExamInfoDepart> examInfoDepart;
+
+    /**
+     * 任务部门组织详情表机构id
+     */
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskInfoDepart> taskInfoDepart;
+
+    /**
+     * 消息发布部门组织机构id
+     */
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<AdvicesInfoDepar> advicesInfoDepar;
+
+    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -124,6 +142,30 @@ public class Subject extends BaseEntity<String> {
 
     public void setGroups(Set<Groups> groups) {
         this.groups = groups;
+    }
+
+    public Set<ExamInfoDepart> getExamInfoDepart() {
+        return examInfoDepart;
+    }
+
+    public void setExamInfoDepart(Set<ExamInfoDepart> examInfoDepart) {
+        this.examInfoDepart = examInfoDepart;
+    }
+
+    public Set<TaskInfoDepart> getTaskInfoDepart() {
+        return taskInfoDepart;
+    }
+
+    public void setTaskInfoDepart(Set<TaskInfoDepart> taskInfoDepart) {
+        this.taskInfoDepart = taskInfoDepart;
+    }
+
+    public Set<AdvicesInfoDepar> getAdvicesInfoDepar() {
+        return advicesInfoDepar;
+    }
+
+    public void setAdvicesInfoDepar(Set<AdvicesInfoDepar> advicesInfoDepar) {
+        this.advicesInfoDepar = advicesInfoDepar;
     }
 
     public enum SUBJECT_TYPE{

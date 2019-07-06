@@ -4,9 +4,7 @@ import com.ayundao.base.BaseController;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
-import com.ayundao.service.ActivityService;
-import com.ayundao.service.AttendanceService;
-import com.ayundao.service.SignService;
+import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +36,13 @@ public class ActivityController extends BaseController {
     private AttendanceService attendanceService;
 
     @Autowired
+    private ActivityInfoUserService activityInfoUserService;
+
+    @Autowired
     private SignService signService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * @api {POST} /activity/upload_file 上传文件
@@ -464,6 +468,7 @@ public class ActivityController extends BaseController {
         if (activity == null) {
             return JsonResult.notFound("活动不存在");
         }
+        //todo
         jsonResult.setData(convertActivity(activity));
         return jsonResult;
     }
@@ -494,6 +499,48 @@ public class ActivityController extends BaseController {
         jsonResult.setData(JsonUtils.getPage(activityPage));
         return jsonResult;
     }
+
+    /**
+     * @api {POST} /activity/registration 添加活动报名人员
+     * @apiGroup Activity
+     * @apiVersion 1.0.0
+     * @apiDescription 分页
+     * @apiParam {String} activityid 必填
+     * @apiParam {String} userid 必填
+     * @apiParamExample {json} 请求示例:
+     *              /activity/registration?activityid=88888888&userid=402881916ba10b8a016ba113adbc0006
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:"没有此活动"<br>
+     *                                  602:"没有此用户"<br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *      "id": "4028d8816bc50e52016bc52dae240001"
+     * }
+     */
+    @PostMapping("/registration")
+    private JsonResult registration(String activityid,
+                                    String userid
+                                    ){
+
+        User user = userService.findById(userid);
+        Activity activity = activityService.find(activityid);
+
+        if (activity == null){
+            return JsonResult.failure(601,"没有此活动");
+        }
+        if(user == null){
+            return JsonResult.failure(602,"没有此用户");
+        }
+        ActivityInfoUser activityInfoUser = activityInfoUserService.save(activity,user);
+        JSONObject json = new JSONObject(JsonUtils.getJson(activityInfoUser));
+        jsonResult.setData(json);
+        return  jsonResult;
+    }
+
 
     /**
      * 转换Activity为json

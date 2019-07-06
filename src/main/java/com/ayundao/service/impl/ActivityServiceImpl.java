@@ -107,6 +107,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Activity find(String id) {
+
         return activityRepository.find(id);
     }
 
