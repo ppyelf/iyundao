@@ -31,8 +31,8 @@ public class TaskInfoUser extends BaseEntity<String> {
     /**
      * 确认接收状态
      */
-    @Column(name = "UARTRSR",length = 50)
-    private String uartrsr;
+    @Column(name = "STATE",length = 50)
+    private String state;
 
     public Task getTask() {
         return task;
@@ -50,11 +50,11 @@ public class TaskInfoUser extends BaseEntity<String> {
         this.user = user;
     }
 
-    public String getUartrsr() {
-        return uartrsr;
+    public String getState() {
+        return state;
     }
 
-    public void setUartrsr(String uartrsr) {
-        this.uartrsr = uartrsr;
+    public void setState(String state) {
+        this.state = state;
     }
 }

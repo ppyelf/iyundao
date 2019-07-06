@@ -15,7 +15,7 @@ public class AdvicesInfoUser extends BaseEntity<String>{
     private static final long serialVersionUID = -8697749555339231366L;
 
     /**
-     * 任务id
+     * 消息id
      */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ADVICESID", nullable = false)
@@ -27,6 +27,13 @@ public class AdvicesInfoUser extends BaseEntity<String>{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USERID", nullable = false)
     private User user;
+
+    /**
+     *接收状态
+     * @return
+     */
+    @Column(name = "STATE",length = 50)
+    private String state;
 
     public Advices getAdvices() {
         return advices;
@@ -42,5 +49,13 @@ public class AdvicesInfoUser extends BaseEntity<String>{
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

@@ -47,6 +47,14 @@ public class AdvicesInfoDepar extends BaseEntity<String>{
     @JoinColumn(name = "GROUPSID")
     private Groups groups;
 
+    /**
+     * 人员id
+     * @return
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USERID")
+    private User user;
+
     public Advices getAdvices() {
         return advices;
     }
@@ -77,5 +85,13 @@ public class AdvicesInfoDepar extends BaseEntity<String>{
 
     public void setGroups(Groups groups) {
         this.groups = groups;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

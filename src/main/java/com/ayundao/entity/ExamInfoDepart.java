@@ -42,6 +42,14 @@ public class ExamInfoDepart extends BaseEntity<String>{
     @JoinColumn(name = "GROUPSID")
     private Groups groups;
 
+    /**
+     * 用户id
+     * @return
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USERID")
+    private User user;
+
     public Exam getExam() {
         return exam;
     }
@@ -72,5 +80,13 @@ public class ExamInfoDepart extends BaseEntity<String>{
 
     public void setGroups(Groups groups) {
         this.groups = groups;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

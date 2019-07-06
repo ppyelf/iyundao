@@ -148,6 +148,24 @@ public class User extends BaseEntity<String> {
     private Set<ExamInfoUser> examInfoUser;
 
     /**
+     *任务组织部门表用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskInfoDepart> taskInfoDepart;
+
+    /**
+     * 消息发送部门组织表用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<AdvicesInfoDepar> advicesInfoDepar;
+
+    /**
+     * 考试参与部门组织表用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExamInfoDepart> examInfoDepart;
+
+    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -281,7 +299,7 @@ public class User extends BaseEntity<String> {
         this.groups = groups;
     }
 
-    public Set<Task> getTaskgetTask() {
+    public Set<Task> getTask() {
         return task;
     }
 
@@ -335,6 +353,31 @@ public class User extends BaseEntity<String> {
 
     public void setExamInfoUser(Set<ExamInfoUser> examInfoUser) {
         this.examInfoUser = examInfoUser;
+    }
+
+
+    public Set<TaskInfoDepart> getTaskInfoDepart() {
+        return taskInfoDepart;
+    }
+
+    public void setTaskInfoDepart(Set<TaskInfoDepart> taskInfoDepart) {
+        this.taskInfoDepart = taskInfoDepart;
+    }
+
+    public Set<AdvicesInfoDepar> getAdvicesInfoDepar() {
+        return advicesInfoDepar;
+    }
+
+    public void setAdvicesInfoDepar(Set<AdvicesInfoDepar> advicesInfoDepar) {
+        this.advicesInfoDepar = advicesInfoDepar;
+    }
+
+    public Set<ExamInfoDepart> getExamInfoDepart() {
+        return examInfoDepart;
+    }
+
+    public void setExamInfoDepart(Set<ExamInfoDepart> examInfoDepart) {
+        this.examInfoDepart = examInfoDepart;
     }
 
     /**

@@ -18,8 +18,8 @@ public class Task extends BaseEntity<String>{
     /**
      *  标题
      */
-    @Column(name = "NAME", length = 50, nullable = false)
-    private String name;
+    @Column(name = "TITLE", length = 50, nullable = false)
+    private String title;
 
     /**
      * 任务类型
@@ -40,11 +40,6 @@ public class Task extends BaseEntity<String>{
     @Column(name = "ISSUERTIME", length = 50)
     private String issuertime;
 
-//    /**
-//     * 评论设置
-//     */
-//    @Column(name = "COMMENTSET", length = 50)
-//    private String commentset;
 
     /**
      * 任务内容
@@ -70,39 +65,12 @@ public class Task extends BaseEntity<String>{
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<TaskInfoDepart> taskInfoDepart;
 
-
-//    /**
-//     * 备用字段1
-//     */
-//    @Column(name = "INFO1", length = 50)
-//    private String info1;
-//    /**
-//     * 备用字段2
-//     */
-//    @Column(name = "INFO2", length = 50)
-//    private String info2;
-//    /**
-//     * 备用字段3
-//     */
-//    @Column(name = "INFO3", length = 50)
-//    private String info3;
-//    /**
-//     * 备用字段4
-//     */
-//    @Column(name = "INFO4", length = 50)
-//    private String info4;
-//    /**
-//     * 备用字段5
-//     */
-//    @Column(name = "INFO5", length = 50)
-//    private String info5;
-
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getType() {
@@ -128,14 +96,6 @@ public class Task extends BaseEntity<String>{
     public void setIssuertime(String issuertime) {
         this.issuertime = issuertime;
     }
-
-//    public String getCommentset() {
-//        return commentset;
-//    }
-//
-//    public void setCommentset(String commentset) {
-//        this.commentset = commentset;
-//    }
 
     public String getTasktext() {
         return tasktext;

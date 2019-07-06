@@ -52,7 +52,7 @@ public class TaskController extends BaseController{
         for(Task task : tasks){
             JSONObject object = new JSONObject();
             object.put("id",task.getId());
-           object.put("title",task.getName());
+           object.put("title",task.getTitle());
             object.put("name",task.getUser().getName());
             object.put("type",task.getType());
             object.put("issuertime",task.getIssuertime());
@@ -85,7 +85,7 @@ public class TaskController extends BaseController{
             Task task = new Task();
             task.setCreatedDate(new Date());
             task.setLastModifiedDate(new Date());
-            task.setName(name);
+            task.setTitle(name);
             task.setType(type);
         User user = userService.findById(userid);
             task.setUser(user);
@@ -109,7 +109,7 @@ public class TaskController extends BaseController{
         System.out.println("task:"+task);
         System.out.println("TaskInfoDepart:"+taskInfoDepart);
         JSONObject object = new JSONObject();
-        object.put("title",task.getName());
+        object.put("title",task.getTitle());
         object.put("workType",task.getType());
         object.put("issuertime",task.getTasktext());
         object.put("name",task.getUser().getName());
@@ -124,8 +124,6 @@ public class TaskController extends BaseController{
        if(taskInfoDepart.getGroups() != null){
            object.put("groupId",taskInfoDepart.getGroups().getName());
        }
-//        jsonResult.setData(converTask(task));
-        System.out.println(object);
         jsonResult.setData(object);
         return jsonResult;
 
@@ -154,7 +152,7 @@ public class TaskController extends BaseController{
         for (Task task : tasksss){
             object = new JSONObject();
             object.put("id",task.getId());
-            object.put("title",task.getName());
+            object.put("title",task.getTitle());
             object.put("name",task.getUser().getName());
             object.put("type",task.getType());
             object.put("issuertime",task.getIssuertime());
