@@ -1,28 +1,28 @@
 package com.ayundao.entity;
 
 import com.ayundao.base.BaseEntity;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
- * @ClassName: AssessmentRange
+ * @ClassName: AssessmentFraction
  * @project: ayundao
  * @author: king
  * @Date: 2019/7/4 10:24
- * @Description: 实体 - 考核范围
+ * @Description: 实体 - 考核分数
  * @Version: V1.0
  */
 @Entity
-@Table(name = "t_assessment_range")
-public class AssessmentRange extends BaseEntity<String> {
+@Table(name = "t_assessment_fraction")
+public class AssessmentFraction extends BaseEntity<String> {
 
-    private final static long serialVersionUID = -1238401294380912804L;
+    private final static long serialVersionUID = -121245452554L;
 
     /**
      * 考核项目ID
      */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ASSESSMENTID")
+    @Column(name = "ASSESSMENTID",nullable = false ,unique = true)
     private Assessment assessment;
 
     /**
@@ -54,6 +54,12 @@ public class AssessmentRange extends BaseEntity<String> {
      */
     @Column(name = "USERID", length = 50)
     private String userId;
+
+    /**
+     * 分数
+     */
+    @Column(name = "FRACTION",nullable = false)
+    private int fraction;
 
     /**
      * 评价
@@ -137,6 +143,14 @@ public class AssessmentRange extends BaseEntity<String> {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public int getFraction() {
+        return fraction;
+    }
+
+    public void setFraction(int fraction) {
+        this.fraction = fraction;
     }
 
     public String getEvaluate() {

@@ -9,7 +9,6 @@ import com.ayundao.entity.*;
 import com.ayundao.service.RoleService;
 import com.ayundao.service.UserService;
 import com.ayundao.service.ActivityService;
-import com.ayundao.service.AssessmentService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +44,6 @@ public class UserController extends BaseController {
 
     @Autowired
     private ActivityService activityService;
-
-    @Autowired
-    private AssessmentService assessmentService;
 
     @Autowired
     private RoleService roleService;
@@ -380,65 +376,6 @@ public class UserController extends BaseController {
         }
         s = activityService.saveUserSign(s);
         jsonResult.setData(JsonUtils.getJson(s));
-        return jsonResult;
-    }
-
-    /**
-     * @api {POST} /user/add_index 添加用户指标
-     * @apiGroup User
-     * @apiVersion 1.0.0
-     * @apiDescription 添加用户指标
-     * @apiParam {String} id 用户ID
-     * @apiParam {String} assessmentId 考核项目ID
-     * @apiParam {String} assessmentIndexId 考核指标ID
-     * @apiParam {int} score 分数
-     * @apiParamExample {json} 请求样例
-     *                /user/add_index?userId=0a4179fc06cb49e3ac0db7bcc8cf0882&assessmentId=2c92eb816b32f12a016b33a555170013&assessmentIndexId=2c92eb816b32f12a016b33b399950017
-     * @apiSuccess (200) {int} code 200:成功</br>
-     *                              601:用户不存在</br>
-     *                              602:考核不存在</br>
-     *                              603:考核指标不存在</br>
-     *                              604:用户不属于该项目考核范围</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": "{"version":"0","id":"2c92eb816b32f12a016b33b497400018","createdDate":"20190608045001","lastModifiedDate":"20190608045001","userId":"0a4179fc06cb49e3ac0db7bcc8cf0882","info1":"","info3":"","info4":"","info5":"","info2":"","assessmentId":"2c92eb816b32f12a016b33a555170013","score":"0","finishTime":"20190608045001","assessmentIndexId":"2c92eb816b32f12a016b33b399950017"}"
-     * }
-     */
-    @PostMapping("/add_index")
-    public JsonResult addIndex(String userId,
-                               String assessmentId,
-                               String assessmentIndexId,
-                               @RequestParam(defaultValue = "0") int score) {
-        User user = userService.findById(userId);
-        if (user == null) {
-            return JsonResult.failure(601, "用户不存在");
-        }
-        Assessment assessment = assessmentService.find(assessmentId);
-        if (assessment == null) {
-            return JsonResult.failure(602, "考核不存在");
-        }
-        AssessmentIndex index = assessmentService.findIndexById(assessmentIndexId);
-        if (index == null) {
-            return JsonResult.failure(603, "考核指标不存在");
-        } 
-        AssessmentRange ar = assessmentService.findByAssessmentIdAndUserId(userId, assessmentId);
-        if (ar == null) {
-            return JsonResult.failure(604, "用户不属于该项目考核范围");
-        }
-        UserIndex ui = new UserIndex();
-        ui.setCreatedDate(new Date());
-        ui.setLastModifiedDate(new Date());
-        ui.setAssessmentId(assessmentId);
-        ui.setAssessmentIndexId(assessmentIndexId);
-        ui.setUserId(userId);
-        ui.setScore(score);
-        ui.setFinishTime(new Date());
-        ui = assessmentService.saveUserIndex(ui);
-        jsonResult.setData(JsonUtils.getJson(ui));
         return jsonResult;
     }
 

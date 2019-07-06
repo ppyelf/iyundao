@@ -1,5 +1,6 @@
 package com.ayundao.base.utils;
 
+import com.ayundao.base.BaseComponent;
 import com.ayundao.base.BaseEntity;
 import com.ayundao.entity.*;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -73,23 +74,22 @@ public class JsonUtils {
     public static com.alibaba.fastjson.JSONObject getJson(Object obj) {
         Map<String, Field> map = ClassUtils.getDeclaredFieldsWithSuper(obj.getClass());
         com.alibaba.fastjson.JSONObject json = new com.alibaba.fastjson.JSONObject();
+        //排除字段
+        String[] names = new String[]{"createdDate", "lastModifiedDate", "version", "info1", "info2", "info3", "info4", "info5"};
         for (Map.Entry<String, Field> entry : map.entrySet()) {
             String key = entry.getKey();
             Field field = entry.getValue();
             Class cls = field.getType();
-            if (!BaseEntity.class.isAssignableFrom(cls) && !Collection.class.isAssignableFrom(cls)
+            if (Arrays.asList(names).contains(key)) {
+                continue;
+            } 
+            if (!BaseComponent.class.isAssignableFrom(cls)
+                    && !BaseEntity.class.isAssignableFrom(cls)
+                    && !Collection.class.isAssignableFrom(cls)
                     && !Map.class.isAssignableFrom(cls)) {
                 json.put(key, ClassUtils.getBrieflyProperty(obj, field.getName()));
             }
         }
-        json.remove("createdDate");
-        json.remove("lastModifiedDate");
-        json.remove("version");
-        json.remove("info1");
-        json.remove("info2");
-        json.remove("info3");
-        json.remove("info4");
-        json.remove("info5");
         return json;
     }
 

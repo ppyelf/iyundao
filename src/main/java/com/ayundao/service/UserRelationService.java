@@ -60,4 +60,20 @@ public interface UserRelationService {
      * @return
      */
     List<UserRelation> findBySubjectAndDepartIdsOrGroupsIds(String subjectId, String[] departId, String[] groupsId);
+
+    /**
+     * 根据用户ID和所属机构/组织ID查询所属关系
+     * @param userId
+     * @param departId
+     * @param groupsId
+     * @return
+     */
+    UserRelation findByUserIdAndDepartIdOrGroupId(String userId, String departId, String groupsId);
+
+    /**
+     * 根据用户ID
+     * @param shareUserIds
+     * @return
+     */
+    List<UserRelation> findByUserIds(String[] shareUserIds);
 }

@@ -74,10 +74,10 @@ public class MedicalController extends BaseController {
     }
 
     /**
-     * @api {POST} /medical/delFile 上传医德附件
+     * @api {POST} /medical/delFile 删除医德附件
      * @apiGroup Medical
      * @apiVersion 1.0.0
-     * @apiDescription 上传医德附件
+     * @apiDescription 删除医德附件
      * @apiParam {String} id 文件ID(必填)
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916b889769016b8897885f0000

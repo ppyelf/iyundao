@@ -5,43 +5,43 @@ import com.ayundao.base.BaseEntity;
 import javax.persistence.*;
 
 /**
- * @ClassName: AssessmentFile
+ * @ClassName: ExamineFile
  * @project: ayundao
- * @author: king
- * @Date: 2019/7/4 10:12
- * @Description: 实体 - 考核文件
+ * @author: 念
+ * @Date: 2019/7/1 10:01
+ * @Description: 实体 - 审核附件
  * @Version: V1.0
  */
 @Entity
-@Table(name = "t_assessment_file")
-public class AssessmentFile extends BaseEntity<String> {
+@Table(name = "t_examine_file")
+public class ExamineFile extends BaseEntity<String> {
 
-    private final static long serialVersionUID = -1023480218340218082L;
+    private final static long serialVersionUID = -3801380912830981029L;
 
     /**
      * 名称
      */
-    @Column(name = "name", nullable = false, length = 50)
+    @Column(name = "NAME", nullable = false, length = 50)
     private String name;
 
     /**
      * url
      */
-    @Column(name = "URL", nullable = false , length = 100)
+    @Column(name = "URL", nullable = false, length = 100)
     private String url;
-
-    /**
-     * 所属考核项目
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ASSESSMENTID")
-    private Assessment assessment;
 
     /**
      * 后缀名
      */
-    @Column(name = "SUFFIX", length = 4, nullable = false)
+    @Column(name = "SUFFIX", nullable = false, length = 4)
     private String suffix;
+
+    /**
+     * 所属审核
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "EXAMINEID")
+    private Examine examine;
 
     /**
      * 备用字段1
@@ -87,14 +87,6 @@ public class AssessmentFile extends BaseEntity<String> {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public Assessment getAssessment() {
-        return assessment;
-    }
-
-    public void setAssessment(Assessment assessment) {
-        this.assessment = assessment;
     }
 
     public String getSuffix() {
@@ -143,5 +135,13 @@ public class AssessmentFile extends BaseEntity<String> {
 
     public void setInfo5(String info5) {
         this.info5 = info5;
+    }
+
+    public Examine getExamine() {
+        return examine;
+    }
+
+    public void setExamine(Examine examine) {
+        this.examine = examine;
     }
 }
