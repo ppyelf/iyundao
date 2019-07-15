@@ -383,7 +383,7 @@ public class UserInfoFdhController extends BaseController {
     }
 
     /**
-     * @api {get} /userInfoFdh/listSex 妇代会图形比例
+     * @api {get} /userInfoFdh/listPower 妇代会图形比例
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
      * @apiDescription 妇代会图形比例
@@ -449,7 +449,7 @@ public class UserInfoFdhController extends BaseController {
      * }
      */
     @GetMapping("/listPower")
-    public JsonResult listSex(){
+    public JsonResult listPower(){
         Map<String,Object> pages = userInfoPowerService.countBySexFdh();
         Map<String,Object> pages1 = userInfoPowerService.countByEducationFdh();
         Map<String,Object> pages2 = userInfoPowerService.countByIdcardFdh();
