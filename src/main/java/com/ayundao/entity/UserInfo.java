@@ -20,18 +20,6 @@ public class UserInfo extends BaseEntity<String> {
 
     private static final long serialVerisonUID = -123151154481254L;
 
-//    /**
-//     * 登录名
-//     */
-//    @Column(name = "USERNAME", nullable=false, unique = true, length = 50)
-//    private String username;
-//
-//    /**
-//     * 密码
-//     */
-//    @Column(name = "PASSWORD", nullable=false, length = 50)
-//    private String password;
-
     /**
      * 行政编号
      */
@@ -174,22 +162,6 @@ public class UserInfo extends BaseEntity<String> {
     public static long getSerialVerisonUID() {
         return serialVerisonUID;
     }
-
-//    public String getUsername() {
-//        return username;
-//    }
-//
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
 
     public String getNumber() {
         return number;

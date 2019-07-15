@@ -114,7 +114,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public UserInfoFile saveFile(UserInfoFile file) {
+    public    UserInfoFile saveFile(UserInfoFile file) {
         return userInfoFileRepository.save(file);
     }
 
@@ -266,6 +266,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param id
      */
     @Override
+    @Transactional
     public void delete(String id) {
         UserInfo userInfo = userInfoRepository.findByUserInfoId(id);
         userInfoRepository.delete(userInfo);
