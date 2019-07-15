@@ -43,7 +43,7 @@ public class UserGroupServiceImpl implements UserGroupService {
 
     @Override
     public List<UserGroup> findByIds(String[] userGroupIds) {
-        List<UserGroup> userGroups = userGroupRepository.findByIds(userGroupIds);
+        List<UserGroup> userGroups = userGroupRepository.findByids(userGroupIds);
         return CollectionUtils.isEmpty(userGroups)
                 ? new ArrayList<>()
                 : userGroups;
@@ -58,5 +58,11 @@ public class UserGroupServiceImpl implements UserGroupService {
     public List<UserGroup> findByFatherId(String id) {
         return userGroupRepository.findByFatherId(id);
     }
+
+    @Override
+    public List<UserGroup> findBysomeIds(String[] userGroupIds) {
+        return userGroupRepository.findByIds(userGroupIds);
+    }
+
 
 }

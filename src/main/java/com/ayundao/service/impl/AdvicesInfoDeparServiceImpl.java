@@ -1,5 +1,6 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.entity.AdvicesInfoDepar;
 import com.ayundao.repository.AdvicesInfoDeparRepository;
 import com.ayundao.service.AdvicesInfoDeparService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,4 +25,8 @@ public class AdvicesInfoDeparServiceImpl implements AdvicesInfoDeparService{
     AdvicesInfoDeparRepository advicesInfoDeparRepository;
 
 
+    @Override
+    public List<AdvicesInfoDepar> findByAdvicesId(String id) {
+        return advicesInfoDeparRepository.findByAdvicesId(id);
+    }
 }

@@ -41,7 +41,7 @@ public class Advices extends BaseEntity<String>{
     private String issuertime;
 
     /**
-     * 审核状态
+     * 发送状态
      */
     @Column(name = "ADVICESSTATUS", length = 50)
     private String advicesstatus;

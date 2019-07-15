@@ -1,5 +1,7 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.AdvicesInfoDepar;
+
 import java.util.List;
 
 /**
@@ -13,4 +15,10 @@ import java.util.List;
 public interface AdvicesInfoDeparService {
 
 
+    /**
+     * 根据消息id寻找关系
+     * @param id
+     * @return
+     */
+    List<AdvicesInfoDepar> findByAdvicesId(String id);
 }

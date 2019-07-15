@@ -63,4 +63,12 @@ public interface SubjectService {
      * @return
      */
     Subject findByCode(String code);
+
+
+
+    /**\
+     * 查找所有实体
+     * @return
+     */
+    List<Subject> findbyIds(String[] subjectIds);
 }

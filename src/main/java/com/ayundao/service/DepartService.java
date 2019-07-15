@@ -91,4 +91,11 @@ public interface DepartService {
      * 根据编号查询实体
      */
     Depart findByCode(String code);
+
+    /**
+     * 查找部门集合
+     * @param departIds
+     * @return
+     */
+    List<Depart> findbyIds(String[] departIds);
 }

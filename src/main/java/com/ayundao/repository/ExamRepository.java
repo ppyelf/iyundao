@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Exam;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository;
  * @Version: V1.0
  */
 @Repository
-public interface ExamRepository  extends CrudRepository<Exam, String>{
+public interface ExamRepository  extends BaseRepository<Exam, String> {
 
 
 }

@@ -77,6 +77,8 @@ public interface ActivityService {
     void delFileByIds(String[] ids);
 
     /**
+     * yundaoSERVER
+     *  YD_2016
      * 根据IDS删除活动图片
      * @param ids
      */

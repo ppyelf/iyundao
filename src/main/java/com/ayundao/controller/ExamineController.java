@@ -85,6 +85,38 @@ public class ExamineController extends BaseController {
     }
 
     /**
+     * @api {GET} /examine/getFileTypes 获取文件类型
+     * @apiGroup Examine
+     * @apiVersion 1.0.0
+     * @apiDescription 获取文件类型
+     * @apiParam {String} id
+     * @apiParamExample {json} 请求示例:
+     *              /examine/getFileTypes
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {"2": "年假","3": "事假","4": "病假","5": "调休","6": "产假","7": "陪产假","8": "婚假","9": "例假","10": "丧假","11": "哺乳假"
+     *     }
+     * }
+     */
+    @GetMapping("/getFileTypes")
+     public JsonResult getFileTypes(){
+         JSONArray arr = new JSONArray();
+         for (UserFile.TYPE type : UserFile.TYPE.values()) {
+             if (type.ordinal() <= typeIndex) continue;
+             JSONObject json = new JSONObject();
+             json.put(type.getIndex() + "", type.getName());
+             arr.add(json);
+         }
+         jsonResult.setData(arr);
+         return jsonResult;
+     }
+
+    /**
      * @api {GET} /examine/getReplyTypes 获取请示类型
      * @apiGroup Examine
      * @apiVersion 1.0.0

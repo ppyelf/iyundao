@@ -19,5 +19,7 @@ import java.util.List;
 public interface AdvicesInfoDeparRepository extends CrudRepository<AdvicesInfoDepar, String>{
 
 
-
+    //根据消息id查找所有部门组织机构信息
+    @Query("select a from AdvicesInfoDepar a where a.advices.id =?1")
+    List<AdvicesInfoDepar> findByAdvicesId(String id);
 }

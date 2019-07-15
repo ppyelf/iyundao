@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Activity;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
@@ -18,7 +19,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface ActivityRepository extends CrudRepository<Activity, String> {
+public interface ActivityRepository extends BaseRepository<Activity, String> {
 
     //根据ID查找实体
     @Query("select a from Activity a where a.id = ?1")

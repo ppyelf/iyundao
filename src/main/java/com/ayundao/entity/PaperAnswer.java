@@ -21,11 +21,11 @@ public class PaperAnswer extends BaseEntity<String>{
     @JoinColumn(name = "PAPERTITLEID", nullable = false)
     private PaperTitle paperTitle;
 
-    /**
-     * 考题序号
-     */
-    @Column(name = "SERIALID" , length = 50)
-    private  String serialid;
+//    /**
+//     * 考题序号
+//     */
+//    @Column(name = "SERIALID" , length = 50)
+//    private  String serialid;
 
     /**
      * 考试答案选择
@@ -47,13 +47,13 @@ public class PaperAnswer extends BaseEntity<String>{
         this.paperTitle = paperTitle;
     }
 
-    public String getSerialid() {
-        return serialid;
-    }
-
-    public void setSerialid(String serialid) {
-        this.serialid = serialid;
-    }
+//    public String getSerialid() {
+//        return serialid;
+//    }
+//
+//    public void setSerialid(String serialid) {
+//        this.serialid = serialid;
+//    }
 
     public String getAnswerselect() {
         return answerselect;

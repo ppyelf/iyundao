@@ -1,9 +1,8 @@
 package com.ayundao.entity;
 
 import com.ayundao.base.BaseEntity;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 
 /**
  * @ClassName: AssessmentFraction
@@ -22,7 +21,8 @@ public class AssessmentFraction extends BaseEntity<String> {
     /**
      * 考核项目ID
      */
-    @Column(name = "ASSESSMENTID",nullable = false ,unique = true)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ASSESSMENTID")
     private Assessment assessment;
 
     /**

@@ -169,8 +169,8 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public Page<Activity> findAllForPage(Pageable pageable) {
-        Page<Activity> activityPage = activityRepository.findAllForPage(pageable);
-        return activityPage;
+
+        return activityRepository.findPage(pageable);
     }
 
     @Override

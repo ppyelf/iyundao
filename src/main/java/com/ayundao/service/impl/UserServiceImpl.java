@@ -202,4 +202,14 @@ public class UserServiceImpl implements UserService {
     public User findByCode(String code) {
         return userRepository.findByCode(code);
     }
+
+    @Override
+    public List<User> findBySubjectIdForPage(String id) {
+        return userRepository.findBySubjectIdForPage(id);
+    }
+
+    @Override
+    public List<User> findbyIds(String[] userids) {
+        return userRepository.findByIds(userids);
+    }
 }

@@ -141,6 +141,13 @@ public interface UserInfoRepository extends BaseRepository<UserInfo,String> {
                     " FROM t_user_info ui INNER JOIN t_user_info_party uip ON ui.id = uip.userinfoid WHERE uip.type = '1'",nativeQuery = true)
     Map<String,Object> countByIdentity();
 
+    /**
+     * 根据userid寻找实体
+     * @param id
+     * @return
+     */
+    @Query("select a from UserInfo a where a.userid = ?1")
+    UserInfo findByUserId(String id);
 }
 
 

@@ -95,4 +95,16 @@ public interface UserService {
      * 根据编号查询实体
      */
     User findByCode(String code);
+
+    /**
+     * 查询机构用户分页
+     */
+    List<User> findBySubjectIdForPage(String id);
+
+    /**
+     * 查找用户群体
+     * @param userids
+     * @return
+     */
+    List<User> findbyIds(String[] userids);
 }

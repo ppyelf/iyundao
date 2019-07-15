@@ -1,7 +1,9 @@
 package com.ayundao.service;
 
+import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.Advices;
 import com.ayundao.entity.AdvicesInfoDepar;
+import com.ayundao.entity.AdvicesInfoUser;
 
 import java.util.List;
 
@@ -17,7 +19,6 @@ public interface AdvicesService {
 
     List<Advices> findAll();
 
-    Advices save(Advices advices, String subjectId, String departId, String groupId);
 
     /**
      * 根据id查找
@@ -37,4 +38,44 @@ public interface AdvicesService {
      * @return
      */
     List<Advices> findAdvicesByDeptionId(String id);
+
+    /**
+     * 添加消息
+     * @param advices
+     * @param subjectIds
+     * @param departIds
+     * @param groupIds
+     * @param userids
+     * @return
+     */
+    Advices save(Advices advices, String[] subjectIds, String[] departIds, String[] groupIds, String[] userids);
+
+
+
+    /**
+     * 查看是否已经发送过消息
+     * @param id
+     * @return
+     */
+    List<AdvicesInfoUser> findsendistrue(String id);
+
+    /**
+     * 通过消息id查找关系
+     * @param id
+     * @return
+     */
+    List<AdvicesInfoDepar> findDeptionByAdvicesId(String id);
+
+    /**
+     * 发送消息
+     * @param advicesInfoDepars
+     */
+    void saveAdvices(List<AdvicesInfoDepar> advicesInfoDepars);
+
+    /**
+     * 修改消息状态
+     * @param id
+     * @param state
+     */
+    void updatestate(String id, String state);
 }

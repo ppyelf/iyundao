@@ -22,11 +22,11 @@ public class PaperTitle extends BaseEntity<String>{
     @JoinColumn(name = "TESTPAPERID", nullable = false)
     private Testpaper testpaper;
 
-    /**
-     * 考题序号
-     */
-    @Column(name = "SERIALID" , length = 50)
-    private  String serialid;
+//    /**
+//     * 考题序号
+//     */
+//    @Column(name = "SERIALID" , length = 50)
+//    private  String serialid;
 
     /**
      * 考试内容介绍
@@ -53,6 +53,13 @@ public class PaperTitle extends BaseEntity<String>{
     @OneToMany(mappedBy = "paperTitle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<PaperAnswer> paperAnswer;
 
+    /**
+     *考试人员详情表考题id
+     * @return
+     */
+    @OneToMany(mappedBy = "paperTitle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExamInfoUser> examInfoUser;
+
 
     public Testpaper getTestpaper() {
         return testpaper;
@@ -62,12 +69,21 @@ public class PaperTitle extends BaseEntity<String>{
         this.testpaper = testpaper;
     }
 
-    public String getSerialid() {
-        return serialid;
+//    public String getSerialid() {
+//        return serialid;
+//    }
+//
+//    public void setSerialid(String serialid) {
+//        this.serialid = serialid;
+//    }
+
+
+    public Set<ExamInfoUser> getExamInfoUser() {
+        return examInfoUser;
     }
 
-    public void setSerialid(String serialid) {
-        this.serialid = serialid;
+    public void setExamInfoUser(Set<ExamInfoUser> examInfoUser) {
+        this.examInfoUser = examInfoUser;
     }
 
     public String getExamcontent() {

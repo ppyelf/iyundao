@@ -1,8 +1,11 @@
 package com.ayundao.repository;
 
 import com.ayundao.entity.ExamInfoDepart;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @ClassName: ExamInfoDepartRepository
@@ -15,4 +18,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExamInfoDepartRepository extends CrudRepository<ExamInfoDepart, String>{
 
+    @Query("select a from ExamInfoDepart a where a.exam.id =?1")
+    List<ExamInfoDepart> findByExamId(String id);
 }

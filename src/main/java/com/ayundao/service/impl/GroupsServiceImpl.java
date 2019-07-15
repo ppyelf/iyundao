@@ -87,4 +87,9 @@ public class GroupsServiceImpl implements GroupsService {
     public Groups findByCode(String code) {
         return groupsRepository.findByCode(code);
     }
+
+    @Override
+    public List<Groups> findByIds(String[] groupIds) {
+        return groupsRepository.findByIds(groupIds);
+    }
 }

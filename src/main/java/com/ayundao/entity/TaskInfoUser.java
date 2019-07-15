@@ -29,6 +29,12 @@ public class TaskInfoUser extends BaseEntity<String> {
     private User user;
 
     /**
+     * 手机号码
+     */
+    @Column(name = "PHONE",length = 50)
+    private String phone;
+
+    /**
      * 确认接收状态
      */
     @Column(name = "STATE",length = 50)
@@ -48,6 +54,14 @@ public class TaskInfoUser extends BaseEntity<String> {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getState() {

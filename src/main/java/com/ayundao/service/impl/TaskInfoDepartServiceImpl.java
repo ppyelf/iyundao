@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @ClassName: TaskInfoDepartServiceImpl
  * @project: ayundao
@@ -32,7 +34,7 @@ public class TaskInfoDepartServiceImpl implements TaskInfoDepartService {
     @Autowired
     private UserRepository userRepository;
     @Override
-    public TaskInfoDepart findByTaskId(String id) {
+    public List<TaskInfoDepart> findByTaskId(String id) {
         return taskInfoDepartRepository.findByTaskId(id);
     }
 
@@ -43,6 +45,7 @@ public class TaskInfoDepartServiceImpl implements TaskInfoDepartService {
     }
 
     @Override
+    @Transactional
     public void deleteTask(Task task) {
         User user = task.getUser();
         user.setTask(null);

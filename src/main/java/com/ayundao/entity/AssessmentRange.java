@@ -55,6 +55,7 @@ public class AssessmentRange extends BaseEntity<String> {
     @Column(name = "USERID", length = 50)
     private String userId;
 
+
     /**
      * 评价
      */

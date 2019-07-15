@@ -22,6 +22,12 @@ public class Testpaper extends BaseEntity<String>{
     private String name;
 
     /**
+     * 试卷简介
+     */
+    @Column(name = "INTRO",length = 50)
+    private String intro;
+
+    /**
      * 考试试卷表试卷id
      * @return
      */
@@ -50,6 +56,14 @@ public class Testpaper extends BaseEntity<String>{
         this.name = name;
     }
 
+    public String getIntro() {
+        return intro;
+    }
+
+    public void setIntro(String intro) {
+        this.intro = intro;
+    }
+
     public Set<ExamInfoTextpaper> getExamInfoTextpaper() {
         return examInfoTextpaper;
     }
@@ -57,6 +71,7 @@ public class Testpaper extends BaseEntity<String>{
     public void setExamInfoTextpaper(Set<ExamInfoTextpaper> examInfoTextpaper) {
         this.examInfoTextpaper = examInfoTextpaper;
     }
+
 
     public Set<PaperTitle> getPaperTitle() {
         return paperTitle;

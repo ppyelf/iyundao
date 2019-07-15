@@ -37,8 +37,8 @@ public class Assessment extends BaseEntity<String> {
     /**
      * 类型
      */
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "TYPE", nullable = false)
+    @Enumerated(value = EnumType.ORDINAL)
+    @Column(name = "TYPE",nullable = false)
     private ASSESSMENT_TYPE type;
 
     /**
@@ -72,6 +72,12 @@ public class Assessment extends BaseEntity<String> {
     private Set<AssessmentFile> assessmentFiles;
 
     /**
+     * 考核图片
+     */
+    @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<AssessmentImage> assessmentImages;
+
+    /**
      * 考核指标
      */
     @OneToMany(mappedBy = "assessment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -82,6 +88,12 @@ public class Assessment extends BaseEntity<String> {
      */
     @OneToMany(mappedBy = "assessment",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<AssessmentRange> assessmentRanges;
+
+    /**
+     * 考核分数
+     */
+    @OneToMany(mappedBy = "assessment",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private Set<AssessmentFraction> assessmentFractions;
 
     /**
      * 备用字段1
@@ -109,9 +121,9 @@ public class Assessment extends BaseEntity<String> {
     @Column(name = "INFO5")
     private String info5;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
+//    public static long getSerialVersionUID() {
+//        return serialVersionUID;
+//    }
 
     public String getNumber() {
         return number;
@@ -169,6 +181,14 @@ public class Assessment extends BaseEntity<String> {
         this.remark = remark;
     }
 
+    public Set<AssessmentFraction> getAssessmentFractions() {
+        return assessmentFractions;
+    }
+
+    public void setAssessmentFractions(Set<AssessmentFraction> assessmentFractions) {
+        this.assessmentFractions = assessmentFractions;
+    }
+
     public Set<AssessmentFile> getAssessmentFiles() {
         return assessmentFiles;
     }
@@ -185,13 +205,21 @@ public class Assessment extends BaseEntity<String> {
         this.assessmentIndices = assessmentIndices;
     }
 
-//    public Set<AssessmentRange> getAssessmentRanges() {
-//        return assessmentRanges;
-//    }
-//
-//    public void setAssessmentRanges(Set<AssessmentRange> assessmentRanges) {
-//        this.assessmentRanges = assessmentRanges;
-//    }
+    public Set<AssessmentRange> getAssessmentRanges() {
+        return assessmentRanges;
+    }
+
+    public void setAssessmentRanges(Set<AssessmentRange> assessmentRanges) {
+        this.assessmentRanges = assessmentRanges;
+    }
+
+    public Set<AssessmentImage> getAssessmentImages() {
+        return assessmentImages;
+    }
+
+    public void setAssessmentImages(Set<AssessmentImage> assessmentImages) {
+        this.assessmentImages = assessmentImages;
+    }
 
     public String getInfo1() {
         return info1;
@@ -237,44 +265,21 @@ public class Assessment extends BaseEntity<String> {
         /**
          * 0 -个人考核
          */
-        personnel(0,"个人考核"),
+        personnel,
 
         /**
          * 1 -支部考核
          */
-        branch(1,"支部考核"),
+        branch,
 
         /**
          * 2 -行政考核
          */
-        standard(2,"行政考核"),
+        standard,
 
         /**
          * 3 -机构考核
          */
-        etc(3,"机构考核");
-        private int index;
-
-        private String name;
-        private ASSESSMENT_TYPE (int index,String name){
-            this.index=index;
-            this.name=name;
-        }
-
-        public int getIndex() {
-            return index;
-        }
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
+        etc
     }
 }

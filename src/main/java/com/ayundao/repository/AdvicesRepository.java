@@ -2,6 +2,7 @@ package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Advices;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,8 @@ public interface AdvicesRepository extends BaseRepository<Advices,String> {
             "OR b.depart.id = ?1 \n" +
             "OR b.groups.id = ?1)")
     List<Advices> findAdvicesByDeptionId(String id);
+
+    @Modifying
+    @Query(value = "update t_advices set ADVICESSTATUS = ?2 where id=?1",nativeQuery = true)
+    void updatestate(String id, String state);
 }

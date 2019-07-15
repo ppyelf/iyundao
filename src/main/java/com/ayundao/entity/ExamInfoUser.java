@@ -15,6 +15,13 @@ public class ExamInfoUser  extends BaseEntity<String>{
     private static final long serialVersionUID = -9153958282058600024L;
 
     /**
+     * 题目id
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PAPERTITLEID", nullable = false)
+    private PaperTitle paperTitle;
+
+    /**
      *考试id
      */
     @ManyToOne(fetch = FetchType.EAGER)
@@ -35,11 +42,11 @@ public class ExamInfoUser  extends BaseEntity<String>{
     @JoinColumn(name = "USERID", nullable = false)
     private User user;
 
-    /**
-     * 考题序号
-     */
-    @Column(name = "SERIALID", length = 50)
-    private String serialid;
+//    /**
+//     * 考题序号
+//     */
+//    @Column(name = "SERIALID", length = 50)
+//    private String serialid;
 
     /**
      * 考试答案选择
@@ -77,12 +84,21 @@ public class ExamInfoUser  extends BaseEntity<String>{
         this.user = user;
     }
 
-    public String getSerialid() {
-        return serialid;
+//    public String getSerialid() {
+//        return serialid;
+//    }
+//
+//    public void setSerialid(String serialid) {
+//        this.serialid = serialid;
+//    }
+
+
+    public PaperTitle getPaperTitle() {
+        return paperTitle;
     }
 
-    public void setSerialid(String serialid) {
-        this.serialid = serialid;
+    public void setPaperTitle(PaperTitle paperTitle) {
+        this.paperTitle = paperTitle;
     }
 
     public String getAnswerselect() {

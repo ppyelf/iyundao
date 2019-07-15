@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Version: V1.0
  */
 @RestController
-@RequestMapping("/index")
+@RequestMapping("/")
 public class IndexController extends BaseController {
 
     @Autowired

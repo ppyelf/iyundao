@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ayundao?serverTimezone=CTT&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     username: root
-    password: wswbh
+    password: 123456
 
   redis:
     port: 6379
@@ -22,7 +22,6 @@ spring:
         max-idle: 10
         min-idle: 0
 
-
   jpa:
     database: mysql
     show-sql: true
@@ -34,11 +33,3 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     #选用Innodb
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  mvc:
-    view:
-      suffix: .html
-  freemarker:
-    enabled: true
-    cache: false
-    charset: UTF-8
-    suffix: .html

@@ -329,4 +329,6 @@ public class ExamineServiceImpl implements ExamineService {
         return examineProcessRepository.findProcessByUserIdAndType(userId, type);
     }
 
+
+
 }

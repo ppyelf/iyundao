@@ -3,6 +3,8 @@ package com.ayundao.service;
 import com.ayundao.entity.Task;
 import com.ayundao.entity.TaskInfoDepart;
 
+import java.util.List;
+
 /**
  * @ClassName: TaskInfoDepartService
  * @project: ayundao
@@ -14,11 +16,11 @@ import com.ayundao.entity.TaskInfoDepart;
 public interface TaskInfoDepartService {
 
     /**
-     * 根据任务id查找
+     * 根据任务id查找关系
      * @param id
      * @return
      */
-    TaskInfoDepart findByTaskId(String id);
+    List<TaskInfoDepart> findByTaskId(String id);
 
     /**
      * 删除实体
@@ -31,4 +33,6 @@ public interface TaskInfoDepartService {
      * @param task
      */
     void deleteTask(Task task);
+
+
 }
