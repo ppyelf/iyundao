@@ -2,6 +2,7 @@ package com.ayundao.controller;
 
 import com.ayundao.base.BaseController;
 import com.ayundao.base.BaseEntity;
+import com.ayundao.base.annotation.CurrentSubject;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.Depart;
@@ -52,7 +53,6 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 部门列表
-     * @apiParam {String} subjectId 机构id
      * @apiParam {int} type 是否只选择父级部门(默认:0-不选择)
      * @apiExample {json} 请求样例
      *                ?subjectId=bd6886bc88e54ef0a36472efd95c744c
@@ -69,14 +69,11 @@ public class DepartController extends BaseController {
      * }
      */
     @PostMapping("/list")
-    public JsonResult list(String subjectId,
+    public JsonResult list(@CurrentSubject Subject subject,
                            @RequestParam(defaultValue = "0") int type) {
-        if (StringUtils.isBlank(subjectId)) {
-            return JsonResult.paramError();
-        }
         List<Depart> departs = type != 0
-                ? departService.findBySubjectIdAndFatherIsNull(subjectId)
-                : departService.findBySubjectId(subjectId);
+                ? departService.findBySubjectIdAndFatherIsNull(subject.getId())
+                : departService.findBySubjectId(subject.getId());
         if (CollectionUtils.isEmpty(departs)) {
             return jsonResult.notFound("请添加部门");
         }
@@ -166,7 +163,6 @@ public class DepartController extends BaseController {
      * @apiParam {String} code
      * @apiParam {String} fatherId
      * @apiParam {String} userId
-     * @apiParam {String} subjectId
      * @apiParamExample {json} 请求样例：
      *                ?name=添加部门11&subjectId=402881f46afdef14016afe28796c000b
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -187,8 +183,8 @@ public class DepartController extends BaseController {
                           String code,
                           String fatherId,
                           String userId,
-                          String subjectId) {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(subjectId)) {
+                          @CurrentSubject Subject subject) {
+        if (StringUtils.isBlank(name) || StringUtils.isBlank(subject.getId())) {
             return JsonResult.paramError();
         } 
         Depart depart = new Depart();
@@ -196,10 +192,6 @@ public class DepartController extends BaseController {
         depart.setCode(code);
         depart.setLastModifiedDate(new Date(System.currentTimeMillis()));
         depart.setCreatedDate(new Date(System.currentTimeMillis()));
-        Subject subject = subjectService.find(subjectId);
-        if (subject == null) {
-            return JsonResult.notFound("机构参数异常");
-        }
         depart.setSubject(subject);
         if (StringUtils.isNotBlank(fatherId)) {
             Depart father = departService.findById(fatherId);
@@ -224,7 +216,6 @@ public class DepartController extends BaseController {
      * @apiParam {String} code
      * @apiParam {String} fatherId
      * @apiParam {String} userId
-     * @apiParam {String} subjectId
      * @apiParamExample {json} 请求样例：
      *                ?id=402881f46afdef14016afdf286170001&name=测试用户组2
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -246,7 +237,7 @@ public class DepartController extends BaseController {
                              String code,
                              String fatherId,
                              String userId,
-                             String subjectId) {
+                             @CurrentSubject Subject subject) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
         }
@@ -257,13 +248,7 @@ public class DepartController extends BaseController {
         depart.setLastModifiedDate(new Date(System.currentTimeMillis()));
         depart.setName(name);
         depart.setCode(code);
-        if (StringUtils.isNotBlank(subjectId)) {
-            Subject subject = subjectService.find(subjectId);
-            if (subject == null) {
-                return JsonResult.notFound("此机构不存在");
-            }
-            depart.setSubject(subject);
-        }
+        depart.setSubject(subject);
         if (StringUtils.isNotBlank(fatherId)) {
             Depart father = departService.findById(fatherId);
             depart.setFather(father);

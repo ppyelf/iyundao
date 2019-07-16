@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "t_role")
 public class Role extends BaseEntity<String> {
 
-    private static final long serialVersionUID = -12734987129347912l;
+    private static final long serialVersionUID = -1273498712913347912L;
 
     /**
      * 名称
@@ -26,34 +26,16 @@ public class Role extends BaseEntity<String> {
     private String name;
 
     /**
-     * 等级
+     * 编码
      */
-    @Column(name = "LEVEL", length = 1, nullable = false, columnDefinition = "tinyint(1) default 0")
-    private int level;
-
-    /**
-     * 菜单关系
-     */
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<MenuRelation> menuRelations;
+    @Column(name = "CODE", length = 50, nullable = false, unique = true)
+    private String code;
 
     /**
      * 角色关系
      */
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserRole> userRoles;
-
-    /**
-     * 字段关系
-     */
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<FieldRole> fieldRoles;
-
-    /**
-     * 按钮关系
-     */
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ButtonRole> buttonRoles;
+    private Set<RoleRelation> roleRelations;
 
     /**
      * 备用字段1
@@ -93,43 +75,19 @@ public class Role extends BaseEntity<String> {
         this.name = name;
     }
 
-    public int getLevel() {
-        return level;
+    public Set<RoleRelation> getRoleRelations() {
+        return roleRelations;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setRoleRelations(Set<RoleRelation> roleRelations) {
+        this.roleRelations = roleRelations;
     }
 
-    public Set<MenuRelation> getMenuRelations() {
-        return menuRelations;
+    public String getCode() {
+        return code;
     }
 
-    public void setMenuRelations(Set<MenuRelation> menuRelations) {
-        this.menuRelations = menuRelations;
-    }
-
-    public Set<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(Set<UserRole> userRoles) {
-        this.userRoles = userRoles;
-    }
-
-    public Set<FieldRole> getFieldRoles() {
-        return fieldRoles;
-    }
-
-    public void setFieldRoles(Set<FieldRole> fieldRoles) {
-        this.fieldRoles = fieldRoles;
-    }
-
-    public Set<ButtonRole> getButtonRoles() {
-        return buttonRoles;
-    }
-
-    public void setButtonRoles(Set<ButtonRole> buttonRoles) {
-        this.buttonRoles = buttonRoles;
+    public void setCode(String code) {
+        this.code = code;
     }
 }

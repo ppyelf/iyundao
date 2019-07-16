@@ -2,6 +2,7 @@ package com.ayundao.controller;
 
 
 import com.ayundao.base.BaseController;
+import com.ayundao.base.annotation.CurrentSubject;
 import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
@@ -148,7 +149,6 @@ public class UserController extends BaseController {
      * @apiParam {String} code 编号
      * @apiParam {int} sex 性别
      * @apiParam {int} userType 用户类型
-     * @apiParam {String} subjectId 机构ID
      * @apiParam {String} departId 部门ID
      * @apiParam {String} groupsId 组织ID
      * @apiParam {String} remark 描述
@@ -178,7 +178,7 @@ public class UserController extends BaseController {
                           String code,
                           @RequestParam(defaultValue = "0") int sex,
                           @RequestParam(defaultValue = "0") int userType,
-                          String subjectId,
+                          @CurrentSubject Subject subject,
                           String departId,
                           String groupsId,
                           String remark,
@@ -209,7 +209,7 @@ public class UserController extends BaseController {
         }
         List<Role> roles = roleService.findByRoleIds(roleIds);
         user.setRemark(remark);
-        return userService.save(user, subjectId, departId, groupsId, roles, jsonResult);
+        return userService.save(user, subject, departId, groupsId, roles, jsonResult);
     }
 
     /**

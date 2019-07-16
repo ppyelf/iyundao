@@ -1,15 +1,18 @@
 package com.ayundao.base.config;
 
+import com.ayundao.base.resolver.CurrentSubjectResolver;
+import com.ayundao.base.resolver.CurrentUserResolver;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.CacheControl;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.validation.MessageInterpolator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -24,9 +27,9 @@ import java.util.Map;
 @Configuration
 public class DefaultConfig implements WebMvcConfigurer {
 
+    @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("index");
-        registry.addViewController("/login").setViewName("login");
+        registry.addViewController("/").setViewName("login");
     }
     
     private static final Map<String, String> VALIDATION_ANNATATION_DEFAULT_MESSAGES =
@@ -40,6 +43,23 @@ public class DefaultConfig implements WebMvcConfigurer {
         LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
         localValidatorFactoryBean.setMessageInterpolator(new MessageInterpolator());
         return localValidatorFactoryBean;
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(currentUserResolver());
+        argumentResolvers.add(currentSubjectResolver());
+        WebMvcConfigurer.super.addArgumentResolvers(argumentResolvers);
+    }
+
+    @Bean
+    public CurrentUserResolver currentUserResolver() {
+        return new CurrentUserResolver();
+    }
+
+    @Bean
+    public CurrentSubjectResolver currentSubjectResolver() {
+        return new CurrentSubjectResolver();
     }
 
     /**

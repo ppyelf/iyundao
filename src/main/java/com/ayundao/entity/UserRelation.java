@@ -41,17 +41,18 @@ public class UserRelation extends BaseEntity<String> {
     private Groups groups;
 
     /**
+     * 所属用户组
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USERGROUPID")
+    private UserGroup userGroup;
+
+    /**
      * 用户
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USERID")
     private User user;
-
-    /**
-     * 菜单关系
-     */
-    @OneToMany(mappedBy = "userRelation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<MenuRelation> menuRelations;
 
     /**
      * 备用字段1
@@ -115,14 +116,6 @@ public class UserRelation extends BaseEntity<String> {
         this.user = user;
     }
 
-    public Set<MenuRelation> getMenuRelations() {
-        return menuRelations;
-    }
-
-    public void setMenuRelations(Set<MenuRelation> menuRelations) {
-        this.menuRelations = menuRelations;
-    }
-
     public String getInfo1() {
         return info1;
     }
@@ -161,5 +154,13 @@ public class UserRelation extends BaseEntity<String> {
 
     public void setInfo5(String info5) {
         this.info5 = info5;
+    }
+
+    public UserGroup getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(UserGroup userGroup) {
+        this.userGroup = userGroup;
     }
 }

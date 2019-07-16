@@ -1,20 +1,37 @@
 package com.ayundao.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
-import com.ayundao.base.utils.EncryptUtils;
+import com.ayundao.base.annotation.CurrentUser;
+import com.ayundao.base.shiro.RetryLimitHashedCredentialsMatcher;
+import com.ayundao.base.shiro.ShiroSessionListener;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.User;
-import com.ayundao.service.UserService;
-import org.apache.commons.lang.StringUtils;
+import com.ayundao.entity.UserRelation;
+import com.ayundao.service.SubjectService;
+import com.ayundao.service.UserRelationService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @ClassName: IndexController
@@ -25,26 +42,32 @@ import javax.servlet.http.HttpServletResponse;
  * @Version: V1.0
  */
 @RestController
-@RequestMapping("/index")
+@RequestMapping("/")
 public class IndexController extends BaseController {
 
-    @Autowired
-    private UserService userService;
+    private final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
-    @RequestMapping("/")
-    public ModelAndView index() {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("index");
-        return mav;
-    }
+
+    @Autowired
+    private UserRelationService userRelationService;
+
+    @Autowired
+    private SubjectService subjectService;
+
+    @Autowired
+    private ShiroSessionListener shiroSessionListener;
+
+    @Autowired
+    private RetryLimitHashedCredentialsMatcher retryLimitHashedCredentialsMatcher;
 
     /**
-     * @api {POST} /index/login 用户登录
-     * @apiGroup Index
+     * @api {POST} /login 用户登录
+     * @apiGroup 首页
      * @apiVersion 1.0.0
      * @apiDescription 用于用户登录
      * @apiParam {String} account 用户名
      * @apiParam {String} password 密码
+     * @apriParam {boolean} rememberMe 记住我
      * @apiParamExample {json} 请求样例：
      *                ?account=admin&password=admin
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -62,44 +85,140 @@ public class IndexController extends BaseController {
      * }
      */
     @PostMapping("/login")
-    public JsonResult login(String account, String password, HttpServletRequest req, HttpServletResponse resp) {
-//        out(account);
-        User user = getUser();
+    public JsonResult login(String account, String password, boolean rememberMe, Model model, HttpServletRequest req, HttpServletResponse resp) {
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(account, password, rememberMe);
+        if (subject.isAuthenticated()) {
+            return loginSuccess((User) subject.getPrincipal());
+        }
+        // 执行认证登陆
+        subject.login(token);
+        //根据权限，指定返回数据
+        User user = (User) subject.getPrincipal();
         JsonResult jsonResult = JsonResult.success();
         if (user != null && user.getAccount().equals(account)) {
-            jsonResult.setCode(200);
-            jsonResult.setMessage("登录成功");
-            jsonResult.setData(JsonUtils.getJson(user));
-            return jsonResult;
+            return loginSuccess(user);
         }
-        if (StringUtils.isNotBlank(account) && StringUtils.isNotBlank(password)) {
-            user = userService.findByAccount(account);
-            if (user == null) {
-                jsonResult.setCode(404);
-                jsonResult.setMessage("用户名/密码不正确");
-                return jsonResult;
+        return JsonResult.failure(400, "账号异常");
+    }
+
+    /**
+     * 返回登录成功结果
+     * @param user
+     * @return
+     */
+    private JsonResult loginSuccess(User user) {
+        Session session = SecurityUtils.getSubject().getSession();
+        List<UserRelation> userRelations = userRelationService.findByUser(user);
+        if (CollectionUtils.isNotEmpty(userRelations)) {
+            for (UserRelation userRelation : userRelations) {
+                com.ayundao.entity.Subject subject = userRelation.getSubject();
+                JSONObject json = new JSONObject();
+                json.put("id", subject.getId());
+                json.put("name", subject.getName());
+                session.setAttribute("currentSubject", subject);
+                break;
             }
-            if (EncryptUtils.getSaltverifyMD5(password, user.getPassword())) {
-                //封装用户
-                setCurrentUser(req, user);
-                jsonResult.setCode(200);
-                jsonResult.setMessage("登录成功");
-                jsonResult.setData(JsonUtils.getJson(user));
-                return jsonResult;
-            }
-        } else {
-            return JsonResult.failure(600, "参数错误");
         }
-        return jsonResult.failure(400, "账号异常");
+        JSONObject json = JsonUtils.getJson(user);
+        jsonResult.setCode(200);
+        jsonResult.setMessage("登录成功");
+        jsonResult.setData(json);
+        return jsonResult;
+    }
+
+    /**
+     * @api {GET} /subjectList 个人机构列表
+     * @apiGroup 首页
+     * @apiVersion 1.0.0
+     * @apiDescription 个人机构列表
+     * @apiParam {String} id 机构ID
+     * @apiParamExample {json} 请求样例：
+     *                /subjectList
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:机构不存在/ID为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     * 	"code": 200,
+     * 	"message": "登录成功",
+     * 	"data": "{'version':'0','id':'0a4179fc06cb49e3ac0db7bcc8cf0882','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'管理员','password':'b356a1a11a067620275401a5a3de04300bf0c47267071e06','status':'normal','remark':'未填写','sex':'0','salt':'3a10624a300f4670','account':'admin','userType':'amdin'}"
+     * }
+     */
+    @GetMapping("/subjectList")
+    public JsonResult subjectList(@CurrentUser User user) {
+        List<UserRelation> list = userRelationService.findByUserId(user.getId());
+        Set<com.ayundao.entity.Subject> set = new HashSet<>();
+        for (UserRelation ur : list) {
+            set.add(ur.getSubject());
+        }
+        JSONArray arr = new JSONArray();
+        for (com.ayundao.entity.Subject subject : set) {
+            JSONObject json = new JSONObject();
+            json.put("id", subject.getId());
+            json.put("name", subject.getName());
+            arr.add(json);
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
+    }
+
+    /**
+     * @api {POST} /changeSubject 切换医院机构
+     * @apiGroup 首页
+     * @apiVersion 1.0.0
+     * @apiDescription 切换医院机构
+     * @apiParam {String} id 机构ID
+     * @apiParamExample {json} 请求样例：
+     *                ?id=bfc5bd62010f467cbbe98c9e4741733b
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 404:机构不存在/ID为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     * 	"code": 200,
+     * 	"message": "登录成功",
+     * 	"data": "{'version':'0','id':'0a4179fc06cb49e3ac0db7bcc8cf0882','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'管理员','password':'b356a1a11a067620275401a5a3de04300bf0c47267071e06','status':'normal','remark':'未填写','sex':'0','salt':'3a10624a300f4670','account':'admin','userType':'amdin'}"
+     * }
+     */
+    @PostMapping("/changeSubject")
+    public JsonResult changeSubject(String id) {
+        com.ayundao.entity.Subject currentSubject = subjectService.find(id);
+        if (currentSubject == null) {
+            return JsonResult.notFound("机构不存在/ID为空");
+        }
+        Session session = SecurityUtils.getSubject().getSession();
+        JSONObject json = new JSONObject();
+        session.setAttribute("currentSubject", json);
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
 
+    @RequestMapping("/unauthorized")
+    public JsonResult unauthorized() {
+        logger.info("==============================无权限");
+        return jsonResult;
+    }
     /**
-     * @api {POST} /index/out 退出登录
+     * 解除admin 用户的限制登录
+     * 写死的 方便测试
+     * @return
+     */
+    @RequestMapping("/unlockAccount")
+    public String unlockAccount(Model model){
+        model.addAttribute("msg","用户解锁成功");
+        retryLimitHashedCredentialsMatcher.unlockAccount("admin");
+        return "login";
+    }
+
+    /**
+     * @api {POST} /logout 退出登录
      * @apiGroup Index
      * @apiVersion 1.0.0
      * @apiDescription 退出登录
-     * @apiParam {String} account 用户名
      * @apiParamExample {json} 请求样例：
      * /out
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -110,10 +229,11 @@ public class IndexController extends BaseController {
      * 	"message": "退出登录成功"
      * }
      */
-    @PostMapping("/out")
-    public JsonResult out(String account) {
-        loginOut(account);
+    @PostMapping("/logout")
+    public JsonResult out(HttpServletRequest req) {
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        req.getSession().removeAttribute("user");
         return JsonResult.success("退出登录成功");
     }
-
 }

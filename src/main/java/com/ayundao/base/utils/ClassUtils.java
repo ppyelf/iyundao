@@ -99,7 +99,7 @@ public class ClassUtils {
         Field[] fields = cls.getDeclaredFields();
         for (Method m : methods) {
             for (Field f : fields) {
-                if (f.getName().equals(toFirstLowwerCase(m.getName().substring(3, m.getName().length())))) {
+                if (f.getName().equals(toFirstLowerCase(m.getName().substring(3, m.getName().length())))) {
                     map.put(f.getName(), f);
                 }
             }
@@ -141,7 +141,7 @@ public class ClassUtils {
      * @param name
      * @return
      */
-    public static String toFirstLowwerCase(String name) {
+    public static String toFirstLowerCase(String name) {
         return name.substring(0, 1).toLowerCase() + name.substring(1, name.length());
     }
 

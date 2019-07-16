@@ -1,6 +1,7 @@
 package com.ayundao.controller;
 
 import com.ayundao.base.BaseController;
+import com.ayundao.base.annotation.CurrentSubject;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.Depart;
@@ -47,7 +48,6 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 小组列表
-     * @apiParam {String} subjectId 机构id
      * @apiParam {int} type 是否只选择父级组织(默认:0-不选择)
      * @apiParamExample {json} 请求样例：
      *                /groups/list
@@ -64,14 +64,11 @@ public class GroupsController extends BaseController {
      * }
      */
     @PostMapping("/list")
-    public JsonResult list(String subjectId,
+    public JsonResult list(@CurrentSubject Subject subject,
                            @RequestParam(defaultValue = "0") int type) {
-        if (StringUtils.isBlank(subjectId)) {
-            return JsonResult.paramError();
-        } 
         List<Groups> groups = type != 0
-                ? groupsService.findBySubjectIdAndFatherIsNull(subjectId)
-                : groupsService.findBySubjectId(subjectId);
+                ? groupsService.findBySubjectIdAndFatherIsNull(subject.getId())
+                : groupsService.findBySubjectId(subject.getId());
         if (CollectionUtils.isEmpty(groups)) {
             return JsonResult.notFound("请添加小组");
         }
@@ -168,14 +165,12 @@ public class GroupsController extends BaseController {
      * @apiParam {String} name
      * @apiParam {String} code
      * @apiParam {String} userId
-     * @apiParam {String} subjectId
      * @apiParam {String} remark
      * @apiParamExample {json} 请求样例：
      *                /groups/add
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
-     *                                 601:机构参数异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -195,10 +190,10 @@ public class GroupsController extends BaseController {
     public JsonResult add(String name,
                           String code,
                           String userId,
-                          String subjectId,
+                          @CurrentSubject Subject subject,
                           String fatherId,
                           String remark) {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(subjectId)) {
+        if (StringUtils.isBlank(name) || StringUtils.isBlank(subject.getId())) {
             return JsonResult.paramError();
         }
         Groups groups = new Groups();
@@ -207,10 +202,6 @@ public class GroupsController extends BaseController {
         groups.setRemark(remark);
         groups.setLastModifiedDate(new Date(System.currentTimeMillis()));
         groups.setCreatedDate(new Date(System.currentTimeMillis()));
-        Subject subject = subjectService.find(subjectId);
-        if (subject == null) {
-            return JsonResult.notFound("机构参数异常");
-        }
         groups.setSubject(subject);
         if (StringUtils.isNotBlank(userId)) {
             User user = userService.findById(userId);
@@ -236,7 +227,6 @@ public class GroupsController extends BaseController {
      * @apiParam {String} name
      * @apiParam {String} code
      * @apiParam {String} userId
-     * @apiParam {String} subjectId 必填
      * @apiParam {String} fatherId 必填
      * @apiParamExample {json} 请求样例：
      *                ?id=402881f46afdef14016afe0d13520005&name=修改用户组
@@ -260,7 +250,7 @@ public class GroupsController extends BaseController {
                              String name,
                              String code,
                              String userId,
-                             String subjectId,
+                             @CurrentSubject Subject subject,
                              String fatherId) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.paramError();
@@ -272,11 +262,7 @@ public class GroupsController extends BaseController {
         groups.setLastModifiedDate(new Date(System.currentTimeMillis()));
         groups.setName(StringUtils.isBlank(name) ? groups.getName() : name);
         groups.setCode(code);
-        if (StringUtils.isNotBlank(subjectId)) {
-            Subject subject = subjectService.find(subjectId);
-            if (subject == null)   return JsonResult.notFound("此机构不存在");
-            groups.setSubject(subject);
-        }
+        groups.setSubject(subject);
         if (StringUtils.isNotBlank(userId)) {
             User user = userService.findById(userId);
             groups.setUser(user);

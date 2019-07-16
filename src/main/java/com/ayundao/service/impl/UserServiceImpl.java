@@ -12,7 +12,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ayundao.base.Page;
-import com.ayundao.base.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,8 +49,7 @@ public class UserServiceImpl implements UserService {
     private UserRelationRepository userRelationRepository;
 
     @Autowired
-    private UserRoleRepository userRoleRepository;
-
+    private RoleRelationRepository roleRelationRepository;
 
     @Override
     public User findByAccount(String account) {
@@ -90,13 +88,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public JsonResult save(User user, String subjectId, String departId, String groupsId, List<Role> roles, JsonResult jsonResult) {
-        if (StringUtils.isBlank(subjectId)
-                 || StringUtils.isBlank(departId)
+    public JsonResult save(User user, Subject subject, String departId, String groupsId, List<Role> roles, JsonResult jsonResult) {
+        if (StringUtils.isBlank(departId)
                     || StringUtils.isBlank(groupsId)) {
             JsonResult.failure(601, "用户必须有所属的机构/部门/组织");
         }
-        Subject subject = subjectRepository.find(subjectId);
         Depart depart = departRepository.findByDepartId(departId);
         Groups groups = groupsRepository.findByGroupsId(groupsId);
         if (subject == null) {
@@ -114,17 +110,18 @@ public class UserServiceImpl implements UserService {
         userRelation.setUser(user);
         user = userRepository.save(user);
         if (CollectionUtils.isNotEmpty(roles)) {
-            Set<UserRole> set = new HashSet<>();
+            Set<RoleRelation> set = new HashSet<>();
             for (Role role : roles) {
-                UserRole ur = new UserRole();
+                RoleRelation ur = new RoleRelation();
                 ur.setCreatedDate(new Date());
                 ur.setLastModifiedDate(new Date());
                 ur.setUser(user);
                 ur.setRole(role);
-                userRoleRepository.save(ur);
+                //todo 添加权限
+                roleRelationRepository.save(ur);
                 set.add(ur);
             }
-            user.setUserRoles(set);
+            user.setRoleRelations(set);
             userRepository.save(user);
         }
         userRelationRepository.save(userRelation);
@@ -163,13 +160,12 @@ public class UserServiceImpl implements UserService {
             }
             userJson.put("userRelations", arr);
         }
-        if (CollectionUtils.isNotEmpty(user.getUserRoles())) {
+        if (CollectionUtils.isNotEmpty(user.getRoleRelations())) {
             JSONArray arr = new JSONArray();
-            for (UserRole ur : user.getUserRoles()) {
+            for (RoleRelation ur : user.getRoleRelations()) {
                 JSONObject json = new JSONObject();
                 json.put("id", ur.getRole().getId());
                 json.put("name", ur.getRole().getName());
-                json.put("level", ur.getRole().getLevel());
                 arr.add(json);
             }
             userJson.put("userRoles", arr);
@@ -201,5 +197,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByCode(String code) {
         return userRepository.findByCode(code);
+    }
+
+    @Override
+    public User save(User user) {
+        return userRepository.save(user);
     }
 }

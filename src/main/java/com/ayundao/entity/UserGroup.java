@@ -41,24 +41,6 @@ public class UserGroup extends BaseEntity<String> {
     private UserGroup father;
 
     /**
-     * 用户组关系
-     */
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserGroupRelation> userGroupRelations;
-
-    /**
-     * 字段关系
-     */
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<FieldRole> fieldRoles;
-
-    /**
-     * 按钮关系
-     */
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ButtonRole> buttonRoles;
-
-    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -112,27 +94,4 @@ public class UserGroup extends BaseEntity<String> {
         this.father = father;
     }
 
-    public Set<UserGroupRelation> getUserGroupRelations() {
-        return userGroupRelations;
-    }
-
-    public void setUserGroupRelations(Set<UserGroupRelation> userGroupRelations) {
-        this.userGroupRelations = userGroupRelations;
-    }
-
-    public Set<FieldRole> getFieldRoles() {
-        return fieldRoles;
-    }
-
-    public void setFieldRoles(Set<FieldRole> fieldRoles) {
-        this.fieldRoles = fieldRoles;
-    }
-
-    public Set<ButtonRole> getButtonRoles() {
-        return buttonRoles;
-    }
-
-    public void setButtonRoles(Set<ButtonRole> buttonRoles) {
-        this.buttonRoles = buttonRoles;
-    }
 }

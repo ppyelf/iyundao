@@ -16,10 +16,11 @@ public class JsonResult implements Serializable {
     public static final String MESSAGE_PARAM = "参数异常";
 	private static final long serialVersionUID = -1491499610244557029L;
 	public static String[] NOOP = new String[] {};
-
-	private int code; // 处理状态：0: 成功
+    // 处理状态：0: 成功
+	private int code;
 	private String message;
-	private Object data; // 返回数据
+    // 返回数据
+	private Object data;
 
 	private JsonResult(int code, String message, Object data) {
 		this.code = code;

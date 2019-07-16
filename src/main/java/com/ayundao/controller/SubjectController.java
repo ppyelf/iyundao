@@ -7,6 +7,9 @@ import com.ayundao.entity.*;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
@@ -27,6 +30,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/subject")
+@RequiresRoles(value = {"user", "admin", "manager"}, logical = Logical.OR)
 public class SubjectController extends BaseController {
 
     @Autowired
@@ -59,6 +63,7 @@ public class SubjectController extends BaseController {
      * 	"data": "['{'version':'1','id':'bd6886bc88e54ef0a36472efd95c744c','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'总院','subjectType':'head'}','{'version':'1','id':'c72a2c6bd1e8428fac6706b217417831','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'分院','subjectType':'head'}']"
      * }
      */
+    @RequiresPermissions("view")
     @GetMapping("/list")
     public JsonResult list() {
         List<Subject> subjects = subjectService.findAll();

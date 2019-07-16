@@ -4,9 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
-import com.ayundao.base.utils.RedisUtils;
+import com.ayundao.base.shiro.RedisManager;
 import com.ayundao.entity.*;
-import com.ayundao.entity.Page;
 import com.ayundao.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.sound.midi.Soundbank;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.*;
@@ -57,17 +54,11 @@ public abstract class BaseController {
     @Value("${server.upload}")
     public String uploadPath;
     @Autowired
-    private RedisUtils redisUtils;
+    private RedisManager redisManager;
     @Autowired
     private UserService userService;
     @Autowired
     private UserRelationService userRelationService;
-    @Autowired
-    private MenuService menuService;
-    @Autowired
-    private PageService pageService;
-    @Autowired
-    private ButtonRoleService buttonRoleService;
     private String account;
     private User user;
 
@@ -136,7 +127,7 @@ public abstract class BaseController {
         account = EncryptUtils.DESencode(user.getPassword(), salt);
 
         setUser(user);
-        redisUtils.set(account+USER_INFO, JsonUtils.getJson(user).toString());
+        redisManager.set(account+USER_INFO, JsonUtils.getJson(user).toString());
         req.getSession().setAttribute("i-YunDao-account", account);
         return this.user;
     }
@@ -160,7 +151,7 @@ public abstract class BaseController {
             for (int i = 0; i < ids.length; i++) {
                 ids[i] = (String) list.get(i).getId();
             }
-            redisUtils.set(account + name, JsonUtils.toJson(ids));
+            redisManager.set(account + name, JsonUtils.toJson(ids));
         }
     }
 
@@ -173,8 +164,8 @@ public abstract class BaseController {
         }
         account = request.getSession().getAttribute("i-YunDao-account").toString();
         user = user == null ? new User() : user;
-        user = redisUtils.get(account+USER_INFO) != null
-                ? toUser(redisUtils.get(account+USER_INFO).toString())
+        user = redisManager.get(account+USER_INFO) != null
+                ? toUser(redisManager.get(account+USER_INFO).toString())
                 : null;
         if (user == null) {
             return null;
@@ -227,7 +218,7 @@ public abstract class BaseController {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         request.getSession().removeAttribute("i-YunDao-account");
-        redisUtils.del(EncryptUtils.DESencode(account, salt)+USER_INFO);
+        redisManager.del(EncryptUtils.DESencode(account, salt)+USER_INFO);
         setUser(null);
         this.user = null;
     }
@@ -239,41 +230,6 @@ public abstract class BaseController {
         return user != null
                 ? userRelationService.findByUserId(user.getId())
                 : null;
-    }
-
-    /**
-     * 获取用户菜单
-     */
-    public List<Menu> getMenu(User user, UserRelation ur) {
-        return menuService.getMenuByUserId(user.getId(), ur);
-    }
-
-    /**
-     * 获取所有页面
-     */
-    public List<Page> getAllPage(List<Menu> menu) {
-        return pageService.getPageByUserAndMenu(menu);
-    }
-
-    /**
-     * 获取单一页面
-     */
-    public Page getPage(Menu menu) {
-        return pageService.getPageByMenu(menu);
-    }
-
-    /**
-     * 获取页面字段属性
-     */
-    public List<Field> getFields(User user, Page page) {
-        return pageService.getFieldsByUserAndPage(user, page);
-    }
-
-    /**
-     * 获取字段按钮
-     */
-    public List<Button> getButtons(User user, Field field) {
-        return buttonRoleService.findByUserAndField(user, field);
     }
 
     public Validator getValidator() {
