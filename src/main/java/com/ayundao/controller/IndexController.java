@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  * @Version: V1.0
  */
 @RestController
-@RequestMapping("/")
+@RequestMapping("/index")
 public class IndexController extends BaseController {
 
     @Autowired
@@ -90,7 +90,7 @@ public class IndexController extends BaseController {
         } else {
             return JsonResult.failure(600, "参数错误");
         }
-        return jsonResult.failure(400, "账号异常");
+        return JsonResult.failure(400, "账号异常");
     }
 
 

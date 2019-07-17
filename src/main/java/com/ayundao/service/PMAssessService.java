@@ -1,8 +1,11 @@
 package com.ayundao.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.Pageable;
 import com.ayundao.base.Page;
+import com.ayundao.entity.DemocraticAppraisal;
 import com.ayundao.entity.PioneerIndex;
+import com.ayundao.entity.User;
 
 import java.util.List;
 
@@ -24,7 +27,7 @@ public interface PMAssessService {
     List<PioneerIndex> saveAllPioneerIndex(List<PioneerIndex> list);
 
     /**
-     * 查询先锋指数排名
+     * 查询先锋指数L列表
      * @param pageable
      * @return
      */
@@ -45,4 +48,59 @@ public interface PMAssessService {
      * @return
      */
     List<PioneerIndex> findOrderByCreatedTime(int type);
+
+    /**
+     * 批量保存民主评议实体
+     * @param list
+     * @return
+     */
+    List<DemocraticAppraisal> saveAllDemocraticAppraisal(List<DemocraticAppraisal> list);
+
+    /**
+     * 查询民主评议列表
+     * @param pageable
+     * @return
+     */
+    Page<DemocraticAppraisal> findDemoForPage(Pageable pageable);
+
+    /**
+     * 民主评议搜索
+     * @param pageable
+     * @return
+     */
+    Page<DemocraticAppraisal> findDemoByProperty(Pageable pageable);
+
+    /**
+     * 查询某一年的所有先锋指数
+     * @return
+     */
+    List<JSONObject> findPioForYear(String year);
+
+    /**
+     * 获得民主评议列表
+     * @return
+     */
+    List<DemocraticAppraisal> findAllDemo();
+
+    /**
+     * 查询某一年的所有民主评议
+     * @param year
+     * @return
+     */
+    List<JSONObject> findDemForYear(String year);
+
+    /**
+     * 根据编号找到用户实体
+     * @param usercode
+     * @return
+     */
+    User findUserByusercode(String usercode);
+
+    /**
+     * 根据编号查找所有数据
+     * @param user
+     * @param usercode
+     * @return
+     */
+    JSONObject findAllForPeople(User user, String usercode,String year);
 }

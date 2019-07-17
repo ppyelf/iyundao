@@ -163,9 +163,6 @@ public interface AssessmentService {
     JSONObject showAssessment(Assessment assessment, List<AssessmentRange> ranges, List<AssessmentFile> files, List<AssessmentImage> images, List<AssessmentIndex> indices);
 
 
-
-
-
     /**
      * 通过指标id查找指标
      */
@@ -177,4 +174,18 @@ public interface AssessmentService {
      * @param  assessmentIndex
      */
     void delByIndex(AssessmentIndex assessmentIndex);
+
+    /**
+     * 通过本机id找到 对应的实体
+     * @param parcode
+     * @return
+     */
+    AssessmentIndex findSnameBySortedid(String parcode);
+
+    /**
+     * 模糊查询
+     * @param pageable
+     * @return
+     */
+    Page<Assessment> findAssessByProperty(Pageable pageable);
 }

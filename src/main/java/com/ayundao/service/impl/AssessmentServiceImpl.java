@@ -149,7 +149,6 @@ public class AssessmentServiceImpl  implements AssessmentService{
             ai.setLname(map.get("lname"));
             ai.setSname(map.get("sname"));
             ai.setParcode(map.get("parcode"));
-            ai.setSortedcode(map.get("sortedcode"));
             ai.setNorder(map.get("norder"));
             ai.setIsuse(map.get("isuse"));
             assessmentIndexRepository.save(ai);
@@ -274,6 +273,17 @@ public class AssessmentServiceImpl  implements AssessmentService{
     @Override
     public void delByIndex(AssessmentIndex assessmentIndex) {
         assessmentIndexRepository.delete(assessmentIndex);
+    }
+
+    @Override
+    public AssessmentIndex findSnameBySortedid(String parcode) {
+        return assessmentIndexRepository.findbyparcode(parcode);
+    }
+
+    @Override
+    public Page<Assessment> findAssessByProperty(Pageable pageable) {
+
+        return assessmentRepository.findPage(pageable);
     }
 
 

@@ -3,9 +3,12 @@ package com.ayundao.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.FileUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
+import com.ayundao.entity.Assessment;
 import com.ayundao.entity.Message;
 import com.ayundao.entity.MessageFile;
 import com.ayundao.entity.MessageImage;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +44,7 @@ public class MessageController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 新增消息发布详情
      * @apiParam {int} type 审核类型
+     * @apiParam {String} title 标题
      * @apiParam {String} branch 发布支部
      * @apiParam {String} publisher 发布人员
      * @apiParam {String} author 要闻作者
@@ -83,6 +88,7 @@ public class MessageController extends BaseController {
      */
     @PostMapping(value = "/add")
     public JsonResult add(@RequestParam(defaultValue = "0") int type,
+                          String title,
                           String branch,
                           String publisher,
                           String author,
@@ -102,6 +108,7 @@ public class MessageController extends BaseController {
         message.setArticleIntroduce(articleIntroduce);
         message.setArticle(article);
         message.setUserId(userId);
+        message.setTitle(title);
         for (Message.TYPE type1 : Message.TYPE.values()) {
             if (type1.ordinal() == type){
                 message.setType(type1);
@@ -336,6 +343,9 @@ public class MessageController extends BaseController {
      * @apiGroup Message
      * @apiVersion 1.0.0
      * @apiDescription 根据状态查询消息发布详情
+     * @apiParam {int} type 类型id 0 -未审核 1 -审核同意 2 -审核未通过
+     * @apiParam {int} page 当前的页面
+     * @apiParam {int} size 每页数量
      * @apiParamExample {json} 请求样例
      *                /message/list_type?type=审核通过
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -351,14 +361,29 @@ public class MessageController extends BaseController {
      * }
      */
     @PostMapping("/list_type")
-    public JsonResult list_type(String type){
-        List<Message> pages = messageService.findAllType(type);
-        JSONArray pageArray = new JSONArray();
-        for (Message message : pages) {
-            JSONObject json = new JSONObject(JsonUtils.getJson(message));
-            pageArray.add(json);
+    public JsonResult list_type(int type,
+                                @RequestParam(defaultValue = "1") int page,
+                                @RequestParam(defaultValue = "10") int size ){
+        List<Message> messages = messageService.findAllType(type);
+        List<Message> currentPageList = new ArrayList<>();
+        if (messages != null && messages.size()>0){
+            int currIdx = (page > 1 ? (page - 1) * size : 0);
+            for (int i = 0; i < size && i < messages.size() - currIdx; i++) {
+                Message data = messages.get(currIdx + i);
+                currentPageList.add(data);
+            }
         }
-        jsonResult.setData(pageArray);
+
+//        Page<Message> messagePage = new Page<>();
+//        JSONObject jsonObject = JsonUtils.getPage(messagePage);
+//        System.out.println("aaa:"+jsonObject);
+//        jsonObject.put("total",messages.size());
+//        String aaa =messages.size()==0?"0":"1";
+//        jsonObject.put("totalPage", aaa);
+//        jsonObject.put("page",0);
+//        jsonObject.put("content",converMessage(messages));
+//        jsonResult.setData(jsonObject);
+        jsonResult.setData(converMessage(currentPageList));
         return jsonResult;
     }
 
@@ -467,5 +492,77 @@ public class MessageController extends BaseController {
         jsonObject.put("messageImage",messageImage);
         jsonResult.setData(jsonObject);
         return jsonResult;
+    }
+
+   /**
+   * @api {POST} /message/audit 审核
+   * @apiGroup Message
+   * @apiVersion 1.0.0
+   * @apiDescription 查看
+   * @apiParam {String} id 必填
+   * @apiParam {int} type 要改变的类型
+    * * 0 -未审核
+    * 1 -审核通过
+    * 2 -审核拒绝
+   * @apiParam {String} userAssess 审核人的评价
+   * @apiParamExample {json} 请求样例:
+   *                /message/audit?id=1122&type=2&userAssess=这是一堆数据
+   * @apiSuccess (200) {String} code 200:成功</br>
+   * @apiSuccess (200) {String} message 信息
+   * @apiSuccess (200) {String} data 返回用户信息
+   * @apiSuccessExample {json} 返回样例:
+   * {
+   *     "code": 200,
+   *     "message": "成功",
+   *       "data": {"articleIntroduce": "33","articleTime": "33","author": "33","publisher": "33","id": "1122","type": "NO","title": "33","branch": "33","userId": "33","article": "33","userAssess": "这是一堆数据"}
+   * }
+   */
+    @PostMapping("/audit")
+    public JsonResult audit(String id,
+                            int type,
+                            String userAssess){
+            Message message = messageService.findById(id);
+            if (message==null){
+                return JsonResult.notFound("找不到该信息");
+            }
+            if (type != 0 && type != 1 && type !=2){
+                return JsonResult.notFound("数据类型异常");
+            }
+            message.setUserAssess(userAssess);
+        for (Message.TYPE type1 : Message.TYPE.values()) {
+            if (type1.ordinal() == type) {
+                message.setType(type1);
+                break;
+            }
+        }
+
+        message = messageService.saveMessage(message);
+            jsonResult.setData(JsonUtils.getJson(message));
+        return  jsonResult;
+    }
+
+    /**
+     * List<Message>转JSONARRAY
+     * @param messages
+     * @return
+     */
+    private JSONArray converMessage(List<Message> messages){
+        JSONArray arr = new JSONArray();
+        for (Message message : messages){
+            JSONObject object = new JSONObject();
+            object.put("id",message.getId());
+            object.put("type",message.getType());
+            object.put("userId",message.getUserId());
+            object.put("title",message.getTitle());
+            object.put("branch",message.getBranch());
+            object.put("publisher",message.getPublisher());
+            object.put("author",message.getAuthor());
+            object.put("article",message.getArticle());
+            object.put("articleTime",message.getArticleTime());
+            object.put("articleIntroduce",message.getArticleIntroduce());
+            object.put("userAssess",message.getUserAssess());
+            arr.add(object);
+        }
+        return arr;
     }
 }

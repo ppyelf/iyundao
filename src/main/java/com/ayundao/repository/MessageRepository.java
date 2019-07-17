@@ -1,6 +1,8 @@
 package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.entity.Message;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,4 +22,7 @@ public interface MessageRepository extends BaseRepository<Message,String> {
 
     @Query("select ma from Message ma where ma.type = ?1")
     List<Message> findByType(Message.TYPE type);
+
+
+
 }

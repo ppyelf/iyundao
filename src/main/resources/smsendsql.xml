@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 短信API的sql语句配置文件-->
+<config>
+	<!--支持msdesql数据库的sql语句-->
+				<msdesql>
+
+					<!--插入待发表的sql语句-->
+						<INSERT_INTO_TBL_SMSENDTASK>
+						   insert into tbl_SMSendTask (CreatorID,SmSendedNum,OperationType,OrgAddr,DestAddr,SM_Content,SendTime,NeedStateReport,ServiceID,FeeType,FeeCode,SMType,MessageID,DestAddrType,SubTime,TaskStatus,SendLevel,SendState,tryTimes,SendType,taskName)values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+						</INSERT_INTO_TBL_SMSENDTASK>
+					<!--查询反向定购或取消消息-->
+						<QUERY_TBL_SMRECEIVED>
+							select * from tbl_smreceived where smtype=3 and MessageID=?
+						</QUERY_TBL_SMRECEIVED>
+					<!--查询任务表的最大maxid-->
+						<SELECT_TASK_ID>
+								select max(id) id from tbl_SMSendTask
+						</SELECT_TASK_ID>
+					<!--添加用户信息-->
+						<INSERT_OPERATOR>
+							INSERT INTO tbl_Operator(Operator_ID,Operator_Name, Operator_Code, Password, OperatorType,roleId, LimitType, MaxCount, Modified) VALUES(?,?,?,?,?,?,?,?,?)
+						</INSERT_OPERATOR>
+					<!--更新usddmsg表的信息-->
+						<UPDATEUSSDMSG>
+						update tbl_UssdMsg set updatetime = ?,LastTrack = ?,CurrentIn = ?,Status = 2, MsgType = ? , FeeType = ? , FeeRate = ? , FeeNO = ?  where CallerNO = ? and Status = 1
+						</UPDATEUSSDMSG>
+					<!--查询ussd请求信息表-->
+						<FETCH_USSD_REQUEST>
+								select top 1 CallerNO, UpdateTime,LastTrack,CurrentIn, MsgType from tbl_UssdMsg where Status = 0 and MsgType in (0, 1)
+						</FETCH_USSD_REQUEST>
+					<!--查询用户表-->
+						<SELECT_USER>
+						select Operator_ID from tbl_Operator where Operator_Code = ? and Password = ?
+						</SELECT_USER>
+					<!--数据库连接池测试sql语句-->
+						<testsql>
+							select top 1 * from tbl_Operator
+						</testsql>
+			  </msdesql>
+
+
+	<!--支持db2数据库的sql语句-->
+        <db2sql>
+			<!--插入待发表的sql语句-->
+						<INSERT_INTO_TBL_SMSENDTASK>
+						   insert into tbl_SMSendTask (CreatorID,SmSendedNum,OperationType,OrgAddr,DestAddr,SM_Content,SendTime,NeedStateReport,ServiceID,FeeType,FeeCode,SMType,MessageID,DestAddrType,SubTime,TaskStatus,SendLevel,SendState,tryTimes,SendType,taskName)values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+						</INSERT_INTO_TBL_SMSENDTASK>
+			<!--查询反向定购或取消消息-->
+						<QUERY_TBL_SMRECEIVED>
+							select * from tbl_smreceived where smtype=3 and MessageID=?
+						</QUERY_TBL_SMRECEIVED>
+			<!--查询任务表的最大maxid-->
+						<SELECT_TASK_ID>
+								select max(id) id from tbl_SMSendTask
+						</SELECT_TASK_ID>
+			<!--添加用户信息-->
+			<INSERT_OPERATOR>
+							INSERT INTO tbl_Operator(Operator_ID,Operator_Name, Operator_Code, Password, OperatorType,roleId, LimitType, MaxCount, Modified) VALUES(?,?,?,?,?,?,?,?,?)
+						</INSERT_OPERATOR>
+			<!--更新usddmsg表的信息-->
+						<UPDATEUSSDMSG>
+						update tbl_UssdMsg set updatetime = ?,LastTrack = ?,CurrentIn = ?,Status = 2, MsgType = ? , FeeType = ? , FeeRate = ? , FeeNO = ?  where CallerNO = ? and Status = 1
+						</UPDATEUSSDMSG>
+			<!--查询ussd请求信息表-->
+						<FETCH_USSD_REQUEST>
+								select  CallerNO, UpdateTime,LastTrack,CurrentIn, MsgType from tbl_UssdMsg where Status = 0 and MsgType in (0, 1) fetch first 1 row  only
+						</FETCH_USSD_REQUEST>
+			<!--查询用户表-->
+						<SELECT_USER>
+						select Operator_ID from tbl_Operator where Operator_Code = ? and Password = ?
+						</SELECT_USER>
+			<!--数据库连接池测试sql语句-->
+						<testsql>
+							select * FROM TBL_OPERATOR fetch first 1 row  only
+						</testsql>
+
+			  </db2sql>
+</config>

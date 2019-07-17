@@ -102,7 +102,7 @@ public class AdvicesController extends BaseController{
      * @apiParam {String} title  标题 必填
      * @apiParam {String} type   消息类型
      * @apiParam {String} issuertime 发布时间
-     * @apiParam {String} advicestext 任务内容
+     * @apiParam {String} advicestext 消息内容
      * @apiParam {String} userid 必填 发布人员id
      * @apiParam {String[]} subjectIds 机构id
      * @apiParam {String[]} departIds   部门id

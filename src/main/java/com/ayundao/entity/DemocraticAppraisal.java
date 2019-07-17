@@ -6,21 +6,20 @@ import com.ayundao.base.annotation.Excel;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.util.Map;
 
 /**
- * @ClassName: PioneerIndex
+ * @ClassName: DemocraticAppraisal
  * @project: ayundao
  * @author: 13620
- * @Date: 2019/7/13
- * @Description: 实现 -
+ * @Date: 2019/7/15
+ * @Description: 实现 - 民主评议
  * @Version: V1.0
  */
 @Entity
-@Table(name = "t_pioneer_index")
-public class PioneerIndex extends BaseEntity<String>{
+@Table(name = "t_democratic_appraisal")
+public class DemocraticAppraisal extends BaseEntity<String>{
 
-    private static final long serialVersionUID = 8246160473272210424L;
+    private static final long serialVersionUID = -5427073884601011032L;
 
     /**
      * 名称
@@ -30,10 +29,10 @@ public class PioneerIndex extends BaseEntity<String>{
     private String name;
 
     /**
-     * 用户编号
+     * 人员编号
      */
-    @Excel(name = "用户编号" , sort = 1)
-    @Column(name = "USERCODE", nullable = false)
+    @Excel(name = "人员编号",sort = 1)
+    @Column(name = "USERCODE", nullable = false, length = 50)
     private String userCode;
 
     /**
@@ -58,18 +57,26 @@ public class PioneerIndex extends BaseEntity<String>{
     private String groupCode;
 
     /**
+     * 评测结果
+     */
+    @Excel(name = "评测结果" , sort = 5)
+    @Column(name = "RESULT")
+    private String result;
+
+    /**
      * 分数
      */
-    @Excel(name = "分数" , sort = 5)
+    @Excel(name = "分数" , sort = 6)
     @Column(name = "SCORE")
     private int score;
 
     /**
-     * 日期
+     * 评测日期
      */
-    @Excel(name = "日期", sort = 6)
+    @Excel(name = "评测日期", sort = 7)
     @Column(name = "DATA")
     private String data;
+
 
     public String getName() {
         return name;
@@ -111,6 +118,14 @@ public class PioneerIndex extends BaseEntity<String>{
         this.groupCode = groupCode;
     }
 
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
     public int getScore() {
         return score;
     }
@@ -126,4 +141,5 @@ public class PioneerIndex extends BaseEntity<String>{
     public void setData(String data) {
         this.data = data;
     }
+
 }

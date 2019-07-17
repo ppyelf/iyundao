@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "title":"医共体",
   "description": "Springboot与后台框架的对接文档",
-  "url": "http://localhost:8030",
-  "sampleUrl":"http://localhost:8030"
+  "url": "http://localhost",
+  "sampleUrl":"http://localhost"
 }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
+import com.ayundao.base.utils.FileUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
@@ -13,6 +14,7 @@ import com.ayundao.service.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
@@ -76,11 +78,12 @@ public class AssessmentController extends BaseController {
         JSONArray arr = new JSONArray();
         for (Assessment assessment : assessments) {
             JSONObject object = new JSONObject();
+            object.put("id",assessment.getId());
             object.put("number", assessment.getNumber());
             object.put("title", assessment.getName());
             object.put("type", assessment.getType());
             object.put("score", assessment.getTotal());
-            object.put("starttime", assessment.getTotal());
+            object.put("starttime", assessment.getStartTime());
             object.put("endtime", assessment.getEndTime());
             object.put("remark", assessment.getRemark());
             arr.add(object);
@@ -247,6 +250,46 @@ public class AssessmentController extends BaseController {
 
 
     /**
+     * @api {POST} /assessment/SearchAssessment 考核搜索
+     * @apiGroup Assessment
+     * @apiVersion 1.0.0
+     * @apiDescription 查看
+     * @apiParam {String} property 必填 模糊查询的字段名
+     *                  number/编号 name/名字
+     * @apiParam {String} value 必填 模糊查询的值
+     * @apiParam {String} page 必填 跳过的页数 默认0
+     * @apiParam {String} size 必填 一页的数量  默认10
+     * @apiParamExample {json} 请求样例:
+     *                /exam/view?id=4028d8816bcc9a32016bcccd9616000c
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *      "data":
+     * }
+     */
+    @PostMapping("SearchAssessment")
+    public JsonResult SearchAssessment(String property,
+                                       String value,
+                                       @RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size){
+        if(StringUtils.isBlank(property)){
+            return JsonResult.paramError();
+        }
+        Pageable pageable = new Pageable(page,size);
+        pageable.setSearchProperty(property);
+        pageable.setSearchValue(value);
+        Page<Assessment> assessmentPage = assessmentService.findAssessByProperty(pageable);
+        JSONObject object = JsonUtils.getPage(assessmentPage);
+        jsonResult.setData(object);
+        return jsonResult;
+    }
+
+
+    /**
      * @api {POST} /assessment/del 删除考核
      * @apiGroup Assessment
      * @apiVersion 1.0.0
@@ -280,14 +323,12 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 上传文件
-     * @apiParam {String} name 必填 名称
-     * @apiParam {String} url 必填 路径
-     * @apiParam {String} suffix 必填
-     * @apiParam {int} type 必填 suffix
-     * @apiParam {String} content
-     * @apiParam {String} fromTo
+     * @apiParam {MultipartFile} file  文件
+     * @apiParam {int} type 必填 0-文档 1文件
+     * @apiParam {String} content 内容
+     * @apiParam {String} fromTo 来源
      * @apiParamExample {json} 请求样例:
-     * /assessment/upload_file?name=12&url=12&suffix=12&content=12&fromTo=12
+     *              /assessment/upload_file?file=XXX&type=0&content=21&fromTo=123
      * @apiSuccess (200) {String} code 200:成功</br>
      * 601:名称,路径或后缀名不能为空</br>
      * 602:文件类型异常</br>
@@ -297,38 +338,37 @@ public class AssessmentController extends BaseController {
      * {
      * "code": 200,
      * "message": "成功",
-     * "data": {"name": "12","id": "4028d8816bdfbd59016bdfc7b51a0000","suffix": "12","fromTo": "12","url": "12","content": "12"}
+     * "data": {"name": "71a55777e8a54e878784c7cb69373459","id": "4028d8816bf47d9e016bf495437e0000","type": "file","suffix": "xlsx","fromTo": "12","content": "12","url": "assessmentfile\\71a55777e8a54e878784c7cb69373459.xlsx"}
      * }
      */
     @PostMapping("/upload_file")
-    public JsonResult uploadFile(String name,
-                                 String url,
-                                 String suffix,
+    public JsonResult uploadFile(MultipartFile file,
                                  @RequestParam(defaultValue = "0") int type,
                                  String content,
                                  String fromTo) {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(url) || StringUtils.isBlank(suffix)) {
-            return JsonResult.failure(601, "名称,路径,后缀名不能为空");
+        AssessmentFile assfile = new AssessmentFile();
+        assfile.setCreatedDate(new Date());
+        assfile.setLastModifiedDate(new Date());
+        Map<String, String> map = FileUtils.uploadFile(file,assfile,uploadPath);
+        if(map == null){
+            return JsonResult.failure(601,"上传失敗");
         }
-        AssessmentFile file = new AssessmentFile();
-        file.setCreatedDate(new Date());
-        file.setLastModifiedDate(new Date());
-        file.setName(name);
-        file.setUrl(url);
-        file.setSuffix(suffix);
-        file.setContent(content);
-        file.setFromTo(fromTo);
+        assfile.setName(map.get("name"));
+        assfile.setUrl(map.get("url"));
+        assfile.setSuffix(map.get("suffix"));
+        assfile.setContent(content);
+        assfile.setFromTo(fromTo);
         for (AssessmentFile.ASSESSMENT_FILE_TYPE fileType : AssessmentFile.ASSESSMENT_FILE_TYPE.values()) {
             if (fileType.ordinal() == type) {
-                file.setType(fileType);
+                assfile.setType(fileType);
                 break;
             }
         }
-        if (file.getType() == null) {
+        if (assfile.getType() == null) {
             return JsonResult.failure(602, "文件类型异常");
         }
-        file = assessmentService.saveFile(file);
-        jsonResult.setData(JsonUtils.getJson(file));
+        assfile = assessmentService.saveFile(assfile);
+        jsonResult.setData(JsonUtils.getJson(assfile));
         return jsonResult;
     }
 
@@ -365,11 +405,9 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 上传图片
-     * @apiParam {String} name 必填 名称
-     * @apiParam {String} url 必填 url
-     * @apiParam {String} suffix 必填 后缀名
+     * @apiParam {MultipartFile} file 图片
      * @apiParamExample {json} 请求样例:
-     * /assessment/upload_image?name=123&url=1231&suffix=12
+     * /assessment/upload_image?file=XXX
      * @apiSuccess (200) {String} code 200:成功</br>
      * 601:名称,路径或后缀名不能为空</br>
      * @apiSuccess (200) {String} message 信息
@@ -382,18 +420,17 @@ public class AssessmentController extends BaseController {
      * }
      */
     @PostMapping("/upload_image")
-    public JsonResult uploadImage(String name,
-                                  String url,
-                                  String suffix) {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(url) || StringUtils.isBlank(suffix)) {
-            return JsonResult.failure(601, "名称,路径或后缀名不能为空");
-        }
+    public JsonResult uploadImage(MultipartFile file) {
         AssessmentImage image = new AssessmentImage();
         image.setCreatedDate(new Date());
         image.setLastModifiedDate(new Date());
-        image.setName(name);
-        image.setUrl(url);
-        image.setSuffix(suffix);
+        Map<String,String > map = FileUtils.uploadFile(file,image,uploadPath);
+        if (map == null) {
+            return JsonResult.failure(601, "上传失败");
+        }
+        image.setName(map.get("name"));
+        image.setUrl(map.get("url"));
+        image.setSuffix(map.get("suffix"));
         image = assessmentService.saveImage(image);
         jsonResult.setData(JsonUtils.getJson(image));
         return jsonResult;
@@ -454,7 +491,23 @@ public class AssessmentController extends BaseController {
         List<AssessmentIndex> assessmentIndices = assessmentService.findIndexByAssessmentId(id);
         JSONArray array = new JSONArray();
         for (AssessmentIndex assessmentIndex : assessmentIndices) {
-            array.add(JsonUtils.getJson(assessmentIndex));
+            JSONObject object = new JSONObject();
+                object.put("id",assessmentIndex.getId());
+                object.put("isuse",assessmentIndex.getIsuse());
+                object.put("lname",assessmentIndex.getLname());
+                object.put("norder",assessmentIndex.getNorder());
+                object.put("parcode",assessmentIndex.getParcode());
+                object.put("sname",assessmentIndex.getSname());
+                object.put("sortedcode",assessmentIndex.getSortedcode());
+                object.put("sortedid",assessmentIndex.getSortedcode());
+                object.put("assessment",JsonUtils.getJson(assessmentIndex.getAssessment()));
+            if (assessmentService.findSnameBySortedid(assessmentIndex.getParcode())!=null){
+                object.put("parcodename",(assessmentService.findSnameBySortedid(assessmentIndex.getParcode())).getSname());
+            }else {
+                object.put("parcodename","");
+            }
+
+                array.add(object);
         }
         jsonResult.setData(array);
         return jsonResult;
@@ -477,14 +530,12 @@ public class AssessmentController extends BaseController {
                 ,"lname":"12"         考核全称
                   ,"sname":"123",       考核缩写
                   "parcode":"1234",     父节点id
-                     "sortedcode":"12345",      编码
                     "norder":"123456",      排序
                      "isuse":"1234567"},        是否使用
     {"sortedid":"9",
     "lname":"98",
     "sname":"987",
     "parcode":"9876",
-    "sortedcode":"98765",
     "norder":"987654",
     "isuse":"9876543"}]}
      * @apiSuccess (200) {String} code 200:成功</br>

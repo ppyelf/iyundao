@@ -22,4 +22,10 @@ public class AyundaoApplicationTests {
         System.out.println(subject);
     }
 
+    @Test
+    public void some(){
+        String rootPat = System.getProperty("user.dir");
+        System.out.println(rootPat);
+    }
+
 }
