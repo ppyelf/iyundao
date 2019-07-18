@@ -4,17 +4,20 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.annotation.CurrentUser;
+import com.ayundao.base.shiro.JwtToken;
+import com.ayundao.base.shiro.RedisManager;
 import com.ayundao.base.shiro.RetryLimitHashedCredentialsMatcher;
-import com.ayundao.base.shiro.ShiroSessionListener;
+import com.ayundao.base.shiro.SecurityConsts;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
+import com.ayundao.base.utils.JwtUtils;
 import com.ayundao.entity.User;
 import com.ayundao.entity.UserRelation;
 import com.ayundao.service.SubjectService;
 import com.ayundao.service.UserRelationService;
+import com.ayundao.service.UserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -31,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @ClassName: IndexController
@@ -52,13 +54,10 @@ public class IndexController extends BaseController {
     private UserRelationService userRelationService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private SubjectService subjectService;
-
-    @Autowired
-    private ShiroSessionListener shiroSessionListener;
-
-    @Autowired
-    private RetryLimitHashedCredentialsMatcher retryLimitHashedCredentialsMatcher;
 
     /**
      * @api {POST} /login 用户登录
@@ -87,40 +86,47 @@ public class IndexController extends BaseController {
     @PostMapping("/login")
     public JsonResult login(String account, String password, boolean rememberMe, Model model, HttpServletRequest req, HttpServletResponse resp) {
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(account, password, rememberMe);
+        JwtToken token = new JwtToken(account, password, rememberMe, SecurityConsts.PREFIX_SHIRO_REFRESH_TOKEN + account);
         if (subject.isAuthenticated()) {
-            return loginSuccess((User) subject.getPrincipal());
+            return loginSuccess(account, resp);
         }
         // 执行认证登陆
         subject.login(token);
         //根据权限，指定返回数据
         User user = (User) subject.getPrincipal();
-        JsonResult jsonResult = JsonResult.success();
         if (user != null && user.getAccount().equals(account)) {
-            return loginSuccess(user);
+            return loginSuccess(account, resp);
         }
-        return JsonResult.failure(400, "账号异常");
+
+        return loginSuccess(account, resp);
     }
 
     /**
      * 返回登录成功结果
-     * @param user
      * @return
      */
-    private JsonResult loginSuccess(User user) {
+    private JsonResult loginSuccess(String account, HttpServletResponse resp) {
+        String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+
         Session session = SecurityUtils.getSubject().getSession();
+        User user = userService.findByAccount(account);
+        //生成token
+        JSONObject json = new JSONObject();
+        String token = JwtUtils.sign(account, currentTimeMillis);
+        json.put("token",token );
         List<UserRelation> userRelations = userRelationService.findByUser(user);
         if (CollectionUtils.isNotEmpty(userRelations)) {
             for (UserRelation userRelation : userRelations) {
                 com.ayundao.entity.Subject subject = userRelation.getSubject();
-                JSONObject json = new JSONObject();
-                json.put("id", subject.getId());
-                json.put("name", subject.getName());
+                JSONObject j = new JSONObject();
+                j.put("id", subject.getId());
+                j.put("name", subject.getName());
                 session.setAttribute("currentSubject", subject);
                 break;
             }
         }
-        JSONObject json = JsonUtils.getJson(user);
+        resp.setHeader(SecurityConsts.IYUNDAO_ASSESS_TOKEN, token);
+        resp.setHeader("Access-Control-Expose-Headers", SecurityConsts.IYUNDAO_ASSESS_TOKEN);
         jsonResult.setCode(200);
         jsonResult.setMessage("登录成功");
         jsonResult.setData(json);
@@ -210,7 +216,6 @@ public class IndexController extends BaseController {
     @RequestMapping("/unlockAccount")
     public String unlockAccount(Model model){
         model.addAttribute("msg","用户解锁成功");
-        retryLimitHashedCredentialsMatcher.unlockAccount("admin");
         return "login";
     }
 
@@ -233,7 +238,8 @@ public class IndexController extends BaseController {
     public JsonResult out(HttpServletRequest req) {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        req.getSession().removeAttribute("user");
+        req.getSession().removeAttribute("currentUser");
+        req.getSession().removeAttribute("currentSubject");
         return JsonResult.success("退出登录成功");
     }
 }

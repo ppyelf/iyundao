@@ -33,6 +33,7 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest req, WebDataBinderFactory webDataBinderFactory) throws Exception {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         if (user != null) {
+            SecurityUtils.getSubject().getSession().setAttribute("currentUser", user);
             return user;
         }
         return new AuthenticationException("无法获取当前用户,认证异常");

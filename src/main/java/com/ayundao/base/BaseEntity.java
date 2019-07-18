@@ -3,16 +3,12 @@ package com.ayundao.base;
 import com.ayundao.base.utils.ClassUtils;
 import com.ayundao.base.utils.TimeUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.netty.channel.ConnectTimeoutException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.analysis.bg.BulgarianAnalyzer;
 import org.dom4j.tree.AbstractEntity;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 import javax.persistence.*;
 import javax.validation.groups.Default;
@@ -96,7 +92,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
      *
      * @param id ID
      */
-    public void setId(ID id) {
+    private void setId(ID id) {
         this.id = (ID)id.toString().replace("-", "");
     }
 

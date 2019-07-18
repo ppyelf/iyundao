@@ -1,12 +1,13 @@
 package com.ayundao.base.shiro;
 
-import com.ayundao.base.utils.JsonUtils;
 import org.apache.shiro.dao.DataAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.*;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @Param 
  * @return 
  */
+@Component
 public class RedisManager {
 
     Logger logger = LoggerFactory.getLogger(RedisManager.class);
@@ -26,11 +28,46 @@ public class RedisManager {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    public final String PREFIX_SHIRO_REFRESH_TOKEN = "iyundao:refresh_token:";
+    public final String CURRENT_TIME_MILLIS = String.valueOf(System.currentTimeMillis());
+    @Value("${server.token.tokenExpireTime}")
+    private Integer tokenExpireTime;
+    @Value("${server.token.refreshTokenExpireTime}")
+    private Integer refreshTokenExpireTime;
+    @Value("${server.token.shiroCacheExpireTime}")
+    private Integer shiroCacheExpireTime;
+    @Value("${server.token.secretKey}")
+    private String secretKey;
+
+    public String getCURRENT_TIME_MILLIS() {
+        return CURRENT_TIME_MILLIS;
+    }
+
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
-    // =============================common============================
+    public String getPREFIX_SHIRO_REFRESH_TOKEN() {
+        return PREFIX_SHIRO_REFRESH_TOKEN;
+    }
+
+    public Integer getTokenExpireTime() {
+        return tokenExpireTime;
+    }
+
+    public Integer getRefreshTokenExpireTime() {
+        return refreshTokenExpireTime;
+    }
+
+    public Integer getShiroCacheExpireTime() {
+        return shiroCacheExpireTime;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+// =============================common============================
     /**
      * 指定缓存失效时间
      *
@@ -106,7 +143,7 @@ public class RedisManager {
      */
     public Object get(String key) {
         Object ret = key == null ? null : redisTemplate.opsForValue().get(key);
-        logger.info("■■■RedisUtils■■■:{}={}",key,ret);
+        logger.info("■■■RedisManager■■■:{}={}",key,ret);
         return ret;
     }
 
@@ -160,7 +197,7 @@ public class RedisManager {
      *
      * @param key
      *            键
-     * @param by
+     * @param delta
      *            要增加几(大于0)
      * @return
      */
@@ -424,8 +461,9 @@ public class RedisManager {
     public long sSetAndTime(String key, long time, Object... values) {
         try {
             Long count = redisTemplate.opsForSet().add(key, values);
-            if (time > 0)
+            if (time > 0){
                 expire(key, time);
+            }
             return count;
         } catch (Exception e) {
             logger.error("execute fail", e);
@@ -530,8 +568,6 @@ public class RedisManager {
      *            键
      * @param value
      *            值
-     * @param time
-     *            时间(秒)
      * @return
      */
     public boolean lSet(String key, Object value) {
@@ -558,8 +594,9 @@ public class RedisManager {
     public boolean lSet(String key, Object value, long time) {
         try {
             redisTemplate.opsForList().rightPush(key, value);
-            if (time > 0)
+            if (time > 0) {
                 expire(key, time);
+            }
             return true;
         } catch (Exception e) {
             logger.error("execute fail", e);
@@ -574,7 +611,7 @@ public class RedisManager {
      *            键
      * @param value
      *            值
-     * @param time
+     * @param value
      *            时间(秒)
      * @return
      */
@@ -602,8 +639,9 @@ public class RedisManager {
     public boolean lSet(String key, List<Object> value, long time) {
         try {
             redisTemplate.opsForList().rightPushAll(key, value);
-            if (time > 0)
+            if (time > 0){
                 expire(key, time);
+            }
             return true;
         } catch (Exception e) {
             logger.error("execute fail", e);
@@ -698,4 +736,6 @@ public class RedisManager {
         });
         return dbSize;
     }
+
+
 }

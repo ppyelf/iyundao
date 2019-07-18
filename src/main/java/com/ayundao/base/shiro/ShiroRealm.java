@@ -1,6 +1,8 @@
 package com.ayundao.base.shiro;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ayundao.base.utils.EncryptUtils;
+import com.ayundao.base.utils.JwtUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.RoleRelationService;
 import com.ayundao.service.UserRelationService;
@@ -28,6 +30,9 @@ import java.util.Set;
 public class ShiroRealm extends AuthorizingRealm {
 
     @Autowired
+    private RedisManager redisManager;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -35,6 +40,11 @@ public class ShiroRealm extends AuthorizingRealm {
 
     @Autowired
     private RoleRelationService roleRelationService;
+
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof JwtToken;
+    }
 
     /**
      * 认证
@@ -44,10 +54,13 @@ public class ShiroRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
+        JwtToken token = (JwtToken) authenticationToken;
+        String account = StringUtils.isBlank(token.getAccount()) ? null : token.getAccount();
+        account = StringUtils.isBlank(account) ? JwtUtils.getClaim(token.getToken(), SecurityConsts.ACCOUNT) : account;
+        String assessToken = JwtUtils.sign(account, redisManager.CURRENT_TIME_MILLIS);
         String password = String.valueOf(token.getPassword());
         // 从数据库获取对应用户名密码的用户
-        User user = StringUtils.isBlank(token.getUsername()) ? null : userService.findByAccount(token.getUsername());
+        User user = StringUtils.isBlank(account) ? null : userService.findByAccount(token.getAccount());
         if (user == null) {
             throw new UnknownAccountException("用户名/密码不正确");
         }
@@ -57,10 +70,46 @@ public class ShiroRealm extends AuthorizingRealm {
         if (user.getStatus().equals(User.ACCOUNT_TYPE.disable)) {
             throw new LockedAccountException("账号已禁用,无法登陆");
         }
-        if (EncryptUtils.getSaltverifyMD5(password, user.getPassword())) {
+        //过期时间内的处理方式
+        if (JwtUtils.verify(assessToken)
+                && redisManager.hasKey(redisManager.getPREFIX_SHIRO_REFRESH_TOKEN() + account)) {
+            // 获取RefreshToken的时间戳
+            String currentTimeMillisRedis = redisManager.get(redisManager.getPREFIX_SHIRO_REFRESH_TOKEN() + account).toString();
+            // 获取AccessToken时间戳，与RefreshToken的时间戳对比
+            if (redisManager.get(redisManager.getPREFIX_SHIRO_REFRESH_TOKEN() + account).equals(currentTimeMillisRedis)) {
+                if (EncryptUtils.getSaltverifyMD5(password, user.getPassword())) {
+                    refreshToken(account);
+                    return new SimpleAuthenticationInfo(user, token.getPassword(), this.getName());
+                }else{
+                    throw new AccountException("用户名/密码不正确");
+                }
+            }
+        }
+        //过期时间后的处理方式
+        if (JwtUtils.verify(assessToken)
+                && !redisManager.hasKey(redisManager.getPREFIX_SHIRO_REFRESH_TOKEN() + account)
+                && EncryptUtils.getSaltverifyMD5(password, user.getPassword())) {
+            refreshToken(account);
             return new SimpleAuthenticationInfo(user, token.getPassword(), this.getName());
+        } 
+        throw new TokenExpiredException("Token已过期");
+    }
+
+    private void refreshToken(String account) {
+        String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+
+        // 清除可能存在的Shiro权限信息缓存
+        String tokenKey=SecurityConsts.PREFIX_SHIRO_CACHE + account;
+        if (redisManager.hasKey(tokenKey)) {
+            redisManager.del(tokenKey);
+        }
+
+        //更新RefreshToken缓存的时间戳
+        String refreshTokenKey= SecurityConsts.PREFIX_SHIRO_REFRESH_TOKEN + account;
+        if (redisManager.hasKey(refreshTokenKey)) {
+            redisManager.set(refreshTokenKey, currentTimeMillis, redisManager.getRefreshTokenExpireTime()*60*60L);
         }else{
-            throw new AccountException("用户名/密码不正确");
+            redisManager.set(refreshTokenKey, currentTimeMillis, redisManager.getRefreshTokenExpireTime()*60*60L);
         }
     }
 
@@ -99,7 +148,7 @@ public class ShiroRealm extends AuthorizingRealm {
         }
         return info;
     }
-
+    
     /**
      * 重写方法,清除当前用户的的 授权缓存
      * @param principals
@@ -138,11 +187,10 @@ public class ShiroRealm extends AuthorizingRealm {
     }
 
     /**
-     * 自定义方法：清除所有的  认证缓存  和 授权缓存
+     * 自定义方法：清除所有的认证缓存和授权缓存
      */
     public void clearAllCache() {
         clearAllCachedAuthenticationInfo();
         clearAllCachedAuthorizationInfo();
     }
-
 }

@@ -3,6 +3,7 @@ package com.ayundao.base.shiro;
 import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.entity.User;
 import com.ayundao.service.UserService;
+import io.lettuce.core.dynamic.annotation.CommandNaming;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -11,6 +12,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,7 +30,7 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
     public static final String DEFAULT_RETRYLIMIT_CACHE_KEY_PREFIX = "shiro:cache:retrylimit:";
     private static final Logger logger = LoggerFactory.getLogger(RetryLimitHashedCredentialsMatcher.class);
     private String keyPrefix = DEFAULT_RETRYLIMIT_CACHE_KEY_PREFIX;
-    @Resource
+    @Autowired
     private UserService userService;
     private RedisManager redisManager;
 

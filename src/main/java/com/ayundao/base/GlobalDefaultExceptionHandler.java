@@ -1,5 +1,6 @@
 package com.ayundao.base;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ayundao.base.utils.JsonResult;
 import org.apache.shiro.authc.AccountException;
 import com.ayundao.base.exception.AuthenticationException;
@@ -9,8 +10,8 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,7 @@ import java.util.Map;
  * @Description: Advice -- 数据校验
  * @Version: V1.0
  */
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalDefaultExceptionHandler {
 
 
@@ -74,9 +75,9 @@ public class GlobalDefaultExceptionHandler {
     }
 
     @ExceptionHandler(UnknownAccountException.class)
-    public JsonResult processUnknownAccountException() {
+    public JsonResult processUnknownAccountException(UnknownAccountException ex) {
         jsonResult.setCode(804);
-        jsonResult.setMessage("账号已被锁定,请联系管理员");
+        jsonResult.setMessage(ex.getMessage());
         return jsonResult;
     }
 
@@ -84,6 +85,13 @@ public class GlobalDefaultExceptionHandler {
     public JsonResult processLockedAccountException() {
         jsonResult.setCode(805);
         jsonResult.setMessage("账号已禁用,无法登陆");
+        return jsonResult;
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public JsonResult processTokenExpiredException(TokenExpiredException ex) {
+        jsonResult.setCode(806);
+        jsonResult.setMessage(ex.getMessage());
         return jsonResult;
     }
 }

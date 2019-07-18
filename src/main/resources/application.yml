@@ -2,16 +2,15 @@ server:
   port: 80
   salt: 45a1d914886d4a92b6835a181b2a20d8
   upload: d:\upload\
-  # AES密码加密私钥(Base64加密)
-  encryptAESKey: L1FuLlkyNuYSKIuqwTQkFQSUpXVA
-  # JWT认证加密私钥(Base64加密)
-  encryptJWTKey: L2JBUElOCNhspJrzkyNjQ3NA
-  # AccessToken过期时间-5分钟-5*60(秒为单位)
-  accessTokenExpireTime: 300
-  # RefreshToken过期时间-30分钟-30*60(秒为单位)
-  refreshTokenExpireTime: 1800
-  # Shiro缓存过期时间-5分钟-5*60(秒为单位)(一般设置与AccessToken过期时间一致)
-  shiroCacheExpireTime: 300
+  token:
+    #  token过期时间，单位分钟
+    tokenExpireTime: 120
+    #  RefreshToken过期时间，单位：分钟, 24*60=1440
+    refreshTokenExpireTime: 1440
+    #  shiro缓存有效期，单位分钟,2*60=120
+    shiroCacheExpireTime: 120
+    #  token加密密钥
+    secretKey: iyundao
 
 spring:
   datasource:
@@ -39,12 +38,6 @@ spring:
     port: 6379
     database: 0
     host: localhost
-    jedis:
-      pool:
-        max-active: 200
-        max-wait: -1ms
-        max-idle: 10
-        min-idle: 0
 
 
   jpa:
@@ -58,6 +51,7 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     #选用Innodb
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: true
   thymeleaf:
     cache: false
     suffix: .html
