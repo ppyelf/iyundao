@@ -34,11 +34,11 @@ public class UserGroupRelation extends BaseEntity<String> {
     @JoinColumn(name = "USERGROUPID")
     private UserGroup userGroup;
 
-    /**
-     * 菜单关系
-     */
-    @OneToMany(mappedBy = "userGroupRelation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<MenuRelation> menuRelations;
+//    /**
+//     * 菜单关系
+//     */
+//    @OneToMany(mappedBy = "userGroupRelation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<MenuRelation> menuRelations;
 
     /**
      * 备用字段1
@@ -86,12 +86,12 @@ public class UserGroupRelation extends BaseEntity<String> {
         this.userGroup = userGroup;
     }
 
-    public Set<MenuRelation> getMenuRelations() {
-        return menuRelations;
-    }
-
-    public void setMenuRelations(Set<MenuRelation> menuRelations) {
-        this.menuRelations = menuRelations;
-    }
+//    public Set<MenuRelation> getMenuRelations() {
+//        return menuRelations;
+//    }
+//
+//    public void setMenuRelations(Set<MenuRelation> menuRelations) {
+//        this.menuRelations = menuRelations;
+//    }
 
 }

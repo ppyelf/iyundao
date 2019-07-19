@@ -2,7 +2,7 @@ package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
 import com.ayundao.base.Pageable;
-import com.ayundao.entity.Page;
+//import com.ayundao.entity.Page;
 import com.ayundao.entity.UserInfoContract;
 import com.ayundao.entity.UserInfoFdh;
 import org.springframework.data.jpa.repository.Query;

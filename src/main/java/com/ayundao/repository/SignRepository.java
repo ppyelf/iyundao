@@ -21,4 +21,7 @@ public interface SignRepository extends CrudRepository<Sign, String> {
     //根据活动ID获取实体集合
     @Query("select s from Sign s where s.activity.id = ?1")
     List<Sign> findByActivityId(String id);
+
+    @Query("select s from Sign s where s.userId=?1 and s.SIGN_TYPE = ?2")
+    List<Sign> findAllByUserId(String userid, Sign.SIGN_TYPE type);
 }

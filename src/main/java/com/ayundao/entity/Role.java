@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "t_role")
 public class Role extends BaseEntity<String> {
 
-    private static final long serialVersionUID = -12734987129347912l;
+    private static final long serialVersionUID = - 12734987129347912l;
 
     /**
      * 名称
@@ -31,11 +31,11 @@ public class Role extends BaseEntity<String> {
     @Column(name = "LEVEL", length = 1, nullable = false, columnDefinition = "tinyint(1) default 0")
     private int level;
 
-    /**
-     * 菜单关系
-     */
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<MenuRelation> menuRelations;
+//    /**
+//     * 菜单关系
+//     */
+//    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<MenuRelation> menuRelations;
 
     /**
      * 角色关系
@@ -43,17 +43,17 @@ public class Role extends BaseEntity<String> {
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserRole> userRoles;
 
-    /**
-     * 字段关系
-     */
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<FieldRole> fieldRoles;
-
-    /**
-     * 按钮关系
-     */
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ButtonRole> buttonRoles;
+//    /**
+//     * 字段关系
+//     */
+//    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<FieldRole> fieldRoles;
+//
+//    /**
+//     * 按钮关系
+//     */
+//    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<ButtonRole> buttonRoles;
 
     /**
      * 备用字段1
@@ -101,13 +101,13 @@ public class Role extends BaseEntity<String> {
         this.level = level;
     }
 
-    public Set<MenuRelation> getMenuRelations() {
-        return menuRelations;
-    }
+//    public Set<MenuRelation> getMenuRelations() {
+//        return menuRelations;
+//    }
 
-    public void setMenuRelations(Set<MenuRelation> menuRelations) {
-        this.menuRelations = menuRelations;
-    }
+//    public void setMenuRelations(Set<MenuRelation> menuRelations) {
+//        this.menuRelations = menuRelations;
+//    }
 
     public Set<UserRole> getUserRoles() {
         return userRoles;
@@ -117,19 +117,19 @@ public class Role extends BaseEntity<String> {
         this.userRoles = userRoles;
     }
 
-    public Set<FieldRole> getFieldRoles() {
-        return fieldRoles;
-    }
-
-    public void setFieldRoles(Set<FieldRole> fieldRoles) {
-        this.fieldRoles = fieldRoles;
-    }
-
-    public Set<ButtonRole> getButtonRoles() {
-        return buttonRoles;
-    }
-
-    public void setButtonRoles(Set<ButtonRole> buttonRoles) {
-        this.buttonRoles = buttonRoles;
-    }
+//    public Set<FieldRole> getFieldRoles() {
+//        return fieldRoles;
+//    }
+//
+//    public void setFieldRoles(Set<FieldRole> fieldRoles) {
+//        this.fieldRoles = fieldRoles;
+//    }
+//
+//    public Set<ButtonRole> getButtonRoles() {
+//        return buttonRoles;
+//    }
+//
+//    public void setButtonRoles(Set<ButtonRole> buttonRoles) {
+//        this.buttonRoles = buttonRoles;
+//    }
 }

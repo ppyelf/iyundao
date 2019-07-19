@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
@@ -84,6 +86,69 @@ public class ExamController extends BaseController{
 
         return jsonResult;
     }
+
+    /**
+     * @api {POST} /exam/page 考试列表分页
+     * @apiGroup Exam
+     * @apiVersion 1.0.0
+     * @apiDescription 列表
+     * @apiParam {int} page 跳过的页数 默认0
+     * @apiParam {int} size 必填 每页的条数 默认10
+     * @apiParamExample {json} 请求样例:
+     *                /exam/page?=1&size=4
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *      "data": {"total": 5,"totalPage": 1,"page": 0,"content": [{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bded8a8016bdee853d8000c","starttime": "2018-12-12 12:12:12","title": "学院检测"}]}
+     * }
+     */
+    @PostMapping("/page")
+    public  JsonResult page(@RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "10") int size){
+        Page<Exam> examPage = examService.finALLForPPage(new Pageable(page,size));
+        jsonResult.setData(JsonUtils.getPage(examPage));
+        return jsonResult;
+    }
+
+
+    /**
+     * @api {POST} /exam/searchByname 模糊查询考试标题分页
+     * @apiGroup Exam
+     * @apiVersion 1.0.0
+     * @apiDescription 列表
+     * @apiParam {String} title 考试名称（标题） 
+     * @apiParam {int} page 跳过的页数 默认0
+     * @apiParam {int} size 必填 每页的条数 默认10
+     * @apiParamExample {json} 请求样例:
+     *                /exam/searchByname?title=学
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *       "data": {"total": 4,"totalPage": 1,"page": 0,"content": [{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bcb8bc8016bcb8de2b40008","starttime": "2018-12-12 12:12:12","title": "学院检测"},{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bcb8bc8016bcbc8d9910010","starttime": "2018-12-12 12:12:12","title": "学院检测"},{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bcc9a32016bcccd9616000c","starttime": "2018-12-12 12:12:12","title": "学院检测"},{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bded8a8016bdee853d8000c","starttime": "2018-12-12 12:12:12","title": "学院检测"}]}
+     * }
+     */
+    @PostMapping("/searchByname")
+    public JsonResult searchByname(String title,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size){
+        String name  = "title";
+        Pageable pageable = new Pageable(page,size);
+        pageable.setSearchProperty(name);
+        pageable.setSearchValue(title);
+        Page<Exam> examPage = examService.findNameForPage(pageable);
+        jsonResult.setData(JsonUtils.getPage(examPage));
+        return jsonResult;
+    }
+
+
 
     /**
      * @api {POST} /exam/add 新增

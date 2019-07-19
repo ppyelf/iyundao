@@ -356,8 +356,11 @@ public class MessageController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": [
-     *     ]
+     *     "data": {
+    "total": 3,   总数量
+    "size": 4,     每页数量
+    "page": 3,      当前页数
+    "content": [{"articleIntroduce": "33","author": "33","articleTime": "33","publisher": "33","id": "1122","type": "YES","title": "33","userId": "33","branch": "33","article": "33","userAssess": "这是一堆数据"},{"articleIntroduce": "22","author": "22","articleTime": "22","publisher": "22","id": "112","type": "YES","title": "22","userId": "22","branch": "22","article": "22","userAssess": "22"},{"articleIntroduce": "11","author": "11","articleTime": "11","publisher": "11","id": "11","type": "YES","title": "11","userId": "11","branch": "11","article": "11","userAssess": "11"}]
      * }
      */
     @PostMapping("/list_type")
@@ -373,17 +376,12 @@ public class MessageController extends BaseController {
                 currentPageList.add(data);
             }
         }
-
-//        Page<Message> messagePage = new Page<>();
-//        JSONObject jsonObject = JsonUtils.getPage(messagePage);
-//        System.out.println("aaa:"+jsonObject);
-//        jsonObject.put("total",messages.size());
-//        String aaa =messages.size()==0?"0":"1";
-//        jsonObject.put("totalPage", aaa);
-//        jsonObject.put("page",0);
-//        jsonObject.put("content",converMessage(messages));
-//        jsonResult.setData(jsonObject);
-        jsonResult.setData(converMessage(currentPageList));
+        JSONObject object = new JSONObject();
+        object.put("total",messages.size());
+        object.put("page",page);
+        object.put("size",size);
+        object.put("content",converMessage(currentPageList));
+        jsonResult.setData(object);
         return jsonResult;
     }
 

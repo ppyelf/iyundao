@@ -1,6 +1,8 @@
 package com.ayundao.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.Exam;
 import com.ayundao.entity.ExamInfoDepart;
@@ -78,4 +80,19 @@ public interface ExamService {
      */
 
     JsonResult saveExamAndUser(String examid, String testpaperid, String userid, List<Map<String, String>> mapList);
+
+
+
+    /**
+     * 考試列表分頁
+     * @return
+     */
+    Page<Exam> finALLForPPage(Pageable pageable);
+
+    /**
+     * 模糊查询分页通过标题
+     * @param pageable
+     * @return
+     */
+    Page<Exam> findNameForPage(Pageable pageable);
 }

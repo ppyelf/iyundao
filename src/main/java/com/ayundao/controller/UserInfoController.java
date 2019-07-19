@@ -806,11 +806,6 @@ public class UserInfoController extends BaseController {
      * }
      */
     @PostMapping("/add_work")
-//    public JsonResult add_work(@RequestBody UserInfoWork userInfoWork){
-//        userInfoWork.setCreatedDate(new Date());
-//        userInfoWork.setLastModifiedDate(new Date());
-//        return userInfoService.saveWork(jsonResult,userInfoWork);
-//    }
     public JsonResult add_work(String startdate,String enddate,String workunit,
                                String toservepost,String posttitle,String witness,
                                String userinfoid){
@@ -956,71 +951,7 @@ public class UserInfoController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": [
-     *         {
-     *             "birthday": "1995-04-10",
-     *             "education": "本科",
-     *             "nation": "汉族",
-     *             "title": "专家",
-     *             "userid": "11213546546132151",
-     *             "number": "002",
-     *             "password": "123456",
-     *             "workDate": "40年",
-     *             "idEntity": "未知",
-     *             "post": "主治医生",
-     *             "id": "297e47e36b7821e5016b782294410000",
-     *             "place": "陕西省",
-     *             "department": "消化科",
-     *             "lastModifiedDate": "20190621114420",
-     *             "sex": "男",
-     *             "branchName": "第一支部",
-     *             "correctionDate": "2000-11-11",
-     *             "version": "0",
-     *             "partyDate": "2011-01-01",
-     *             "createdDate": "20190621114420",
-     *             "phone": "12124545121",
-     *             "idcard": "61052719950410181X",
-     *             "name": "测试",
-     *             "info1": "",
-     *             "info5": "",
-     *             "info4": "",
-     *             "info3": "",
-     *             "username": "管理员1",
-     *             "info2": ""
-     *         },
-     *         {
-     *             "birthday": "1995-04-10",
-     *             "education": "本科",
-     *             "nation": "汉族",
-     *             "title": "专家",
-     *             "userid": "11213546546132151",
-     *             "number": "003",
-     *             "password": "123",
-     *             "workDate": "40年",
-     *             "idEntity": "未知",
-     *             "post": "45514",
-     *             "id": "297e47e36b7edc64016b7edcaf540000",
-     *             "place": "陕西省",
-     *             "department": "消化科",
-     *             "lastModifiedDate": "20190622190520",
-     *             "sex": "男",
-     *             "branchName": "第一支部",
-     *             "correctionDate": "",
-     *             "version": "0",
-     *             "partyDate": "2011-01-01",
-     *             "createdDate": "20190622190520",
-     *             "phone": "12124545121",
-     *             "idcard": "61052719950410181X",
-     *             "name": "测试",
-     *             "info1": "",
-     *             "info5": "",
-     *             "info4": "",
-     *             "info3": "",
-     *             "username": "管理员44",
-     *             "info2": ""
-     *         }
-     *     ]
-     * }
+     *     "data": [{"birthday": "1995-04-10","education": "本科","nation": "汉族","title": "专家","userid": "11213546546132151","number": "002","password": "123456","workDate": "40年","idEntity": "未知","post": "主治医生","id": "297e47e36b7821e5016b782294410000","place": "陕西省","department": "消化科","lastModifiedDate": "20190621114420","sex": "男","branchName": "第一支部","correctionDate": "2000-11-11","version": "0","partyDate": "2011-01-01","createdDate": "20190621114420","phone": "12124545121","idcard": "61052719950410181X","name": "测试","info1": "","info5": "","info4": "","info3": "","username": "管理员1","info2": ""},{"birthday": "1995-04-10","education": "本科","nation": "汉族","title": "专家","userid": "11213546546132151","number": "003","password": "123","workDate": "40年","idEntity": "未知","post": "45514","id": "297e47e36b7edc64016b7edcaf540000","place": "陕西省","department": "消化科","lastModifiedDate": "20190622190520","sex": "男","branchName": "第一支部","correctionDate": "","version": "0","partyDate": "2011-01-01","createdDate": "20190622190520","phone": "12124545121","idcard": "61052719950410181X","name": "测试","info1": "","info5": "","info4": "","info3": "","username": "管理员44","info2": ""}]}
      */
     @GetMapping("/list")
     public JsonResult list(){
@@ -1531,38 +1462,8 @@ public class UserInfoController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": [
-     *         {
-     *             "birthday": "1984-11-11",
-     *             "education": "本科",
-     *             "nation": "汉族",
-     *             "title": "主治医生",
-     *             "userid": "297e47e36b8cbecd016b8cbf239b0000",
-     *             "number": "002",
-     *             "idEntity": "",
-     *             "workDate": "2004-11-11",
-     *             "post": "院长",
-     *             "id": "297e47e36b8cbecd016b8cbf24ec0001",
-     *             "place": "浙江杭州",
-     *             "department": "内科",
-     *             "lastModifiedDate": "20190625114744",
-     *             "sex": "男",
-     *             "branchName": "第一党支部",
-     *             "correctionDate": "2007-11-11",
-     *             "version": "0",
-     *             "partyDate": "2004-11-11",
-     *             "createdDate": "20190625114744",
-     *             "phone": "19822222222",
-     *             "idcard": "315247198811111811",
-     *             "name": "测试1",
-     *             "info1": "",
-     *             "info5": "",
-     *             "info4": "",
-     *             "info3": "",
-     *             "info2": ""
-     *         }
-     *     ]
-     * }
+     *     "data": [{"birthday": "1984-11-11","education": "本科","nation": "汉族","title": "主治医生","userid": "297e47e36b8cbecd016b8cbf239b0000","number": "002","idEntity": "","workDate": "2004-11-11","post": "院长","id": "297e47e36b8cbecd016b8cbf24ec0001","place": "浙江杭州","department": "内科","lastModifiedDate": "20190625114744","sex": "男","branchName": "第一党支部","correctionDate": "2007-11-11","version": "0","partyDate": "2004-11-11","createdDate": "20190625114744","phone": "19822222222","idcard": "315247198811111811","name": "测试1","info1": "","info5": "","info4": "","info3": "","info2": ""}     ]
+      }
      */
     @PostMapping("/findByLike")
     public JsonResult findByLike(String name,String number,String department){
@@ -1594,64 +1495,7 @@ public class UserInfoController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": [
-     *         {
-     *             "education": {
-     *                 "doctor": 1,
-     *                 "specialty": 0,
-     *                 "postgraduate": 0,
-     *                 "highSchool": 0,
-     *                 "undergraduate": 1
-     *             },
-     *             "identity": {
-     *                 "cadre": 1,
-     *                 "masses": 0
-     *             },
-     *             "sex": {
-     *                 "woman": 0,
-     *                 "man": 2
-     *             },
-     *             "partyAge": {
-     *                 "2年以下": 0,
-     *                 "5-10年": 1,
-     *                 "2-5年": 0,
-     *                 "10年以上": 1
-     *             },
-     *             "place": {
-     *                 "NO": 1,
-     *                 "yes": 1
-     *             },
-     *             "department": {
-     *                 "eye": 0,
-     *                 "chinese": 0,
-     *                 "nternal": 1,
-     *                 "emergency": 0,
-     *                 "surgery": 1
-     *             },
-     *             "title": {
-     *                 "doctor": 0,
-     *                 "attendingDoctor": 1,
-     *                 "deputyChiefPhysician": 1,
-     *                 "chiefPhysician": 0,
-     *                 "residents": 0
-     *             },
-     *             "branch": {
-     *                 "ONE": 1,
-     *                 "four": 0,
-     *                 "two": 1,
-     *                 "three": 0,
-     *                 "five": 0
-     *             },
-     *             "age": {
-     *                 "25-35周岁": 1,
-     *                 "25周岁以下": 1,
-     *                 "45周岁以上": 0,
-     *                 "35-45以下": 0
-     *             }
-     *         }
-     *     ]
-     * }
-     */
+     *     "data": [{"education": {"doctor": 1,"specialty": 0,"postgraduate": 0,"highSchool": 0,"undergraduate": 1},"identity": {"cadre": 1,"masses": 0},"sex": {"woman": 0,"man": 2},"partyAge": {"2年以下": 0,"5-10年": 1,"2-5年": 0,"10年以上": 1},"place": {"NO": 1,"yes": 1},"department": {"eye": 0,"chinese": 0,"nternal": 1,"emergency": 0,"surgery": 1},"title": {"doctor": 0,"attendingDoctor": 1,"deputyChiefPhysician": 1,"chiefPhysician": 0,"residents": 0},"branch": {"ONE": 1,"four": 0,"two": 1,"three": 0,"five": 0},"age": {"25-35周岁": 1,"25周岁以下": 1,"45周岁以上": 0,"35-45以下": 0}}]}*/
     @GetMapping("/listPower")
     public JsonResult listSex(){
         Map<String,Object> pages = userInfoService.countBySex();
@@ -1678,6 +1522,84 @@ public class UserInfoController extends BaseController {
         jsonResult.setData(pageArray);
         return jsonResult;
     }
+
+    /**
+    * @api {POST} /userInfo/findWorkOrEducationByUserid 根据用户id分别查找工作经历或教育经历
+    * @apiGroup UserInfo
+    * @apiVersion 1.0.0
+    * @apiDescription 根据用户id分别查找工作经历或教育经历
+    * @apiParam {String} userid 必填
+    * @apiParam {in} workOrEducation 必填 0-工作经历 1-教育经历  默认0
+    * @apiParamExample {json} 请求样例:
+    *                /userInfo/findWorkOrEducationByUserid?userid=402881916ba10b8a016ba113adbc0006&workOrEducation=1
+    * @apiSuccess (200) {String} code 200:成功</br>
+    * @apiSuccess (200) {String} message 信息
+    * @apiSuccess (200) {String} data 返回用户信息
+    * @apiSuccessExample {json} 返回样例:
+    * {
+    *     "code": 200,
+    *     "message": "成功",
+    *      "data": {"witness": "姜子儒","userinfoid": "402881916ba10b8a016ba11f1cd0000f","education": "本科","enddate": "2015-07-01","major": "中医药","degree": "学士","educationcategory": "全日制","id": "402881916ba10b8a016ba124904f0012","startdate": "2011-09-01","graduationschool": "浙江大学","degreedate": "2015-07-01","edusystem": "4年"}
+    * }
+    */
+    @PostMapping("/findWorkOrEducationByUserid")
+    public JsonResult findWorkOrEducationByUserid(String userid,
+                                                  @RequestParam(defaultValue = "0") int workOrEducation){
+        UserInfo userInfo ;
+        if (userService.findById(userid) ==null){
+            return JsonResult.notFound("没有这个用户");
+        }else {
+            userInfo = userInfoService.findbyUserId(userid);
+        }
+        if (workOrEducation == 0){
+                UserInfoWork userInfoWork = userInfoService.findWorkById(userInfo.getId());
+                jsonResult.setData(JsonUtils.getJson(userInfoWork));
+        }else if (workOrEducation ==1){
+                UserInfoEducationWork userInfoEducationWork = userInfoService.findEducationWorkById(userInfo.getId());
+                jsonResult.setData(JsonUtils.getJson(userInfoEducationWork));
+        }else {
+            return JsonResult.failure(601,"输入的类型有误");
+        }
+        return jsonResult;
+    }
+
+
+    /**
+    * @api {POST} /userInfo/findUserInfoByUserID 根据用户id查找用户详情
+    * @apiGroup UserInfo
+    * @apiVersion 1.0.0
+    * @apiDescription 查看
+    * @apiParam {String} userid 用户id 必填
+    * @apiParamExample {json} 请求样例:
+    *                /userInfo/findUserInfoByUserID?userid=402881916ba10b8a016ba113adbc0006
+    * @apiSuccess (200) {String} code 200:成功</br>
+    * @apiSuccess (200) {String} message 信息
+    * @apiSuccess (200) {String} data 返回用户信息
+    * @apiSuccessExample {json} 返回样例:
+    * {
+    *     "code": 200,
+    *     "message": "成功",
+    *        "data": {"birthday": "2019-06-21","education": "大专","nation": "","sex": "0","branchName": "第一党支部","correctionDate": "","title": "主治医生","userid": "402881916ba10b8a016ba113adbc0006","partyDate": "","number": "001","idEntity": "","workDate": "","post": "科主任","phone": "","idcard": "","name": "钱正","id": "402881916ba10b8a016ba11f1cd0000f","place": "","department": "急诊科"}
+    * }
+    */
+    @PostMapping("/findUserInfoByUserID")
+    public JsonResult findUserInfoByUserID(String userid){
+            UserInfo userInfo = userInfoService.findbyUserId(userid);
+            if (userInfo == null){
+                JsonResult.notFound("找不到用户信息");
+            }
+            jsonResult.setData(JsonUtils.getJson(userInfo));
+        return jsonResult;
+    }
+
+
+
+//    @PostMapping("findActivityScoreByUserId")
+//    public JsonResult findActivityScoreByUserId(String userid){
+//        List<Sign> signs = userInfoService.findAllByUserId(userid);
+//        System.out.println("aaa:"+signs);
+//        return null;
+//    }
 
 
 }

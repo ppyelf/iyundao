@@ -84,6 +84,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     private UserInfoWorkRepository userInfoWorkRepository;
 
+    @Autowired
+    private SignRepository signRepository;
 
     @Override
     @Transactional
@@ -647,5 +649,30 @@ public class UserInfoServiceImpl implements UserInfoService {
     public Map<String, Object> countByIdentity() {
         return userInfoRepository.countByIdentity();
     }
+
+    @Override
+    public UserInfoWork findWorkById(String userid) {
+        return userInfoWorkRepository.findbyUserInfoId(userid);
+    }
+
+    @Override
+    public UserInfoEducationWork findEducationWorkById(String userid) {
+        return userInfoEducationWorkRepository.findByUserInfoId(userid);
+    }
+
+    @Override
+    public UserInfo findbyUserId(String userid) {
+        return userInfoRepository.findByUserId(userid);
+    }
+
+//    @Override
+//    public List<Sign> findAllByUserId(String userid) {
+//        for (Sign.SIGN_TYPE type : Sign.SIGN_TYPE.values()){
+//            if (type.ordinal() == 0){
+//                return signRepository.findAllByUserId(userid,type);
+//            }
+//        }
+//        return  null;
+//    }
 
 }

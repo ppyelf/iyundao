@@ -6,6 +6,7 @@ import com.ayundao.entity.Role;
 import com.ayundao.entity.User;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
+import com.ayundao.entity.UserInfoWork;
 
 import java.util.List;
 
@@ -107,4 +108,6 @@ public interface UserService {
      * @return
      */
     List<User> findbyIds(String[] userids);
+
+
 }

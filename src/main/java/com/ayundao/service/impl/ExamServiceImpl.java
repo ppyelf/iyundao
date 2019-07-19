@@ -2,6 +2,8 @@ package com.ayundao.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
@@ -270,6 +272,16 @@ public class ExamServiceImpl implements ExamService {
         JSONObject object = JsonUtils.getJson(examInfoUserScore);
        jsonResult.setData(object);
        return jsonResult;
+    }
+
+    @Override
+    public Page<Exam> finALLForPPage(Pageable pageable) {
+        return examRepository.findPage(pageable);
+    }
+
+    @Override
+    public Page<Exam> findNameForPage(Pageable pageable) {
+        return examRepository.findPage(pageable);
     }
 
 

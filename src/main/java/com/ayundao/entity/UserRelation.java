@@ -47,11 +47,11 @@ public class UserRelation extends BaseEntity<String> {
     @JoinColumn(name = "USERID")
     private User user;
 
-    /**
-     * 菜单关系
-     */
-    @OneToMany(mappedBy = "userRelation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<MenuRelation> menuRelations;
+//    /**
+//     * 菜单关系
+//     */
+//    @OneToMany(mappedBy = "userRelation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<MenuRelation> menuRelations;
 
     /**
      * 备用字段1
@@ -115,13 +115,13 @@ public class UserRelation extends BaseEntity<String> {
         this.user = user;
     }
 
-    public Set<MenuRelation> getMenuRelations() {
-        return menuRelations;
-    }
-
-    public void setMenuRelations(Set<MenuRelation> menuRelations) {
-        this.menuRelations = menuRelations;
-    }
+//    public Set<MenuRelation> getMenuRelations() {
+//        return menuRelations;
+//    }
+//
+//    public void setMenuRelations(Set<MenuRelation> menuRelations) {
+//        this.menuRelations = menuRelations;
+//    }
 
     public String getInfo1() {
         return info1;

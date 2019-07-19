@@ -20,7 +20,7 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends BaseRepository<Message,String> {
 
-    @Query("select ma from Message ma where ma.type = ?1")
+    @Query("select ma from Message ma where ma.type = ?1 order by ma.lastModifiedDate DESC")
     List<Message> findByType(Message.TYPE type);
 
 

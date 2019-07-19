@@ -46,17 +46,17 @@ public class UserGroup extends BaseEntity<String> {
     @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserGroupRelation> userGroupRelations;
 
-    /**
-     * 字段关系
-     */
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<FieldRole> fieldRoles;
+//    /**
+//     * 字段关系
+//     */
+//    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<FieldRole> fieldRoles;
 
-    /**
-     * 按钮关系
-     */
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ButtonRole> buttonRoles;
+//    /**
+//     * 按钮关系
+//     */
+//    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private Set<ButtonRole> buttonRoles;
 
     /**
      * 备用字段1
@@ -120,19 +120,19 @@ public class UserGroup extends BaseEntity<String> {
         this.userGroupRelations = userGroupRelations;
     }
 
-    public Set<FieldRole> getFieldRoles() {
-        return fieldRoles;
-    }
-
-    public void setFieldRoles(Set<FieldRole> fieldRoles) {
-        this.fieldRoles = fieldRoles;
-    }
-
-    public Set<ButtonRole> getButtonRoles() {
-        return buttonRoles;
-    }
-
-    public void setButtonRoles(Set<ButtonRole> buttonRoles) {
-        this.buttonRoles = buttonRoles;
-    }
+//    public Set<FieldRole> getFieldRoles() {
+//        return fieldRoles;
+//    }
+//
+//    public void setFieldRoles(Set<FieldRole> fieldRoles) {
+//        this.fieldRoles = fieldRoles;
+//    }
+//
+//    public Set<ButtonRole> getButtonRoles() {
+//        return buttonRoles;
+//    }
+//
+//    public void setButtonRoles(Set<ButtonRole> buttonRoles) {
+//        this.buttonRoles = buttonRoles;
+//    }
 }
