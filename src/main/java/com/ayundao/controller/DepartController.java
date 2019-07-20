@@ -16,12 +16,17 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonBooleanFormatVisito
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.util.SetOnce;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Id;
+import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +39,7 @@ import java.util.UUID;
  * @Description: 控制层 - 部门
  * @Version: V1.0
  */
+@RequiresAuthentication
 @RestController
 @RequestMapping("/depart")
 public class DepartController extends BaseController {
@@ -53,9 +59,10 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 部门列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} type 是否只选择父级部门(默认:0-不选择)
      * @apiExample {json} 请求样例
-     *                ?subjectId=bd6886bc88e54ef0a36472efd95c744c
+     *                ?type=1
      * @apiSuccess {int} code 200:成功</br>
      *                                 404:请添加部门</br>
      *                                 600:参数异常</br>
@@ -68,6 +75,7 @@ public class DepartController extends BaseController {
      *     "data": "[{'version':'1','id':'9b7678a607ef4199ad7a4018b892c49d','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'总-部门','depart':''}]"
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/list")
     public JsonResult list(@CurrentSubject Subject subject,
                            @RequestParam(defaultValue = "0") int type) {
@@ -91,6 +99,7 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 部门管理列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例：
      *                /depart/manager_list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -104,6 +113,8 @@ public class DepartController extends BaseController {
      *     "data": "[{"id":"66d09d0417604cb9a52bff07dee7f408","name":"分-部门","subject":"{"version":"1","id":"c72a2c6bd1e8428fac6706b217417831","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"分院","subjectType":"part"}","user":"{"version":"0","id":"5cf0d3c3b0da4cbaad179e0d6d230d0c","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"测试用户","status":"normal","password":"b356a1a11a067620275401a5a3de04300bf0c47267071e06","account":"test","remark":"未填写","salt":"3a10624a300f4670","sex":"0","userType":"normal"}"},{"id":"9b7678a607ef4199ad7a4018b892c49d","name":"总-部门","subject":"{"version":"1","id":"bd6886bc88e54ef0a36472efd95c744c","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"总院","subjectType":"head"}","father":"{"version":"1","id":"66d09d0417604cb9a52bff07dee7f408","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"分-部门","subject":"java.lang.String@2276b840[version=1,id=c72a2c6bd1e8428fac6706b217417831,lastModifiedDate=20190517111111,createdDate=20190517111111,name=分院,subjectType=part]","user":"java.lang.String@2f66960[version=0,id=5cf0d3c3b0da4cbaad179e0d6d230d0c,lastModifiedDate=20190517111111,createdDate=20190517111111,name=测试用户,status=normal,password=b356a1a11a067620275401a5a3de04300bf0c47267071e06,account=test,remark=未填写,salt=3a10624a300f4670,sex=0,userType=normal]","father":""}","user":"{"version":"0","id":"0a4179fc06cb49e3ac0db7bcc8cf0882","lastModifiedDate":"20190517111111","createdDate":"20190517111111","name":"管理员","status":"normal","password":"b356a1a11a067620275401a5a3de04300bf0c47267071e06","account":"admin","remark":"未填写","salt":"3a10624a300f4670","sex":"0","userType":"amdin"}"}]"
      * }
      */
+    @RequiresRoles(ROLE_ADMIN)
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/manager_list")
     public JsonResult managerList() {
         List<Depart> departs = departService.getListByFatherIdIsNull();
@@ -120,6 +131,7 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 查看部门信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
      *                ?id=66d09d0417604cb9a52bff07dee7f408
@@ -135,6 +147,8 @@ public class DepartController extends BaseController {
      *     "data": {"createdDate": "20190517111111","lastModifiedDate": "20190517111111","subject": {"createdDate": "20190517111111","lastModifiedDate": "20190517111111","name": "分院","id": "c72a2c6bd1e8428fac6706b217417831","version": "1","subjectType": "part"},"father": null,"name": "分-部门","id": "66d09d0417604cb9a52bff07dee7f408","version": "1","user": {"password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06","createdDate": "20190517111111","salt": "3a10624a300f4670","lastModifiedDate": "20190517111111","sex": "0","name": "测试用户","remark": "未填写","id": "5cf0d3c3b0da4cbaad179e0d6d230d0c","userType": "normal","version": "0","account": "test","status": "normal"}}
      * }
      */
+    @RequiresRoles(value = {ROLE_USER, ROLE_MANAGER}, logical = Logical.OR)
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id) {
         if (StringUtils.isBlank(id)) {
@@ -159,12 +173,13 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 新增部门
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} name
      * @apiParam {String} code
      * @apiParam {String} fatherId
      * @apiParam {String} userId
      * @apiParamExample {json} 请求样例：
-     *                ?name=添加部门11&subjectId=402881f46afdef14016afe28796c000b
+     *                ?name=添加部门11
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:未查询到此用户</br>
      *                                 600:参数异常</br>
@@ -178,6 +193,8 @@ public class DepartController extends BaseController {
      *     "data": {"version":"0","id":"402881f46afe9429016afeaf39e30006","lastModifiedDate":"20190528214417","createdDate":"20190528214417","name":"添加部门11","subject":{"version":"1","id":"402881f46afdef14016afe28796c000b","lastModifiedDate":"20190528193528","createdDate":"20190528191706","name":"修改机构","subjectType":"etc"}}
      * }
      */
+    @RequiresRoles(value = {ROLE_ADMIN, ROLE_MANAGER}, logical = Logical.OR)
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     public JsonResult add(String name,
                           String code,
@@ -211,6 +228,7 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 修改部门信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParam {String} name
      * @apiParam {String} code
@@ -231,6 +249,7 @@ public class DepartController extends BaseController {
      *     "data": {"createdDate": "20190528213713","lastModifiedDate": "20190618095208","subject": {    "createdDate": "20190528191706",    "lastModifiedDate": "20190528193528",    "name": "修改机构",    "id": "402881f46afdef14016afe28796c000b",    "version": "1",    "subjectType": "etc"},"father": {    "name": "总-部门",    "id": "9b7678a607ef4199ad7a4018b892c49d"},"name": "测试修改","id": "402881f46afe9429016afea8c2570001","version": "2","user": {    "password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06",    "createdDate": "20190517111111",    "salt": "3a10624a300f4670",    "lastModifiedDate": "20190517111111",    "sex": "0",    "name": "管理员",    "remark": "未填写",    "id": "0a4179fc06cb49e3ac0db7bcc8cf0882",    "userType": "admin",    "version": "0",    "account": "admin",    "status": "normal"}}
      * }
      */
+    @RequiresPermissions(PERMISSION_MODIFY)
     @PostMapping("/modify")
     public JsonResult modify(String id,
                              String name,
@@ -267,6 +286,7 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 获取子集部门
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
      *                ?id=9b7678a607ef4199ad7a4018b892c49d
@@ -281,6 +301,7 @@ public class DepartController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/childs")
     public JsonResult child(String id) {
         List<Depart> departs = departService.findByFatherId(id);
@@ -297,6 +318,7 @@ public class DepartController extends BaseController {
      * @apiGroup Depart
      * @apiVersion 1.0.0
      * @apiDescription 获取所有部门
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例：
      *                /depart/all
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -310,6 +332,7 @@ public class DepartController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/all")
     public JsonResult all(String id) {
         List<Depart> departs = departService.getList();
@@ -326,6 +349,7 @@ public class DepartController extends BaseController {
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 检测编号是否存在
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} code
      * @apiParamExample {json} 请求样例：
      *                ?code=1234

@@ -7,12 +7,15 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.User;
 import com.ayundao.entity.UserInfo;
-import com.ayundao.entity.UserInfoFdh;
 import com.ayundao.entity.UserInfoTw;
 import com.ayundao.service.UserInfoPowerService;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.ayundao.base.BaseController.*;
+
 /**
  * @ClassName: UserInfoTwController
  * @project: ayundao
@@ -31,6 +36,8 @@ import java.util.Map;
  * @Description: 控制层 - 用户详情 -团委信息
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_MANAGER, ROLE_USER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/userInfoTw")
 public class UserInfoTwController extends BaseController {
@@ -48,6 +55,7 @@ public class UserInfoTwController extends BaseController {
      * @apiGroup UserInfoTw
      * @apiVersion 1.0.0
      * @apiDescription 新增用团委基础信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} post 职务
      * @apiParam {String} time 任职时间
      * @apiParam {String} userinfoid
@@ -78,6 +86,7 @@ public class UserInfoTwController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_tw")
     public JsonResult add_tw(String post,String time,
                              String userinfoid) {
@@ -95,6 +104,7 @@ public class UserInfoTwController extends BaseController {
      * @apiGroup UserInfoTw
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 团委基础信息ID
      * @apiParamExample {json} 请求样例
      *                ?id
@@ -109,6 +119,7 @@ public class UserInfoTwController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         if (StringUtils.isBlank(id)) {
@@ -123,6 +134,7 @@ public class UserInfoTwController extends BaseController {
      * @apiGroup UserInfoTw
      * @apiVersion 1.0.0
      * @apiDescription 团委基础信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /userInfoTw/list
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -136,6 +148,7 @@ public class UserInfoTwController extends BaseController {
      *      "data":{...}
      *  }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<UserInfo> pages = userInfoService.findAll();
@@ -144,11 +157,9 @@ public class UserInfoTwController extends BaseController {
         for (UserInfo userInfo : pages) {
             for (UserInfoTw userInfoTw : pages1) {
                 if (userInfo.getId().equals(userInfoTw.getUserinfoid())){
-                    JSONObject json1 = new JSONObject(JsonUtils.getJson(userInfo));
-                    JSONObject json2 = new JSONObject(JsonUtils.getJson(userInfoTw));
                     JSONObject json = new JSONObject();
-                    json.putAll(json1);
-                    json.putAll(json2);
+                    json.putAll(JsonUtils.getJson(userInfo));
+                    json.putAll(JsonUtils.getJson(userInfoTw));
                     pageArray.add(json);
                 }
             }
@@ -163,6 +174,7 @@ public class UserInfoTwController extends BaseController {
      * @apiGroup UserInfoTw
      * @apiVersion 1.0.0
      * @apiDescription 用户分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} departId 组织id
      * @apiParamExample {json} 请求样例
      *                /userInfoTw/listDepart
@@ -177,6 +189,7 @@ public class UserInfoTwController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listDepart")
     public JsonResult listDepart(String departId){
         List<User> pages = userService.findByDepartIdForPage(departId);
@@ -212,6 +225,7 @@ public class UserInfoTwController extends BaseController {
      * @apiGroup UserInfoTw
      * @apiVersion 1.0.0
      * @apiDescription 用户分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} groupId 部门id
      * @apiParamExample {json} 请求样例
      *                /userInfoTw/listDepart
@@ -226,6 +240,7 @@ public class UserInfoTwController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listGroupId")
     public JsonResult listGroupId(String groupId){
         List<User> pages = userService.findByGroupIdForPage(groupId);
@@ -233,7 +248,6 @@ public class UserInfoTwController extends BaseController {
         List<UserInfoTw> pages2 = userInfoService.findAllByTw();
         JSONArray pageArray = new JSONArray();
         for (User user : pages) {
-
             for (UserInfo userInfo : pages1) {
                 for (UserInfoTw userInfoTw : pages2) {
                     if (user.getId().equals(userInfo.getUserid())) {
@@ -263,6 +277,7 @@ public class UserInfoTwController extends BaseController {
      * @apiGroup UserInfoTw
      * @apiVersion 1.0.0
      * @apiDescription 用户条件查询
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} name 姓名
      * @apiParam {String} number 编号
      * @apiParam {String} department 科室
@@ -311,6 +326,7 @@ public class UserInfoTwController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findByLike")
     public JsonResult findByLike(String name,String number,String department) {
         String s = "%" + name + "%";
@@ -341,6 +357,7 @@ public class UserInfoTwController extends BaseController {
      * @apiGroup UserInfoTw
      * @apiVersion 1.0.0
      * @apiDescription 团委图形比例
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /userInfoTw/listPower
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -402,6 +419,7 @@ public class UserInfoTwController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/listPower")
     public JsonResult listSex(){
         Map<String,Object> pages = userInfoPowerService.countBySexTw();

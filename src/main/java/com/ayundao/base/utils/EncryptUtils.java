@@ -1,6 +1,5 @@
 package com.ayundao.base.utils;
 
-import org.apache.shiro.codec.Hex;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -12,10 +11,8 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
-import java.util.UUID;
 
 /**
  * @ClassName: EncryptUtils

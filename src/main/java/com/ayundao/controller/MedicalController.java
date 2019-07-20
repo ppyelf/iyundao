@@ -52,7 +52,10 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/addFile 上传医德附件
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传医德附件
+     *
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
      *              /medical/addFile
@@ -77,6 +80,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/delFile 删除医德附件
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除医德附件
      * @apiParam {String} id 文件ID(必填)
      * @apiParamExample {json} 请求示例:
@@ -96,7 +100,7 @@ public class MedicalController extends BaseController {
     public JsonResult delFile(String id) {
         if (StringUtils.isBlank(id)) {
             return JsonResult.notFound("文件不存在或ID错误");
-        } 
+        }
         return medicalService.deleteFile(id);
     }
 
@@ -104,6 +108,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/add 新建医德档案
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新建医德档案
      * @apiParam {String} name 名称(必填)
      * @apiParam {int} total 分数
@@ -171,6 +176,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/list 医德档案分页
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 医德档案分页
      * @apiParam {String} key 搜索字段名
      * @apiParam {String} value 查询值
@@ -207,6 +213,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/view 查看
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 查看
      * @apiParam {String} id 查看文档的字段
      * @apiParamExample {json} 请求示例:
@@ -239,6 +246,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/del 删除医德档案
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除医德档案
      * @apiParam {String} id 医德档案ID(必填)
      * @apiParamExample {json} 请求示例:
@@ -264,6 +272,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/addIndex 添加医德指标
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 添加医德指标
      * @apiParam {String} name 名称(必填)
      * @apiParam {String} remark 描述
@@ -310,6 +319,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/addUserIndex 评价指标
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 评价指标
      * @apiParam {String} medicalIndexId 名称(必填)
      * @apiParam {String} userId 描述
@@ -356,6 +366,7 @@ public class MedicalController extends BaseController {
      * @api {GET} /medical/indexList 指标列表
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 指标列表
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916b8c5340016b8c5418e50001
@@ -386,6 +397,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/child 获取指标子集
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 获取指标子集
      * @apiParam {String} id 指标ID(必填)
      * @apiParamExample {json} 请求示例:
@@ -417,6 +429,7 @@ public class MedicalController extends BaseController {
      * @api {POST} /medical/downloadExcel 下载模板
      * @apiGroup Medical
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 下载模板
      * @apiParamExample {json} 请求示例:
      *                      /medical/downloadExcel

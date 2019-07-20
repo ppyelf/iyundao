@@ -42,6 +42,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add 新增用户详情
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户详情
      * @apiParam {json} fileid:["id",""],
      *          {String}imageid:"id",
@@ -209,6 +210,7 @@ public class UserInfoController extends BaseController {
      * @api {POST} /userInfo/upload_file 上传文件
      * @apiGroup UserInfoFile
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传文件
      * @apiParam {String} name 必填 名称
      * @apiParam {String} url 必填路径
@@ -263,6 +265,7 @@ public class UserInfoController extends BaseController {
      * @api {POST} /userInfo/upload_image 上传图片
      * @apiGroup UserInfoImage
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传图片
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求样例:
@@ -313,6 +316,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_basic 新增用户基础信息表
      * @apiGroup UserInfoBasic
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户基础信息表
      * @apiParam {JSON} userInfoBasic:{
      *         {String} "workerdate":"计算连续工龄时间",</br>
@@ -372,6 +376,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_contract 新增用户合同信息表
      * @apiGroup UserInfoContract
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户合同信息表
      * @apiParam {JSON} userinfoid:xxxx,
      *      UserInfoContract:{
@@ -442,6 +447,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_education_work 新增用户教育工作表
      * @apiGroup UserInfoEducationWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户教育工作表
      * @apiParam {JSON} userInfoEducationWork:{
      *         {String} "startdate":"开始日期",</br>
@@ -517,6 +523,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_medical_care 新增用户医务护理表
      * @apiGroup UserInfoMedicalCare
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户医务护理表
      * @apiParam {JSON} UserInfoMedicalCare:{
      *         {String} "parcticelevel":"执业资格等级",</br>
@@ -573,6 +580,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_other 新增用户其他信息表
      * @apiGroup UserInfoOther
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户其他信息表
      * @apiParam {JSON} UserInfoOther{
      *         {String} "whethersign":"是否允许登录",</br>
@@ -615,6 +623,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_personnel 新增用户人事信息表
      * @apiGroup UserInfoPersonnel
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户人事信息表
      * @apiParam {JSON} userInfoPersonnel:{
      *            		{String} "workyear":"工龄(年)",</br>
@@ -697,6 +706,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_title_apost 新增用户职称职务表
      * @apiGroup UserInfoTitleaPost
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户职称职务表
      * @apiParam {JSON} UserInfoTitleaPost:{
      *         {String} "postname":"职务名称",</br>
@@ -781,6 +791,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_work 新增用户工作经历表
      * @apiGroup UserInfoWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户工作经历表
      * @apiParam {JSON} UserInfoWork:{
      *         {String} "startdate":"开始时间",</br>
@@ -833,6 +844,7 @@ public class UserInfoController extends BaseController {
      * @api {Post} /userInfo/del 删除用户详情
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例
@@ -861,6 +873,7 @@ public class UserInfoController extends BaseController {
      * @api {Post} /userInfo/del_contract 删除用户详情 -合同信息表
      * @apiGroup UserInfoContract
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 合同信息表ID
      * @apiParamExample {json} 请求样例
@@ -889,6 +902,7 @@ public class UserInfoController extends BaseController {
      * @api {Post} /userInfo/del_work 删除用户详情 -工作信息表
      * @apiGroup UserInfoWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 工作信息表ID
      * @apiParamExample {json} 请求样例
@@ -917,6 +931,7 @@ public class UserInfoController extends BaseController {
      * @api {Post} /userInfo/del_edu 删除用户详情 -工作信息表
      * @apiGroup UserInfoEducationWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 工作信息表ID
      * @apiParamExample {json} 请求样例
@@ -945,6 +960,7 @@ public class UserInfoController extends BaseController {
      * @api {get} /userInfo/list 用户分页
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParamExample {json} 请求样例
      *                /userInfo/list
@@ -1040,6 +1056,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/listDepart 用户分页 -根据组织查询
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParam {String} departId
      * @apiParamExample {json} 请求样例
@@ -1081,6 +1098,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/listGroupId 用户分页 -根据部门查询
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParam {String} groupId 部门id
      * @apiParamExample {json} 请求样例
@@ -1122,6 +1140,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findId 用户个人查询
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParamExample {json} 请求样例
      *                /userInfo/findId?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1252,6 +1271,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findBasic 用户个人查询 -基础信息
      * @apiGroup UserInfoBasic
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户基础信息
      * @apiParamExample {json} 请求样例
      *                /userInfo/findBasic?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1284,6 +1304,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findContract 用户个人查询 -合同信息
      * @apiGroup UserInfoContract
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户合同信息
      * @apiParamExample {json} 请求样例
      *                /userInfo/findContract?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1319,6 +1340,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findEducationWork 用户个人查询 -教育工作
      * @apiGroup UserInfoEducationWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户教育工作
      * @apiParamExample {json} 请求样例
      *                /userInfo/findEducationWork?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1354,6 +1376,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findMedicalCare 用户个人查询 -医务护理
      * @apiGroup UserInfoMedicalCare
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户医务护理
      * @apiParamExample {json} 请求样例
      *                /userInfo/findMedicalCare?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1386,6 +1409,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findOther 用户个人查询 -其他表
      * @apiGroup UserInfoOther
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户其他表
      * @apiParamExample {json} 请求样例
      *                /userInfo/findOther?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1418,6 +1442,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findPersonnel 用户个人查询 -人事信息
      * @apiGroup UserInfoPersonnel
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户人事信息
      * @apiParamExample {json} 请求样例
      *                /userInfo/findPersonnel?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1450,6 +1475,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findTitleaPost 用户个人查询 -职务职称
      * @apiGroup UserInfoTitleaPost
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户职务职称
      * @apiParamExample {json} 请求样例
      *                /userInfo/findTitleaPost?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1482,6 +1508,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findWork 用户个人查询 -工作经历
      * @apiGroup UserInfoWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户工作经历
      * @apiParamExample {json} 请求样例
      *                /userInfo/findWork ?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1517,6 +1544,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findByLike 用户条件查询
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户条件查询
      * @apiParam {String} name 姓名
      * @apiParam {String} number 编号
@@ -1583,6 +1611,7 @@ public class UserInfoController extends BaseController {
      * @api {get} /userInfo/listPower 党建组织图形比例
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 党建组织图形比例
      * @apiParamExample {json} 请求样例
      *                /userInfo/listPower

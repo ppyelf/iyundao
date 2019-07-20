@@ -48,6 +48,7 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 小组列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} type 是否只选择父级组织(默认:0-不选择)
      * @apiParamExample {json} 请求样例：
      *                /groups/list
@@ -85,6 +86,7 @@ public class GroupsController extends BaseController {
      * @apiGroup Group
      * @apiVersion 1.0.0
      * @apiDescription 部门管理列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例：
      *                /groups/manager_list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -114,6 +116,7 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 查看小组信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例：
      *                ?id=813f15af1b1c402da17838e8a067ed68
@@ -162,6 +165,7 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 新增部门
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} name
      * @apiParam {String} code
      * @apiParam {String} userId
@@ -223,6 +227,7 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 修改小组信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParam {String} name
      * @apiParam {String} code
@@ -286,6 +291,7 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 获取子集小组
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
      *                ?id=9b7678a607ef4199ad7a4018b892c49d
@@ -316,6 +322,7 @@ public class GroupsController extends BaseController {
      * @apiGroup Groups
      * @apiVersion 1.0.0
      * @apiDescription 获取所有组织集合
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例：
      *                /groups/all
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -345,6 +352,7 @@ public class GroupsController extends BaseController {
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 检测编号是否存在
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} code
      * @apiParamExample {json} 请求样例：
      *                ?code=1234

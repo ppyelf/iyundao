@@ -7,14 +7,16 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.User;
 import com.ayundao.entity.UserInfo;
-import com.ayundao.entity.UserInfoFdh;
 import com.ayundao.entity.UserInfoGzqt;
 import com.ayundao.service.UserInfoPowerService;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.QueryAnnotation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.ayundao.base.BaseController.*;
+
 /**
  * @ClassName: UserInfoGzqtController
  * @project: ayundao
@@ -32,6 +36,8 @@ import java.util.Map;
  * @Description: 控制层 - 用户详情 -高知群体信息
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/userInfoGzqt")
 public class UserInfoGzqtController extends BaseController {
@@ -49,6 +55,7 @@ public class UserInfoGzqtController extends BaseController {
      * @apiGroup UserInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 新增用户高知群体基础信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} education 学历
      * @apiParam {String} title 职称
      * @apiParam {String} userinfoid
@@ -79,6 +86,7 @@ public class UserInfoGzqtController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_gzqt")
     public JsonResult add_gzqt(String education,String title,
                                String userinfoid) {
@@ -96,6 +104,7 @@ public class UserInfoGzqtController extends BaseController {
      * @apiGroup UserInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 用户详情ID
      * @apiParamExample {json} 请求样例
      *                ?id=
@@ -110,6 +119,7 @@ public class UserInfoGzqtController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         if (StringUtils.isBlank(id)) {
@@ -124,6 +134,7 @@ public class UserInfoGzqtController extends BaseController {
      * @apiGroup UserInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 高知群体信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /userInfoGzqt/list
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -137,6 +148,7 @@ public class UserInfoGzqtController extends BaseController {
      *      "data":{...}
      *  }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<UserInfo> pages = userInfoService.findAll();
@@ -163,6 +175,7 @@ public class UserInfoGzqtController extends BaseController {
      * @apiGroup UserInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 用户分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} departId 组织id
      * @apiParamExample {json} 请求样例
      *                /userInfoGzqt/listDepart
@@ -177,6 +190,7 @@ public class UserInfoGzqtController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listDepart")
     public JsonResult listDepart(String departId){
         List<User> pages = userService.findByDepartIdForPage(departId);
@@ -212,6 +226,7 @@ public class UserInfoGzqtController extends BaseController {
      * @apiGroup UserInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 用户分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} groupId 部门id
      * @apiParamExample {json} 请求样例
      *                /userInfoGzqt/listDepart
@@ -226,6 +241,7 @@ public class UserInfoGzqtController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listGroupId")
     public JsonResult listGroupId(String groupId){
         List<User> pages = userService.findByGroupIdForPage(groupId);
@@ -262,6 +278,7 @@ public class UserInfoGzqtController extends BaseController {
      * @apiGroup UserInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 用户条件查询
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} name 姓名
      * @apiParam {String} number 编号
      * @apiParam {String} department 科室
@@ -310,6 +327,7 @@ public class UserInfoGzqtController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findByLike")
     public JsonResult findByLike(String name,String number,String department){
         String s = "%" + name + "%";
@@ -339,6 +357,7 @@ public class UserInfoGzqtController extends BaseController {
      * @apiGroup UserInfoGzqt
      * @apiVersion 1.0.0
      * @apiDescription 高知群体图形比例
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /userInfoGzqt/listPower
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -394,6 +413,7 @@ public class UserInfoGzqtController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/listPower")
     public JsonResult listSex(){
         Map<String,Object> pages = userInfoPowerService.countBySexGzqt();

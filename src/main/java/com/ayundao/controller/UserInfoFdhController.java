@@ -46,6 +46,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/add_fdh 新增用户妇代会基础信息
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户妇代会基础信息
      * @apiParam {String} post 职称
      * @apiParam {String} time 任职时间
@@ -95,6 +96,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/del 删除用户详情 -妇代会
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 用户详情ID -妇代会
      * @apiParamExample {json} 请求样例
@@ -123,6 +125,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {get} /userInfoFdh/list 用户详情 -妇代会信息
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 妇代会信息
      * @apiParamExample {json} 请求样例
      *                /userInfoFdh/list
@@ -211,6 +214,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/listDepart 用户分页 -根据组织查询
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParam {String} departId 组织id
      * @apiParamExample {json} 请求样例
@@ -260,6 +264,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/listGroupId 用户分页 -根据部门查询
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParam {String} groupId 部门id
      * @apiParamExample {json} 请求样例
@@ -309,6 +314,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/findByLike 用户条件查询
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户条件查询
      * @apiParam {String} name 姓名
      * @apiParam {String} number 编号
@@ -386,6 +392,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {get} /userInfoFdh/listPower 妇代会图形比例
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 妇代会图形比例
      * @apiParamExample {json} 请求样例
      *                /userInfoFdh/listPower

@@ -1,5 +1,6 @@
 package com.ayundao.base.shiro;
 
+import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.base.utils.JwtUtils;
@@ -11,10 +12,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +33,7 @@ import java.util.Set;
  * @Description: shiro - 用户域
  * @Version: V1.0
  */
+@RequiresAuthentication
 public class ShiroRealm extends AuthorizingRealm {
 
     @Autowired
@@ -58,9 +65,12 @@ public class ShiroRealm extends AuthorizingRealm {
         String account = StringUtils.isBlank(token.getAccount()) ? null : token.getAccount();
         account = StringUtils.isBlank(account) ? JwtUtils.getClaim(token.getToken(), SecurityConsts.ACCOUNT) : account;
         String assessToken = JwtUtils.sign(account, redisManager.CURRENT_TIME_MILLIS);
-        String password = String.valueOf(token.getPassword());
+        String password = token.getPassword();
         // 从数据库获取对应用户名密码的用户
-        User user = StringUtils.isBlank(account) ? null : userService.findByAccount(token.getAccount());
+        User user = StringUtils.isBlank(account) ? null : userService.findByAccount(account);
+        if (StringUtils.isBlank(token.getAccount()) && StringUtils.isBlank(password) && user != null) {
+            password = user.getPassword();
+        }
         if (user == null) {
             throw new UnknownAccountException("用户名/密码不正确");
         }
@@ -77,9 +87,9 @@ public class ShiroRealm extends AuthorizingRealm {
             String currentTimeMillisRedis = redisManager.get(redisManager.getPREFIX_SHIRO_REFRESH_TOKEN() + account).toString();
             // 获取AccessToken时间戳，与RefreshToken的时间戳对比
             if (redisManager.get(redisManager.getPREFIX_SHIRO_REFRESH_TOKEN() + account).equals(currentTimeMillisRedis)) {
-                if (EncryptUtils.getSaltverifyMD5(password, user.getPassword())) {
+                if (EncryptUtils.getSaltverifyMD5(password, user.getPassword()) || password.equals(user.getPassword())) {
                     refreshToken(account);
-                    return new SimpleAuthenticationInfo(user, token.getPassword(), this.getName());
+                    return new SimpleAuthenticationInfo(user, password, this.getName());
                 }else{
                     throw new AccountException("用户名/密码不正确");
                 }
@@ -88,10 +98,10 @@ public class ShiroRealm extends AuthorizingRealm {
         //过期时间后的处理方式
         if (JwtUtils.verify(assessToken)
                 && !redisManager.hasKey(redisManager.getPREFIX_SHIRO_REFRESH_TOKEN() + account)
-                && EncryptUtils.getSaltverifyMD5(password, user.getPassword())) {
+                && (EncryptUtils.getSaltverifyMD5(password, user.getPassword()) || password.equals(user.getPassword()))) {
             refreshToken(account);
-            return new SimpleAuthenticationInfo(user, token.getPassword(), this.getName());
-        } 
+            return new SimpleAuthenticationInfo(user, password, this.getName());
+        }
         throw new TokenExpiredException("Token已过期");
     }
 

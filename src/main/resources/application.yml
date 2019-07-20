@@ -6,7 +6,7 @@ server:
     #  token过期时间，单位分钟
     tokenExpireTime: 120
     #  RefreshToken过期时间，单位：分钟, 24*60=1440
-    refreshTokenExpireTime: 1440
+    refreshTokenExpireTime: 120
     #  shiro缓存有效期，单位分钟,2*60=120
     shiroCacheExpireTime: 120
     #  token加密密钥
@@ -55,3 +55,8 @@ spring:
   thymeleaf:
     cache: false
     suffix: .html
+
+wechat:
+  app:
+    id: wxe1184bbaaedfd86b
+    secret: 3442b30372d452fdce32943926fdfda

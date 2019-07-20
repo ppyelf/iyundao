@@ -2,6 +2,7 @@ package com.ayundao.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.deserializer.AbstractDateDeserializer;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.BaseEntity;
 import com.ayundao.base.Pageable;
@@ -14,6 +15,10 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonNullFormatVisitor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+
+import static com.ayundao.base.BaseController.*;
 
 
 /**
@@ -31,6 +38,8 @@ import java.util.*;
  * @Description: 控制层 - 审批
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_MANAGER, ROLE_USER, ROLE_ADMIN, ROLE_AUDITOR}, logical = Logical.OR)
 @RestController
 @RequestMapping("/examine")
 public class ExamineController extends BaseController {
@@ -57,6 +66,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 获取请假类型
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParamExample {json} 请求示例:
      *              /examine/getLeaveTypes
@@ -89,6 +99,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 获取请示批复类型
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParamExample {json} 请求示例:
      *              /examine/getReplyTypes
@@ -123,6 +134,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 上传审批附件
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
      *              /examine/addFile
@@ -138,6 +150,7 @@ public class ExamineController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addFile")
     public JsonResult uploadFile(MultipartFile file) {
         return examineService.saveFile(file, jsonResult, uploadPath);
@@ -148,6 +161,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 上传审批图片
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
      *              /examine/addImage
@@ -163,6 +177,7 @@ public class ExamineController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addImage")
     public JsonResult addImage(MultipartFile file) {
         return examineService.saveImage(file, jsonResult, uploadPath);
@@ -173,6 +188,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 删除审批附件
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParamExample {json} 请求示例:
      *              ?id=xxx
@@ -187,6 +203,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/delFile")
     public JsonResult delFile(String id) {
         ExamineFile file = examineService.findFile(id);
@@ -202,6 +219,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 删除审批图片
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParamExample {json} 请求示例:
      *              ?id=xxx
@@ -216,6 +234,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/delImage")
     public JsonResult delImage(String id) {
         ExamineImage image = examineService.findImage(id);
@@ -231,6 +250,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 添加请假
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} startTime
      * @apiParam {String} endTime
      * @apiParam {int} type
@@ -262,6 +282,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addLeave")
     public JsonResult addLeave(String startTime,
                           String endTime,
@@ -329,6 +350,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 添加请假
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} type 请示类型:0-个人原因(默认),1-工作原因
      * @apiParam {String} cause 事由
      * @apiParam {String} detail 详情
@@ -365,6 +387,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addReply")
     public JsonResult addReply(@RequestParam(defaultValue = "0") int type,
                                String cause,
@@ -455,6 +478,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 查看请假审批
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 请假ID,必填
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916bb19747016bb197bdd50000
@@ -468,6 +492,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id) {
         Examine examine = examineService.find(id);
@@ -482,6 +507,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 删除请假/请示
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 请假ID,必填
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916bb19747016bb197bdd50000
@@ -495,6 +521,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult delLeave(String id) {
         Examine examine = examineService.find(id);
@@ -510,6 +537,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} userId 用户ID,必填
      * @apiParam {int} type 列表类型,必填,0-请假列表,1请示列表
      * @apiParamExample {json} 请求示例:
@@ -525,6 +553,7 @@ public class ExamineController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/list")
     public JsonResult list(String userId,
                                 @RequestParam(defaultValue = "0") int type) {
@@ -544,6 +573,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 审核
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 请假ID,必填
      * @apiParam {String} userId ,必填
      * @apiParam {int} status 审核态度,必填,1-同意(默认),2-拒绝
@@ -565,6 +595,8 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresRoles(ROLE_AUDITOR)
+    @RequiresPermissions(PERMISSION_EXAMINE)
     @PostMapping("/apply")
     public JsonResult examineEntity(String id,
                                     String userId,
@@ -611,6 +643,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 资料类型列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file 文件
      * @apiParam {int} type 文件类型
      * @apiParamExample {json} 请求示例:
@@ -626,6 +659,8 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresRoles(value = {ROLE_PUBLISHER, ROLE_USER, ROLE_MANAGER}, logical = Logical.OR)
+    @RequiresPermissions(PERMISSION_RELEASE)
     @GetMapping("/userFileType")
     public JsonResult userFileType() {
         JSONArray arr = new JSONArray();
@@ -643,6 +678,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 上传个人资料
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file 文件
      * @apiParam {int} type 文件类型
      * @apiParam {String} userId 用户ID
@@ -665,6 +701,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/uploadUserFile")
     public JsonResult uploadUserFile(MultipartFile file,
                                      @RequestParam(defaultValue = "0") int type,
@@ -704,6 +741,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 下载个人资料
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 文件ID
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916bc15971016bc17be44c0004
@@ -718,6 +756,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/downloadUserFile")
     public JsonResult downloadUserFile(String id, HttpServletRequest req, HttpServletResponse resp) {
         UserFile userFile = userFileService.find(id);
@@ -733,6 +772,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 删除个人资料
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 文件ID
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916bc15971016bc17be44c0004
@@ -747,6 +787,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/delUserFile")
     public JsonResult delUserFile(String id) {
         UserFile userFile = userFileService.find(id);
@@ -762,6 +803,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 个人资料列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} userId 用户ID
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916bc15971016bc17be44c0004
@@ -776,6 +818,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/myselfList")
     public JsonResult userFileList(String userId) {
         User user = userService.findById(userId);
@@ -797,6 +840,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 资料分享列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求示例:
      *              /examine/shareList
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -811,6 +855,7 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/shareList")
     public JsonResult userFileShareList() {
         List<UserFile> userFiles = userFileService.getShareList();
@@ -829,6 +874,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 资料审核列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} userId 用户ID
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916bc15971016bc17be44c0004
@@ -844,6 +890,8 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresRoles(ROLE_PUBLISHER)
+    @RequiresPermissions(PERMISSION_EXAMINE)
     @GetMapping("/examineList")
     public JsonResult userFileExamineList(String userId) {
         User user = userService.findById(userId);
@@ -869,6 +917,7 @@ public class ExamineController extends BaseController {
      * @apiGroup Examine
      * @apiVersion 1.0.0
      * @apiDescription 审核文件
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 资源文件ID
      * @apiparam {int} status 审核态度 1-分享,3-拒绝分享
      * @apiParamExample {json} 请求示例:
@@ -886,6 +935,8 @@ public class ExamineController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresRoles(ROLE_PUBLISHER)
+    @RequiresPermissions(PERMISSION_EXAMINE)
     @PostMapping("/examineFile")
     public JsonResult examineUserFile(String id, @RequestParam(defaultValue = "0") int status) {
         UserFile userFile = userFileService.find(id);

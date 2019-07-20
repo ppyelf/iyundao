@@ -225,6 +225,7 @@ public class User extends BaseEntity<String> {
         this.groups = groups;
     }
 
+
     /**
      * 账号类型
      */
@@ -250,7 +251,7 @@ public class User extends BaseEntity<String> {
      */
     public enum USER_TYPE {
         /**
-         * 普通用户w
+         * 普通用户
          */
         normal,
 

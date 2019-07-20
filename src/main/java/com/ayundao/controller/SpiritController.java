@@ -55,6 +55,7 @@ public class SpiritController extends BaseController {
      * @api {GET} /spirit/users 用户列表
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户列表
      * @apiParamExample {json} 请求示例:
      *              /users
@@ -87,6 +88,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/userSubject 用户所属机构
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户所属机构
      * @apiParam {String} id 用户ID (必填)
      * @apiParamExample {json} 请求示例:
@@ -126,6 +128,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/addFile 上传附件
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传附件
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
@@ -163,6 +166,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/addImage 上传图片
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传图片
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
@@ -200,6 +204,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/delFile 删除附件
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除附件
      * @apiParam {String} id
      * @apiParamExample {json} 请求示例:
@@ -225,6 +230,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/delImage 删除图片
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除图片
      * @apiParam {String} id
      * @apiParamExample {json} 请求示例:
@@ -250,6 +256,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/add 添加党内精神
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 添加党内精神
      * @apiParam {String} name 必填
      * @apiParam {String} time 必填,格式yyyyMMddHHmmss
@@ -309,6 +316,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/view 查看
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 查看党内精神
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求示例:
@@ -336,6 +344,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/list 查看
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 查看党内精神
      * @apiParam {String} key 搜索字段
      * @apiParam {String} value 查询值
@@ -382,6 +391,7 @@ public class SpiritController extends BaseController {
      * @api {POST} /spirit/del 查看
      * @apiGroup Spirit
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 查看党内精神
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求示例:

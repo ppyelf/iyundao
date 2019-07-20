@@ -53,6 +53,7 @@ public class UserController extends BaseController {
      * @api {POST} /user/checkCode 检测code
      * @apiGroup User
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 检测编号是否存在
      * @apiParam {String} code
      * @apiParamExample {json} 请求样例：
@@ -77,6 +78,7 @@ public class UserController extends BaseController {
      * @api {POST} /user/checkAccount 检测账号
      * @apiGroup User
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 检测账号是否存在
      * @apiParam {String} code
      * @apiParamExample {json} 请求样例：
@@ -102,6 +104,7 @@ public class UserController extends BaseController {
      * @apiName search
      * @apiGroup User
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户搜索
      * @apiParam {String} key 搜索条件
      * @apiParam {String} value 查询值
@@ -143,6 +146,7 @@ public class UserController extends BaseController {
      * @api {POST} /user/add 新建用户
      * @apiGroup User
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新建用户
      * @apiParam {String} account 账号
      * @apiParam {String} name 姓名
@@ -216,6 +220,7 @@ public class UserController extends BaseController {
      * @api {POST} /user/view 查看用户
      * @apiGroup User
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 查看
      * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例
@@ -244,6 +249,7 @@ public class UserController extends BaseController {
      * @api {post} /user/groupUser 组织用户分页
      * @apiGroup User
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 组织用户分页
      * @apiParam {String} groupId 组织ID
      * @apiParam {int} page 页数
@@ -279,6 +285,7 @@ public class UserController extends BaseController {
      * @api {post} /user/departUser 部门用户分页
      * @apiGroup User
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 部门用户分页
      * @apiParam {String} departId 部门ID
      * @apiParam {int} page 页数
@@ -320,6 +327,7 @@ public class UserController extends BaseController {
      * @api {POST} /user/sign 用户签到
      * @apiGroup User
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 查看
      * @apiParam {String} userId 用户ID
      * @apiParam {int} type 签到类型

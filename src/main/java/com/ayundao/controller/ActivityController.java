@@ -1,6 +1,7 @@
 package com.ayundao.controller;
 
 import com.ayundao.base.BaseController;
+import com.ayundao.base.annotation.CurrentSubject;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
@@ -9,15 +10,19 @@ import com.ayundao.service.AttendanceService;
 import com.ayundao.service.SignService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
+import org.springframework.context.annotation.Role;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.ayundao.base.BaseController.*;
 
 /**
  * @ClassName: ActivityController
@@ -27,6 +32,8 @@ import java.util.List;
  * @Description: 控制层 - 活动
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/activity")
 public class ActivityController extends BaseController {
@@ -44,6 +51,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/upload_file 上传文件
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传文件
      * @apiParam {String} name 必填
      * @apiParam {String} url 必填
@@ -65,6 +73,7 @@ public class ActivityController extends BaseController {
      *     "data": {"version":"0","id":"402881916b2a9588016b2abd6f300001","createdDate":"20190606110236","lastModifiedDate":"20190606110236","name":"上传文件","type":"file","content":"测试内容","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_file")
     public JsonResult uploadFile(String name,
                                  String url,
@@ -101,6 +110,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/del_file 活动文件删除
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 活动文件删除
      * @apiParam {String[]} ids 必填
      * @apiParamExample {json} 请求样例:
@@ -116,6 +126,7 @@ public class ActivityController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_file")
     public JsonResult delFile(String[] ids) {
         if (ids == null) {
@@ -129,6 +140,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/upload_image 上传图片
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传图片
      * @apiParam {String} name 必填
      * @apiParam {String} url 必填
@@ -146,6 +158,7 @@ public class ActivityController extends BaseController {
      *     "data": {"version":"0","id":"402881916b2a9588016b2adbe569000e","createdDate":"20190606113622","lastModifiedDate":"20190606113622","name":"上传图片","type":"text","content":"","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_image")
     public JsonResult uploadImage(String name,
                                   String url,
@@ -168,6 +181,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/del_image 活动图片删除
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 活动图片删除
      * @apiParam {String[]} ids 必填
      * @apiParamExample {json} 请求样例:
@@ -183,6 +197,7 @@ public class ActivityController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_image")
     public JsonResult delImage(String[] ids) {
         if (ids == null) {
@@ -196,6 +211,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/add_time 添加出勤类型
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 添加出勤类型
      * @apiParam {String} startTime 必填
      * @apiParam {String} endTime 必填
@@ -218,6 +234,7 @@ public class ActivityController extends BaseController {
      *     "data": "{"version":"0","id":"402881916b2a9588016b2b5f1c1c0011","createdDate":"20190606135941","lastModifiedDate":"20190606135941","startTime":"某年某月某日","endTime":"结束时间","day":"100","axisx":"33","axisy":"333","area":"500米","attendanceType":"daily","info4":"","info3":"","info5":"","info2":"","info1":""}"
      * }
      */
+    @RequiresPermissions(value = {PERMISSION_ADD})
     @PostMapping("/add_time")
     public JsonResult addTime(String startTime,
                               String endTime,
@@ -241,6 +258,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/add 新增
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增
      * @apiParam {String} name 必填
      * @apiParam {String} content
@@ -250,7 +268,6 @@ public class ActivityController extends BaseController {
      * @apiParam {String[]} attendanceIds
      * @apiParam {String[]} activityFileIds
      * @apiParam {String[]} activityImageIds
-     * @apiParam {String} subjectId
      * @apiParam {String} departId
      * @apiParam {String} groupId
      * @apiParamExample {json} 请求样例:
@@ -268,6 +285,7 @@ public class ActivityController extends BaseController {
      *     "data": "{"version":"0","id":"402881916b2b9dd2016b2ba9227d0005","createdDate":"20190606152033","lastModifiedDate":"20190606152033","name":"添加活动2","type":"etc","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":"","attendances":["{"version":"4","id":"402881916b2a9588016b2b5f1c1c0011","createdDate":"20190606135941","lastModifiedDate":"20190606135941","axisy":"333","axisx":"33","startTime":"某年某月某日","area":"500米","day":"100","endTime":"结束时间","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}","{"version":"4","id":"402881916b2a9588016b2b5dbc480010","createdDate":"20190606135811","lastModifiedDate":"20190606135811","axisy":"","axisx":"","startTime":"某年某月某日","area":"","day":"0","endTime":"结束时间","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}"]}"
      * }
      */
+    @RequiresPermissions(value = {PERMISSION_ADD, PERMISSION_MODIFY})
     @PostMapping("/add")
     public JsonResult add(String name,
                           String content,
@@ -277,7 +295,7 @@ public class ActivityController extends BaseController {
                           String[] attendanceIds,
                           String[] activityFileIds,
                           String[] activityImageIds,
-                          String subjectId,
+                          @CurrentSubject Subject subject,
                           String departId,
                           String groupId) {
         if (StringUtils.isBlank(name)) {
@@ -303,7 +321,7 @@ public class ActivityController extends BaseController {
         List<Attendance> attendances = attendanceService.findByIds(attendanceIds);
         List<ActivityFile> activityFiles = activityService.findActivityFilesByIds(activityFileIds);
         List<ActivityImage> activityImages = activityService.findActivityImageByIds(activityImageIds);
-        activity = activityService.save(activity, attendances, activityFiles, activityImages, subjectId, departId, groupId);
+        activity = activityService.save(activity, attendances, activityFiles, activityImages, subject.getId(), departId, groupId);
         jsonResult.setData(convertActivity(activity));
         return jsonResult;
     }
@@ -312,6 +330,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/del 删除
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
@@ -327,6 +346,7 @@ public class ActivityController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions({PERMISSION_DELETE})
     @PostMapping("/del")
     public JsonResult del(String id) {
         Activity activity = activityService.find(id);
@@ -341,6 +361,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/modify 修改
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 修改
      * @apiParam {String} id 必填
      * @apiParam {String[]} attendanceIds
@@ -351,7 +372,6 @@ public class ActivityController extends BaseController {
      * @apiParam {int} number
      * @apiParam {String} total
      * @apiParam {int} type
-     * @apiParam {String} subjectId
      * @apiParam {String} departId
      * @apiParam {String} groupId
      * @apiParamExample {json} 请求样例:
@@ -369,6 +389,7 @@ public class ActivityController extends BaseController {
      *     "data": "{"version":"2","id":"402881916b2a3187016b2a3306ca0006","createdDate":"20190606083155","lastModifiedDate":"20190606083155","name":"添加活动1111","type":"etc","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":"","attendances":["{"version":"5","id":"402881916b2a9588016b2b5f1c1c0011","createdDate":"20190606135941","lastModifiedDate":"20190606135941","axisy":"333","axisx":"33","startTime":"某年某月某日","area":"500米","day":"100","endTime":"结束时间","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}","{"version":"5","id":"402881916b2a9588016b2b5dbc480010","createdDate":"20190606135811","lastModifiedDate":"20190606135811","axisy":"","axisx":"","startTime":"某年某月某日","area":"","day":"0","endTime":"结束时间","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}"]}"
      * }
      */
+    @RequiresPermissions(PERMISSION_MODIFY)
     @PostMapping("/modify")
     public JsonResult modify(String id,
                              String[] attendanceIds,
@@ -379,7 +400,7 @@ public class ActivityController extends BaseController {
                              @RequestParam(defaultValue = "0") int number,
                              String total,
                              @RequestParam(defaultValue = "0") int type,
-                             String subjectId,
+                             @CurrentSubject Subject subject,
                              String departId,
                              String groupId) {
         Activity activity = activityService.find(id);
@@ -406,7 +427,7 @@ public class ActivityController extends BaseController {
         List<ActivityFile> activityFiles = activityService.findActivityFilesByIds(activityFileIds);
         List<Attendance> attendances = attendanceService.findByIds(attendanceIds);
         List<ActivityImage> activityImages = activityService.findActivityImageByIds(activityImageIds);
-        activity = activityService.save(activity, attendances, activityFiles, activityImages, subjectId, departId, groupId);
+        activity = activityService.save(activity, attendances, activityFiles, activityImages, subject.getId(), departId, groupId);
         jsonResult.setData(convertActivity(activity));
         return jsonResult;
     }
@@ -415,6 +436,7 @@ public class ActivityController extends BaseController {
      * @api {GET} /activity/list 列表
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 列表
      * @apiParamExample {json} 请求样例:
      *                /activity/list
@@ -428,6 +450,7 @@ public class ActivityController extends BaseController {
      *     "data": "["{"version":"0","id":"402881916b2a3187016b2a3247350002","createdDate":"20190606083106","lastModifiedDate":"20190606083106","name":"添加活动1","type":"depart","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":"","attendances":["{"version":"0","id":"402881916b2a3187016b2a3247360003","createdDate":"20190606083106","lastModifiedDate":"20190606083106","axisy":"","axisx":"","startTime":"2019060511","area":"","day":"13","endTime":"2019","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}"]}","{"version":"0","id":"402881916b2a3187016b2a32570c0004","createdDate":"20190606083110","lastModifiedDate":"20190606083110","name":"添加活动2","type":"depart","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":"","attendances":["{"version":"0","id":"402881916b2a3187016b2a32570c0005","createdDate":"20190606083110","lastModifiedDate":"20190606083110","axisy":"","axisx":"","startTime":"2019060511","area":"","day":"13","endTime":"2019","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}"]}","{"version":"2","id":"402881916b2a3187016b2a3306ca0006","createdDate":"20190606083155","lastModifiedDate":"20190606083155","name":"添加活动1111","type":"etc","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":"","attendances":["{"version":"5","id":"402881916b2a9588016b2b5f1c1c0011","createdDate":"20190606135941","lastModifiedDate":"20190606135941","axisy":"333","axisx":"33","startTime":"某年某月某日","area":"500米","day":"100","endTime":"结束时间","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}","{"version":"5","id":"402881916b2a9588016b2b5dbc480010","createdDate":"20190606135811","lastModifiedDate":"20190606135811","axisy":"","axisx":"","startTime":"某年某月某日","area":"","day":"0","endTime":"结束时间","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}","{"version":"0","id":"402881916b2a3187016b2a3306cb0007","createdDate":"20190606083155","lastModifiedDate":"20190606083155","axisy":"","axisx":"","startTime":"2019060511","area":"","day":"13","endTime":"2019","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}"]}","{"version":"0","id":"402881916b2a9588016b2b9a0ef10012","createdDate":"20190606150405","lastModifiedDate":"20190606150405","name":"添加活动2","type":"etc","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":""}","{"version":"0","id":"402881916b2b9dd2016b2b9e77620000","createdDate":"20190606150853","lastModifiedDate":"20190606150853","name":"添加活动2","type":"etc","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":""}","{"version":"0","id":"402881916b2b9dd2016b2b9f91f40003","createdDate":"20190606151006","lastModifiedDate":"20190606151006","name":"添加活动2","type":"etc","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":""}","{"version":"0","id":"402881916b2b9dd2016b2ba9227d0005","createdDate":"20190606152033","lastModifiedDate":"20190606152033","name":"添加活动2","type":"etc","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":""}"]"
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list() {
         List<Activity> activities = activityService.findAll();
@@ -443,6 +466,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/view 查看
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 查看
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
@@ -458,6 +482,7 @@ public class ActivityController extends BaseController {
      *     "data": "{"version":"0","id":"402881916b2a3187016b2a3247350002","createdDate":"20190606083106","lastModifiedDate":"20190606083106","name":"添加活动1","type":"depart","number":"13","content":"测试内容个","total":"100","info5":"","info4":"","info2":"","info3":"","info1":"","attendances":["{"version":"0","id":"402881916b2a3187016b2a3247360003","createdDate":"20190606083106","lastModifiedDate":"20190606083106","axisy":"","axisx":"","startTime":"2019060511","area":"","day":"13","endTime":"2019","attendanceType":"daily","info5":"","info4":"","info2":"","info3":"","info1":""}"]}"
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id) {
         Activity activity = activityService.find(id);
@@ -472,6 +497,7 @@ public class ActivityController extends BaseController {
      * @api {POST} /activity/page 分页
      * @apiGroup Activity
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 分页
      * @apiParamExample {json} 请求示例:
      *              /activity/page?id=123
@@ -486,6 +512,7 @@ public class ActivityController extends BaseController {
      *     "data": "{"total":7,"page":3,"content":"["{"id":"402881916b2a9588016b2b9a0ef10012","version":"0","lastModifiedDate":"20190606150405","createdDate":"20190606150405","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"402881916b2b9dd2016b2b9e77620000","version":"0","lastModifiedDate":"20190606150853","createdDate":"20190606150853","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}","{"id":"402881916b2b9dd2016b2b9f91f40003","version":"0","lastModifiedDate":"20190606151006","createdDate":"20190606151006","name":"添加活动2","type":"etc","total":"100","number":"13","content":"测试内容个","info3":"","info2":"","info5":"","info1":"","info4":""}"]"}"
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/page")
     public JsonResult page(@RequestParam(defaultValue = "1") int page,
                            @RequestParam(defaultValue = "10") int size,

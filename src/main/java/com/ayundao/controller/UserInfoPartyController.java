@@ -11,11 +11,19 @@ import com.ayundao.entity.UserInfoParty;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+
+import static com.ayundao.base.BaseController.ROLE_ADMIN;
+import static com.ayundao.base.BaseController.ROLE_MANAGER;
+import static com.ayundao.base.BaseController.ROLE_USER;
 
 /**
  * @ClassName: UserInfoPartyController
@@ -25,6 +33,8 @@ import java.util.List;
  * @Description: 控制层 - 用户详情 -党建基础信息
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/userInfoParty")
 public class UserInfoPartyController extends BaseController {
@@ -38,6 +48,7 @@ public class UserInfoPartyController extends BaseController {
      * @apiGroup UserInfoParty
      * @apiVersion 1.0.0
      * @apiDescription 新增用户党建信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} type 党员状态
      * @apiParam {int} state 党籍是否在籍
      * @apiParam {String} partyPost 党内职务
@@ -84,6 +95,7 @@ public class UserInfoPartyController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_party")
     public JsonResult add_party(int type,int state,String partyPost,
                                 String partyBranch,String applyDate,String potDate,
@@ -121,6 +133,7 @@ public class UserInfoPartyController extends BaseController {
      * @apiGroup UserInfoParty
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 用户详情ID
      * @apiParamExample {json} 请求样例
      *                ?id
@@ -135,6 +148,7 @@ public class UserInfoPartyController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         if (StringUtils.isBlank(id)) {
@@ -150,6 +164,7 @@ public class UserInfoPartyController extends BaseController {
      * @apiVersion 1.0.0
      * @apiParam {String} type 党员
      * @apiDescription 党建基础信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /userInfoParty/list?type=党员
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -202,6 +217,7 @@ public class UserInfoPartyController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/list")
     public JsonResult list(String type){
         List<UserInfo> pages = userInfoService.findAll();
@@ -229,6 +245,7 @@ public class UserInfoPartyController extends BaseController {
      * @apiGroup UserInfoParty
      * @apiVersion 1.0.0
      * @apiDescription 用户分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} departId 组织id
      * @apiParamExample {json} 请求样例
      *                /userInfoParty/listDepart
@@ -243,6 +260,7 @@ public class UserInfoPartyController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listDepart")
     public JsonResult listDepart(String departId,String type){
         List<User> pages = userService.findByDepartIdForPage(departId);
@@ -278,6 +296,7 @@ public class UserInfoPartyController extends BaseController {
      * @apiGroup UserInfoParty
      * @apiVersion 1.0.0
      * @apiDescription 用户分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} groupId 部门id
      * @apiParamExample {json} 请求样例
      *                /userInfoParty/listDepart
@@ -292,6 +311,7 @@ public class UserInfoPartyController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listGroupId")
     public JsonResult listGroupId(String groupId,String type){
         List<User> pages = userService.findByGroupIdForPage(groupId);
@@ -327,6 +347,7 @@ public class UserInfoPartyController extends BaseController {
      * @apiGroup UserInfoParty
      * @apiVersion 1.0.0
      * @apiDescription 用户条件查询
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} name 姓名
      * @apiParam {String} number 编号
      * @apiParam {String} department 科室
@@ -375,6 +396,7 @@ public class UserInfoPartyController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findByLike")
     public JsonResult findByLike(String name,String number,String department,String type){
         String s = "%" + name + "%";
