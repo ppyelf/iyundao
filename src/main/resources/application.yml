@@ -58,5 +58,6 @@ spring:
 
 wechat:
   app:
-    id: wxe1184bbaaedfd86b
-    secret: 3442b30372d452fdce32943926fdfda
+    id: wxa5dcacd695f37fb2
+    secret: afc9c2f3a8afb4c03def051757268f23
+    url: http://www.ydyy.online

@@ -100,6 +100,12 @@ public class User extends BaseEntity<String> {
     private Set<Groups> groups;
 
     /**
+     * 第三方授权
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserApp> userApps;
+
+    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -225,6 +231,13 @@ public class User extends BaseEntity<String> {
         this.groups = groups;
     }
 
+    public Set<UserApp> getUserApps() {
+        return userApps;
+    }
+
+    public void setUserApps(Set<UserApp> userApps) {
+        this.userApps = userApps;
+    }
 
     /**
      * 账号类型
