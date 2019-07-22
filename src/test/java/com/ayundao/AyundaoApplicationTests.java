@@ -15,17 +15,5 @@ public class AyundaoApplicationTests {
     @Autowired
     SubjectService subjectService;
 
-    @Test
-    public void contextLoads() {
-        String i = "213123123";
-            Subject subject = subjectService.find(i);
-        System.out.println(subject);
-    }
-
-    @Test
-    public void some(){
-        String rootPat = System.getProperty("user.dir");
-        System.out.println(rootPat);
-    }
 
 }
