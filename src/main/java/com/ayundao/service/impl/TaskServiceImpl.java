@@ -1,5 +1,6 @@
 package com.ayundao.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +49,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskInfoUserRepository taskInfoUserRepository;
+
 
     @Override
     public List<Task> findAll() {
@@ -105,26 +108,31 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void sendtask(List<TaskInfoDepart> taskInfoDeparts) {
+    public List<User> sendtask(List<TaskInfoDepart> taskInfoDeparts) {
         TaskInfoUser tiu;
+        List<User> userList = new ArrayList<>();
         for (TaskInfoDepart taskInfoDepart : taskInfoDeparts) {
             //如果是机构获取所有部门组织
             if (taskInfoDepart.getSubject()!=null){
                 List<User> users = userService.findBySubjectIdForPage(taskInfoDepart.getSubject().getId());
+                userList.addAll(users);
                 saveUser(taskInfoDepart,users);
             }
 
             if (taskInfoDepart.getDepart()!= null){
                         List<User>  users = userService.findByDepartIdForPage(taskInfoDepart.getDepart().getId());
+                userList.addAll(users);
                         saveUser(taskInfoDepart,users);
             }
             if (taskInfoDepart.getGroups()!=null){
                         List<User> users = userService.findByGroupIdForPage(taskInfoDepart.getGroups().getId());
+                userList.addAll(users);
                         saveUser(taskInfoDepart,users);
 
             }
             //如果有用户
             if(taskInfoDepart.getUser()!=null){
+                userList.add(taskInfoDepart.getUser());
                 UserInfo uif =userInfoRepository.findByUserId(taskInfoDepart.getUser().getId());
                 tiu = new TaskInfoUser();
                 tiu.setCreatedDate(new Date());
@@ -137,7 +145,7 @@ public class TaskServiceImpl implements TaskService {
                 taskInfoUserRepository.save(tiu);
             }
         }
-
+            return userList;
     }
 
     @Override
@@ -149,6 +157,18 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void updatstate(String id,String state) {
         taskRepository.updatestate(id,state);
+    }
+
+    @Override
+    public JSONArray findphoneByUser(List<User> userList) {
+        JSONArray jsonArray = new JSONArray();
+        for (User user : userList) {
+            if (StringUtils.isNotBlank(userInfoRepository.findphoneByUserId(user.getId()))){
+                jsonArray.add(userInfoRepository.findphoneByUserId(user.getId()));
+            }
+        }
+       return jsonArray;
+
     }
 
 

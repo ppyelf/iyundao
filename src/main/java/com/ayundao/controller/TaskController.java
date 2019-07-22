@@ -3,6 +3,7 @@ package com.ayundao.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
+import com.ayundao.base.utils.HttpUtil;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Null;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +53,7 @@ public class TaskController extends BaseController {
      * @apiGroup Task
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
      * /task/list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -90,6 +93,7 @@ public class TaskController extends BaseController {
      * @apiGroup Task
      * @apiVersion 1.0.0
      * @apiDescription 新增
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} title 标题 必填
      * @apiParam {String} type 任务类型
      * @apiParam {String} issuertime 发布时间
@@ -172,6 +176,7 @@ public class TaskController extends BaseController {
      * @apiGroup Task
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /task/view?id=4028d8816bcb8bc8016bcbe014240011
@@ -238,6 +243,7 @@ public class TaskController extends BaseController {
      * @apiGroup Task
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /task/del?id=4028d8816bcc2280016bcc271c420000
@@ -265,6 +271,7 @@ public class TaskController extends BaseController {
      * @apiGroup Task
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /task/findBydeption?id=402881916b9d3031016b9d63a172000d
@@ -306,6 +313,7 @@ public class TaskController extends BaseController {
      * @apiGroup Task
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填 任务id
      * @apiParamExample {json} 请求样例:
      *                   /task/sendTask?id=4028d8816bcb8bc8016bcbe014240011
@@ -330,11 +338,26 @@ public class TaskController extends BaseController {
         if (CollectionUtils.isEmpty(taskInfoDeparts)){
             return JsonResult.notFound("没有找到此任务下的用户");
         }
-        //发送任务
-        taskService.sendtask(taskInfoDeparts);
-        String state ="已发送";
-        taskService.updatstate(id,state);
-        return jsonResult;
+        //发送任务返回用戶实体
+        List<User> userList = taskService.sendtask(taskInfoDeparts);
+        //通过实体找到电话号码
+//        JSONArray array = taskService.findphoneByUser(userList);
+        JSONObject object = new JSONObject();
+//        object.put("phones",array);
+        JSONArray array = new JSONArray();
+        array.add("13738700108");
+        object.put("phones",array);
+        String url = "http://115.236.80.114:8080/duanxin/sendSMS";
+        JSONObject object1 = HttpUtil.doPost(url, object);
+        System.out.println(object1);
+        if (Integer.parseInt(object1.get("code").toString())== 200){
+            String state ="已发送";
+            taskService.updatstate(id,state);
+            return jsonResult;
+        }else {
+            return JsonResult.paramError("发送失败");
+        }
+
     }
 
 

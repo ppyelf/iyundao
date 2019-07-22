@@ -28,7 +28,7 @@ import java.util.Map;
  * @project: ayundao
  * @author: King
  * @Date: 2019/5/13 16:24
- * @Description: 控制层 - 消息发布
+ * @Description: 控制层 - 信息发布
  * @Version: V1.0
  */
 @RestController
@@ -39,10 +39,11 @@ public class MessageController extends BaseController {
     private MessageService messageService;
 
     /**
-     * @api {post} /message/add 新增消息发布详情
+     * @api {post} /message/add 新增信息发布详情
      * @apiGroup Message
      * @apiVersion 1.0.0
-     * @apiDescription 新增消息发布详情
+     * @apiDescription 新增信息发布详情
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} type 审核类型
      * @apiParam {String} title 标题
      * @apiParam {String} branch 发布支部
@@ -126,6 +127,7 @@ public class MessageController extends BaseController {
       * @apiGroup MessageFile
       * @apiVersion 1.0.0
       * @apiDescription 上传文件
+     * @apiHeader {String} IYunDao-AssessToken token验证
       * @apiParam {MultipartFile} file
       * @apiParamExample {json} 请求样例:
       *                message/upload_file
@@ -168,6 +170,7 @@ public class MessageController extends BaseController {
      * @apiGroup MessageImage
      * @apiVersion 1.0.0
      * @apiDescription 上传图片
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求样例:
      *                /message/upload_image
@@ -209,6 +212,7 @@ public class MessageController extends BaseController {
      * @apiGroup Message
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例
      *                ?id=xxx
@@ -251,10 +255,11 @@ public class MessageController extends BaseController {
     }
 
     /**
-     * @api {Post} /message/del_file 删除消息发布 -附件文件
+     * @api {Post} /message/del_file 删除信息发布 -附件文件
      * @apiGroup MessageFile
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例
      *                ?id=xxx
@@ -279,10 +284,11 @@ public class MessageController extends BaseController {
     }
 
     /**
-     * @api {Post} /message/del_image 删除消息发布 -附件图片
+     * @api {Post} /message/del_image 删除信息发布 -附件图片
      * @apiGroup MessageImage
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例
      *                ?id=xxx
@@ -308,10 +314,11 @@ public class MessageController extends BaseController {
 
 
     /**
-     * @api {post} /message/list 查询消息发布详情
+     * @api {post} /message/list 查询信息发布详情
      * @apiGroup Message
      * @apiVersion 1.0.0
-     * @apiDescription 查询消息发布详情
+     * @apiDescription 查询信息发布详情
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /message/list
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -339,10 +346,11 @@ public class MessageController extends BaseController {
     }
 
     /**
-     * @api {post} /message/list_type 根据状态查询消息发布详情
+     * @api {post} /message/list_type 根据状态查询信息发布详情
      * @apiGroup Message
      * @apiVersion 1.0.0
-     * @apiDescription 根据状态查询消息发布详情
+     * @apiDescription 根据状态查询信息发布详情
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} type 类型id 0 -未审核 1 -审核同意 2 -审核未通过
      * @apiParam {int} page 当前的页面
      * @apiParam {int} size 每页数量
@@ -386,10 +394,11 @@ public class MessageController extends BaseController {
     }
 
     /**
-     * @api {post} /message/findId 单条消息发布详情
+     * @api {post} /message/findId 单条信息发布详情
      * @apiGroup Message
      * @apiVersion 1.0.0
-     * @apiDescription 单条消息发布详情
+     * @apiDescription 单条信息发布详情
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /message/findId?id=
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -431,10 +440,11 @@ public class MessageController extends BaseController {
     }
 
     /**
-     * @api {post} /message/findIdf 消息发布详情 -单条文件信息
+     * @api {post} /message/findIdf 信息发布详情 -单条文件信息
      * @apiGroup MessageFile
      * @apiVersion 1.0.0
-     * @apiDescription 消息发布详情 -单条文件信息
+     * @apiDescription 信息发布详情 -单条文件信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /message/findIdf?id=
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -462,10 +472,11 @@ public class MessageController extends BaseController {
     }
 
     /**
-     * @api {post} /message/findIdi 消息发布详情 -单条图片信息
+     * @api {post} /message/findIdi 信息发布详情 -单条图片信息
      * @apiGroup MessageImage
      * @apiVersion 1.0.0
-     * @apiDescription 消息发布详情 -单条图片信息
+     * @apiDescription 信息发布详情 -单条图片信息
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例
      *                /message/findIdi?id=
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -497,6 +508,7 @@ public class MessageController extends BaseController {
    * @apiGroup Message
    * @apiVersion 1.0.0
    * @apiDescription 查看
+    * @apiHeader {String} IYunDao-AssessToken token验证
    * @apiParam {String} id 必填
    * @apiParam {int} type 要改变的类型
     * * 0 -未审核

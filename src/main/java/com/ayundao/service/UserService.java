@@ -3,6 +3,7 @@ package com.ayundao.service;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.Role;
+import com.ayundao.entity.Subject;
 import com.ayundao.entity.User;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
@@ -63,7 +64,7 @@ public interface UserService {
      * 添加用户
      * @param user
      */
-    JsonResult save(User user, String subjectId, String departId, String groupsId, List<Role> roles, JsonResult jsonResult);
+    JsonResult save(User user, Subject subject, String departId, String groupsId, List<Role> roles, JsonResult jsonResult);
 
     /**
      * 获取用户详情的json
@@ -98,16 +99,21 @@ public interface UserService {
     User findByCode(String code);
 
     /**
-     * 查询机构用户分页
+     * 保存实体
+     * @param user
      */
-    List<User> findBySubjectIdForPage(String id);
+    User save(User user);
 
     /**
-     * 查找用户群体
-     * @param userids
-     * @return
+     * 通过用户id找到所有实体
      */
     List<User> findbyIds(String[] userids);
 
 
+
+
+    /**
+     * 通过机构id获得所有的用户
+     */
+    List<User> findBySubjectIdForPage(String id);
 }

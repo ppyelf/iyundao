@@ -181,6 +181,12 @@ public class AdvicesServiceImpl implements AdvicesService{
         advicesRepository.updatestate(id,state);
     }
 
+    @Override
+    public List<AdvicesInfoUser> findAllByUser(User user) {
+
+        return advicesInfoUserRepository.findAllByUser(user);
+    }
+
     private void saveUser(AdvicesInfoDepar advicesInfoDepar, List<User> users) {
         for (User user : users) {
             UserInfo uif = userInfoRepository.findByUserId(user.getId());

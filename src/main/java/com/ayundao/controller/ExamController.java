@@ -63,6 +63,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
      *                /exam/list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -92,6 +93,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} page 跳过的页数 默认0
      * @apiParam {int} size 必填 每页的条数 默认10
      * @apiParamExample {json} 请求样例:
@@ -120,6 +122,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} title 考试名称（标题） 
      * @apiParam {int} page 跳过的页数 默认0
      * @apiParam {int} size 必填 每页的条数 默认10
@@ -155,6 +158,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 新增
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} title 必填 标题
      * @apiParam {String} starttime 考试开始时间
      * @apiParam {String} overtime 开始结束时间
@@ -240,6 +244,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /exam/view?id=4028d8816bcc9a32016bcccd9616000c
@@ -272,6 +277,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *               /exam/del?id=4028d8816bcf68cb016bcf7e22810008
@@ -301,6 +307,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
      *                   /exam/score?id=4028d8816bcb8bc8016bcb8de2b40008
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -338,6 +345,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 新增
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} examid 考试id必填
      * @apiParam {String} testpaperid 试卷id必填
      * @apiParam {String} userid  用户id必填
@@ -377,6 +385,7 @@ public class ExamController extends BaseController{
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *               /exam/findExamInfoUser?examid=4028d8816bcb8bc8016bcb8de2b40008&userid=402881916ba10b8a016ba113adbc0006

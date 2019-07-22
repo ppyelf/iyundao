@@ -82,16 +82,10 @@ public class User extends BaseEntity<String> {
     private Set<UserRelation> userRelations;
 
     /**
-     * 用户组关系
-     */
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserGroupRelation> userGroupRelations;
-
-    /**
      * 角色关系
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserRole> userRoles;
+    private Set<RoleRelation> roleRelations;
 
     /**
      * 部门负责人
@@ -267,20 +261,12 @@ public class User extends BaseEntity<String> {
         this.userRelations = userRelations;
     }
 
-    public Set<UserGroupRelation> getUserGroupRelations() {
-        return userGroupRelations;
+    public Set<RoleRelation> getRoleRelations() {
+        return roleRelations;
     }
 
-    public void setUserGroupRelations(Set<UserGroupRelation> userGroupRelations) {
-        this.userGroupRelations = userGroupRelations;
-    }
-
-    public Set<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(Set<UserRole> userRoles) {
-        this.userRoles = userRoles;
+    public void setRoleRelations(Set<RoleRelation> roleRelations) {
+        this.roleRelations = roleRelations;
     }
 
     public Set<Depart> getDeparts() {
@@ -385,6 +371,11 @@ public class User extends BaseEntity<String> {
      */
     public enum ACCOUNT_TYPE {
         /**
+         * 正常
+         */
+        normal,
+
+        /**
          * 禁用
          */
         disable,
@@ -392,12 +383,7 @@ public class User extends BaseEntity<String> {
         /**
          * 锁定
          */
-        block,
-
-        /**
-         * 正常
-         */
-        normal
+        block
     }
 
     /**

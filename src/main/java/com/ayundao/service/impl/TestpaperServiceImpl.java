@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: TestpaperServiceImpl
@@ -51,41 +53,6 @@ public class TestpaperServiceImpl implements TestpaperService{
         return testpaperRepository.findAll();
     }
 
-    @Override
-    @Transactional
-    public Testpaper save(Testpaper testpaper, String[] examcontent, String[] answer, String[] yesorno,String[] score) {
-        testpaper = testpaperRepository.save(testpaper);
-        PaperTitle paperTitle;
-        PaperAnswer paperAnswer;
-        String[] answers;
-        String[] yesornos;
-        for (int i =0;i<examcontent.length;i++){
-            //先添加题目
-                paperTitle = new PaperTitle();
-                //放入试卷
-                paperTitle.setTestpaper(testpaper);
-                //放入属性
-                paperTitle.setExamcontent(examcontent[i]);
-                paperTitle.setScore(score[i]);
-                //添加题目
-                paperTitle = paperTitleRepository.save(paperTitle);
-            //分别拆分装入
-            answers = answer[i].split("\\|");
-            yesornos = yesorno[i].split("\\|");
-            for (int k =0;k<answers.length;k++){
-                paperAnswer = new PaperAnswer();
-                paperAnswer.setPaperTitle(paperTitle);
-                paperAnswer.setAnswerselect(answers[k]);
-                paperAnswer.setAnswer(yesornos[k]);
-                paperAnswerRepository.save(paperAnswer);
-            }
-        }
-
-        JsonResult jsonResult = JsonResult.success();
-        JSONObject object = JsonUtils.getJson(testpaper);
-        jsonResult.setData(object);
-        return testpaper;
-    }
 
     @Override
     @Transactional
@@ -127,6 +94,40 @@ public class TestpaperServiceImpl implements TestpaperService{
     @Override
     public List<Testpaper> findByIds(String[] testpapers) {
         return testpaperRepository.findByIds(testpapers);
+    }
+
+    @Override
+    @Transactional
+    public void savetest(Testpaper testpaper, List<Map<String, String>> examination) {
+            testpaper=testpaperRepository.save(testpaper);
+        PaperTitle paperTitle;
+        PaperAnswer paperAnswer;
+        String[] answers;
+        String[] yesornos;
+        for (Map<String, String> map : examination) {
+            //先添加题目
+            paperTitle = new PaperTitle();
+            paperTitle.setCreatedDate(new Date());
+            paperTitle.setLastModifiedDate(new Date());
+            //放入试卷
+            paperTitle.setTestpaper(testpaper);
+            //放入属性
+            paperTitle.setExamcontent(map.get("examcontent"));
+            paperTitle.setScore(map.get("score"));
+            //添加题目
+            paperTitle = paperTitleRepository.save(paperTitle);
+            answers = map.get("answer").split("\\|");
+            yesornos = map.get("yesorno").split("\\|");
+            for (int i =0;i<answers.length;i++){
+                paperAnswer = new PaperAnswer();
+                paperAnswer.setCreatedDate(new Date());
+                paperAnswer.setLastModifiedDate(new Date());
+                paperAnswer.setPaperTitle(paperTitle);
+                paperAnswer.setAnswerselect(answers[i]);
+                paperAnswer.setAnswer(yesornos[i]);
+                paperAnswerRepository.save(paperAnswer);
+            }
+        }
     }
 
 

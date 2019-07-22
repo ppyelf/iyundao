@@ -56,6 +56,7 @@ public class PMAssessController extends BaseController{
      * @apiGroup PMAssess
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *               /PMAssess/downloadPioneerIndex
@@ -84,6 +85,7 @@ public class PMAssessController extends BaseController{
      * @apiGroup PMAssess
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /PMAssess/importPioneerIndex
@@ -113,6 +115,7 @@ public class PMAssessController extends BaseController{
     * @apiGroup PMAssess
     * @apiVersion 1.0.0
     * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParamExample {json} 请求样例:
     *               /PMAssess/pagePioneerIndex?page=2&size=2
     * @apiSuccess (200) {String} code 200:成功</br>
@@ -141,6 +144,7 @@ public class PMAssessController extends BaseController{
     * @apiGroup PMAssess
     * @apiVersion 1.0.0
     * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} property 必填 模糊查询的字段名
      *                      name名字/userCode/subjectCode/departCode/groupCode/score分数/data评测日期
     * @apiParam {String} value 必填 模糊查询的值
@@ -182,6 +186,7 @@ public class PMAssessController extends BaseController{
      * @apiGroup PMAssess
      * @apiVersion 1.0.0
      * @apiDescription 下载模板
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} type (0-默认,本日;1-本周;2-本月;3-本年)
      * @apiParamExample {json} 请求示例:
      *                  ?type=0
@@ -207,6 +212,7 @@ public class PMAssessController extends BaseController{
      * @apiGroup PMAssess
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
      *               /PMAssess/downloadDemocraticAppraisal
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -234,6 +240,7 @@ public class PMAssessController extends BaseController{
     * @apiGroup PMAssess
     * @apiVersion 1.0.0
     * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {MultipartFile} file 必填
     * @apiParamExample {json} 请求样例:
     *                /PMAssess/importDemocraticAppraisal
@@ -263,6 +270,7 @@ public class PMAssessController extends BaseController{
     * @apiGroup PMAssess
     * @apiVersion 1.0.0
     * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParamExample {json} 请求样例:
     *               /PMAssess/pageDemocraticAppraisal?page=2&size=2
     * @apiSuccess (200) {String} code 200:成功</br>
@@ -292,6 +300,7 @@ public class PMAssessController extends BaseController{
     * @apiGroup PMAssess
     * @apiVersion 1.0.0
     * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} property 必填 模糊查询的字段名
      *   name名字/userCode/subjectCode/departCode/groupCode/result评测结果/score分数/data评测日期
     * @apiParam {String} value 必填 模糊查询的值
@@ -333,6 +342,7 @@ public class PMAssessController extends BaseController{
     * @apiGroup PMAssess
     * @apiVersion 1.0.0
     * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} year 默认0 表示今年   年份
     * @apiParamExample {json} 请求样例:
     *                /PMAssess/annuallist
@@ -388,6 +398,7 @@ public class PMAssessController extends BaseController{
     * @apiGroup PMAssess
     * @apiVersion 1.0.0
     * @apiDescription 查看
+    * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} usercode 必填   用户编码
     * @apiParam {String} year   默认0 表示今年    年份
     * @apiParamExample {json} 请求样例:

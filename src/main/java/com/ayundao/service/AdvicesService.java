@@ -4,6 +4,7 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.Advices;
 import com.ayundao.entity.AdvicesInfoDepar;
 import com.ayundao.entity.AdvicesInfoUser;
+import com.ayundao.entity.User;
 
 import java.util.List;
 
@@ -78,4 +79,11 @@ public interface AdvicesService {
      * @param state
      */
     void updatestate(String id, String state);
+
+    /**
+     * 查找所有的用户关联活动
+     * @param user
+     * @return
+     */
+    List<AdvicesInfoUser> findAllByUser(User user);
 }

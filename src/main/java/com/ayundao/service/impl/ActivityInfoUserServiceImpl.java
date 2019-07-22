@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @ClassName: ActivityInfoUserServiceImpl
@@ -27,12 +28,15 @@ public class ActivityInfoUserServiceImpl implements ActivityInfoUserService {
     ActivityInfoUserRepository activityInfoUserRepository;
 
     @Override
-    public ActivityInfoUser save(Activity activity, User user) {
-        ActivityInfoUser activityInfoUser = new ActivityInfoUser();
-        activityInfoUser.setCreatedDate(new Date());
-        activityInfoUser.setLastModifiedDate(new Date());
-        activityInfoUser.setActivity(activity);
-        activityInfoUser.setUser(user);
-        return  activityInfoUserRepository.save(activityInfoUser);
+    public void save(Activity activity, List<User> user) {
+        ActivityInfoUser activityInfoUser;
+        for (User user1 : user) {
+            activityInfoUser = new ActivityInfoUser();
+            activityInfoUser.setCreatedDate(new Date());
+            activityInfoUser.setLastModifiedDate(new Date());
+            activityInfoUser.setActivity(activity);
+            activityInfoUser.setUser(user1);
+            activityInfoUserRepository.save(activityInfoUser);
+        }
     }
 }

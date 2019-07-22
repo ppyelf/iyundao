@@ -55,7 +55,6 @@ public class RoleController extends BaseController {
             JSONObject json = new JSONObject();
             json.put("id", role.getId());
             json.put("name", role.getName());
-            json.put("level", role.getLevel());
             arr.add(json);
         }
         jsonResult.setData(arr);
@@ -94,7 +93,6 @@ public class RoleController extends BaseController {
         JSONObject json = new JSONObject();
         json.put("id", role.getId());
         json.put("name", role.getName());
-        json.put("level", role.getLevel());
         jsonResult.setData(json);
         return jsonResult;
     }
@@ -128,7 +126,6 @@ public class RoleController extends BaseController {
         role.setName(name);
         role.setLastModifiedDate(new Date(System.currentTimeMillis()));
         role.setCreatedDate(new Date(System.currentTimeMillis()));
-        role.setLevel(level);
         role = roleService.save(role);
         jsonResult.setData(JsonUtils.getJson(role));
         return jsonResult;
@@ -170,7 +167,6 @@ public class RoleController extends BaseController {
         role.setLastModifiedDate(new Date(System.currentTimeMillis()));
         role.setName(name);
         if (level < 10 && level > 0) {
-            role.setLevel(level);
         }else {
             return JsonResult.paramError();
         }

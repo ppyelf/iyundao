@@ -1,12 +1,16 @@
 package com.ayundao.controller;
 
 import com.ayundao.base.BaseController;
+import com.ayundao.base.annotation.CurrentSubject;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
@@ -14,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
 import sun.rmi.server.DeserializationChecker;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +32,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/subject")
+@RequiresRoles(value = {"user", "admin", "manager"}, logical = Logical.OR)
 public class SubjectController extends BaseController {
 
     @Autowired
@@ -59,9 +65,18 @@ public class SubjectController extends BaseController {
      * 	"data": "['{'version':'1','id':'bd6886bc88e54ef0a36472efd95c744c','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'总院','subjectType':'head'}','{'version':'1','id':'c72a2c6bd1e8428fac6706b217417831','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'分院','subjectType':'head'}']"
      * }
      */
+    @RequiresPermissions("view")
     @GetMapping("/list")
-    public JsonResult list() {
-        List<Subject> subjects = subjectService.findAll();
+    public JsonResult list(@CurrentSubject Subject subject) {
+        if (subject == null) {
+            return JsonResult.success();
+        }
+        List<Subject> subjects = subject.getSubjectType().equals(Subject.SUBJECT_TYPE.head)
+                ? subjectService.findAll()
+                : new ArrayList<Subject>(){};
+        if (CollectionUtils.isEmpty(subjects)) {
+            subjects.add(subject);
+        }
         if (CollectionUtils.isEmpty(subjects)) {
             return JsonResult.failure(404, "请添加机构");
         }
@@ -69,7 +84,9 @@ public class SubjectController extends BaseController {
         for (Subject s :subjects){
             s.setUserRelations(null);
             JSONObject json =JsonUtils.getJson(s);
-            json.put("subjectType", s.getSubjectType().getName());
+            json.put("code", s.getCode());
+            json.put("name", s.getName());
+            json.put("type", s.getSubjectType().getName());
             arr.add(json);
         }
         jsonResult.setData(arr);
@@ -109,6 +126,7 @@ public class SubjectController extends BaseController {
      *     ]
      * }
      */
+    @RequiresRoles("admin")
     @GetMapping("/manager_list")
     public JsonResult managerList() {
         List<Subject> subjects = subjectService.findAll();

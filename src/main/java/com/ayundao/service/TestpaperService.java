@@ -5,6 +5,7 @@ import com.ayundao.entity.PaperTitle;
 import com.ayundao.entity.Testpaper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: TestpaperService
@@ -29,15 +30,6 @@ public interface TestpaperService {
      */
     List<Testpaper> findAll();
 
-    /**
-     * 添加试卷
-     * @param testpaper
-     * @param examcontent
-     * @param answer
-     * @param yesorno
-     * @return
-     */
-    Testpaper save(Testpaper testpaper, String[] examcontent, String[] answer, String[] yesorno,String[] score);
 
     /**
      * 找到所有的题目跟答案
@@ -58,4 +50,14 @@ public interface TestpaperService {
      * @return
      */
     List<Testpaper> findByIds(String[] testpapers);
+
+
+
+
+    /**
+     * 添加試卷
+     * @param testpaper
+     * @param examination
+     */
+    void savetest(Testpaper testpaper, List<Map<String, String>> examination);
 }

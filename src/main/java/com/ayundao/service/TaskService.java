@@ -1,10 +1,8 @@
 package com.ayundao.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.ayundao.base.utils.JsonResult;
-import com.ayundao.entity.Subject;
-import com.ayundao.entity.Task;
-import com.ayundao.entity.TaskInfoDepart;
-import com.ayundao.entity.TaskInfoUser;
+import com.ayundao.entity.*;
 
 import java.util.List;
 
@@ -46,7 +44,7 @@ public interface TaskService {
      * 发送任务
      * @param taskInfoDeparts
      */
-    void sendtask(List<TaskInfoDepart> taskInfoDeparts);
+    List<User> sendtask(List<TaskInfoDepart> taskInfoDeparts);
 
     /**
      * 查看是否以及发送过任务
@@ -59,4 +57,11 @@ public interface TaskService {
      * @param id
      */
     void updatstate(String id,String state);
+
+    /**
+     *通过实体找到电话号码
+     * @param userList
+     * @return
+     */
+    JSONArray findphoneByUser(List<User> userList);
 }

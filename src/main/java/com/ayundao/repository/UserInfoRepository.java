@@ -148,6 +148,10 @@ public interface UserInfoRepository extends BaseRepository<UserInfo,String> {
      */
     @Query("select a from UserInfo a where a.userid = ?1")
     UserInfo findByUserId(String id);
+
+
+    @Query("select a.phone from UserInfo a where a.userid = ?1")
+    String findphoneByUserId(String id);
 }
 
 

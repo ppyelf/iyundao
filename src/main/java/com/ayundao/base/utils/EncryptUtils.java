@@ -2,6 +2,9 @@ package com.ayundao.base.utils;
 
 import org.apache.shiro.codec.Hex;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -29,6 +32,8 @@ public class EncryptUtils {
     public static final String HmacSHA1 = "HmacSHA1";
     public static final String DES = "DES";
     public static final String AES = "AES";
+    //循环次数
+    public final static int hashIterations = 1024;
 
     /**编码格式；默认使用uft-8*/
     public static String charset = "utf-8";
@@ -379,6 +384,18 @@ public class EncryptUtils {
         }
         String Salt = new String(cs2);
         return md5Hex(password + Salt).equals(String.valueOf(cs1));
+    }
+
+    /**
+     * shiro密码加密工具类
+     *
+     * @param credentials 密码
+     * @param saltSource 密码盐
+     * @return
+     */
+    public static String md5(String credentials, String saltSource) {
+        ByteSource salt = new Md5Hash(saltSource);
+        return new SimpleHash(MD5, credentials, salt, hashIterations).toString();
     }
 
 }

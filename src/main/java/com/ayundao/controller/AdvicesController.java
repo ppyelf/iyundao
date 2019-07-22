@@ -1,5 +1,6 @@
 package com.ayundao.controller;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -25,7 +26,7 @@ import java.util.List;
  * @project: ayundao
  * @author: 13620
  * @Date: 2019/7/4
- * @Description: 实现 - 活动
+ * @Description: 实现 - 消息
  * @Version: V1.0
  */
 @RestController
@@ -59,6 +60,7 @@ public class AdvicesController extends BaseController{
      * @apiGroup Advices
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
      *                /advices/list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -99,6 +101,7 @@ public class AdvicesController extends BaseController{
      * @apiGroup Advices
      * @apiVersion 1.0.0
      * @apiDescription 新增
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} title  标题 必填
      * @apiParam {String} type   消息类型
      * @apiParam {String} issuertime 发布时间
@@ -181,6 +184,7 @@ public class AdvicesController extends BaseController{
      * @apiGroup Advices
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /advices/view?id=4028d8816bcc9a32016bccc68bfc0006
@@ -247,6 +251,7 @@ public class AdvicesController extends BaseController{
      * @apiGroup Advices
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /advices/del?id=4028d8816bcc9a32016bccc68bfc0006
@@ -273,6 +278,7 @@ public class AdvicesController extends BaseController{
      * @apiGroup Advices
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /advices/findBydeption?id=402881916b9d3031016b9d626593000c
@@ -308,11 +314,12 @@ public class AdvicesController extends BaseController{
 
 
     /**
-     * @api {POST} /advices/sendAdvices 发送任务
+     * @api {POST} /advices/sendAdvices 发送消息
      * @apiGroup Advices
      * @apiVersion 1.0.0
      * @apiDescription 列表
-     * @apiParam {String} id 任务id
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiParam {String} id 消息id
      * @apiParamExample {json} 请求样例:
      *                   /advices/sendAdvices?id=4028d8816bc1252e016bc12b1c9b000a
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -342,6 +349,47 @@ public class AdvicesController extends BaseController{
 
         return  jsonResult;
     }
+
+    /**
+     * @api {POST} /advices/findAllByUserId 查看用户id相关消息列表
+     * @apiGroup Advices
+     * @apiVersion 1.0.0
+     * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiParam {String} userid 用户id 必填
+     * @apiParamExample {json} 请求样例:
+     *                   /advices/findAllByUserId?userid=402881916ba10b8a016ba113adbc0006
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                  601:已经发送过任务<br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     * "code": 200,
+     * "message": "成功",
+     *  "data": [{"phone": "","advices": {"advicestext": "描述","issuertime": "2019-07-16 08:00:00","advicesstatus": "已发送","id": "4028d8816bf8a59a016bf8aab6050000","title": "新增任务...","type": "0"},"state": "未接收","user": {"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}},{"phone": "","advices": {"advicestext": "描述","issuertime": "2019-07-16 08:00:00","advicesstatus": "已发送","id": "4028d8816bf8a59a016bf8aab6050000","title": "新增任务...","type": "0"},"state": "未接收","user": {"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}}]
+     * }
+     */
+    @PostMapping("/findAllByUserId")
+    public JsonResult findAllByUserId(String userid){
+        User user = userService.findById(userid);
+        if (user == null){
+            return JsonResult.notFound("找不到用户");
+        }
+        List<AdvicesInfoUser> advicesInfoUsers = advicesService.findAllByUser(user);
+        JSONArray array = new JSONArray();
+        for (AdvicesInfoUser advicesInfoUser : advicesInfoUsers) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("advices", JsonUtils.getJson(advicesInfoUser.getAdvices()));
+            jsonObject.put("state",advicesInfoUser.getState());
+            jsonObject.put("phone",advicesInfoUser.getPhone());
+            jsonObject.put("user",JsonUtils.getJson(advicesInfoUser.getUser()));
+            array.add(jsonObject);
+        }
+        jsonResult.setData(array);
+        return jsonResult;
+    }
+
 
     /**
      * 转换Advices为json

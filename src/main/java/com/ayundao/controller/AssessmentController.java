@@ -60,6 +60,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
      *                /assessment/list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -98,6 +99,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {int} type  默认0
      * @apiParam {int} total  默认10
      * @apiParamExample {json} 请求样例:
@@ -124,6 +126,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填 考核id
      * @apiParamExample {json} 请求样例:
      *                /assessment/view?id=4028d8816be4b6fd016be521e09f001b
@@ -157,6 +160,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 新增
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} number 编号
      * @apiParam {String} name  标题(必填)
      * @apiParam {int} type  默认0        0 -个人考核 1 -支部考核 * 2 -行政考核  * 3 -机构考核
@@ -254,6 +258,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} property 必填 模糊查询的字段名
      *                  number/编号 name/名字
      * @apiParam {String} value 必填 模糊查询的值
@@ -294,6 +299,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填 考核id
      * @apiParamExample {json} 请求样例:
      *          /assessment/del?id=4028d8816be4b6fd016be4c2c93d0002
@@ -323,6 +329,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 上传文件
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file  文件
      * @apiParam {int} type 必填 0-文档 1文件
      * @apiParam {String} content 内容
@@ -377,6 +384,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 考核文件删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String[]} ids 必填 文件id
      * @apiParamExample {json} 请求样例:
      * /assessment/del_file?ids=4028d8816bdfbd59016bdfc7b51a0000,4028d8816bdfbd59016bdfd5c0610001,4028d8816bdfbd59016bdfd6019d0002
@@ -405,6 +413,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 上传图片
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file 图片
      * @apiParamExample {json} 请求样例:
      * /assessment/upload_image?file=XXX
@@ -441,6 +450,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 活动图片删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String[]} ids 必填
      * @apiParamExample {json} 请求样例:
      * /assessment/del_image?ids=4028d8816bdff15a016be016ad770011,4028d8816bdff15a016be016aa500010
@@ -473,6 +483,7 @@ public class AssessmentController extends BaseController {
     * @apiGroup Assessment
     * @apiVersion 1.0.0
     * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} id 必填 考核id
     * @apiParamExample {json} 请求样例:
     *                /assessment/view_index?id=4028d8816be4b6fd016be521e09f001b
@@ -521,6 +532,7 @@ public class AssessmentController extends BaseController {
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 新增
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} assessmentid 考核id必填
      * @apiParam {String[]} indexlist  请看样例中的indexlist
      * @apiParamExample {json} 请求样例:
@@ -569,6 +581,7 @@ public class AssessmentController extends BaseController {
     * @apiGroup Assessment
     * @apiVersion 1.0.0
     * @apiDescription 查看
+    * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} id 必填 考核id
     * @apiParamExample {json} 请求样例:
     *                /assessment/del_index id=4028d8816bcc9a32016bcccd9616000c
@@ -595,6 +608,7 @@ public class AssessmentController extends BaseController {
     * @apiGroup Assessment
     * @apiVersion 1.0.0
     * @apiDescription 查看
+    * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} id 必填
     * @apiParamExample {json} 请求样例:
     *                /assessment/del_byindexid?id=4028d8816bf387ac016bf3a207830002

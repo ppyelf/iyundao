@@ -1594,12 +1594,35 @@ public class UserInfoController extends BaseController {
 
 
 
-//    @PostMapping("findActivityScoreByUserId")
-//    public JsonResult findActivityScoreByUserId(String userid){
-//        List<Sign> signs = userInfoService.findAllByUserId(userid);
-//        System.out.println("aaa:"+signs);
-//        return null;
-//    }
+    /**
+     * @api {POST} /userInfo/findActivityScoreByUserId 根据用户id查找积分记录
+     * @apiGroup UserInfo
+     * @apiVersion 1.0.0
+     * @apiDescription 查看
+     * @apiParam {String} userid 用户id 必填
+     * @apiParamExample {json} 请求样例:
+     *                /userInfo/findActivityScoreByUserId?userid=402881916ba10b8a016ba113adbc0006
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *         "data": [{"activity": {"number": "3","total": "15","name": "12312","id": "88888888","type": "depart","content": "21321"},"time": "1232122","getscore": 5},{"activity": {"number": "1""total": "4","name": "","id": "121211231","type": "depart","content": ""},"time": "1232122","getscore": 4}]
+     * }
+     */
+    @PostMapping("/findActivityScoreByUserId")
+    public JsonResult findActivityScoreByUserId(String userid){
+        User user  = userService.findById(userid);
+        if (user ==null){
+            return JsonResult.notFound("找不到用户");
+        }
+        List<Sign> signs = userInfoService.findAllByUserId(userid);
+        JSONArray array =  userInfoService.findsocreALL(signs,user);
+        jsonResult.setData(array);
+        return jsonResult;
+    }
 
 
 }

@@ -1,6 +1,8 @@
 package com.ayundao.repository;
 
+import com.ayundao.entity.Activity;
 import com.ayundao.entity.AdvicesInfoUser;
+import com.ayundao.entity.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -20,4 +22,8 @@ public interface AdvicesInfoUserRepository extends CrudRepository<AdvicesInfoUse
 
     @Query("select a from AdvicesInfoUser a where a.advices.id = ?1")
     List<AdvicesInfoUser> findByAdvicesId(String id);
+
+    @Query("select a from AdvicesInfoUser a where a.user = ?1")
+    List<AdvicesInfoUser> findAllByUser(User user);
+
 }

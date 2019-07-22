@@ -51,6 +51,9 @@ public class ActivityServiceImpl implements ActivityService {
     @Autowired
     private SignRepository signRepository;
 
+    @Autowired
+    private ActivityInfoUserRepository activityInfoUserRepository;
+
     @Override
     @Modifying
     @Transactional
@@ -183,5 +186,28 @@ public class ActivityServiceImpl implements ActivityService {
     public ActivityFile findByIds(String id) {
         return activityFileRepository.find(id);
     }
+
+    @Override
+    public List<ActivityInfoUser> findActivityInfoUserByUserAndActivity(Activity activity, List<User> user) {
+
+        return activityInfoUserRepository.findActivityInfoUserByUserAndActivity(activity,user);
+    }
+
+    @Override
+    public List<User> findUserFromActivityInfroUserByActivity(Activity activity) {
+        return  activityInfoUserRepository.findUserFromActivityInfroUserByActivity(activity);
+    }
+
+    @Override
+    public List<ActivityInfoUser> findByUsers(List<User> users) {
+
+        return activityInfoUserRepository.findBYusers(users);
+    }
+
+    @Override
+    public void deleteActivityInfoUsers(List<ActivityInfoUser> activityInfoUsers) {
+        activityInfoUserRepository.deleteAll(activityInfoUsers);
+    }
+
 
 }

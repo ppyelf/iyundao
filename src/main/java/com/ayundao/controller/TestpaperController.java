@@ -12,13 +12,11 @@ import com.ayundao.service.PaperTitleService;
 import com.ayundao.service.TestpaperService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: TestpaperController
@@ -43,6 +41,7 @@ public class TestpaperController extends BaseController{
      * @apiGroup Testpaper
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
      * /testpaper/list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -71,23 +70,18 @@ public class TestpaperController extends BaseController{
     }
 
 
+
+
     /**
      * @api {POST} /testpaper/add 新增
      * @apiGroup Testpaper
      * @apiVersion 1.0.0
      * @apiDescription 新增
-     * @apiParam {String} title 试卷名称  必填
-     * @apiParam {String} intro 试卷简介
-     * @apiParam {String[]} examcontent 题目
-     * @apiParam {String[]} answer 答案  一个题目多个答案|分割
-     * @apiParam {String[]} yesorno 正确答案
-     * @apiParam {String[]} score
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
-     *                /testpaper/add?title=1112&intro=222&examcontent=111,222,333&answer=1.1|1.2|1.3,2.1|2.2|2.3,3.1|3.2|3.3&yesorno=1|1|1,2|2|2,3|3|3&score=5,10,15
+     *                {Json} {"title":"title","intro":"intro","examination":[{"examcontent" : "111","answer" : "1.1|1.2|1.3","yesorno":"1|1|1","score":"5"},{"examcontent":"222","answer":"2.1|2.2|2.3","yesorno":"1|0|1","score":"10"},{"examcontent":"333","answer":"3.1|3.2|3.3","yesorno":"0|0|1","score":"15"}]}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:</br>
-     *                                 601:传入的4个数组长度不匹配,无法做到下标1对1的关系</br>
-     *                                 602:第"+(i+1)+"道答案与正确答案长度不符合</br>
      *                                 603:试卷名称不能为空</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -99,34 +93,33 @@ public class TestpaperController extends BaseController{
      * }
      */
     @PostMapping("/add")
-    public JsonResult add(String title,
-                          String intro,
-                          String[] examcontent,
-                          String[] answer,
-                          String[] yesorno,
-                          String[] score){
-            if(StringUtils.isBlank(title)){
-                return JsonResult.failure(603, "试卷名称不能为空");
-            }
-            Testpaper testpaper = new Testpaper();
-            testpaper.setCreatedDate(new Date());
-            testpaper.setLastModifiedDate(new Date());
-            testpaper.setName(title);
-            testpaper.setIntro(intro);
-            if(examcontent.length != answer.length || examcontent.length != yesorno.length || examcontent.length != score.length){
-                return JsonResult.failure(601,"传入的4个数组长度不匹配,无法做到下标1对1的关系");
-            }
-        for (int i =0;i<answer.length;i++){
-            String[] answers= answer[i].split("\\|");
-            String[] yesornos= yesorno[i].split("\\|");
-            if(answers.length != yesornos.length ){
-                return JsonResult.failure(602,"第"+(i+1)+"道答案与正确答案长度不符合");
+    public  JsonResult addd(@RequestBody JSONObject params){
+
+        String title = (String)params.get("title");
+        if(StringUtils.isBlank(title)){
+            return JsonResult.failure(603, "试卷名称不能为空");
+        }
+        String intro = (String)params.get("intro");
+        Testpaper testpaper = new Testpaper();
+        testpaper.setCreatedDate(new Date());
+        testpaper.setLastModifiedDate(new Date());
+        testpaper.setName(title);
+        testpaper.setIntro(intro);
+        List<Map<String, String>> examination = (List<Map<String, String>>)params.get("examination");
+        String[] one;
+        String[] two;
+        for (Map<String, String> map : examination) {
+            one = map.get("answer").split("\\|");
+            two = map.get("yesorno").split("\\|");
+            if (one.length != two.length) {
+                return JsonResult.failure(601, map.get("answer") + "和" + map.get("yesorno") + "长度不匹配");
             }
         }
-        testpaper = testpaperService.save(testpaper,examcontent,answer,yesorno,score);
-        jsonResult.setData(converTestpaper(testpaper));
-        return  jsonResult;
+        testpaperService.savetest(testpaper,examination);
+        jsonResult.setData(testpaper);
+        return jsonResult;
     }
+
 
     /**
      * TestPaper 为json
@@ -142,6 +135,7 @@ public class TestpaperController extends BaseController{
      * @apiGroup Testpaper
      * @apiVersion 1.0.0
      * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *               /testpaper/view?id=4028d8816bd07269016bd0c82ac10027
@@ -171,6 +165,7 @@ public class TestpaperController extends BaseController{
      * @apiGroup Testpaper
      * @apiVersion 1.0.0
      * @apiDescription 删除
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
      *                /testpaper/del?id=4028d8816bd07269016bd0cdb85b0034
