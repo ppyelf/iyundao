@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8030
   salt: 45a1d914886d4a92b6835a181b2a20d8
   upload: d:\upload\
   token:
@@ -38,7 +38,6 @@ spring:
     port: 6379
     database: 0
     host: localhost
-
 
   jpa:
     database: mysql

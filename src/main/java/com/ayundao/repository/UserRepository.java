@@ -5,7 +5,6 @@ import com.ayundao.entity.User;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -76,4 +75,13 @@ public interface UserRepository extends BaseRepository<User, String> {
      */
     @Query("select u from User u where u.code = ?1")
     User findByCode(String code);
+
+    /**
+     * 机构用户分页
+     * @param id
+     * @return
+     */
+    @Query(value = "select u.* from t_user u left join t_user_relations ur on ur.USERID = u.ID where ur.SUBJECTID = (?1)", nativeQuery = true)
+    List<User> findBySubjectIdForPage(String id);
+
 }
