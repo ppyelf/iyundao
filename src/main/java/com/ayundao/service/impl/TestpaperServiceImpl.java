@@ -68,11 +68,13 @@ public class TestpaperServiceImpl implements TestpaperService{
         for (PaperTitle paperTitle : paperTitles) {
             obj2 = new JSONObject();
             obj2.put("title",paperTitle.getExamcontent());
+            obj2.put("paperTitleid",paperTitle.getId());
            List<PaperAnswer> paperAnswers = paperAnswerRepository.findByPaperTitles(paperTitle);
             one = new JSONArray();
             for (PaperAnswer paperAnswer : paperAnswers) {
                 obj = new JSONObject();
-                obj.put("select ",paperAnswer.getAnswerselect());
+                obj.put("id",paperAnswer.getId());
+                obj.put("select",paperAnswer.getAnswerselect());
                 obj.put("istrue",paperAnswer.getAnswer());
                 one.add(obj);
             }

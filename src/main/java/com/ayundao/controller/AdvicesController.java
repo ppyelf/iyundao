@@ -85,16 +85,18 @@ public class AdvicesController extends BaseController{
         System.out.println(advicesAll);
         JSONArray arr = new JSONArray();
         JSONObject object ;
-        for (Advices advices : advicesAll){
-            object = new JSONObject();
-            object.put("id",advices.getId());
-            object.put("title",advices.getTitle());
-            object.put("type",advices.getType());
-            object.put("issuertime",advices.getIssuertime());
-            object.put("username",advices.getUser().getName());
-            object.put("advicestext",advices.getAdvicestext());
-            object.put("advicesstatus",advices.getAdvicesstatus());
-            arr.add(object);
+        if (CollectionUtils.isNotEmpty(advicesAll)){
+            for (Advices advices : advicesAll){
+                object = new JSONObject();
+                object.put("id",advices.getId());
+                object.put("title",advices.getTitle());
+                object.put("type",advices.getType());
+                object.put("issuertime",advices.getIssuertime());
+                object.put("username",advices.getUser().getName());
+                object.put("advicestext",advices.getAdvicestext());
+                object.put("advicesstatus",advices.getAdvicesstatus());
+                arr.add(object);
+            }
         }
         jsonResult.setData(arr);
         return jsonResult;
@@ -225,25 +227,26 @@ public class AdvicesController extends BaseController{
         object.put("issuertime",advices.getIssuertime());
         object.put("advicesstatus",advices.getAdvicesstatus());
         object.put("advicestext",advices.getAdvicestext());
-        for (AdvicesInfoDepar advicesInfoDepar : advicesInfoDepars){
-            if(advicesInfoDepar.getSubject()!=null){
-                JSONObject json = new JSONObject(JsonUtils.getJson(advicesInfoDepar.getSubject()));
-                subjects.add(json);
-            }
-            if(advicesInfoDepar.getDepart()!=null){
-                JSONObject json = new JSONObject(JsonUtils.getJson(advicesInfoDepar.getDepart()));
-                departs.add(json);
-            }
-            if(advicesInfoDepar.getGroups()!=null){
-                JSONObject json = new JSONObject(JsonUtils.getJson(advicesInfoDepar.getGroups()));
-                groups.add(json);
-            }
-            if(advicesInfoDepar.getUser()!=null){
-                JSONObject json = new JSONObject(JsonUtils.getJson(advicesInfoDepar.getUser()));
-                users.add(json);
+        if (CollectionUtils.isNotEmpty(advicesInfoDepars)){
+            for (AdvicesInfoDepar advicesInfoDepar : advicesInfoDepars){
+                if(advicesInfoDepar.getSubject()!=null){
+                    JSONObject json = new JSONObject(JsonUtils.getJson(advicesInfoDepar.getSubject()));
+                    subjects.add(json);
+                }
+                if(advicesInfoDepar.getDepart()!=null){
+                    JSONObject json = new JSONObject(JsonUtils.getJson(advicesInfoDepar.getDepart()));
+                    departs.add(json);
+                }
+                if(advicesInfoDepar.getGroups()!=null){
+                    JSONObject json = new JSONObject(JsonUtils.getJson(advicesInfoDepar.getGroups()));
+                    groups.add(json);
+                }
+                if(advicesInfoDepar.getUser()!=null){
+                    JSONObject json = new JSONObject(JsonUtils.getJson(advicesInfoDepar.getUser()));
+                    users.add(json);
+                }
             }
         }
-
         object.put("subjects", subjects);
         object.put("departs", departs);
         object.put("groups", groups);
@@ -307,16 +310,18 @@ public class AdvicesController extends BaseController{
         List<Advices> advices2 = advicesService.findAdvicesByDeptionId(id);
         JSONArray arr = new JSONArray();
         JSONObject object;
-        for(Advices advices :advices2){
-            object = new JSONObject();
-            object.put("id",advices.getId());
-            object.put("title",advices.getTitle());
-            object.put("type",advices.getType());
-            object.put("issuertime",advices.getIssuertime());
-            object.put("username",advices.getUser().getName());
-            object.put("advicestext",advices.getAdvicestext());
-            object.put("advicesstatus",advices.getAdvicesstatus());
-            arr.add(object);
+        if (CollectionUtils.isNotEmpty(advices2)){
+            for(Advices advices :advices2){
+                object = new JSONObject();
+                object.put("id",advices.getId());
+                object.put("title",advices.getTitle());
+                object.put("type",advices.getType());
+                object.put("issuertime",advices.getIssuertime());
+                object.put("username",advices.getUser().getName());
+                object.put("advicestext",advices.getAdvicestext());
+                object.put("advicesstatus",advices.getAdvicesstatus());
+                arr.add(object);
+            }
         }
         jsonResult.setData(arr);
         return jsonResult;

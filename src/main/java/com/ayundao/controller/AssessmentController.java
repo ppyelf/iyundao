@@ -11,6 +11,7 @@ import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.repository.AssessmentRepository;
 import com.ayundao.service.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -87,17 +88,19 @@ public class AssessmentController extends BaseController {
     public JsonResult list() {
         List<Assessment> assessments = assessmentService.findAll();
         JSONArray arr = new JSONArray();
-        for (Assessment assessment : assessments) {
-            JSONObject object = new JSONObject();
-            object.put("id",assessment.getId());
-            object.put("number", assessment.getNumber());
-            object.put("title", assessment.getName());
-            object.put("type", assessment.getType());
-            object.put("score", assessment.getTotal());
-            object.put("starttime", assessment.getStartTime());
-            object.put("endtime", assessment.getEndTime());
-            object.put("remark", assessment.getRemark());
-            arr.add(object);
+        if (CollectionUtils.isNotEmpty(assessments)){
+            for (Assessment assessment : assessments) {
+                JSONObject object = new JSONObject();
+                object.put("id",assessment.getId());
+                object.put("number", assessment.getNumber());
+                object.put("title", assessment.getName());
+                object.put("type", assessment.getType());
+                object.put("score", assessment.getTotal());
+                object.put("starttime", assessment.getStartTime());
+                object.put("endtime", assessment.getEndTime());
+                object.put("remark", assessment.getRemark());
+                arr.add(object);
+            }
         }
         jsonResult.setData(arr);
         return jsonResult;
@@ -521,8 +524,9 @@ public class AssessmentController extends BaseController {
     public JsonResult viewIndex(String id){
         List<AssessmentIndex> assessmentIndices = assessmentService.findIndexByAssessmentId(id);
         JSONArray array = new JSONArray();
-        for (AssessmentIndex assessmentIndex : assessmentIndices) {
-            JSONObject object = new JSONObject();
+        if (CollectionUtils.isNotEmpty(assessmentIndices)){
+            for (AssessmentIndex assessmentIndex : assessmentIndices) {
+                JSONObject object = new JSONObject();
                 object.put("id",assessmentIndex.getId());
                 object.put("isuse",assessmentIndex.getIsuse());
                 object.put("lname",assessmentIndex.getLname());
@@ -532,13 +536,14 @@ public class AssessmentController extends BaseController {
                 object.put("sortedcode",assessmentIndex.getSortedcode());
                 object.put("sortedid",assessmentIndex.getSortedcode());
                 object.put("assessment",JsonUtils.getJson(assessmentIndex.getAssessment()));
-            if (assessmentService.findSnameBySortedid(assessmentIndex.getParcode())!=null){
-                object.put("parcodename",(assessmentService.findSnameBySortedid(assessmentIndex.getParcode())).getSname());
-            }else {
-                object.put("parcodename","");
-            }
+                if (assessmentService.findSnameBySortedid(assessmentIndex.getParcode())!=null){
+                    object.put("parcodename",(assessmentService.findSnameBySortedid(assessmentIndex.getParcode())).getSname());
+                }else {
+                    object.put("parcodename","");
+                }
 
                 array.add(object);
+            }
         }
         jsonResult.setData(array);
         return jsonResult;

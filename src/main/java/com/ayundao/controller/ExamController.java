@@ -339,11 +339,12 @@ public class ExamController extends BaseController{
 
 
     /**
-     * @api {POST} /exam/score 得分列表
+     * @api {POST} /exam/score 考试得分列表
      * @apiGroup Exam
      * @apiVersion 1.0.0
      * @apiDescription 列表
      * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiParam {String} 考试id 必填
      * @apiParamExample {json} 请求样例:
      *                   /exam/score?id=4028d8816bcb8bc8016bcb8de2b40008
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -366,11 +367,13 @@ public class ExamController extends BaseController{
         JSONArray arr = new JSONArray();
 
         List<ExamInfoUserScore> examInfoUserScores = examService.findALLScore(exam);
-        for (ExamInfoUserScore examInfoUserScore : examInfoUserScores) {
-            JSONObject object = new JSONObject();
-            object.put("name",examInfoUserScore.getUser().getName());
-            object.put("score",examInfoUserScore.getScore());
-            arr.add(object);
+        if (CollectionUtils.isNotEmpty(examInfoUserScores)){
+            for (ExamInfoUserScore examInfoUserScore : examInfoUserScores) {
+                JSONObject object = new JSONObject();
+                object.put("name",examInfoUserScore.getUser().getName());
+                object.put("score",examInfoUserScore.getScore());
+                arr.add(object);
+            }
         }
         jsonResult.setData(arr);
         return jsonResult;
@@ -438,7 +441,7 @@ public class ExamController extends BaseController{
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
-    @PostMapping("findExamInfoUser")
+    @PostMapping("/findExamInfoUser")
     public JsonResult findExamInfoUser(String examid,String userid){
         List<ExamInfoUser> examInfoUsers = examInfoUserService.findByExamUserId(examid,userid);
         ExamInfoUserScore examInfoUserScore = examInfoUserScoreService.findByExamUserId(examid,userid);
@@ -465,6 +468,59 @@ public class ExamController extends BaseController{
         return  jsonResult;
     }
 
+    /**
+    * @api {POST} /exam/socreforuser 查看个人考试得分记录
+    * @apiGroup Exam
+    * @apiVersion 1.0.0
+    * @apiDescription 查看
+     * @apiHeader {String} IYunDao-AssessToken token验证
+    * @apiParam {String} 用户id必填
+    * @apiParamExample {json} 请求样例:
+    *                /exam/socreforuser?id=4028d8816bcc9a32016bcccd9616000c
+    * @apiSuccess (200) {String} code 200:成功</br>
+    * @apiSuccess (200) {String} message 信息
+    * @apiSuccess (200) {String} data 返回用户信息
+    * @apiSuccessExample {json} 返回样例:
+    * {
+    *     "code": 200,
+    *     "message": "成功",
+    *      "data": [
+    {
+    "score": "10",                                  得分
+    "examtitle": "学院检测",                        考试名称
+    "examid": "4028d8816bcb8bc8016bcb8de2b40008",   考试id
+    "id": "4028d8816bd49aee016bd4a2edf50013",       这条记录的id
+    "userid": "402881916ba10b8a016ba113adbc0006",   用户id
+    "username": "钱正"                                用户名称
+    },]
+    * }
+    */
+    @RequiresPermissions(PERMISSION_VIEW)
+    @PostMapping("/socreforuser")
+    public JsonResult socreforuser(String id){
+        User user = userService.findById(id);
+        if(user ==null){
+            return  JsonResult.notFound("找不到用户");
+        }
+        List<ExamInfoUserScore> examInfoUserScore = examService.findScoreByUser(user);
+        JSONArray arr = new JSONArray();
+        System.out.println("sadasde"+examInfoUserScore);
+        if (CollectionUtils.isNotEmpty(examInfoUserScore)){
+            for (ExamInfoUserScore infoUserScore : examInfoUserScore) {
+                JSONObject object = new JSONObject();
+
+                object.put("id",infoUserScore.getId());
+                object.put("score",infoUserScore.getScore());
+                object.put("examid",infoUserScore.getExam().getId());
+                object.put("examtitle",infoUserScore.getExam().getTitle());
+                object.put("userid",infoUserScore.getUser().getId());
+                object.put("username",infoUserScore.getUser().getName());
+                arr.add(object);
+            }
+        }
+        jsonResult.setData(arr);
+        return jsonResult;
+    }
 
     /**
      * 转换Exam 为json

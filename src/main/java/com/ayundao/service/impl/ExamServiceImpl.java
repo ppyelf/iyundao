@@ -284,5 +284,10 @@ public class ExamServiceImpl implements ExamService {
         return examRepository.findPage(pageable);
     }
 
+    @Override
+    public List<ExamInfoUserScore> findScoreByUser(User user) {
+        return examInfoUserScoreRepository.findbyUser(user);
+    }
+
 
 }

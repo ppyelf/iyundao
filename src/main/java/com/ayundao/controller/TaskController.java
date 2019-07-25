@@ -79,19 +79,21 @@ public class TaskController extends BaseController {
     public JsonResult list() {
         List<Task> tasks = taskService.findAll();
         JSONArray arr = new JSONArray();
-        for (Task task : tasks) {
-            JSONObject object = new JSONObject();
-            object.put("id", task.getId());
-            object.put("title", task.getTitle());
-            object.put("name", task.getUser().getName());
-            object.put("type", task.getType());
-            object.put("issuertime", task.getIssuertime());
-            object.put("tasktext", task.getTasktext());
-            if (task.getSendstate() == null) {
-                task.setSendstate("未发送任务");
+        if (CollectionUtils.isNotEmpty(tasks)){
+            for (Task task : tasks) {
+                JSONObject object = new JSONObject();
+                object.put("id", task.getId());
+                object.put("title", task.getTitle());
+                object.put("name", task.getUser().getName());
+                object.put("type", task.getType());
+                object.put("issuertime", task.getIssuertime());
+                object.put("tasktext", task.getTasktext());
+                if (task.getSendstate() == null) {
+                    task.setSendstate("未发送任务");
+                }
+                object.put("sendstate", task.getSendstate());
+                arr.add(object);
             }
-            object.put("sendstate", task.getSendstate());
-            arr.add(object);
         }
         jsonResult.setData(arr);
         return jsonResult;
@@ -220,25 +222,27 @@ public class TaskController extends BaseController {
         object.put("name", task.getUser().getName());
         object.put("tasktext", task.getTasktext());
         object.put("sendstatu", task.getSendstate());
-
-        for(TaskInfoDepart taskInfoDepart: taskInfoDeparts){
-            if(taskInfoDepart.getSubject()!= null){
-                JSONObject json = new JSONObject(JsonUtils.getJson(taskInfoDepart.getSubject()));
-                subjects.add(json);
-            }
-            if (taskInfoDepart.getDepart()!=null){
-                JSONObject json = new JSONObject(JsonUtils.getJson(taskInfoDepart.getDepart()));
-                departs.add(json);
-            }
-            if(taskInfoDepart.getGroups()!=null){
-                JSONObject json = new JSONObject(JsonUtils.getJson(taskInfoDepart.getGroups()));
-                groups.add(json);
-            }
-            if(taskInfoDepart.getUser()!=null){
-                JSONObject json = new JSONObject(JsonUtils.getJson(taskInfoDepart.getUser()));
-                users.add(json);
+        if (CollectionUtils.isNotEmpty(taskInfoDeparts)){
+            for(TaskInfoDepart taskInfoDepart: taskInfoDeparts){
+                if(taskInfoDepart.getSubject()!= null){
+                    JSONObject json = new JSONObject(JsonUtils.getJson(taskInfoDepart.getSubject()));
+                    subjects.add(json);
+                }
+                if (taskInfoDepart.getDepart()!=null){
+                    JSONObject json = new JSONObject(JsonUtils.getJson(taskInfoDepart.getDepart()));
+                    departs.add(json);
+                }
+                if(taskInfoDepart.getGroups()!=null){
+                    JSONObject json = new JSONObject(JsonUtils.getJson(taskInfoDepart.getGroups()));
+                    groups.add(json);
+                }
+                if(taskInfoDepart.getUser()!=null){
+                    JSONObject json = new JSONObject(JsonUtils.getJson(taskInfoDepart.getUser()));
+                    users.add(json);
+                }
             }
         }
+
         object.put("subjects", subjects);
         object.put("departs", departs);
         object.put("groups", groups);
@@ -303,20 +307,23 @@ public class TaskController extends BaseController {
         List<Task> tasksss = taskService.findAdvicesByDeptionId(id);
         JSONArray arr = new JSONArray();
         JSONObject object;
-        for (Task task : tasksss) {
-            object = new JSONObject();
-            object.put("id", task.getId());
-            object.put("title", task.getTitle());
-            object.put("name", task.getUser().getName());
-            object.put("type", task.getType());
-            object.put("issuertime", task.getIssuertime());
-            object.put("tasktext", task.getTasktext());
-            if (task.getSendstate() == null) {
-                task.setSendstate("未发送任务");
+        if (CollectionUtils.isNotEmpty(tasksss)){
+            for (Task task : tasksss) {
+                object = new JSONObject();
+                object.put("id", task.getId());
+                object.put("title", task.getTitle());
+                object.put("name", task.getUser().getName());
+                object.put("type", task.getType());
+                object.put("issuertime", task.getIssuertime());
+                object.put("tasktext", task.getTasktext());
+                if (task.getSendstate() == null) {
+                    task.setSendstate("未发送任务");
+                }
+                object.put("sendstate", task.getSendstate());
+                arr.add(object);
             }
-            object.put("sendstate", task.getSendstate());
-            arr.add(object);
         }
+
         jsonResult.setData(arr);
         return jsonResult;
     }

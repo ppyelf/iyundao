@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
-import com.ayundao.entity.Exam;
-import com.ayundao.entity.ExamInfoDepart;
-import com.ayundao.entity.ExamInfoTextpaper;
-import com.ayundao.entity.ExamInfoUserScore;
+import com.ayundao.entity.*;
 
 import java.util.List;
 import java.util.Map;
@@ -95,4 +92,11 @@ public interface ExamService {
      * @return
      */
     Page<Exam> findNameForPage(Pageable pageable);
+
+    /**
+     * 通过用户实体查找所有得分情况
+     * @param user
+     * @return
+     */
+    List<ExamInfoUserScore> findScoreByUser(User user);
 }

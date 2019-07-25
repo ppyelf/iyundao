@@ -10,6 +10,7 @@ import com.ayundao.entity.Task;
 import com.ayundao.entity.Testpaper;
 import com.ayundao.service.PaperTitleService;
 import com.ayundao.service.TestpaperService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -67,13 +68,16 @@ public class TestpaperController extends BaseController{
     public JsonResult list(){
         List<Testpaper> testpapers = testpaperService.findAll();
         JSONArray arr = new JSONArray();
-        for (Testpaper testpaper : testpapers) {
-            JSONObject object = new JSONObject();
-            object.put("id",testpaper.getId());
-            object.put("name",testpaper.getName());
-            object.put("intro",testpaper.getIntro());
-            arr.add(object);
+        if (CollectionUtils.isNotEmpty(testpapers)){
+            for (Testpaper testpaper : testpapers) {
+                JSONObject object = new JSONObject();
+                object.put("id",testpaper.getId());
+                object.put("name",testpaper.getName());
+                object.put("intro",testpaper.getIntro());
+                arr.add(object);
+            }
         }
+
         jsonResult.setData(arr);
         return jsonResult;
     }
@@ -104,7 +108,6 @@ public class TestpaperController extends BaseController{
     @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     public  JsonResult addd(@RequestBody JSONObject params){
-
         String title = (String)params.get("title");
         if(StringUtils.isBlank(title)){
             return JsonResult.failure(603, "试卷名称不能为空");

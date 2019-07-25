@@ -132,6 +132,7 @@ public class ActivityController extends BaseController {
      *     "data": []
      * }
      */
+
     @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_file")
     public JsonResult delFile(String[] ids) {
@@ -164,6 +165,7 @@ public class ActivityController extends BaseController {
      *     "data": {"version":"0","id":"402881916b2a9588016b2adbe569000e","createdDate":"20190606113622","lastModifiedDate":"20190606113622","name":"上传图片","type":"text","content":"","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
      * }
      */
+
     @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_image")
     public JsonResult uploadImage(String name,
