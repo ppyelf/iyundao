@@ -77,6 +77,8 @@ public interface ActivityService {
     void delFileByIds(String[] ids);
 
     /**
+     * yundaoSERVER
+     *  YD_2016
      * 根据IDS删除活动图片
      * @param ids
      */
@@ -109,4 +111,31 @@ public interface ActivityService {
      */
     ActivityFile findByIds(String id);
 
+
+    /**
+     * 查看用户是不是已经在这个活动了
+     * @param activity
+     * @param user
+     */
+    List<ActivityInfoUser> findActivityInfoUserByUserAndActivity(Activity activity, List<User> user);
+
+    /**
+     * 根据活动查找改活动下的人员
+     * @param activity
+     * @return
+     */
+    List<User> findUserFromActivityInfroUserByActivity(Activity activity);
+
+    /**
+     * 根据用户实体找到所有用户参与实体
+     * @param users
+     * @return
+     */
+    List<ActivityInfoUser> findByUsers(List<User> users);
+
+    /**
+     * 批量删除实体
+     * @param activityInfoUsers
+     */
+    void deleteActivityInfoUsers(List<ActivityInfoUser> activityInfoUsers);
 }

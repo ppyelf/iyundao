@@ -1,6 +1,8 @@
 package com.ayundao.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.Message;
 import com.ayundao.entity.MessageFile;
@@ -125,9 +127,10 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> findAllType(String type){
+    public List<Message> findAllType(int type){
+
         for (Message.TYPE value : Message.TYPE.values()) {
-            if(value.getName().equals(type)){
+            if(value.ordinal()==(type)){
                 return messageRepository.findByType(value);
             }
         }
@@ -158,4 +161,17 @@ public class MessageServiceImpl implements MessageService {
     public MessageFile findByIdF(String id) {
         return messageFileRepository.find(id);
     }
+
+    @Override
+    public Message saveMessage(Message message) {
+
+        return messageRepository.save(message);
+    }
+
+    @Override
+    public List<Message> findByTitleAndStatu(int a, String title) {
+        return messageRepository.findByTitleAndStatu(a,title);
+    }
+
+
 }

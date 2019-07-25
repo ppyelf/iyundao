@@ -71,4 +71,5 @@ public interface UserRelationRepository extends CrudRepository<UserRelation, Str
     //根据用户IDS获取实体集合信息
     @Query("select ur from UserRelation ur where ur.user.id in (?1)")
     List<UserRelation> findByUserIds(String[] userIds);
+
 }

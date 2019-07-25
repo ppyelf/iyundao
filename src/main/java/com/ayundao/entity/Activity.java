@@ -91,6 +91,14 @@ public class Activity extends BaseEntity<String> {
      */
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ReleaseGroups> releaseGroups;
+
+    /**
+     * 活动报名人员id
+     */
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ActivityInfoUser> activityInfoUser;
+
+
     /**
      * 备用字段1
      */
@@ -251,6 +259,14 @@ public class Activity extends BaseEntity<String> {
 
     public void setActivityImages(Set<ActivityImage> activityImages) {
         this.activityImages = activityImages;
+    }
+
+    public Set<ActivityInfoUser> getActivityInfoUser() {
+        return activityInfoUser;
+    }
+
+    public void setActivityInfoUser(Set<ActivityInfoUser> activityInfoUser) {
+        this.activityInfoUser = activityInfoUser;
     }
 
     public enum ACTIVITY_TYPE{

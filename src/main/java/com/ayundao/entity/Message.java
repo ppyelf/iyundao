@@ -31,6 +31,12 @@ public class Message extends BaseEntity<String> {
     private Set<MessageImage> messageImages;
 
     /**
+     * 标题
+     */
+    @Column(name = "TITLE",nullable = false,length = 50)
+    private String title;
+
+    /**
      * 发布支部
      */
     @Column(name = "BRANCH",nullable = false,length = 50)
@@ -246,6 +252,14 @@ public class Message extends BaseEntity<String> {
 
     public void setInfo5(String info5) {
         this.info5 = info5;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public enum TYPE{

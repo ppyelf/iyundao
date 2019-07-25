@@ -7,6 +7,7 @@ import com.ayundao.entity.Subject;
 import com.ayundao.entity.User;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
+import com.ayundao.entity.UserInfoWork;
 
 import java.util.List;
 
@@ -102,4 +103,17 @@ public interface UserService {
      * @param user
      */
     User save(User user);
+
+    /**
+     * 通过用户id找到所有实体
+     */
+    List<User> findbyIds(String[] userids);
+
+
+
+
+    /**
+     * 通过机构id获得所有的用户
+     */
+    List<User> findBySubjectIdForPage(String id);
 }

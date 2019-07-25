@@ -1,13 +1,13 @@
 package com.ayundao.controller;
 
+import com.alibaba.druid.support.json.JSONUtils;
+import com.alibaba.fastjson.JSON;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.annotation.CurrentSubject;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
-import com.ayundao.service.ActivityService;
-import com.ayundao.service.AttendanceService;
-import com.ayundao.service.SignService;
+import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authz.annotation.*;
@@ -45,7 +45,13 @@ public class ActivityController extends BaseController {
     private AttendanceService attendanceService;
 
     @Autowired
+    private ActivityInfoUserService activityInfoUserService;
+
+    @Autowired
     private SignService signService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * @api {POST} /activity/upload_file 上传文件
@@ -489,6 +495,7 @@ public class ActivityController extends BaseController {
         if (activity == null) {
             return JsonResult.notFound("活动不存在");
         }
+        //todo
         jsonResult.setData(convertActivity(activity));
         return jsonResult;
     }
@@ -523,6 +530,174 @@ public class ActivityController extends BaseController {
     }
 
     /**
+     * @api {POST} /activity/registration 添加活动报名人员
+     * @apiGroup Activity
+     * @apiVersion 1.0.0
+     * @apiDescription 分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiParam {String} activityid 必填
+     * @apiParam {String[]} userid 必填
+     * @apiParamExample {json} 请求示例:
+     *              /activity/registration?activityid=88888888&userid=402881916ba10b8a016ba113adbc0006
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:"没有此活动"<br>
+     *                                  602:"没有此用户"<br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *      "id": "4028d8816bc50e52016bc52dae240001"
+     * }
+     */
+    @PostMapping("/registration")
+    private JsonResult registration(String activityid,
+                                    String[] userid
+                                    ){
+        List<User> user = userService.findbyIds(userid);
+        Activity activity = activityService.find(activityid);
+        if (activity == null){
+            return JsonResult.failure(601,"没有此活动");
+        }
+        if(CollectionUtils.isEmpty(user)){
+            return JsonResult.failure(602,"没有此用户");
+        }
+        if (userid.length!=user.size()){
+            return JsonResult.failure(603,"有"+(userid.length-user.size())+"个用户实体不存在");
+        }
+       List<ActivityInfoUser> activities = activityService.findActivityInfoUserByUserAndActivity(activity,user);
+        if (CollectionUtils.isNotEmpty(activities)){
+            return JsonResult.failure(604,"有用户已经在这个活动中了");
+        }
+        activityInfoUserService.save(activity,user);
+        return  jsonResult;
+    }
+
+
+    /**
+     * @api {POST} /activity/viewpeopleforactivity 根据活动查找改活动下的人员
+     * @apiGroup Activity
+     * @apiVersion 1.0.0
+     * @apiDescription 分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiParam {String} activityid 必填
+     * @apiParamExample {json} 请求示例:
+     *             /activity/viewpeopleforactivity?activityid=88888888
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:"没有此活动"<br>
+     *                                  602:"没有此用户"<br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *        "data": [{"password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06","code": "000","salt": "3a10624a300f4670","sex": "0","name": "管理员","remark": "未填写","id": "0a4179fc06cb49e3ac0db7bcc8cf0882","userType": "normal","account": "admin","status": "normal"},{"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}]
+     * }
+     */
+    @PostMapping("/viewpeopleforactivity")
+    public JsonResult viewpeopleforactivity(String activityid){
+        Activity activity = activityService.find(activityid);
+        if (activity == null){
+            return JsonResult.notFound("找不到活动");
+        }
+        List<User> users = activityService.findUserFromActivityInfroUserByActivity(activity);
+        JSONArray array = new JSONArray();
+        for (User user : users) {
+            array.add(JsonUtils.getJson(user));
+        }
+        jsonResult.setData(array);
+        return jsonResult;
+    }
+
+
+    /**
+     * @api {POST} /activity/delpeople 删除人员
+     * @apiGroup Activity
+     * @apiVersion 1.0.0
+     * @apiDescription 分页
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiParam {String[]} userids 必填 用户id
+     * @apiParamExample {json} 请求示例:
+     *             /activity/delpeople?userids=402881916ba10b8a016ba113adbc0006,0a4179fc06cb49e3ac0db7bcc8cf0882
+     * @apiSuccess (200) {String} code 200:成功</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *        "data": []
+     * }
+     */
+    @PostMapping("/delpeople")
+    public  JsonResult delpeople(String[] userids){
+        List<User> users = userService.findbyIds(userids);
+        if (CollectionUtils.isEmpty(users)){
+            return JsonResult.notFound("没有找到用户实体");
+        }
+        List<ActivityInfoUser> activityInfoUsers = activityService.findByUsers(users);
+        activityService.deleteActivityInfoUsers(activityInfoUsers);
+        return JsonResult.success();
+    }
+
+
+    /**
+    * @api {POST} /activity/searchname 模糊查询活动名称
+    * @apiGroup Activity
+    * @apiVersion 1.0.0
+    * @apiDescription 查看
+    * @apiParam {String} name 模糊查询名称必填
+    * @apiParam {int} page  跳过的页数
+    * @apiParam {int} size 每页的数量
+    * @apiParamExample {json} 请求样例:
+    *                /activity/searchname?name=1&page&size
+    * @apiSuccess (200) {String} code 200:成功</br>
+    * @apiSuccess (200) {String} message 信息
+    * @apiSuccess (200) {String} data 返回用户信息
+    * @apiSuccessExample {json} 返回样例:
+    * {
+    *     "code": 200,
+    *     "message": "成功",
+    *       "data": {
+    "total": 2,
+    "totalPage": 1,
+    "page": 0,
+    "content": [
+    {
+                "number": "3",    成员数
+                "total": "15",          总分
+                "name": "12312",        标题
+                "id": "88888888",       活动id
+                "type": "depart",   0-部门考核 1老干部考核 2 etc
+                "content": "21321"          内容
+                },
+                {
+                "number": "1",
+                "total": "4",
+                "name": "154",
+                "id": "121211231",
+                "type": "depart",
+                "content": ""
+    }]}
+    * }
+    */
+    @PostMapping("/searchname")
+    public JsonResult searchtitle(String name,
+                                  @RequestParam(defaultValue = "0")int page,
+                                  @RequestParam(defaultValue = "10")int size){
+            Pageable pageable = new Pageable(page,size);
+            pageable.setSearchProperty("name");
+            pageable.setSearchValue(name);
+            Page<Activity> activityPage = activityService.findAllForPage(pageable);
+        JSONObject jsonObject = JsonUtils.getPage(activityPage);
+        jsonResult.setData(jsonObject);
+        return jsonResult;
+    }
+
+
+    /**
      * 转换Activity为json
      * @param activity
      * @return
@@ -551,6 +726,6 @@ public class ActivityController extends BaseController {
             json.put("activityImages", arr);
         }
         return json;
-
     }
+
 }

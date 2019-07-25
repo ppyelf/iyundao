@@ -97,4 +97,12 @@ public class SubjectServiceImpl implements SubjectService {
     public Subject findByCode(String code) {
         return subjectRepository.findByCode(code);
     }
+
+    @Override
+    public List<Subject> findbyIds(String[] subjectIds) {
+
+        return subjectRepository.findByIds(subjectIds);
+    }
+
+
 }

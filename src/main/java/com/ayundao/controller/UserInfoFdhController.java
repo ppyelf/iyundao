@@ -12,6 +12,10 @@ import com.ayundao.service.UserInfoPowerService;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +26,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.ayundao.base.BaseController.ROLE_ADMIN;
+import static com.ayundao.base.BaseController.ROLE_MANAGER;
+import static com.ayundao.base.BaseController.ROLE_USER;
+
 /**
  * @ClassName: UserInfoFdhController
  * @project: ayundao
@@ -30,6 +38,8 @@ import java.util.Map;
  * @Description: 控制层 - 用户详情 -妇代会
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_MANAGER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/userInfoFdh")
 public class UserInfoFdhController extends BaseController {
@@ -79,6 +89,7 @@ public class UserInfoFdhController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_fdh")
     public JsonResult add_fdh(String post,String time,
                               String userinfoid) {
@@ -112,6 +123,7 @@ public class UserInfoFdhController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         if (StringUtils.isBlank(id)) {
@@ -188,6 +200,7 @@ public class UserInfoFdhController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<UserInfo> pages = userInfoService.findAll();
@@ -230,6 +243,7 @@ public class UserInfoFdhController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listDepart")
     public JsonResult listDepart(String departId){
         List<User> pages = userService.findByDepartIdForPage(departId);
@@ -280,6 +294,7 @@ public class UserInfoFdhController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listGroupId")
     public JsonResult listGroupId(String groupId){
         List<User> pages = userService.findByGroupIdForPage(groupId);
@@ -455,6 +470,7 @@ public class UserInfoFdhController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/listPower")
     public JsonResult listPower(){
         Map<String,Object> pages = userInfoPowerService.countBySexFdh();

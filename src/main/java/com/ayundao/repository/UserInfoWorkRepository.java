@@ -26,4 +26,12 @@ public interface UserInfoWorkRepository extends BaseRepository<UserInfoWork,Stri
      */
     @Query("select ui from UserInfoWork ui where ui.userinfoid=?1")
     List<UserInfoWork> findByUserInfoWorkUserid(String userinfoid);
+
+    /**
+     * 根据用户关联ID查询实体信息
+     * @param userid
+     * @return
+     */
+    @Query("select ui from UserInfoWork ui where ui.userinfoid=?1")
+    UserInfoWork findbyUserInfoId(String userid);
 }

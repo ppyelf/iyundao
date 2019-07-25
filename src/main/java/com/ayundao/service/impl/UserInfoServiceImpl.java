@@ -1,5 +1,6 @@
 package com.ayundao.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
@@ -84,6 +85,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Autowired
     private UserInfoWorkRepository userInfoWorkRepository;
 
+    @Autowired
+    private SignRepository signRepository;
+
+    @Autowired
+    private ActivityRepository activityRepository;
 
     @Override
     @Transactional
@@ -646,6 +652,47 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public Map<String, Object> countByIdentity() {
         return userInfoRepository.countByIdentity();
+    }
+
+    @Override
+    public UserInfoWork findWorkById(String userid) {
+        return userInfoWorkRepository.findbyUserInfoId(userid);
+    }
+
+    @Override
+    public UserInfoEducationWork findEducationWorkById(String userid) {
+        return userInfoEducationWorkRepository.findByUserInfoId(userid);
+    }
+
+    @Override
+    public UserInfo findbyUserId(String userid) {
+        return userInfoRepository.findByUserId(userid);
+    }
+
+    @Override
+    public List<Sign> findAllByUserId(String userid) {
+        for (Sign.SIGN_TYPE type : Sign.SIGN_TYPE.values()){
+            if (type.ordinal() == 0){
+                return signRepository.findActivityByUserId(type.ordinal(),userid);
+            }
+        }
+        return  null;
+    }
+
+    @Override
+    public JSONArray findsocreALL(List<Sign> signs,User user) {
+        JSONArray array = new JSONArray();
+        JSONObject object;
+        for (Sign sign : signs) {
+            object = new JSONObject();
+            object.put("time",sign.getSignTime());
+            object.put("activity",JsonUtils.getJson(sign.getActivity()));
+            object.put("getscore",Integer.parseInt(sign.getActivity().getTotal())/sign.getActivity().getNumber());
+            object.put("user",user);
+            array.add(object);
+        }
+        return array;
+
     }
 
 }

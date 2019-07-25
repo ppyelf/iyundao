@@ -99,11 +99,72 @@ public class User extends BaseEntity<String> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Groups> groups;
 
-    /**
+	 /**
+
      * 第三方授权
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserApp> userApps;
+	
+    /**
+     * 任务发布人id
+     */
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Task> task;
+
+    /**
+     * 任务人员参与表中的用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskInfoUser> taskInfoUser;
+
+    /**
+     * 消息发布人id
+     */
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    private Set<Advices> advices;
+
+    /**
+     * 消息人员接收表人员id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<AdvicesInfoUser> advicesInfoUser;
+
+    /**
+     * 活动报名人员id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ActivityInfoUser> activityInfoUser;
+
+    /**
+     * 考试人员得分表用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExamInfoUserScore> examInfoUserScore;
+
+    /**
+     * 考试人员详情表用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExamInfoUser> examInfoUser;
+
+    /**
+     *任务组织部门表用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskInfoDepart> taskInfoDepart;
+
+    /**
+     * 消息发送部门组织表用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<AdvicesInfoDepar> advicesInfoDepar;
+
+    /**
+     * 考试参与部门组织表用户id
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExamInfoDepart> examInfoDepart;
 
     /**
      * 备用字段1
@@ -231,12 +292,92 @@ public class User extends BaseEntity<String> {
         this.groups = groups;
     }
 
+	
     public Set<UserApp> getUserApps() {
         return userApps;
     }
 
     public void setUserApps(Set<UserApp> userApps) {
         this.userApps = userApps;
+    }    public Set<Task> getTask() {
+        return task;
+    }
+
+    public void setTask(Set<Task> task) {
+        this.task = task;
+    }
+
+    public Set<TaskInfoUser> getTaskInfoUser() {
+        return taskInfoUser;
+    }
+
+    public void setTaskInfoUser(Set<TaskInfoUser> taskInfoUser) {
+        this.taskInfoUser = taskInfoUser;
+    }
+
+    public Set<Advices> getAdvices() {
+        return advices;
+    }
+
+    public void setAdvices(Set<Advices> advices) {
+        this.advices = advices;
+    }
+
+    public Set<AdvicesInfoUser> getAdvicesInfoUser() {
+        return advicesInfoUser;
+    }
+
+    public void setAdvicesInfoUser(Set<AdvicesInfoUser> advicesInfoUser) {
+        this.advicesInfoUser = advicesInfoUser;
+    }
+
+    public Set<ActivityInfoUser> getActivityInfoUser() {
+        return activityInfoUser;
+    }
+
+    public void setActivityInfoUser(Set<ActivityInfoUser> activityInfoUser) {
+        this.activityInfoUser = activityInfoUser;
+    }
+
+    public Set<ExamInfoUserScore> getExamInfoUserScore() {
+        return examInfoUserScore;
+    }
+
+    public void setExamInfoUserScore(Set<ExamInfoUserScore> examInfoUserScore) {
+        this.examInfoUserScore = examInfoUserScore;
+    }
+
+    public Set<ExamInfoUser> getExamInfoUser() {
+        return examInfoUser;
+    }
+
+    public void setExamInfoUser(Set<ExamInfoUser> examInfoUser) {
+        this.examInfoUser = examInfoUser;
+    }
+
+
+    public Set<TaskInfoDepart> getTaskInfoDepart() {
+        return taskInfoDepart;
+    }
+
+    public void setTaskInfoDepart(Set<TaskInfoDepart> taskInfoDepart) {
+        this.taskInfoDepart = taskInfoDepart;
+    }
+
+    public Set<AdvicesInfoDepar> getAdvicesInfoDepar() {
+        return advicesInfoDepar;
+    }
+
+    public void setAdvicesInfoDepar(Set<AdvicesInfoDepar> advicesInfoDepar) {
+        this.advicesInfoDepar = advicesInfoDepar;
+    }
+
+    public Set<ExamInfoDepart> getExamInfoDepart() {
+        return examInfoDepart;
+    }
+
+    public void setExamInfoDepart(Set<ExamInfoDepart> examInfoDepart) {
+        this.examInfoDepart = examInfoDepart;
     }
 
     /**

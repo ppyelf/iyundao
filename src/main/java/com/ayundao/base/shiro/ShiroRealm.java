@@ -158,7 +158,7 @@ public class ShiroRealm extends AuthorizingRealm {
         }
         return info;
     }
-    
+
     /**
      * 重写方法,清除当前用户的的 授权缓存
      * @param principals

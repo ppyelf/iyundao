@@ -85,4 +85,9 @@ public class DepartServiceImpl implements DepartService {
         return departRepository.findByCode(code);
     }
 
+    @Override
+    public List<Depart> findbyIds(String[] departIds) {
+        return departRepository.findByIds(departIds);
+    }
+
 }

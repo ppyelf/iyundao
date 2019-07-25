@@ -200,4 +200,14 @@ public class UserServiceImpl implements UserService {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+    @Override
+    public List<User> findbyIds(String[] userids) {
+        return userRepository.findByIds(userids);
+    }
+
+    @Override
+    public List<User> findBySubjectIdForPage(String id) {
+        return userRepository.findBySubjectIdForPage(id);
+    }
 }

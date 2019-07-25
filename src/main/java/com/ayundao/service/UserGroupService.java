@@ -34,6 +34,7 @@ public interface UserGroupService {
     UserGroup save(UserGroup userGroup);
 
 
+
     List<UserGroup> findByIds(String[] userGroupIds);
 
     /**
@@ -48,4 +49,11 @@ public interface UserGroupService {
      * @return
      */
     List<UserGroup> findByFatherId(String id);
+
+    /**
+     *
+     * @param userGroupIds
+     * @return
+     */
+    List<UserGroup> findBysomeIds(String[] userGroupIds);
 }

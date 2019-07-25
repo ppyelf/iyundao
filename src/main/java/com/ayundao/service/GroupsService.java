@@ -88,4 +88,11 @@ public interface GroupsService {
      * 根据编号查询实体
      */
     Groups findByCode(String code);
+
+    /**
+     * 查找部门集合
+     * @param groupIds
+     * @return
+     */
+    List<Groups> findByIds(String[] groupIds);
 }

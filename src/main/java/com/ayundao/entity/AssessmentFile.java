@@ -44,6 +44,25 @@ public class AssessmentFile extends BaseEntity<String> {
     private String suffix;
 
     /**
+     * 类型
+     */
+    @Enumerated(value = EnumType.ORDINAL)
+    @Column(name = "TYPE")
+    private ASSESSMENT_FILE_TYPE type;
+
+    /**
+     * 内容
+     */
+    @Column(name = "CONTENT", length = 500)
+    private String content;
+
+    /**
+     * 来源
+     */
+    @Column(name = "FROMTO", length = 50)
+    private String fromTo;
+
+    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -105,6 +124,30 @@ public class AssessmentFile extends BaseEntity<String> {
         this.suffix = suffix;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getFromTo() {
+        return fromTo;
+    }
+
+    public void setFromTo(String fromTo) {
+        this.fromTo = fromTo;
+    }
+
+    public ASSESSMENT_FILE_TYPE getType() {
+        return type;
+    }
+
+    public void setType(ASSESSMENT_FILE_TYPE type) {
+        this.type = type;
+    }
+
     public String getInfo1() {
         return info1;
     }
@@ -143,5 +186,17 @@ public class AssessmentFile extends BaseEntity<String> {
 
     public void setInfo5(String info5) {
         this.info5 = info5;
+    }
+
+    public enum ASSESSMENT_FILE_TYPE{
+        /**
+         * 文档
+         */
+        text,
+
+        /**
+         * 文件
+         */
+        file
     }
 }

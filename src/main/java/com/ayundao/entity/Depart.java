@@ -60,6 +60,24 @@ public class Depart extends BaseEntity<String> {
     private Set<UserRelation> userRelations;
 
     /**
+     * 考试部门详情表部门id
+     */
+    @OneToMany(mappedBy = "depart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ExamInfoDepart> examInfoDepart;
+
+    /**
+     * 任务部门组织表部门id
+     */
+    @OneToMany(mappedBy = "depart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<TaskInfoDepart> taskInfoDepart;
+
+    /**
+     *消息部门组织部门id
+     */
+    @OneToMany(mappedBy = "depart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<AdvicesInfoDepar> advicesInfoDepar;
+
+    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -135,6 +153,30 @@ public class Depart extends BaseEntity<String> {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public Set<ExamInfoDepart> getExamInfoDepart() {
+        return examInfoDepart;
+    }
+
+    public void setExamInfoDepart(Set<ExamInfoDepart> examInfoDepart) {
+        this.examInfoDepart = examInfoDepart;
+    }
+
+    public Set<TaskInfoDepart> getTaskInfoDepart() {
+        return taskInfoDepart;
+    }
+
+    public void setTaskInfoDepart(Set<TaskInfoDepart> taskInfoDepart) {
+        this.taskInfoDepart = taskInfoDepart;
+    }
+
+    public Set<AdvicesInfoDepar> getAdvicesInfoDepar() {
+        return advicesInfoDepar;
+    }
+
+    public void setAdvicesInfoDepar(Set<AdvicesInfoDepar> advicesInfoDepar) {
+        this.advicesInfoDepar = advicesInfoDepar;
     }
 
     public String getInfo1() {

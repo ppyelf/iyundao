@@ -1,5 +1,7 @@
 package com.ayundao.service;
 
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.Message;
 import com.ayundao.entity.MessageFile;
@@ -82,7 +84,7 @@ public interface MessageService {
     /**
      * 根据状态查询消息发布详情
      */
-    List<Message> findAllType(String type);
+    List<Message> findAllType(int type);
 
     /**
      * 查询单条消息发布详情
@@ -119,4 +121,21 @@ public interface MessageService {
      */
     MessageFile findByIdF(String id);
 
+
+    /**
+     * 存入Meaages实体
+     * @param message
+     * @return
+     */
+    Message saveMessage(Message message);
+
+
+
+
+    /**
+     * 根据标题查找审核通过的信息
+     * @param title
+     * @return
+     */
+    List<Message> findByTitleAndStatu(int a, String title);
 }

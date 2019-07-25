@@ -46,22 +46,22 @@ public class AssessmentIndex extends BaseEntity<String> {
      * 节点ID
      */
     @Column(name = "SORTEDID",length = 50,unique = true)
-    private String sortedId;
+    private String sortedid;
 
     /**
      * 编码
      */
     @Column(name = "SORTEDCODE",length = 50)
-    private String sortedCode;
+    private String sortedcode;
 
     /**
-     * 名称全称
+     * 考核全称
      */
-    @Column(name = "LNAME",length = 50)
+    @Column(name = "LNAME",length = 500)
     private String lname;
 
     /**
-     * 名称缩写
+     * 考核缩写
      */
     @Column(name = "SNAME",length = 50)
     private String sname;
@@ -121,24 +121,21 @@ public class AssessmentIndex extends BaseEntity<String> {
     @Column(name = "INFO5")
     private String info5;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
+
+    public String getSortedid() {
+        return sortedid;
     }
 
-    public String getSortedId() {
-        return sortedId;
+    public void setSortedid(String sortedid) {
+        this.sortedid = sortedid;
     }
 
-    public void setSortedId(String sortedId) {
-        this.sortedId = sortedId;
+    public String getSortedcode() {
+        return sortedcode;
     }
 
-    public String getSortedCode() {
-        return sortedCode;
-    }
-
-    public void setSortedCode(String sortedCode) {
-        this.sortedCode = sortedCode;
+    public void setSortedcode(String sortedcode) {
+        this.sortedcode = sortedcode;
     }
 
     public String getLname() {

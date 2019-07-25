@@ -1,5 +1,6 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.UserGroup;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,7 +17,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface UserGroupRepository extends CrudRepository<UserGroup, String> {
+public interface UserGroupRepository extends BaseRepository<UserGroup, String> {
 
     //所有用户组集合
     @Query("select ug from UserGroup ug")
@@ -28,7 +29,7 @@ public interface UserGroupRepository extends CrudRepository<UserGroup, String> {
 
     //根据IDS获取用户组集合
     @Query("select ug from UserGroup ug where ug.id in (?1)")
-    List<UserGroup> findByIds(String[] userGroupIds);
+    List<UserGroup> findByids(String[] userGroupIds);
 
     //获取没有父级的集合
     @Query("select ug from UserGroup ug where ug.father is null")
@@ -37,4 +38,6 @@ public interface UserGroupRepository extends CrudRepository<UserGroup, String> {
     //根据父级ID获取实体集合
     @Query("select ug from UserGroup ug where ug.father.id = (?1)")
     List<UserGroup> findByFatherId(String id);
+
+
 }
