@@ -53,22 +53,27 @@ public interface UserRepository extends BaseRepository<User, String> {
     @Query("select u from User u where u.id = ?1")
     User findByUserId(String id);
 
-    //组织用户分页
+    /**
+     * 组织用户分页
+     * @param groupId
+     * @return
+     */
     @Query(value = "SELECT u.* from t_user u left join t_user_relations ur on ur.USERID = u.ID where ur.GROUPSID = (?1)", nativeQuery = true)
     List<User> findByGroupIdForPage(String groupId);
 
-    //部门用户分页
+    /**
+     * 部门用户分页
+     * @param departId
+     * @return
+     */
     @Query(value = "select u from User u left outer join fetch u.userRelations ur left outer join fetch ur.depart d where d.id = :departId")
     List<User> findByDepartIdForPage(@Param("departId") String departId);
 
-    //机构用户分页
-    @Query(value = "select u.* from t_user u left join t_user_relations ur on ur.USERID = u.ID where ur.SUBJECTID = (?1)", nativeQuery = true)
-    List<User> findBySubjectIdForPage(String id);
-
-    //根据编号查询实体
+    /**
+     * 根据编号查询实体
+     * @param code
+     * @return
+     */
     @Query("select u from User u where u.code = ?1")
     User findByCode(String code);
-
-
-
 }

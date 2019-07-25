@@ -1,13 +1,32 @@
 package com.ayundao.base;
 
+import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.ayundao.base.shiro.JwtToken;
+import com.ayundao.base.shiro.SecurityConsts;
 import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
+import com.ayundao.base.utils.JwtUtils;
+import com.ayundao.entity.User;
+import com.ayundao.entity.UserRelation;
+import com.ayundao.service.UserRelationService;
+import com.ayundao.service.UserService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.*;
@@ -92,6 +111,12 @@ public abstract class BaseController {
     @Value("${server.upload}")
     public String uploadPath;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRelationService userRelationService;
+
     /**
      * 数据验证
      *
@@ -142,6 +167,56 @@ public abstract class BaseController {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         requestAttributes.setAttribute(CONSTRAINT_VIOLATIONS_ATTRIBUTE_NAME, constraintViolations, RequestAttributes.SCOPE_REQUEST);
         return false;
+    }
+    
+    public JsonResult login(Subject subject, JwtToken token) {
+        // 执行认证登陆
+        try {
+            subject.login(token);
+            return JsonResult.success();
+        } catch (UnknownAccountException ex) {
+            return JsonResult.failure(804, ex.getMessage());
+        } catch (LockedAccountException ex) {
+            return JsonResult.failure(805, ex.getMessage());
+        } catch (AccountException ex) {
+            return JsonResult.failure(803, ex.getMessage());
+        } catch (TokenExpiredException ex) {
+            return JsonResult.failure(806, ex.getMessage());
+        } catch (IncorrectCredentialsException ex){
+            return JsonResult.failure(807, "密码校验错误");
+        }
+    }
+
+    /**
+     * 返回登录成功结果
+     * @return
+     */
+    public JsonResult loginSuccess(String account, HttpServletResponse resp) {
+        String currentTimeMillis = String.valueOf(System.currentTimeMillis());
+
+        Session session = SecurityUtils.getSubject().getSession();
+        User user = userService.findByAccount(account);
+        //生成token
+        JSONObject json = JsonUtils.getJson(user);
+        String token = JwtUtils.sign(account, currentTimeMillis);
+        json.put("token",token );
+        List<UserRelation> userRelations = userRelationService.findByUser(user);
+        if (CollectionUtils.isNotEmpty(userRelations)) {
+            for (UserRelation userRelation : userRelations) {
+                com.ayundao.entity.Subject subject = userRelation.getSubject();
+                JSONObject j = new JSONObject();
+                j.put("id", subject.getId());
+                j.put("name", subject.getName());
+                session.setAttribute("currentSubject", subject);
+                break;
+            }
+        }
+        resp.setHeader(SecurityConsts.IYUNDAO_ASSESS_TOKEN, token);
+        resp.setHeader("Access-Control-Expose-Headers", SecurityConsts.IYUNDAO_ASSESS_TOKEN);
+        jsonResult.setCode(200);
+        jsonResult.setMessage("登录成功");
+        jsonResult.setData(json);
+        return jsonResult;
     }
 
     /**

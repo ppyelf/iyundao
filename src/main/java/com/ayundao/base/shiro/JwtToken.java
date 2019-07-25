@@ -19,6 +19,7 @@ public class JwtToken implements AuthenticationToken {
     private String password;
 
     private boolean rememberMe;
+
     /**
      * Token
      */

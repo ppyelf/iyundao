@@ -1,8 +1,10 @@
 package com.ayundao.entity;
 
 import com.ayundao.base.BaseEntity;
+import com.ayundao.base.utils.TimeUtils;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @ClassName: UserApp
@@ -68,6 +70,12 @@ public class UserApp extends BaseEntity<String> {
     @Column(name = "UNIONID")
     private String unionId;
 
+    /**
+     * 最后登录时间
+     */
+    @Column(name = "LASTLOGINTIME", nullable = false)
+    private String lastLoginTime;
+
     public APP_TYPE getType() {
         return type;
     }
@@ -130,6 +138,14 @@ public class UserApp extends BaseEntity<String> {
 
     public void setUnionId(String unionId) {
         this.unionId = unionId;
+    }
+
+    public String getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(Date lastLoginTime) {
+        this.lastLoginTime = TimeUtils.convertTime(lastLoginTime, "yyyyMMddHHmmss");
     }
 
     public enum APP_TYPE{
