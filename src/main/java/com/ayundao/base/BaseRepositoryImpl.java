@@ -1,7 +1,6 @@
 package com.ayundao.base;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.lucene.analysis.bg.BulgarianAnalyzer;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.data.domain.Example;

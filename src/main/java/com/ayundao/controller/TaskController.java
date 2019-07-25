@@ -3,13 +3,17 @@ package com.ayundao.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
-import com.ayundao.base.utils.HttpUtil;
+import com.ayundao.base.utils.HttpUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,12 +24,16 @@ import javax.validation.constraints.Null;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import static com.ayundao.base.BaseController.*;
 
 /**
  * 控制层- 任务
  * Created by 13620 on 2019/7/3.
  */
-
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER, ROLE_USER, ROLE_PUBLISHER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/task")
 public class TaskController extends BaseController {
@@ -66,6 +74,7 @@ public class TaskController extends BaseController {
      * "data": [{"issuertime": "2019-07-11 00:00:00","name": "钱正","sendstate": "未发送任务","id": "4028d8816bbc4897016bbc6731640000","title": "王柏","type": "0","tasktext": "1223123"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list() {
         List<Task> tasks = taskService.findAll();
@@ -122,6 +131,7 @@ public class TaskController extends BaseController {
      *     "data": {"issuertime": "2018-12-12 12:12:12","sendstate": "","id": "4028d8816bcb8bc8016bcbe014240011","type": "1","title": "任务名称","tasktext": "任务简介"}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     private JsonResult add(String title,
                            String type,
@@ -190,6 +200,7 @@ public class TaskController extends BaseController {
      *      "data": {"issuertime": "任务简介","subjects": [{"code": "1","name": "分院党组织","id": "402881916b9d3031016b9d626593000c","subjectType": "part"},{"code": "0","name": "富阳人民医院","id": "bfc5bd62010f467cbbe98c9e4741733b","subjectType": "part"}],"workType": "1","name": "钱正","sendstatu": null,"groups": [{"code": "0","name": "行政支部","remark": "","id": "402881916b9d3031016b9d63a172000d"},{"code": "1","name": "后勤支部","remark": "","id": "402881916b9d3031016b9d63d7af000e"}],"title": "任务名称","tasktext": "任务简介","users": [{"password": "6A36E430976A64EA","salt": "45a1d914886d4a92b6835a181b2a20d8","code": "001","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}],"departs": []}
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id) {
         Task task = taskService.find(id);
@@ -258,6 +269,7 @@ public class TaskController extends BaseController {
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         Task task = taskService.find(id);
@@ -285,6 +297,7 @@ public class TaskController extends BaseController {
      *       "data": [{"issuertime": "2018-12-12 12:12:12","name": "钱正","sendstate": "未发送任务","id": "4028d8816bcb8bc8016bcbe014240011","title": "任务名称","type": "1","tasktext": "任务简介"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findBydeption")
     public JsonResult findBydeption(String id) {
         List<Task> tasksss = taskService.findAdvicesByDeptionId(id);
@@ -341,23 +354,12 @@ public class TaskController extends BaseController {
         //发送任务返回用戶实体
         List<User> userList = taskService.sendtask(taskInfoDeparts);
         //通过实体找到电话号码
-//        JSONArray array = taskService.findphoneByUser(userList);
-        JSONObject object = new JSONObject();
-//        object.put("phones",array);
-        JSONArray array = new JSONArray();
-        array.add("13738700108");
-        object.put("phones",array);
-        String url = "http://115.236.80.114:8080/duanxin/sendSMS";
-        JSONObject object1 = HttpUtil.doPost(url, object);
-        System.out.println(object1);
-        if (Integer.parseInt(object1.get("code").toString())== 200){
-            String state ="已发送";
-            taskService.updatstate(id,state);
-            return jsonResult;
-        }else {
-            return JsonResult.paramError("发送失败");
-        }
-
+//        Map<String,String> map = taskService.findphoneByUser(userList);
+//        String url = "http://localhost:8080/duanxin/sendSMSSS";
+//        String result = HttpUtils.sendPost(url, map);
+        String state ="已发送";
+        taskService.updatstate(id,state);
+        return jsonResult;
     }
 
 

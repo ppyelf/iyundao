@@ -24,5 +24,6 @@ public interface MessageRepository extends BaseRepository<Message,String> {
     List<Message> findByType(Message.TYPE type);
 
 
-
+    @Query(value = "SELECT * FROM t_message WHERE type = ?1 and title like ?2 ORDER BY LASTMODIFIEDTIME desc",nativeQuery = true)
+    List<Message> findByTitleAndStatu(int a, String title);
 }

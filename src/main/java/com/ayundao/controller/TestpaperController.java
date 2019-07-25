@@ -11,12 +11,18 @@ import com.ayundao.entity.Testpaper;
 import com.ayundao.service.PaperTitleService;
 import com.ayundao.service.TestpaperService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static com.ayundao.base.BaseController.*;
 
 /**
  * @ClassName: TestpaperController
@@ -26,6 +32,8 @@ import java.util.Map;
  * @Description: 实现 - 试卷
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER, ROLE_PUBLISHER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/testpaper")
 public class TestpaperController extends BaseController{
@@ -54,6 +62,7 @@ public class TestpaperController extends BaseController{
      *  "data": [{"intro": null,"name": "第一张","id": "1"},{"intro": null,"name": "第二张","id": "2"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<Testpaper> testpapers = testpaperService.findAll();
@@ -92,6 +101,7 @@ public class TestpaperController extends BaseController{
      *     "data": {"intro": "222","name": "1112","id": "4028d8816bd07269016bd0cdb85b0034"}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     public  JsonResult addd(@RequestBody JSONObject params){
 
@@ -136,7 +146,7 @@ public class TestpaperController extends BaseController{
      * @apiVersion 1.0.0
      * @apiDescription 查看
      * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiParam {String} id 必填
+     * @apiParam {String} id 必填 试卷id
      * @apiParamExample {json} 请求样例:
      *               /testpaper/view?id=4028d8816bd07269016bd0c82ac10027
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -149,6 +159,7 @@ public class TestpaperController extends BaseController{
      *     "data": {"intro": "222","name": "111","topic": [{"title": "111","selectall": [{"select ": "1.1","istrue": "1"},{"select ": "1.2","istrue": "1"},{"select ": "1.3","istrue": "1"}]},{"title": "222","selectall": [{"select ": "2.1","istrue": "2"},{"select ": "2.2","istrue": "2"},{"select ": "2.3","istrue": "2"}]},{"title": "333","selectall": [{"select ": "3.1","istrue": "3"},{"select ": "3.2","istrue": "3"},{"select ": "3.3","istrue": "3"}]}],"id": "4028d8816bd07269016bd0c82ac10027"}
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id){
         Testpaper testpaper = testpaperService.findById(id);
@@ -180,6 +191,7 @@ public class TestpaperController extends BaseController{
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id){
         Testpaper testpaper = testpaperService.findById(id);

@@ -34,6 +34,7 @@ public class RoleController extends BaseController {
      * @api {get} /role/list 列表
      * @apiGroup Role
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 列表
      * @apiParamExample {json} 请求样例:
      *                /role/list
@@ -65,6 +66,7 @@ public class RoleController extends BaseController {
      * @api {post} /role/view 查看角色
      * @apiGroup Role
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 查看角色
      * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
@@ -101,6 +103,7 @@ public class RoleController extends BaseController {
      * @api {post} /role/add 新增角色
      * @apiGroup Role
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增角色
      * @apiParam {String} name
      * @apiParam {int} level
@@ -135,6 +138,7 @@ public class RoleController extends BaseController {
      * @api {post} /role/modify 修改角色
      * @apiGroup Role
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 修改角色
      * @apiParam {String} id
      * @apiParam {String} name

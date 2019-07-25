@@ -128,4 +128,14 @@ public interface MessageService {
      * @return
      */
     Message saveMessage(Message message);
+
+
+
+
+    /**
+     * 根据标题查找审核通过的信息
+     * @param title
+     * @return
+     */
+    List<Message> findByTitleAndStatu(int a, String title);
 }

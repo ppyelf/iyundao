@@ -12,6 +12,10 @@ import com.ayundao.service.UserInfoPowerService;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +26,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.ayundao.base.BaseController.ROLE_ADMIN;
+import static com.ayundao.base.BaseController.ROLE_MANAGER;
+import static com.ayundao.base.BaseController.ROLE_USER;
+
 /**
  * @ClassName: UserInfoFdhController
  * @project: ayundao
@@ -30,6 +38,8 @@ import java.util.Map;
  * @Description: 控制层 - 用户详情 -妇代会
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_MANAGER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/userInfoFdh")
 public class UserInfoFdhController extends BaseController {
@@ -46,6 +56,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/add_fdh 新增用户妇代会基础信息
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户妇代会基础信息
      * @apiParam {String} post 职称
      * @apiParam {String} time 任职时间
@@ -78,6 +89,7 @@ public class UserInfoFdhController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_fdh")
     public JsonResult add_fdh(String post,String time,
                               String userinfoid) {
@@ -95,6 +107,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/del 删除用户详情 -妇代会
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 用户详情ID -妇代会
      * @apiParamExample {json} 请求样例
@@ -110,6 +123,7 @@ public class UserInfoFdhController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         if (StringUtils.isBlank(id)) {
@@ -123,6 +137,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {get} /userInfoFdh/list 用户详情 -妇代会信息
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 妇代会信息
      * @apiParamExample {json} 请求样例
      *                /userInfoFdh/list
@@ -185,6 +200,7 @@ public class UserInfoFdhController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<UserInfo> pages = userInfoService.findAll();
@@ -211,6 +227,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/listDepart 用户分页 -根据组织查询
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParam {String} departId 组织id
      * @apiParamExample {json} 请求样例
@@ -226,6 +243,7 @@ public class UserInfoFdhController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listDepart")
     public JsonResult listDepart(String departId){
         List<User> pages = userService.findByDepartIdForPage(departId);
@@ -260,6 +278,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/listGroupId 用户分页 -根据部门查询
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParam {String} groupId 部门id
      * @apiParamExample {json} 请求样例
@@ -275,6 +294,7 @@ public class UserInfoFdhController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listGroupId")
     public JsonResult listGroupId(String groupId){
         List<User> pages = userService.findByGroupIdForPage(groupId);
@@ -309,6 +329,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {post} /userInfoFdh/findByLike 用户条件查询
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户条件查询
      * @apiParam {String} name 姓名
      * @apiParam {String} number 编号
@@ -386,6 +407,7 @@ public class UserInfoFdhController extends BaseController {
      * @api {get} /userInfoFdh/listPower 妇代会图形比例
      * @apiGroup UserInfoFdh
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 妇代会图形比例
      * @apiParamExample {json} 请求样例
      *                /userInfoFdh/listPower
@@ -448,6 +470,7 @@ public class UserInfoFdhController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/listPower")
     public JsonResult listPower(){
         Map<String,Object> pages = userInfoPowerService.countBySexFdh();

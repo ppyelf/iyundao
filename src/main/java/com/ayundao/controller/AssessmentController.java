@@ -12,6 +12,10 @@ import com.ayundao.entity.*;
 import com.ayundao.repository.AssessmentRepository;
 import com.ayundao.service.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static com.ayundao.base.BaseController.*;
 
 /**
  * @ClassName: AssessmentController
@@ -28,6 +34,9 @@ import java.util.Map;
  * @Description: 实现 - 考核
  * @Version: V1.0
  */
+
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER, ROLE_AUDITOR, ROLE_PUBLISHER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/assessment")
 public class AssessmentController extends BaseController {
@@ -73,6 +82,7 @@ public class AssessmentController extends BaseController {
      *      "data": [{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "personnel"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list() {
         List<Assessment> assessments = assessmentService.findAll();
@@ -114,6 +124,7 @@ public class AssessmentController extends BaseController {
      * "data": [{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "personnel"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listpage")
     public JsonResult list(@RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
@@ -140,6 +151,7 @@ public class AssessmentController extends BaseController {
      *       "data": {"number": "12","total": 80,"name": "测试考核","endtime": "2018-12-12 12:12:12","remark": "测试内容","deption": {"subject": ["bfc5bd62010f467cbbe98c9e4741733b","402881916b9d3031016b9d626593000c"],"usergroup": [],"depart": ["123"],"users": ["0a4179fc06cb49e3ac0db7bcc8cf0882","402881916ba10b8a016ba113adbc0006"],"group": ["402881916b9d3031016b9d706b4e0012","402881916b9d3031016b9d708a710013","402881916b9d3031016b9d70b2510014"]},"Index": [{"isuse": "1234567","lname": "12","norder": "123456","sname": "123","sortedcode": "12345","id": "4028d8816be4b6fd016be5224bb60024","parcode": "1234","sortedid": "1"},{"isuse": "9876543","lname": "98","norder": "987654","sname": "987","sortedcode": "98765","id": "4028d8816be4b6fd016be5224bb60025","parcode": "9876","sortedid": "9"}],"id": "4028d8816be4b6fd016be521e09f001b","starttime": "2018-12-12 12:12:12","type": "personnel","Image": [{"name": "123","id": "4028d8816be4b6fd016be52115250017","suffix": "12","url": "1231"},{"name": "123","id": "4028d8816be4b6fd016be521188f0018","suffix": "12","url": "1231"}],"File": [{"name": "12","id": "4028d8816be4b6fd016be52123450019","type": "file","suffix": "12","fromTo": "12","content": "12","url": "12"},{"name": "12","id": "4028d8816be4b6fd016be521264c001a","type": "file","suffix": "12","fromTo": "12","content": "12","url": "12"}]}
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id){
         Assessment assessment = assessmentService.findById(id);
@@ -190,6 +202,7 @@ public class AssessmentController extends BaseController {
      * "data": {"number": "12","total": "80","name": "测试考核","startTime": "2018-12-12 12:12:12","remark": "测试内容","id": "4028d8816be3fcaf016be42734820000","endTime": "2018-12-12 12:12:12","type": "personnel"}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     public JsonResult add(String number,
                           String name,
@@ -276,6 +289,7 @@ public class AssessmentController extends BaseController {
      *      "data":
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("SearchAssessment")
     public JsonResult SearchAssessment(String property,
                                        String value,
@@ -313,6 +327,7 @@ public class AssessmentController extends BaseController {
      *  "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         Assessment assessment = assessmentService.findById(id);
@@ -348,6 +363,7 @@ public class AssessmentController extends BaseController {
      * "data": {"name": "71a55777e8a54e878784c7cb69373459","id": "4028d8816bf47d9e016bf495437e0000","type": "file","suffix": "xlsx","fromTo": "12","content": "12","url": "assessmentfile\\71a55777e8a54e878784c7cb69373459.xlsx"}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_file")
     public JsonResult uploadFile(MultipartFile file,
                                  @RequestParam(defaultValue = "0") int type,
@@ -399,6 +415,7 @@ public class AssessmentController extends BaseController {
      * "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_file")
     public JsonResult delFile(String[] ids) {
         if (ids == null) {
@@ -428,6 +445,7 @@ public class AssessmentController extends BaseController {
      * "data": {"name": "123","id": "4028d8816bdff15a016be010af5f000f","suffix": "12","url": "1231"}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_image")
     public JsonResult uploadImage(MultipartFile file) {
         AssessmentImage image = new AssessmentImage();
@@ -465,6 +483,7 @@ public class AssessmentController extends BaseController {
      * "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_image")
     public JsonResult delImage(String[] ids) {
         if (ids == null) {
@@ -497,6 +516,7 @@ public class AssessmentController extends BaseController {
     *       "data": [{"isuse": "1234567","lname": "12","norder": "123456","sname": "123","sortedcode": "12345","id": "4028d8816be4b6fd016be5224bb60024","parcode": "1234","sortedid": "1"},{"isuse": "9876543","lname": "98","norder": "987654","sname": "987","sortedcode": "98765","id": "4028d8816be4b6fd016be5224bb60025","parcode": "9876","sortedid": "9"}]
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view_index")
     public JsonResult viewIndex(String id){
         List<AssessmentIndex> assessmentIndices = assessmentService.findIndexByAssessmentId(id);
@@ -562,6 +582,7 @@ public class AssessmentController extends BaseController {
      * "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_index")
     public JsonResult addIndex(@RequestBody JSONObject params) {
         String assessmentid = (String) params.get("assessmentid");
@@ -595,6 +616,7 @@ public class AssessmentController extends BaseController {
     *      "data": []
     * }
     */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/del_index")
     public JsonResult delIndex(String id) {
         List<AssessmentIndex> assessmentIndices = assessmentService.findIndexByAssessmentId(id);
@@ -622,6 +644,7 @@ public class AssessmentController extends BaseController {
     *      "data": [{"number": "12","score": 80,"endtime": "2018-12-12 12:12:12","remark": "测试内容","starttime": 80,"title": "测试考核","type": "personnel"}]
     * }
     */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("del_byindexid")
     public JsonResult delbyindexid(String id){
        AssessmentIndex assessmentIndex =  assessmentService.findByIndexId(id);
@@ -635,7 +658,6 @@ public class AssessmentController extends BaseController {
 
     /**
      * 转换Aessessment 为json
-     *
      * @param assessment
      * @return
      */

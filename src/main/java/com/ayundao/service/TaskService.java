@@ -5,6 +5,7 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 任务
@@ -63,5 +64,5 @@ public interface TaskService {
      * @param userList
      * @return
      */
-    JSONArray findphoneByUser(List<User> userList);
+    Map<String,String> findphoneByUser(List<User> userList);
 }

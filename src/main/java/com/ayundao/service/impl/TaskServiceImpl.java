@@ -16,9 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by 13620 on 2019/7/3.
@@ -110,29 +108,29 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public List<User> sendtask(List<TaskInfoDepart> taskInfoDeparts) {
         TaskInfoUser tiu;
-        List<User> userList = new ArrayList<>();
+//        List<User> userList = new ArrayList<>();
         for (TaskInfoDepart taskInfoDepart : taskInfoDeparts) {
             //如果是机构获取所有部门组织
             if (taskInfoDepart.getSubject()!=null){
                 List<User> users = userService.findBySubjectIdForPage(taskInfoDepart.getSubject().getId());
-                userList.addAll(users);
+//                userList.addAll(users);
                 saveUser(taskInfoDepart,users);
             }
 
             if (taskInfoDepart.getDepart()!= null){
                         List<User>  users = userService.findByDepartIdForPage(taskInfoDepart.getDepart().getId());
-                userList.addAll(users);
+//                userList.addAll(users);
                         saveUser(taskInfoDepart,users);
             }
             if (taskInfoDepart.getGroups()!=null){
                         List<User> users = userService.findByGroupIdForPage(taskInfoDepart.getGroups().getId());
-                userList.addAll(users);
+//                userList.addAll(users);
                         saveUser(taskInfoDepart,users);
 
             }
             //如果有用户
             if(taskInfoDepart.getUser()!=null){
-                userList.add(taskInfoDepart.getUser());
+//                userList.add(taskInfoDepart.getUser());
                 UserInfo uif =userInfoRepository.findByUserId(taskInfoDepart.getUser().getId());
                 tiu = new TaskInfoUser();
                 tiu.setCreatedDate(new Date());
@@ -145,7 +143,8 @@ public class TaskServiceImpl implements TaskService {
                 taskInfoUserRepository.save(tiu);
             }
         }
-            return userList;
+//            return userList;
+        return null;
     }
 
     @Override
@@ -160,15 +159,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public JSONArray findphoneByUser(List<User> userList) {
-        JSONArray jsonArray = new JSONArray();
+    public Map<String,String> findphoneByUser(List<User> userList) {
+        Map<String,String> map = new HashMap<>();
+        String value = "";
+        int a =1;
         for (User user : userList) {
+            a++;
             if (StringUtils.isNotBlank(userInfoRepository.findphoneByUserId(user.getId()))){
-                jsonArray.add(userInfoRepository.findphoneByUserId(user.getId()));
+                value =userInfoRepository.findphoneByUserId(user.getId());
+                map.put(a+"",value);
             }
         }
-       return jsonArray;
-
+       return map;
     }
 
 

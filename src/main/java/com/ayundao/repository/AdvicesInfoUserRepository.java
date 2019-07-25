@@ -23,7 +23,7 @@ public interface AdvicesInfoUserRepository extends CrudRepository<AdvicesInfoUse
     @Query("select a from AdvicesInfoUser a where a.advices.id = ?1")
     List<AdvicesInfoUser> findByAdvicesId(String id);
 
-    @Query("select a from AdvicesInfoUser a where a.user = ?1")
+    @Query("select a from AdvicesInfoUser a where a.user = ?1 order by a.lastModifiedDate desc ")
     List<AdvicesInfoUser> findAllByUser(User user);
 
 }

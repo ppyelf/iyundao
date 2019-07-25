@@ -2,6 +2,7 @@ package com.ayundao.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONReader;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
@@ -14,6 +15,10 @@ import com.ayundao.entity.MessageFile;
 import com.ayundao.entity.MessageImage;
 import com.ayundao.service.MessageService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +28,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.ayundao.base.BaseController.*;
+import static com.ayundao.base.BaseController.ROLE_AUDITOR;
+
 /**
  * @ClassName: MessageController
  * @project: ayundao
@@ -31,6 +39,8 @@ import java.util.Map;
  * @Description: 控制层 - 信息发布
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER, ROLE_PUBLISHER, ROLE_AUDITOR}, logical = Logical.OR)
 @RestController
 @RequestMapping("/message")
 public class MessageController extends BaseController {
@@ -87,6 +97,7 @@ public class MessageController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping(value = "/add")
     public JsonResult add(@RequestParam(defaultValue = "0") int type,
                           String title,
@@ -148,6 +159,7 @@ public class MessageController extends BaseController {
       *     }
       * }
       */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_file")
     public JsonResult uploadFile(MultipartFile file){
         MessageFile files = new MessageFile();
@@ -190,6 +202,7 @@ public class MessageController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_image")
     public JsonResult uploadImage(MultipartFile file) {
         MessageImage image = new MessageImage();
@@ -245,6 +258,7 @@ public class MessageController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id){
         if (StringUtils.isBlank(id)){
@@ -274,6 +288,7 @@ public class MessageController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_file")
     public JsonResult del_file(String id){
         if(StringUtils.isBlank(id)){
@@ -303,6 +318,7 @@ public class MessageController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_image")
     public JsonResult del_image(String id){
         if(StringUtils.isBlank(id)){
@@ -333,6 +349,7 @@ public class MessageController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<Message> pages = messageService.findAll();
@@ -371,6 +388,7 @@ public class MessageController extends BaseController {
     "content": [{"articleIntroduce": "33","author": "33","articleTime": "33","publisher": "33","id": "1122","type": "YES","title": "33","userId": "33","branch": "33","article": "33","userAssess": "这是一堆数据"},{"articleIntroduce": "22","author": "22","articleTime": "22","publisher": "22","id": "112","type": "YES","title": "22","userId": "22","branch": "22","article": "22","userAssess": "22"},{"articleIntroduce": "11","author": "11","articleTime": "11","publisher": "11","id": "11","type": "YES","title": "11","userId": "11","branch": "11","article": "11","userAssess": "11"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/list_type")
     public JsonResult list_type(int type,
                                 @RequestParam(defaultValue = "1") int page,
@@ -413,6 +431,7 @@ public class MessageController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findId")
     public JsonResult findId(String id){
         if (StringUtils.isBlank(id)){
@@ -459,6 +478,7 @@ public class MessageController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findIdf")
     public JsonResult findIdf(String id){
         if(StringUtils.isBlank(id)){
@@ -491,6 +511,7 @@ public class MessageController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findIdi")
     public JsonResult findIdi(String id){
         if(StringUtils.isBlank(id)){
@@ -527,6 +548,7 @@ public class MessageController extends BaseController {
    *       "data": {"articleIntroduce": "33","articleTime": "33","author": "33","publisher": "33","id": "1122","type": "NO","title": "33","branch": "33","userId": "33","article": "33","userAssess": "这是一堆数据"}
    * }
    */
+   @RequiresPermissions(PERMISSION_EXAMINE)
     @PostMapping("/audit")
     public JsonResult audit(String id,
                             int type,
@@ -549,6 +571,53 @@ public class MessageController extends BaseController {
         message = messageService.saveMessage(message);
             jsonResult.setData(JsonUtils.getJson(message));
         return  jsonResult;
+    }
+
+    /**
+    * @api {POST} /message/findMessageByTitleAndstatu 根据标题查找审核通过的信息
+    * @apiGroup Message
+    * @apiVersion 1.0.0
+    * @apiDescription 查看
+    * @apiParam {String} title 必填 模糊查询的名称值
+    * @apiParam {int} page 需要的查看的页数  默认1
+    * @apiParam {int} size 每页的条数  默认10
+    * @apiParamExample {json} 请求样例:
+    *                /message/findMessageByTitleAndstatu?title=1&page=1&size=2
+    * @apiSuccess (200) {String} code 200:成功</br>
+    * @apiSuccess (200) {String} message 信息
+    * @apiSuccess (200) {String} data 返回用户信息
+    * @apiSuccessExample {json} 返回样例:
+    * {
+    *     "code": 200,
+    *     "message": "成功",
+    *        "data": {"total": 2,"size": 2,"page": 1,"content": [{"id": "112","messageFiles": [],"messageImages": [],"title": "11","branch": "22","publisher": "22","author": "22","articleTime": "22","articleIntroduce": "22","article": "22","userId": "22","userAssess": "22","type": "YES","info1": "22","info2": "22","info3": "22","info4": "22","info5": "22","new": false},{"id": "11","messageFiles": [],"messageImages": [],"title": "11","branch": "11","publisher": "11","author": "11","articleTime": "11","articleIntroduce": "11","article": "11","userId": "11","userAssess": "11","type": "YES","info1": "11","info2": "11","info3": "11","info4": "11","info5": "11","new": false}]}
+    * }
+    */
+    @RequiresPermissions(PERMISSION_VIEW)
+    @PostMapping("/findMessageByTitleAndstatu")
+    public JsonResult findMessageByTitleAndstatu(String title,
+                                                 @RequestParam(defaultValue = "1") int page,
+                                                 @RequestParam(defaultValue = "10")int size){
+             int a =1;
+             title = "%"+title+"%";
+           List<Message> messages = messageService.findByTitleAndStatu(a,title);
+
+        List<Message> currentPageList = new ArrayList<>();
+        if (messages != null && messages.size() > 0) {
+            int currIdx = (page > 1 ? (page - 1) * size : 0);
+            for (int i = 0; i < size && i < messages.size() - currIdx; i++) {
+                Message data = messages.get(currIdx + i);
+                currentPageList.add(data);
+            }
+        }
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("total",messages.size());
+                jsonObject.put("page",page);
+                jsonObject.put("size",size);
+                jsonObject.put("content",currentPageList);
+           jsonResult.setData(jsonObject);
+
+            return jsonResult;
     }
 
     /**

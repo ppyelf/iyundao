@@ -99,7 +99,6 @@ public class Activity extends BaseEntity<String> {
     private Set<ActivityInfoUser> activityInfoUser;
 
 
-
     /**
      * 备用字段1
      */

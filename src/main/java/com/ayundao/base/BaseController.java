@@ -24,9 +24,58 @@ import java.util.*;
 public abstract class BaseController {
 
     /**
-     * 错误消息
+     * 负责人
      */
-    protected static final String ERROR_MESSAGE = "common.message.error";
+    public static final String ROLE_MANAGER = "manager";
+    /**
+     * 发布人
+     */
+    public static final String ROLE_PUBLISHER = "publisher";
+    /**
+     * 管理员
+     */
+    public static final String ROLE_ADMIN = "admin";
+    /**
+     * 用户
+     */
+    public static final String ROLE_USER = "user";
+    /**
+     * 审核人
+     */
+    public static final String ROLE_AUDITOR = "auditor";
+
+    /**
+     * 删除
+     */
+    public static final String PERMISSION_DELETE = "delete";
+    /**
+     * 添加
+     */
+    public static final String PERMISSION_ADD = "add";
+    /**
+     * 查看
+     */
+    public static final String PERMISSION_VIEW = "view";
+    /**
+     * 发布
+     */
+    public static final String PERMISSION_RELEASE = "release";
+    /**
+     * 锁定
+     */
+    public static final String PERMISSION_LOCK = "lock";
+    /**
+     * 审核
+     */
+    public static final String PERMISSION_EXAMINE = "examine";
+    /**
+     * 修改
+     */
+    public static final String PERMISSION_MODIFY = "modify";
+    /**
+     * 禁用
+     */
+    public static final String PERMISSION_DISABLE = "disable";
 
     /**
      * "验证结果"属性名称

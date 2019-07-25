@@ -12,10 +12,16 @@ import com.ayundao.entity.*;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+import static com.ayundao.base.BaseController.*;
 
 /**
  * @ClassName: ExamController
@@ -25,6 +31,8 @@ import java.util.*;
  * @Description: 实现 - 考试
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER, ROLE_PUBLISHER, ROLE_AUDITOR}, logical = Logical.OR)
 @RestController
 @RequestMapping("/exam")
 public class ExamController extends BaseController{
@@ -76,6 +84,7 @@ public class ExamController extends BaseController{
      *     "data": [{"examlong": "60","starttime": "2121","title": "name","score": "100","showthat": "员工测试","overtime": "2121","id": "123123"},{"examlong": "60","starttime": "2121","title": "name","score": "100","showthat": "员工测试","overtime": "2121","id": "55555555"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<Exam> exams = examService.findAll();
@@ -108,6 +117,7 @@ public class ExamController extends BaseController{
      *      "data": {"total": 5,"totalPage": 1,"page": 0,"content": [{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bded8a8016bdee853d8000c","starttime": "2018-12-12 12:12:12","title": "学院检测"}]}
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/page")
     public  JsonResult page(@RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size){
@@ -135,9 +145,32 @@ public class ExamController extends BaseController{
      * {
      *     "code": 200,
      *     "message": "成功",
-     *       "data": {"total": 4,"totalPage": 1,"page": 0,"content": [{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bcb8bc8016bcb8de2b40008","starttime": "2018-12-12 12:12:12","title": "学院检测"},{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bcb8bc8016bcbc8d9910010","starttime": "2018-12-12 12:12:12","title": "学院检测"},{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bcc9a32016bcccd9616000c","starttime": "2018-12-12 12:12:12","title": "学院检测"},{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bded8a8016bdee853d8000c","starttime": "2018-12-12 12:12:12","title": "学院检测"}]}
+     *        "data": {
+                    "total": 4,             z
+                    "totalPage": 1,
+                    "page": 0,
+                    "content": [
+    {
+                            "examlong": "60",                                           考试时长
+                            "score": "100",                                             合格分数
+                            "showthat": "简介",                                       考试说明
+                            "overtime": "2018-12-12 12:12:12",                          开始结束时间
+                            "id": "4028d8816bcb8bc8016bcb8de2b40008",                       考试id
+                            "starttime": "2018-12-12 12:12:12",                         考试开始时间
+                            "title": "学院检测"                                              标题
+    },
+    {
+                            "examlong": "60",
+                            "score": "100",
+                            "showthat": "简介",
+                            "overtime": "2018-12-12 12:12:12",
+                            "id": "4028d8816bcb8bc8016bcbc8d9910010",
+                            "starttime": "2018-12-12 12:12:12",
+                            "title": "学院检测"
+    },]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/searchByname")
     public JsonResult searchByname(String title,
                                    @RequestParam(defaultValue = "0") int page,
@@ -189,6 +222,7 @@ public class ExamController extends BaseController{
      *     "data": {"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bcb8bc8016bcb8de2b40008","starttime": "2018-12-12 12:12:12","title": "学院检测"}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     public JsonResult add(String title,
                           String starttime,
@@ -258,6 +292,7 @@ public class ExamController extends BaseController{
      *      "data": {"examlong": "60","score": "100","textpapers": [{"name": "第一张","id": "1"},{"name": "第二张","id": "2"}],"subjects": [{"code": "1","name": "分院党组织","id": "402881916b9d3031016b9d626593000c","subjectType": "part"},{"code": "0","name": "富阳人民医院","id": "bfc5bd62010f467cbbe98c9e4741733b","subjectType": "part"}],"showthat": "简介","overtime": "2018-12-12 12:12:12","groups": [{"code": "0","name": "行政支部","remark": "","id": "402881916b9d3031016b9d63a172000d"},{"code": "1","name": "后勤支部","remark": "","id": "402881916b9d3031016b9d63d7af000e"}],"starttime": "2018-12-12 12:12:12","title": "学院检测","users": [{"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}],"departs": []}
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id){
         Exam exam = examService.findById(id);
@@ -291,6 +326,7 @@ public class ExamController extends BaseController{
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id){
         Exam exam = examService.findById(id);
@@ -320,6 +356,7 @@ public class ExamController extends BaseController{
      *  "data": [{"score": "10","name": "钱正"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/score")
     public JsonResult score(String id){
         Exam exam = examService.findById(id);
@@ -368,6 +405,7 @@ public class ExamController extends BaseController{
      *     "data": {"issuertime": "2018-12-12 12:12:12","sendstate": "","id": "4028d8816bcb8bc8016bcbe014240011","type": "1","title": "任务名称","tasktext": "任务简介"}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addExamInfoUser")
     public JsonResult addExamInfoUser(@RequestBody JSONObject params){
         JSONObject object = params;
@@ -399,6 +437,7 @@ public class ExamController extends BaseController{
      *     "data": {"examtitle": "学院检测","test": [{"answer": "1.1","papertitle": "111","istrue": {}},{"answer": "2.3","papertitle": "222","istrue": {}},{"answer": "3.1","papertitle": "333","istrue": {}}],"username": "钱正"}
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("findExamInfoUser")
     public JsonResult findExamInfoUser(String examid,String userid){
         List<ExamInfoUser> examInfoUsers = examInfoUserService.findByExamUserId(examid,userid);

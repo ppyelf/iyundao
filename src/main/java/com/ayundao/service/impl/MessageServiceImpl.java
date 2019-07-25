@@ -1,11 +1,9 @@
 package com.ayundao.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
-import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.Message;
 import com.ayundao.entity.MessageFile;
 import com.ayundao.entity.MessageImage;
@@ -17,9 +15,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.reflect.misc.ConstructorUtil;
-
-import java.rmi.MarshalException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -171,6 +166,11 @@ public class MessageServiceImpl implements MessageService {
     public Message saveMessage(Message message) {
 
         return messageRepository.save(message);
+    }
+
+    @Override
+    public List<Message> findByTitleAndStatu(int a, String title) {
+        return messageRepository.findByTitleAndStatu(a,title);
     }
 
 

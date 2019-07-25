@@ -2,14 +2,24 @@ package com.ayundao.base.resolver;
 
 import com.ayundao.base.annotation.CurrentUser;
 import com.ayundao.base.exception.AuthenticationException;
+import com.ayundao.base.shiro.RedisManager;
+import com.ayundao.base.shiro.SecurityConsts;
+import com.ayundao.base.utils.JwtUtils;
 import com.ayundao.entity.User;
+import com.ayundao.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @ClassName: CurrentUserResolver
@@ -20,6 +30,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * @Version: V1.0
  */
 public class CurrentUserResolver implements HandlerMethodArgumentResolver {
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -32,10 +45,14 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest req, WebDataBinderFactory webDataBinderFactory) throws Exception {
         User user = (User) SecurityUtils.getSubject().getPrincipal();
-        if (user != null) {
-            SecurityUtils.getSubject().getSession().setAttribute("currentUser", user);
-            return user;
-        }
-        return new AuthenticationException("无法获取当前用户,认证异常");
+        user = user == null ? (User) SecurityUtils.getSubject().getSession().getAttribute("currentUser") : user;
+        if (user == null) {
+            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = servletRequestAttributes.getRequest();
+            String token = request.getHeader("IYunDao-AssessToken");
+            user = userService.findByAccount(JwtUtils.getClaim(token, SecurityConsts.ACCOUNT));
+        } 
+        SecurityUtils.getSubject().getSession().setAttribute("currentUser", user);
+        return user;
     }
 }

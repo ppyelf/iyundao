@@ -10,6 +10,10 @@ import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.*;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +25,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import static com.ayundao.base.BaseController.ROLE_ADMIN;
+import static com.ayundao.base.BaseController.ROLE_MANAGER;
+import static com.ayundao.base.BaseController.ROLE_USER;
+
 /**
  * @ClassName: PMAssessController
  * @project: ayundao
@@ -30,6 +38,8 @@ import java.util.List;
  * @Version: V1.0
  */
 @CrossOrigin
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/PMAssess")
 public class PMAssessController extends BaseController{
@@ -128,6 +138,7 @@ public class PMAssessController extends BaseController{
     *      "data": {"total": 8,"totalPage": 1,"page": 0,"content": [{"score": "23","groupId": "","name": "","departId": "","id": "4028d8816bf34e2f016bf3514a1b000a","userId": "0a4179fc06cb49e3ac0db7bcc8cf0882","subjectId": ""},{"score": "22","groupId": "","name": "","departId": "","id": "4028d8816bf34e2f016bf3514a1c000b","userId": "402881916ba10b8a016ba113adbc0006","subjectId": ""}]}
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("pagePioneerIndex")
     public JsonResult pagePioneerIndex(@RequestParam(defaultValue = "0")int page,
                                        @RequestParam(defaultValue = "10")int size){
@@ -162,6 +173,7 @@ public class PMAssessController extends BaseController{
     *        "data": {"total": 1,"totalPage": 1,"page": 0,"content": [{"score": "0","data": "20181212111111","name": "","departCode": "","id": "11","subjectCode": "1","userCode": "11""groupCode": ""}]}
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("findSearch")
     public JsonResult findBydeption(String property,
                                     String value,
@@ -200,6 +212,7 @@ public class PMAssessController extends BaseController{
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/lists")
     public JsonResult lists(@RequestParam(defaultValue = "0")int type){
         List<PioneerIndex> list = pmAssessService.findOrderByCreatedTime(type);
@@ -283,6 +296,7 @@ public class PMAssessController extends BaseController{
     *      "data": {"total": 3,"totalPage": 1,"page": 0,"content": [{"result": "11","score": "11","data": "11","name": "11","departCode": "11","id": "4028d8816bf8a59a016bf8ab95850009","subjectCode": "11","userCode": "11","groupCode": "11"},{"result": "22","score": "22""data": "22","name": "22","departCode": "22","id": "4028d8816bf8a59a016bf8ab9586000a","subjectCode": "22","userCode": "22","groupCode": "22"}]}
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("pageDemocraticAppraisal")
     public JsonResult pageDemocraticAppraisal(@RequestParam(defaultValue = "0")int page,
                                               @RequestParam(defaultValue = "10")int size){
@@ -318,6 +332,7 @@ public class PMAssessController extends BaseController{
     *      "data": {"total": 1,"totalPage": 1,"page": 0,"content": [{"score": "0","data": "20181212111111","name": "","departCode": "","id": "11","subjectCode": "1","userCode": "11""groupCode": ""}]}
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("SearchDemocraticAppraisal")
     public  JsonResult SearchDemocraticAppraisal(String property,
                                                  String value,
@@ -364,6 +379,7 @@ public class PMAssessController extends BaseController{
     },
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/annuallist")
     public  JsonResult annuallist( @RequestParam(defaultValue = "0") String year){
         if ("0".equals(year)){
@@ -426,6 +442,7 @@ public class PMAssessController extends BaseController{
                     }
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findpeopleALL")
     public  JsonResult findpeopleALL(String  usercode,
                                      @RequestParam(defaultValue = "0") String year){

@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.bind.annotation.*;
 import sun.rmi.server.DeserializationChecker;
 
+import javax.swing.text.ParagraphView;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,10 +48,14 @@ public class SubjectController extends BaseController {
     @Autowired
     private GroupsService groupsService;
 
+    @CurrentSubject
+    private Subject subject;
+
     /**
      * @api {GET} /subject/list 机构列表
      * @apiGroup Subject
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 机构列表
      * @apiParamExample {json} 请求样例：
      *                /subject/list
@@ -65,15 +70,17 @@ public class SubjectController extends BaseController {
      * 	"data": "['{'version':'1','id':'bd6886bc88e54ef0a36472efd95c744c','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'总院','subjectType':'head'}','{'version':'1','id':'c72a2c6bd1e8428fac6706b217417831','createdDate':'20190517111111','lastModifiedDate':'20190517111111','name':'分院','subjectType':'head'}']"
      * }
      */
-    @RequiresPermissions("view")
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(@CurrentSubject Subject subject) {
+        List<Subject> subjects = new ArrayList<>();
         if (subject == null) {
-            return JsonResult.success();
+            subjects = subjectService.findAll();
+        }else {
+            subjects = subject.getSubjectType().equals(Subject.SUBJECT_TYPE.head)
+                    ? subjectService.findAll()
+                    : new ArrayList<Subject>(){};
         }
-        List<Subject> subjects = subject.getSubjectType().equals(Subject.SUBJECT_TYPE.head)
-                ? subjectService.findAll()
-                : new ArrayList<Subject>(){};
         if (CollectionUtils.isEmpty(subjects)) {
             subjects.add(subject);
         }
@@ -96,6 +103,7 @@ public class SubjectController extends BaseController {
     /**
      * @api {GET} /user_group/manager_list 列表
      * @apiGroup Subject
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiVersion 1.0.0
      * @apiDescription 列表
      * @apiParamExample {json} 请求样例：
@@ -157,6 +165,7 @@ public class SubjectController extends BaseController {
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 查看机构
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParamExample {json} 请求样例：
      *                ?id=402881f46afdef14016afe28796c000b
@@ -200,6 +209,7 @@ public class SubjectController extends BaseController {
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 新增机构
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} name
      * @apiParam {String} code
      * @apiParam {int} type
@@ -259,6 +269,7 @@ public class SubjectController extends BaseController {
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 修改机构
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id
      * @apiParam {String} name
      * @apiParam {String} code
@@ -313,6 +324,7 @@ public class SubjectController extends BaseController {
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 检测编号是否存在
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} code
      * @apiParamExample {json} 请求样例：
      *                ?code=1234
@@ -338,6 +350,7 @@ public class SubjectController extends BaseController {
      * @apiGroup Subject
      * @apiVersion 1.0.0
      * @apiDescription 分配
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填,机构ID
      * @apiParam {String[]} departIds 部门ID集合
      * @apiParam {String[]} groupIds 组织ID集合

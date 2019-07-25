@@ -14,13 +14,9 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.web.server.ConfigurableWebServerFactory;
-import org.springframework.boot.web.server.ErrorPage;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.http.HttpStatus;
 
 import javax.servlet.Filter;
 import java.util.*;
@@ -156,20 +152,6 @@ public class ShiroConfig{
         return advisor;
     }
 
-    /**
-     * 解决spring-boot Whitelabel Error Page
-     * @return
-     */
-    @Bean
-    public WebServerFactoryCustomizer<ConfigurableWebServerFactory> webServerFactoryCustomizer(){
-        return factory -> {
-            factory.setPort(80);
-            ErrorPage error401Page = new ErrorPage(HttpStatus.UNAUTHORIZED, "/unauthorized");
-            ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/404");
-            ErrorPage error500Page = new ErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "/500");
-            factory.addErrorPages(error401Page, error404Page, error500Page);
-        };
-    }
     /**
      * cookie对象;会话Cookie模板 ,默认为: JSESSIONID 问题: 与SERVLET容器名冲突,重新定义为sid或rememberMe，自定义
      * @return

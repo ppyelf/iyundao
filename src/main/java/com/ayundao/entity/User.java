@@ -99,6 +99,13 @@ public class User extends BaseEntity<String> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Groups> groups;
 
+	 /**
+
+     * 第三方授权
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<UserApp> userApps;
+	
     /**
      * 任务发布人id
      */
@@ -285,7 +292,14 @@ public class User extends BaseEntity<String> {
         this.groups = groups;
     }
 
-    public Set<Task> getTask() {
+	
+    public Set<UserApp> getUserApps() {
+        return userApps;
+    }
+
+    public void setUserApps(Set<UserApp> userApps) {
+        this.userApps = userApps;
+    }    public Set<Task> getTask() {
         return task;
     }
 
@@ -391,7 +405,7 @@ public class User extends BaseEntity<String> {
      */
     public enum USER_TYPE {
         /**
-         * 普通用户w
+         * 普通用户
          */
         normal,
 

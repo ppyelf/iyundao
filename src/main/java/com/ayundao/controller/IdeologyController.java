@@ -47,7 +47,7 @@ public class IdeologyController extends BaseController {
      * @api {POST} /ideology/downloadCountry 下载学习强国模板
      * @apiGroup Ideology
      * @apiVersion 1.0.0
-     * @apiDescription 下载模板
+     * @apiDescription 下载学习强国模板
      * @apiParamExample {json} 请求示例:
      *                  /ideology/downloadCountry
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -74,7 +74,7 @@ public class IdeologyController extends BaseController {
      * @api {POST} /ideology/importCountry 导入学习强国
      * @apiGroup Ideology
      * @apiVersion 1.0.0
-     * @apiDescription 下载模板
+     * @apiDescription 导入学习强国
      * @apiParamExample {json} 请求示例:
      *                  /ideology/importCountry
      * @apiSuccess (200) {String} code 200:成功</br>

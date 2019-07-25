@@ -8,8 +8,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.*;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
+import org.hibernate.loader.collection.PaddedBatchingCollectionInitializerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static com.ayundao.base.BaseController.*;
 
 /**
  * @ClassName: WorkController
@@ -26,6 +32,8 @@ import java.util.Map;
  * @Description: 控制层 - 中心工作
  * @Version: V1.0
  */
+@RequiresRoles(value = {ROLE_USER, ROLE_MANAGER, ROLE_ADMIN}, logical = Logical.OR)
+@RequiresUser
 @RestController
 @RequestMapping("/work")
 public class WorkController extends BaseController {
@@ -59,6 +67,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求示例:
      *              /list
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -72,6 +81,7 @@ public class WorkController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list() {
         List<Work> works = workService.findAll();
@@ -88,6 +98,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 添加工作
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} year 必填,
      * @apiParam {String} name 必填,
      * @apiParam {int} workType 必填(默认:0),
@@ -113,6 +124,7 @@ public class WorkController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     public JsonResult add(String year,
                           String name,
@@ -141,6 +153,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 查看工作
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填,
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916b6a2198016b6a21e0450000
@@ -158,6 +171,7 @@ public class WorkController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id) {
         Work work = workService.find(id);
@@ -179,6 +193,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 删除工作
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填,
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916b6a2198016b6a21e0450000
@@ -193,6 +208,7 @@ public class WorkController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         workService.delete(id);
@@ -204,6 +220,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 添加工作指标
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} name
      * @apiParam {String} situation
      * @apiParam {String} fatherId
@@ -229,6 +246,7 @@ public class WorkController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addIndicator")
     public JsonResult addIndicator(String name,
                                    String situation,
@@ -236,7 +254,7 @@ public class WorkController extends BaseController {
                                    String workId) {
         Work work = workService.find(workId);
         if (work == null) {
-            return jsonResult.notFound("此工作不存在");
+            return JsonResult.notFound("此工作不存在");
         } 
         Indicator father = indicatorService.find(fatherId);
         if (father == null && StringUtils.isNotBlank(fatherId)) {
@@ -246,10 +264,11 @@ public class WorkController extends BaseController {
     }
 
     /**
-     * @api {POST} /work/indicatorList 添加工作指标
+     * @api {POST} /work/indicatorList 工作指标列表
      * @apiGroup Work
      * @apiVersion 1.0.0
-     * @apiDescription 添加工作指标
+     * @apiDescription 工作指标列表
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求示例:
      *              /indicatorList
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -271,6 +290,7 @@ public class WorkController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/indicatorList")
     public JsonResult indicatorList() {
         List<Indicator> list = indicatorService.findAllAndFatherIsNull();
@@ -288,6 +308,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 添加指标详情
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} year 必填
      * @apiParam {String} month 必填
      * @apiParam {String} completion
@@ -316,6 +337,7 @@ public class WorkController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addIndicatorInfo")
     public JsonResult addIndicatorInfo(String year,
                                        String month,
@@ -351,6 +373,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 上传指标图片
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
      *                      /work/addImage
@@ -365,6 +388,7 @@ public class WorkController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addImage")
     public JsonResult addImage(MultipartFile file) {
         IndicatorInfoImage image = new IndicatorInfoImage();
@@ -387,6 +411,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 上传指标详情附件
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
      *              /work/addFile
@@ -401,6 +426,7 @@ public class WorkController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/addFile")
     public JsonResult addFile(MultipartFile file) {
         IndicatorInfoFile indicatorInfoFile = new IndicatorInfoFile();
@@ -423,6 +449,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 上传指标详情附件
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求示例:
      *              /work/delFile
@@ -437,6 +464,7 @@ public class WorkController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/delFile")
     public JsonResult delFile(String id) {
         IndicatorInfoFile file = indicatorInfoFileService.find(id);
@@ -449,6 +477,7 @@ public class WorkController extends BaseController {
      * @apiGroup Work
      * @apiVersion 1.0.0
      * @apiDescription 删除工作指标
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求示例:
      *              ?id=402881916b6e4a53016b6e500b0e0003
@@ -464,6 +493,7 @@ public class WorkController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/delIndicator")
     public JsonResult delIndicator(String id) {
         //需要完善

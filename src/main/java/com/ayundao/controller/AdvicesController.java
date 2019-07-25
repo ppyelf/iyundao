@@ -12,14 +12,17 @@ import com.ayundao.repository.UserRepository;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static com.ayundao.base.BaseController.*;
 
 /**
  * @ClassName: AdvicesController
@@ -29,6 +32,8 @@ import java.util.List;
  * @Description: 实现 - 消息
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER, ROLE_PUBLISHER,ROLE_AUDITOR})
 @RestController
 @RequestMapping("/advices")
 public class AdvicesController extends BaseController{
@@ -73,6 +78,7 @@ public class AdvicesController extends BaseController{
      *     "data": [{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12959f90000","title": "我撒旦","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc129e1110002","title": "我","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12a88660004","title": "自行车","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12acad10006","title": "9880980","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12b05f60008","title": "测试","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12b1c9b000a","title": "测试111","type": "1","username": "钱正"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<Advices> advicesAll = advicesService.findAll();
@@ -130,6 +136,7 @@ public class AdvicesController extends BaseController{
      *      "data": {"advicestext": "","issuertime": "2018-12-12 12:12:12","advicesstatus": "","id": "4028d8816bcc9a32016bccc68bfc0006","type": "1","title": "消息标题1"}
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     public JsonResult add(String title,
                           String type,
@@ -198,6 +205,7 @@ public class AdvicesController extends BaseController{
      *      "data": {"advicestext": null,"issuertime": "2018-12-12 12:12:12","advicesstatus": null,"subjects": [{"code": "1","name": "分院党组织","id": "402881916b9d3031016b9d626593000c","subjectType": "part"},{"code": "0","name": "富阳人民医院","id": "bfc5bd62010f467cbbe98c9e4741733b","subjectType": "part"}],"name": "钱正","groups": [{"code": "0","name": "行政支部","remark": "","id": "402881916b9d3031016b9d63a172000d"},{"code": "1","name": "后勤支部","remark": "","id": "402881916b9d3031016b9d63d7af000e"}],"id": "4028d8816bcc9a32016bccc68bfc0006","title": "消息标题1","type": "1","users": [{"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}],"departs": []}
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/view")
     public JsonResult view(String id){
         Advices advices = advicesService.findById(id);
@@ -266,6 +274,7 @@ public class AdvicesController extends BaseController{
      *     "data": []
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id){
         Advices advices = advicesService.findById(id);
@@ -292,6 +301,7 @@ public class AdvicesController extends BaseController{
      *     "data": [{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12959f90000","title": "我撒旦","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc129e1110002","title": "我","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12a88660004","title": "自行车","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12acad10006","title": "9880980","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12b05f60008","title": "测试","type": "1","username": "钱正"},{"advicestext": "1","issuertime": "1","advicesstatus": "1","id": "4028d8816bc1252e016bc12b1c9b000a","title": "测试111","type": "1","username": "钱正"}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findBydeption")
     public JsonResult findBydeption(String id){
         List<Advices> advices2 = advicesService.findAdvicesByDeptionId(id);
@@ -367,26 +377,70 @@ public class AdvicesController extends BaseController{
      * {
      * "code": 200,
      * "message": "成功",
-     *  "data": [{"phone": "","advices": {"advicestext": "描述","issuertime": "2019-07-16 08:00:00","advicesstatus": "已发送","id": "4028d8816bf8a59a016bf8aab6050000","title": "新增任务...","type": "0"},"state": "未接收","user": {"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}},{"phone": "","advices": {"advicestext": "描述","issuertime": "2019-07-16 08:00:00","advicesstatus": "已发送","id": "4028d8816bf8a59a016bf8aab6050000","title": "新增任务...","type": "0"},"state": "未接收","user": {"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}}]
+     *   "data": {
+            "total": 2,   总条数
+            "size": 10,     每页的条数
+            "page": 1,        当前页数
+            "content": [
+            {
+            "phone": "",         电话
+            "advices": {
+                    "advicestext": "描述",            任务内容
+                    "issuertime": "2019-07-16 08:00:00",        发布时间
+                    "advicesstatus": "已发送",         发送状态
+                    "id": "4028d8816bf8a59a016bf8aab6050000",           发布人员id
+                    "type": "0",                消息类型
+                    "title": "新增任务..."                  标题
+                    },
+            "state": "未接收",
+            "user": {
+                    "code": "001",                           编号
+
+                    "name": "钱正",                           名字
+                    "id": "402881916ba10b8a016ba113adbc0006", 编号
+
+
+
+    }]
+    },
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findAllByUserId")
-    public JsonResult findAllByUserId(String userid){
+    public JsonResult findAllByUserId(String userid,
+                                      @RequestParam(defaultValue = "1")int page,
+                                      @RequestParam(defaultValue = "10")int size){
         User user = userService.findById(userid);
         if (user == null){
             return JsonResult.notFound("找不到用户");
         }
         List<AdvicesInfoUser> advicesInfoUsers = advicesService.findAllByUser(user);
+        List<AdvicesInfoUser> currentPageList = new ArrayList<>();
+        if (advicesInfoUsers != null && advicesInfoUsers.size() > 0) {
+            int currIdx = (page > 1 ? (page - 1) * size : 0);
+            for (int i = 0; i < size && i < advicesInfoUsers.size() - currIdx; i++) {
+                AdvicesInfoUser data = advicesInfoUsers.get(currIdx + i);
+                currentPageList.add(data);
+            }
+        }
         JSONArray array = new JSONArray();
-        for (AdvicesInfoUser advicesInfoUser : advicesInfoUsers) {
+        for (AdvicesInfoUser advicesInfoUser : currentPageList) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("advices", JsonUtils.getJson(advicesInfoUser.getAdvices()));
             jsonObject.put("state",advicesInfoUser.getState());
             jsonObject.put("phone",advicesInfoUser.getPhone());
-            jsonObject.put("user",JsonUtils.getJson(advicesInfoUser.getUser()));
+//            jsonObject.put("user",JsonUtils.getJson(advicesInfoUser.getUser()));
+            jsonObject.put("name",advicesInfoUser.getUser().getName());
+            jsonObject.put("code",advicesInfoUser.getUser().getCode());
+            jsonObject.put("id",advicesInfoUser.getUser().getId());
             array.add(jsonObject);
         }
-        jsonResult.setData(array);
+        JSONObject object = new JSONObject();
+        object.put("total",advicesInfoUsers.size());
+        object.put("page",page);
+        object.put("size",size);
+        object.put("content",array);
+        jsonResult.setData(object);
         return jsonResult;
     }
 

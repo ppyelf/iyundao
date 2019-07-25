@@ -2,11 +2,13 @@ package com.ayundao.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.annotation.CurrentUser;
 import com.ayundao.base.shiro.JwtToken;
 import com.ayundao.base.shiro.SecurityConsts;
 import com.ayundao.base.utils.JsonResult;
+import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.base.utils.JwtUtils;
 import com.ayundao.entity.User;
 import com.ayundao.entity.UserRelation;
@@ -15,6 +17,10 @@ import com.ayundao.service.UserRelationService;
 import com.ayundao.service.UserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
@@ -46,7 +52,6 @@ public class IndexController extends BaseController {
 
     private final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
-
     @Autowired
     private UserRelationService userRelationService;
 
@@ -55,6 +60,9 @@ public class IndexController extends BaseController {
 
     @Autowired
     private SubjectService subjectService;
+
+    @CurrentUser
+    private User user;
 
     /**
      * @api {POST} /login 用户登录
@@ -88,14 +96,26 @@ public class IndexController extends BaseController {
             return loginSuccess(account, resp);
         }
         // 执行认证登陆
-        subject.login(token);
+        try {
+            subject.login(token);
+        } catch (UnknownAccountException ex) {
+            return JsonResult.failure(804, ex.getMessage());
+        } catch (LockedAccountException ex) {
+            return JsonResult.failure(805, ex.getMessage());
+        } catch (AccountException ex) {
+            return JsonResult.failure(803, ex.getMessage());
+        } catch (TokenExpiredException ex) {
+            return JsonResult.failure(806, ex.getMessage());
+        } catch (IncorrectCredentialsException ex){
+            return JsonResult.failure(807, "密码校验错误");
+        }
         //根据权限，指定返回数据
         User user = (User) subject.getPrincipal();
         if (user != null && user.getAccount().equals(account)) {
             return loginSuccess(account, resp);
         }
 
-        return loginSuccess(account, resp);
+        return JsonResult.failure(400,"账号不存在");
     }
 
     /**
@@ -108,7 +128,7 @@ public class IndexController extends BaseController {
         Session session = SecurityUtils.getSubject().getSession();
         User user = userService.findByAccount(account);
         //生成token
-        JSONObject json = new JSONObject();
+        JSONObject json = JsonUtils.getJson(user);
         String token = JwtUtils.sign(account, currentTimeMillis);
         json.put("token",token );
         List<UserRelation> userRelations = userRelationService.findByUser(user);
@@ -135,11 +155,12 @@ public class IndexController extends BaseController {
      * @apiGroup 首页
      * @apiVersion 1.0.0
      * @apiDescription 个人机构列表
-     * @apiParam {String} id 机构ID
+     * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例：
      *                /subjectList
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:机构不存在/ID为空</br>
+     *                                 100:未加入任何机构</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -151,8 +172,8 @@ public class IndexController extends BaseController {
      */
     @GetMapping("/subjectList")
     public JsonResult subjectList(@CurrentUser User user) {
-        List<UserRelation> list = userRelationService.findByUserId(user.getId());
         Set<com.ayundao.entity.Subject> set = new HashSet<>();
+        List<UserRelation> list = userRelationService.findByUserId(user.getId());
         for (UserRelation ur : list) {
             set.add(ur.getSubject());
         }
@@ -163,6 +184,12 @@ public class IndexController extends BaseController {
             json.put("name", subject.getName());
             arr.add(json);
         }
+        jsonResult = JsonResult.success();
+        if (CollectionUtils.isEmpty(arr)) {
+            jsonResult.setCode(100);
+            jsonResult.setMessage("未加入任何和机构");
+            return jsonResult;
+        } 
         jsonResult.setData(arr);
         return jsonResult;
     }
@@ -202,7 +229,8 @@ public class IndexController extends BaseController {
 
     @RequestMapping("/unauthorized")
     public JsonResult unauthorized() {
-        logger.info("==============================无权限");
+        jsonResult.setCode(401);
+        jsonResult.setMessage("无权限/未登录");
         return jsonResult;
     }
     /**

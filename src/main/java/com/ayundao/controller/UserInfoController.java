@@ -14,12 +14,21 @@ import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.omg.CORBA.MARSHAL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+
+import static com.ayundao.base.BaseController.ROLE_ADMIN;
+import static com.ayundao.base.BaseController.ROLE_MANAGER;
+import static com.ayundao.base.BaseController.ROLE_USER;
+
 /**
  * @ClassName: UserInfoController
  * @project: ayundao
@@ -28,6 +37,8 @@ import java.util.*;
  * @Description: 控制层 - 用户详情
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/userInfo")
 public class UserInfoController extends BaseController {
@@ -42,6 +53,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add 新增用户详情
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户详情
      * @apiParam {json} fileid:["id",""],
      *          {String}imageid:"id",
@@ -101,95 +113,12 @@ public class UserInfoController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": {
-     *         "userInfoImage": {
-     *             "id": "2c9707816b9c33a4016b9c34191d0000",
-     *             "name": "f4b4c806692a400b8cddee34dbbb33dc",
-     *             "url": "userinfoimage\\f4b4c806692a400b8cddee34dbbb33dc.jpg",
-     *             "suffix": "jpg",
-     *             "userinfoid": "2c9707816b9c33a4016b9d2de1560015",
-     *             "info1": null,
-     *             "info2": null,
-     *             "info3": null,
-     *             "info4": null,
-     *             "info5": null,
-     *             "new": false
-     *         },
-     *         "userInfoPersonnel": {
-     *             "id": "2c9707816b9c33a4016b9d2de15d0016",
-     *             "workyear": "工龄(年)",
-     *             "workmonth": "工龄(月)",
-     *             "partypost": "党内职务",
-     *             "servingdate": "任命时间",
-     *             "otherpost": "其他职务",
-     *             "jianpingpost": "兼评职称",
-     *             "jianpingdate": "兼评时间",
-     *             "politicalappearance": "政治面貌",
-     *             "partydate": "入党团日期",
-     *             "branchname": "所在支部",
-     *             "typeworker": "工人工种",
-     *             "gradeworker": "工人等级",
-     *             "appointmenttime": "聘任时间",
-     *             "maritalstatus": "婚姻状况",
-     *             "hukounature": "户口性质",
-     *             "hukouwhere": "户口所在",
-     *             "beforecompany": "调入前单位",
-     *             "reserveleavedate": "预定离院日期",
-     *             "firstcontractdate": "首次合同开始时间",
-     *             "familyaddr": "家庭地址",
-     *             "personneltype": "人员类别",
-     *             "fanpinenddate": "返聘到期时间",
-     *             "userinfoid": "2c9707816b9c33a4016b9d2de1560015",
-     *             "info1": null,
-     *             "info2": null,
-     *             "info3": null,
-     *             "info4": null,
-     *             "info5": null,
-     *             "new": false
-     *         },
-     *         "userInfoFile": {
-     *             "id": "2c9707816b9c33a4016b9d28a9e60012",
-     *             "name": "e94ef487227c43b2999efcd53b06fc61",
-     *             "url": "userinfofile\\e94ef487227c43b2999efcd53b06fc61.jpg",
-     *             "suffix": "jpg",
-     *             "userinfoid": "2c9707816b9c33a4016b9d2de1560015",
-     *             "info1": null,
-     *             "info2": null,
-     *             "info3": null,
-     *             "info4": null,
-     *             "info5": null,
-     *             "new": false
-     *         },
-     *         "userinfo": {
-     *             "id": "2c9707816b9c33a4016b9d2de1560015",
-     *             "number": "005",
-     *             "name": "测试5",
-     *             "branchName": "第一党支部",
-     *             "sex": "男",
-     *             "department": "内科",
-     *             "birthday": "1995-04-10",
-     *             "education": "高中",
-     *             "place": "杭州",
-     *             "nation": "汉族",
-     *             "post": "主席",
-     *             "title": "主任医师",
-     *             "idEntity": "干部",
-     *             "workDate": "",
-     *             "partyDate": "2011-11-11",
-     *             "correctionDate": "",
-     *             "phone": "",
-     *             "idcard": "61052719950410181X",
-     *             "userid": "",
-     *             "info1": null,
-     *             "info2": null,
-     *             "info3": null,
-     *             "info4": null,
-     *             "info5": null,
-     *             "new": false
+     *     "data": {"userInfoImage": {"id": "2c9707816b9c33a4016b9c34191d0000","name": "f4b4c806692a400b8cddee34dbbb33dc","url": "userinfoimage\\f4b4c806692a400b8cddee34dbbb33dc.jpg","suffix": "jpg","userinfoid": "2c9707816b9c33a4016b9d2de1560015","info1": null,"info2": null,"info3": null,"info4": null,"info5": null,"new": false},"userInfoPersonnel": {"id": "2c9707816b9c33a4016b9d2de15d0016","workyear": "工龄(年)","workmonth": "工龄(月)","partypost": "党内职务","servingdate": "任命时间","otherpost": "其他职务","jianpingpost": "兼评职称","jianpingdate": "兼评时间","politicalappearance": "政治面貌","partydate": "入党团日期","branchname": "所在支部","typeworker": "工人工种","gradeworker": "工人等级","appointmenttime": "聘任时间","maritalstatus": "婚姻状况","hukounature": "户口性质","hukouwhere": "户口所在","beforecompany": "调入前单位","reserveleavedate": "预定离院日期","firstcontractdate": "首次合同开始时间","familyaddr": "家庭地址","personneltype": "人员类别","fanpinenddate": "返聘到期时间","userinfoid": "2c9707816b9c33a4016b9d2de1560015","info1": null,"info2": null,"info3": null,"info4": null,"info5": null,"new": false},"userInfoFile": {"id": "2c9707816b9c33a4016b9d28a9e60012","name": "e94ef487227c43b2999efcd53b06fc61","url": "userinfofile\\e94ef487227c43b2999efcd53b06fc61.jpg","suffix": "jpg","userinfoid": "2c9707816b9c33a4016b9d2de1560015","info1": null,"info2": null,"info3": null,"info4": null,"info5": null,"new": false},"userinfo": {"id": "2c9707816b9c33a4016b9d2de1560015","number": "005","name": "测试5","branchName": "第一党支部","sex": "男","department": "内科","birthday": "1995-04-10","education": "高中","place": "杭州","nation": "汉族","post": "主席","title": "主任医师","idEntity": "干部","workDate": "","partyDate": "2011-11-11","correctionDate": "","phone": "","idcard": "61052719950410181X","userid": "","info1": null,"info2": null,"info3": null,"info4": null,"info5": null,"new": false
      *         }
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping(value = "/add")
     public JsonResult add(@RequestBody Map<String,Object> map){
         String imageids =(String) map.get("imageid");
@@ -209,6 +138,7 @@ public class UserInfoController extends BaseController {
      * @api {POST} /userInfo/upload_file 上传文件
      * @apiGroup UserInfoFile
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传文件
      * @apiParam {String} name 必填 名称
      * @apiParam {String} url 必填路径
@@ -242,6 +172,7 @@ public class UserInfoController extends BaseController {
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_file")
     public JsonResult uploadFile(MultipartFile file){
         UserInfoFile files = new UserInfoFile();
@@ -263,6 +194,7 @@ public class UserInfoController extends BaseController {
      * @api {POST} /userInfo/upload_image 上传图片
      * @apiGroup UserInfoImage
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传图片
      * @apiParam {MultipartFile} file
      * @apiParamExample {json} 请求样例:
@@ -275,23 +207,11 @@ public class UserInfoController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": {
-     *         "userinfoid": "",
-     *         "lastModifiedDate": "20190628114945",
-     *         "suffix": "jpg",
-     *         "version": "0",
-     *         "url": "d:\\upload\\userinfoimage\\f4b4c806692a400b8cddee34dbbb33dc.jpg",
-     *         "createdDate": "20190628114945",
-     *         "name": "f4b4c806692a400b8cddee34dbbb33dc",
-     *         "info1": "",
-     *         "id": "2c9707816b9c33a4016b9c34191d0000",
-     *         "info5": "",
-     *         "info4": "",
-     *         "info3": "",
-     *         "info2": ""
+     *     "data": {"userinfoid": "","lastModifiedDate": "20190628114945","suffix": "jpg","version": "0","url": "d:\\upload\\userinfoimage\\f4b4c806692a400b8cddee34dbbb33dc.jpg","createdDate": "20190628114945","name": "f4b4c806692a400b8cddee34dbbb33dc","info1": "","id": "2c9707816b9c33a4016b9c34191d0000","info5": "","info4": "","info3": "","info2": ""
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/upload_image")
     public JsonResult uploadImage(MultipartFile file) {
         UserInfoImage image = new UserInfoImage();
@@ -313,6 +233,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_basic 新增用户基础信息表
      * @apiGroup UserInfoBasic
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户基础信息表
      * @apiParam {JSON} userInfoBasic:{
      *         {String} "workerdate":"计算连续工龄时间",</br>
@@ -343,6 +264,7 @@ public class UserInfoController extends BaseController {
      *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_basic")
     public JsonResult add_basic(String workerdate,String zhuanzhengdate,String wagesdate,
                                 String arrivedate,String workersnature, String workerscategory,
@@ -372,6 +294,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_contract 新增用户合同信息表
      * @apiGroup UserInfoContract
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户合同信息表
      * @apiParam {JSON} userinfoid:xxxx,
      *      UserInfoContract:{
@@ -396,29 +319,11 @@ public class UserInfoController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": {
-     *         "userInfoContract": {
-     *             "id": "2c9707816b9c33a4016b9d930573001b",
-     *             "archivesmanagementunit": "档案管理单位",
-     *             "contracttype": "合同类型",
-     *             "contractnumber": "合同编号",
-     *             "contractstarttime": "合同开始时间",
-     *             "contractendtime": "合同结束时间",
-     *             "signaturetype": "签订类型",
-     *             "contractperiod": "合同期限",
-     *             "frequency": "合同签定次数",
-     *             "registrationtime": "注册时间",
-     *             "userinfoid": "2c9707816b9c33a4016b9d2de1560015",
-     *             "info1": null,
-     *             "info2": null,
-     *             "info3": null,
-     *             "info4": null,
-     *             "info5": null,
-     *             "new": false
-     *         }
+     *     "data": {"userInfoContract": {"id": "2c9707816b9c33a4016b9d930573001b","archivesmanagementunit": "档案管理单位","contracttype": "合同类型","contractnumber": "合同编号",     "contractstarttime": "合同开始时间",     "contractendtime": "合同结束时间","signaturetype": "签订类型","contractperiod": "合同期限","frequency": "合同签定次数","registrationtime": "注册时间","userinfoid": "2c9707816b9c33a4016b9d2de1560015","info1": null,"info2": null,     "info3": null,     "info4": null,     "info5": null,     "new": false}
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_contract")
     public JsonResult add_contract(String archivesmanagementunit,String contracttype,String contractnumber,
                                    String contractstarttime,String contractendtime,String signaturetype,
@@ -442,6 +347,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_education_work 新增用户教育工作表
      * @apiGroup UserInfoEducationWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户教育工作表
      * @apiParam {JSON} userInfoEducationWork:{
      *         {String} "startdate":"开始日期",</br>
@@ -468,29 +374,12 @@ public class UserInfoController extends BaseController {
      *     "code": 200,
      *     "message": "成功",
      *     "data": {
-     *         "userInfoEducationWork": {
-     *             "id": "297e47e36b96ab96016b9972f96d0017",
-     *             "startdate": "1",
-     *             "enddate": "1",
-     *             "graduationschool": null,
-     *             "major": "1",
-     *             "educationcategory": "1",
-     *             "education": "1",
-     *             "degree": "1",
-     *             "degreedate": "1",
-     *             "edusystem": "1",
-     *             "witness": "1",
-     *             "userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",
-     *             "info1": null,
-     *             "info2": null,
-     *             "info3": null,
-     *             "info4": null,
-     *             "info5": null,
-     *             "new": false
+     *         "userInfoEducationWork": {     "id": "297e47e36b96ab96016b9972f96d0017","startdate": "1","enddate": "1","graduationschool": null,"major": "1","educationcategory": "1","education": "1","degree": "1","degreedate": "1""edusystem": "1","witness": "1","userinfoid": "297e47e36b8cbecd016b8cbf24ec0001",    "info1": null,"info2": null,"info3": null,     "info4": null,     "info5": null,     "new": false
      *         }
      *     }
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_education_work")
     public JsonResult add_education_work(String startdate,String enddate, String graduationschool,
                                          String major,String educationcategory,String education,
@@ -517,6 +406,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_medical_care 新增用户医务护理表
      * @apiGroup UserInfoMedicalCare
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户医务护理表
      * @apiParam {JSON} UserInfoMedicalCare:{
      *         {String} "parcticelevel":"执业资格等级",</br>
@@ -546,6 +436,7 @@ public class UserInfoController extends BaseController {
      *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_medical_care")
     public JsonResult add_medical_care(String parcticelevel,String practicenumber,String parcticebookobtaindate,
                                        String technologynumber,String technologybookobtaindate,String nurseshoesize,
@@ -573,6 +464,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_other 新增用户其他信息表
      * @apiGroup UserInfoOther
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户其他信息表
      * @apiParam {JSON} UserInfoOther{
      *         {String} "whethersign":"是否允许登录",</br>
@@ -596,6 +488,7 @@ public class UserInfoController extends BaseController {
      *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_other")
     public JsonResult add_other(String whethersign,String whethercheck,String state,
                                 String leavedate,String cancellation,String userinfoid){
@@ -615,6 +508,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_personnel 新增用户人事信息表
      * @apiGroup UserInfoPersonnel
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户人事信息表
      * @apiParam {JSON} userInfoPersonnel:{
      *            		{String} "workyear":"工龄(年)",</br>
@@ -655,6 +549,7 @@ public class UserInfoController extends BaseController {
      *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_personnel")
     public JsonResult add_personnel(String workyear,String workmonth,String partypost,
                                     String servingdate,String otherpost,String jianpingpost,
@@ -697,6 +592,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_title_apost 新增用户职称职务表
      * @apiGroup UserInfoTitleaPost
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户职称职务表
      * @apiParam {JSON} UserInfoTitleaPost:{
      *         {String} "postname":"职务名称",</br>
@@ -738,6 +634,7 @@ public class UserInfoController extends BaseController {
      *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_title_apost")
     public JsonResult add_title_apost(String postname,String administrationpost,String servingyears,
                                       String administrationlevel,String servingdate,String servingstopdate,
@@ -781,6 +678,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/add_work 新增用户工作经历表
      * @apiGroup UserInfoWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新增用户工作经历表
      * @apiParam {JSON} UserInfoWork:{
      *         {String} "startdate":"开始时间",</br>
@@ -805,6 +703,7 @@ public class UserInfoController extends BaseController {
      *     "data": "{\"version\":\"0\",\"id\":\"402881f46afdef14016afdf286170001\",\"createdDate\":\"20190528181810\",\"lastModifiedDate\":\"20190528181810\",\"name\":\"测试用户组2\",\"user\":\"\",\"father\":\"\"}"
      * }
      */
+    @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_work")
     public JsonResult add_work(String startdate,String enddate,String workunit,
                                String toservepost,String posttitle,String witness,
@@ -828,6 +727,7 @@ public class UserInfoController extends BaseController {
      * @api {Post} /userInfo/del 删除用户详情
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例
@@ -843,6 +743,7 @@ public class UserInfoController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del")
     public JsonResult del(String id) {
         if (StringUtils.isBlank(id)) {
@@ -856,6 +757,7 @@ public class UserInfoController extends BaseController {
      * @api {Post} /userInfo/del_contract 删除用户详情 -合同信息表
      * @apiGroup UserInfoContract
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 合同信息表ID
      * @apiParamExample {json} 请求样例
@@ -871,6 +773,7 @@ public class UserInfoController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_contract")
     public JsonResult del_contract(String id) {
         if (StringUtils.isBlank(id)) {
@@ -884,6 +787,7 @@ public class UserInfoController extends BaseController {
      * @api {Post} /userInfo/del_work 删除用户详情 -工作信息表
      * @apiGroup UserInfoWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 工作信息表ID
      * @apiParamExample {json} 请求样例
@@ -899,6 +803,7 @@ public class UserInfoController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_work")
     public JsonResult del_work(String id) {
         if (StringUtils.isBlank(id)) {
@@ -912,6 +817,7 @@ public class UserInfoController extends BaseController {
      * @api {Post} /userInfo/del_edu 删除用户详情 -工作信息表
      * @apiGroup UserInfoEducationWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 删除
      * @apiParam {String} id 工作信息表ID
      * @apiParamExample {json} 请求样例
@@ -927,6 +833,7 @@ public class UserInfoController extends BaseController {
      * 	"data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/del_edu")
     public JsonResult del_edu(String id) {
         if (StringUtils.isBlank(id)) {
@@ -940,6 +847,7 @@ public class UserInfoController extends BaseController {
      * @api {get} /userInfo/list 用户分页
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParamExample {json} 请求样例
      *                /userInfo/list
@@ -953,6 +861,7 @@ public class UserInfoController extends BaseController {
      *     "message": "成功",
      *     "data": [{"birthday": "1995-04-10","education": "本科","nation": "汉族","title": "专家","userid": "11213546546132151","number": "002","password": "123456","workDate": "40年","idEntity": "未知","post": "主治医生","id": "297e47e36b7821e5016b782294410000","place": "陕西省","department": "消化科","lastModifiedDate": "20190621114420","sex": "男","branchName": "第一支部","correctionDate": "2000-11-11","version": "0","partyDate": "2011-01-01","createdDate": "20190621114420","phone": "12124545121","idcard": "61052719950410181X","name": "测试","info1": "","info5": "","info4": "","info3": "","username": "管理员1","info2": ""},{"birthday": "1995-04-10","education": "本科","nation": "汉族","title": "专家","userid": "11213546546132151","number": "003","password": "123","workDate": "40年","idEntity": "未知","post": "45514","id": "297e47e36b7edc64016b7edcaf540000","place": "陕西省","department": "消化科","lastModifiedDate": "20190622190520","sex": "男","branchName": "第一支部","correctionDate": "","version": "0","partyDate": "2011-01-01","createdDate": "20190622190520","phone": "12124545121","idcard": "61052719950410181X","name": "测试","info1": "","info5": "","info4": "","info3": "","username": "管理员44","info2": ""}]}
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/list")
     public JsonResult list(){
         List<UserInfo> pages = userInfoService.findAll();
@@ -971,6 +880,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/listDepart 用户分页 -根据组织查询
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParam {String} departId
      * @apiParamExample {json} 请求样例
@@ -986,6 +896,7 @@ public class UserInfoController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listDepart")
     public JsonResult listDepart(String departId){
         List<User> pages = userService.findByDepartIdForPage(departId);
@@ -1012,6 +923,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/listGroupId 用户分页 -根据部门查询
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParam {String} groupId 部门id
      * @apiParamExample {json} 请求样例
@@ -1027,6 +939,7 @@ public class UserInfoController extends BaseController {
      *     "data": ""
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/listGroupId")
     public JsonResult listGroupId(String groupId){
         List<User> pages = userService.findByGroupIdForPage(groupId);
@@ -1053,6 +966,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findId 用户个人查询
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户分页
      * @apiParamExample {json} 请求样例
      *                /userInfo/findId?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1155,6 +1069,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findId")
     public JsonResult findId(String id){
         if (StringUtils.isBlank(id)) {
@@ -1183,6 +1098,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findBasic 用户个人查询 -基础信息
      * @apiGroup UserInfoBasic
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户基础信息
      * @apiParamExample {json} 请求样例
      *                /userInfo/findBasic?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1199,6 +1115,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findBasic")
     public JsonResult findBasic(String id){
         if (StringUtils.isBlank(id)) {
@@ -1215,6 +1132,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findContract 用户个人查询 -合同信息
      * @apiGroup UserInfoContract
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户合同信息
      * @apiParamExample {json} 请求样例
      *                /userInfo/findContract?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1231,6 +1149,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findContract")
     public JsonResult findContract(String id){
         if (StringUtils.isBlank(id)) {
@@ -1250,6 +1169,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findEducationWork 用户个人查询 -教育工作
      * @apiGroup UserInfoEducationWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户教育工作
      * @apiParamExample {json} 请求样例
      *                /userInfo/findEducationWork?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1266,6 +1186,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findEducationWork")
     public JsonResult findEducationWork(String id){
         if (StringUtils.isBlank(id)) {
@@ -1285,6 +1206,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findMedicalCare 用户个人查询 -医务护理
      * @apiGroup UserInfoMedicalCare
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户医务护理
      * @apiParamExample {json} 请求样例
      *                /userInfo/findMedicalCare?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1301,6 +1223,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findMedicalCare")
     public JsonResult findMedicalCare(String id){
         if (StringUtils.isBlank(id)) {
@@ -1317,6 +1240,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findOther 用户个人查询 -其他表
      * @apiGroup UserInfoOther
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户其他表
      * @apiParamExample {json} 请求样例
      *                /userInfo/findOther?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1333,6 +1257,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findOther")
     public JsonResult findOther(String id){
         if (StringUtils.isBlank(id)) {
@@ -1349,6 +1274,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findPersonnel 用户个人查询 -人事信息
      * @apiGroup UserInfoPersonnel
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户人事信息
      * @apiParamExample {json} 请求样例
      *                /userInfo/findPersonnel?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1365,6 +1291,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findPersonnel")
     public JsonResult findPersonnel(String id){
         if (StringUtils.isBlank(id)) {
@@ -1381,6 +1308,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findTitleaPost 用户个人查询 -职务职称
      * @apiGroup UserInfoTitleaPost
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户职务职称
      * @apiParamExample {json} 请求样例
      *                /userInfo/findTitleaPost?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1397,6 +1325,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findTitleaPost")
     public JsonResult findTitleaPost(String id){
         if (StringUtils.isBlank(id)) {
@@ -1413,6 +1342,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findWork 用户个人查询 -工作经历
      * @apiGroup UserInfoWork
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户工作经历
      * @apiParamExample {json} 请求样例
      *                /userInfo/findWork ?id=297e47e36b8cbecd016b8cbf24ec0001
@@ -1429,6 +1359,7 @@ public class UserInfoController extends BaseController {
      *     ]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findWork")
     public JsonResult findWork(String id){
         if (StringUtils.isBlank(id)) {
@@ -1448,6 +1379,7 @@ public class UserInfoController extends BaseController {
      * @api {post} /userInfo/findByLike 用户条件查询
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户条件查询
      * @apiParam {String} name 姓名
      * @apiParam {String} number 编号
@@ -1465,6 +1397,7 @@ public class UserInfoController extends BaseController {
      *     "data": [{"birthday": "1984-11-11","education": "本科","nation": "汉族","title": "主治医生","userid": "297e47e36b8cbecd016b8cbf239b0000","number": "002","idEntity": "","workDate": "2004-11-11","post": "院长","id": "297e47e36b8cbecd016b8cbf24ec0001","place": "浙江杭州","department": "内科","lastModifiedDate": "20190625114744","sex": "男","branchName": "第一党支部","correctionDate": "2007-11-11","version": "0","partyDate": "2004-11-11","createdDate": "20190625114744","phone": "19822222222","idcard": "315247198811111811","name": "测试1","info1": "","info5": "","info4": "","info3": "","info2": ""}     ]
       }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findByLike")
     public JsonResult findByLike(String name,String number,String department){
        String s = "%" + name + "%";
@@ -1484,6 +1417,7 @@ public class UserInfoController extends BaseController {
      * @api {get} /userInfo/listPower 党建组织图形比例
      * @apiGroup UserInfo
      * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 党建组织图形比例
      * @apiParamExample {json} 请求样例
      *                /userInfo/listPower
@@ -1496,6 +1430,7 @@ public class UserInfoController extends BaseController {
      *     "code": 200,
      *     "message": "成功",
      *     "data": [{"education": {"doctor": 1,"specialty": 0,"postgraduate": 0,"highSchool": 0,"undergraduate": 1},"identity": {"cadre": 1,"masses": 0},"sex": {"woman": 0,"man": 2},"partyAge": {"2年以下": 0,"5-10年": 1,"2-5年": 0,"10年以上": 1},"place": {"NO": 1,"yes": 1},"department": {"eye": 0,"chinese": 0,"nternal": 1,"emergency": 0,"surgery": 1},"title": {"doctor": 0,"attendingDoctor": 1,"deputyChiefPhysician": 1,"chiefPhysician": 0,"residents": 0},"branch": {"ONE": 1,"four": 0,"two": 1,"three": 0,"five": 0},"age": {"25-35周岁": 1,"25周岁以下": 1,"45周岁以上": 0,"35-45以下": 0}}]}*/
+    @RequiresPermissions(PERMISSION_VIEW)
     @GetMapping("/listPower")
     public JsonResult listSex(){
         Map<String,Object> pages = userInfoService.countBySex();
@@ -1542,6 +1477,7 @@ public class UserInfoController extends BaseController {
     *      "data": {"witness": "姜子儒","userinfoid": "402881916ba10b8a016ba11f1cd0000f","education": "本科","enddate": "2015-07-01","major": "中医药","degree": "学士","educationcategory": "全日制","id": "402881916ba10b8a016ba124904f0012","startdate": "2011-09-01","graduationschool": "浙江大学","degreedate": "2015-07-01","edusystem": "4年"}
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findWorkOrEducationByUserid")
     public JsonResult findWorkOrEducationByUserid(String userid,
                                                   @RequestParam(defaultValue = "0") int workOrEducation){
@@ -1582,6 +1518,7 @@ public class UserInfoController extends BaseController {
     *        "data": {"birthday": "2019-06-21","education": "大专","nation": "","sex": "0","branchName": "第一党支部","correctionDate": "","title": "主治医生","userid": "402881916ba10b8a016ba113adbc0006","partyDate": "","number": "001","idEntity": "","workDate": "","post": "科主任","phone": "","idcard": "","name": "钱正","id": "402881916ba10b8a016ba11f1cd0000f","place": "","department": "急诊科"}
     * }
     */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findUserInfoByUserID")
     public JsonResult findUserInfoByUserID(String userid){
             UserInfo userInfo = userInfoService.findbyUserId(userid);
@@ -1612,6 +1549,7 @@ public class UserInfoController extends BaseController {
      *         "data": [{"activity": {"number": "3","total": "15","name": "12312","id": "88888888","type": "depart","content": "21321"},"time": "1232122","getscore": 5},{"activity": {"number": "1""total": "4","name": "","id": "121211231","type": "depart","content": ""},"time": "1232122","getscore": 4}]
      * }
      */
+    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findActivityScoreByUserId")
     public JsonResult findActivityScoreByUserId(String userid){
         User user  = userService.findById(userid);
