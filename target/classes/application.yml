@@ -2,25 +2,42 @@ server:
   port: 80
   salt: 45a1d914886d4a92b6835a181b2a20d8
   upload: d:\upload\
+  token:
+    #  token过期时间，单位分钟
+    tokenExpireTime: 120
+    #  RefreshToken过期时间，单位：分钟, 24*60=1440
+    refreshTokenExpireTime: 120
+    #  shiro缓存有效期，单位分钟,2*60=120
+    shiroCacheExpireTime: 120
+    #  token加密密钥
+    secretKey: iyundao
+
 spring:
-  resources:
-    static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/static/upload
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ayundao?serverTimezone=CTT&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     username: root
     password: root
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      filters: stat
+      max-active: 20
+      initial-size: 1
+      min-idle: 1
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 30000
+      validation-query: select 'x'
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      max-pool-prepared-statement-per-connection-size: 20
+      pool-prepared-statements: true
 
   redis:
     port: 6379
     database: 0
     host: localhost
-    jedis:
-      pool:
-        max-active: 200
-        max-wait: -1ms
-        max-idle: 10
-        min-idle: 0
 
 
   jpa:
@@ -34,11 +51,13 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     #选用Innodb
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  mvc:
-    view:
-      suffix: .html
-  freemarker:
-    enabled: true
+    open-in-view: true
+  thymeleaf:
     cache: false
-    charset: UTF-8
     suffix: .html
+
+wechat:
+  app:
+    id: wxa5dcacd695f37fb2
+    secret: afc9c2f3a8afb4c03def051757268f23
+    url: http://www.ydyy.online

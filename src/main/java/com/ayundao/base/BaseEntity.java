@@ -73,10 +73,6 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     @Version
     @Column(name = "VERSION", nullable = false, columnDefinition = "bigint(20) default 1")
     private Long version;
-    public BaseEntity() {
-        this.createdDate = TimeUtils.nowTime();
-        this.lastModifiedDate = TimeUtils.nowTime();
-    }
 
     /**
      * 获取ID

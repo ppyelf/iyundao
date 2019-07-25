@@ -44,6 +44,25 @@ public class JwtUtils {
     @Value("${server.token.secretKey}")
     public String secretKey;
 
+    public static final String WX_START_URL = "/wx";
+
+    public enum LOGIN_TYPE{
+        /**
+         * app
+         */
+        app,
+
+        /**
+         * pc
+         */
+        pc,
+
+        /**
+         * token过期
+         */
+        expire
+    }
+
     /**
      * 校验token是否正确
      * @param token

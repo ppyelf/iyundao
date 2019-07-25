@@ -10,7 +10,6 @@ package com.ayundao.base.shiro;
  */
 public class SecurityConsts {
 
-    public static final String LOGIN_SALT = "iyundao";
     /**
      * request请求头属性
      */
@@ -27,7 +26,8 @@ public class SecurityConsts {
     public static final String PREFIX_SHIRO_CACHE = "iyundao:cache:";
 
     /**
-     * redis-key-前缀-iyundao:refresh_token
+     * redis-key-前缀
+     * iyundao:refresh_token
      */
     public final static String PREFIX_SHIRO_REFRESH_TOKEN = "iyundao:refresh_token:";
 

@@ -6,8 +6,11 @@ import com.ayundao.base.annotation.CurrentUser;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JwtUtils;
 import com.ayundao.entity.User;
+import com.ayundao.entity.UserApp;
+import com.ayundao.service.UserAppService;
 import com.ayundao.service.UserGroupService;
 import com.ayundao.service.UserService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -56,8 +59,11 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserAppService userAppService;
+
     /**
-     * 检测Header里Authorization字段
+     * 检测Header里ASSESSTOKEN字段
      * 判断是否登录
      */
     @Override
@@ -65,6 +71,16 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         HttpServletRequest req = (HttpServletRequest) request;
         String authorization = req.getHeader(SecurityConsts.IYUNDAO_ASSESS_TOKEN);
         return authorization != null;
+    }
+
+    /**
+     * 是否APP登录
+     * @param request
+     * @return
+     */
+    private boolean isAppLogin(ServletRequest request) {
+        HttpServletRequest req = (HttpServletRequest) request;
+        return req.getRequestURI().startsWith(JwtUtils.WX_START_URL);
     }
 
     /**
@@ -96,6 +112,38 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 return true;
             }
             return false;
+        } catch (UnknownAccountException ex) {
+            return false;
+        } catch (LockedAccountException ex) {
+            return false;
+        } catch (AccountException ex) {
+            return false;
+        } catch (TokenExpiredException ex) {
+            return false;
+        } catch (IncorrectCredentialsException ex){
+            return false;
+        }
+    }
+    
+    private boolean executeAppLogin(ServletRequest request) {
+        HttpServletRequest req = (HttpServletRequest) request;
+        String openId = req.getParameter("openId");
+        if (StringUtils.isBlank(openId)) {
+            return false;
+        } 
+        UserApp app = userAppService.findByOpenId(openId);
+        if (app == null) {
+            return false;
+        }
+        JwtToken token = null;
+        User user = userService.findById(app.getUser().getId());
+        String assessToken = SecurityConsts.PREFIX_SHIRO_REFRESH_TOKEN + user.getAccount();
+        if (user != null) {
+            token = new JwtToken(user.getAccount(), user.getPassword(), true, assessToken);
+        }
+        try {
+            SecurityUtils.getSubject().login(token);
+            return true;
         } catch (UnknownAccountException ex) {
             return false;
         } catch (LockedAccountException ex) {
@@ -158,6 +206,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        if (isAppLogin(request)) {
+            return executeAppLogin(request);
+        } 
         if (isLoginAttempt(request, response)) {
             try {
                 this.executeLogin(request, response);

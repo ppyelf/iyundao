@@ -95,60 +95,17 @@ public class IndexController extends BaseController {
         if (subject.isAuthenticated()) {
             return loginSuccess(account, resp);
         }
-        // 执行认证登陆
-        try {
-            subject.login(token);
-        } catch (UnknownAccountException ex) {
-            return JsonResult.failure(804, ex.getMessage());
-        } catch (LockedAccountException ex) {
-            return JsonResult.failure(805, ex.getMessage());
-        } catch (AccountException ex) {
-            return JsonResult.failure(803, ex.getMessage());
-        } catch (TokenExpiredException ex) {
-            return JsonResult.failure(806, ex.getMessage());
-        } catch (IncorrectCredentialsException ex){
-            return JsonResult.failure(807, "密码校验错误");
-        }
         //根据权限，指定返回数据
-        User user = (User) subject.getPrincipal();
-        if (user != null && user.getAccount().equals(account)) {
-            return loginSuccess(account, resp);
-        }
-
+        jsonResult = login(subject, token);
+        if (jsonResult.getCode() == JsonResult.CODE_SUCCESS) {
+            User user = (User) subject.getPrincipal();
+            if (user != null && user.getAccount().equals(account)) {
+                return loginSuccess(account, resp);
+            }
+        } 
         return JsonResult.failure(400,"账号不存在");
     }
 
-    /**
-     * 返回登录成功结果
-     * @return
-     */
-    private JsonResult loginSuccess(String account, HttpServletResponse resp) {
-        String currentTimeMillis = String.valueOf(System.currentTimeMillis());
-
-        Session session = SecurityUtils.getSubject().getSession();
-        User user = userService.findByAccount(account);
-        //生成token
-        JSONObject json = JsonUtils.getJson(user);
-        String token = JwtUtils.sign(account, currentTimeMillis);
-        json.put("token",token );
-        List<UserRelation> userRelations = userRelationService.findByUser(user);
-        if (CollectionUtils.isNotEmpty(userRelations)) {
-            for (UserRelation userRelation : userRelations) {
-                com.ayundao.entity.Subject subject = userRelation.getSubject();
-                JSONObject j = new JSONObject();
-                j.put("id", subject.getId());
-                j.put("name", subject.getName());
-                session.setAttribute("currentSubject", subject);
-                break;
-            }
-        }
-        resp.setHeader(SecurityConsts.IYUNDAO_ASSESS_TOKEN, token);
-        resp.setHeader("Access-Control-Expose-Headers", SecurityConsts.IYUNDAO_ASSESS_TOKEN);
-        jsonResult.setCode(200);
-        jsonResult.setMessage("登录成功");
-        jsonResult.setData(json);
-        return jsonResult;
-    }
 
     /**
      * @api {GET} /subjectList 个人机构列表

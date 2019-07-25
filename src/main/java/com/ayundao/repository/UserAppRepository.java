@@ -13,4 +13,10 @@ import com.ayundao.entity.UserApp;
  */
 public interface UserAppRepository extends BaseRepository<UserApp, String> {
 
+    /**
+     * 根据openid查询实体
+     * @param openId
+     * @return
+     */
+    UserApp findByOpenId(String openId);
 }
