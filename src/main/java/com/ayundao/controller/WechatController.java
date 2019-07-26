@@ -47,7 +47,7 @@ public class WechatController extends BaseController {
 
     /**
      * @api {post} /wx/userAuthor 授权
-     * @apiGroup Message
+     * @apiGroup: 微信
      * @apiVersion 1.0.0
      * @apiDescription 授权
      * @apiParam {String} code 微信返回值
@@ -117,7 +117,7 @@ public class WechatController extends BaseController {
 
     /**
      * @api {post} /wx/login 登录
-     * @apiGroup Message
+     * @apiGroup WeChat
      * @apiVersion 1.0.0
      * @apiDescription 查询信息发布详情
      * @apiParam {String} openId openId

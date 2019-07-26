@@ -63,8 +63,6 @@ public class AssessmentController extends BaseController {
     @Autowired
     private UserGroupService userGroupService;
 
-    @Autowired
-
     /**
      * @api {GET} /assessment/list 列表
      * @apiGroup Assessment
