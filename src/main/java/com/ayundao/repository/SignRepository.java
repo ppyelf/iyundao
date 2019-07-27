@@ -18,7 +18,11 @@ import java.util.List;
 @Repository
 public interface SignRepository extends BaseRepository<Sign, String> {
 
-    //根据活动ID获取实体集合
+    /**
+     * 根据活动ID获取实体集合
+     * @param id
+     * @return
+     */
     @Query("select s from Sign s where s.activity.id = ?1")
     List<Sign> findByActivityId(String id);
 
