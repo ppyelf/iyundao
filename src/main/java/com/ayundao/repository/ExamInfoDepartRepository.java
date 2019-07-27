@@ -1,8 +1,8 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.ExamInfoDepart;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface ExamInfoDepartRepository extends CrudRepository<ExamInfoDepart, String>{
+public interface ExamInfoDepartRepository extends BaseRepository<ExamInfoDepart, String> {
 
     @Query("select a from ExamInfoDepart a where a.exam.id =?1")
     List<ExamInfoDepart> findByExamId(String id);

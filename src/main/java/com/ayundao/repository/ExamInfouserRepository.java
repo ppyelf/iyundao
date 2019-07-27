@@ -1,8 +1,8 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.ExamInfoUser;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface ExamInfouserRepository extends CrudRepository<ExamInfoUser,String>{
+public interface ExamInfouserRepository extends BaseRepository<ExamInfoUser,String> {
 
     @Query("select a from ExamInfoUser a where a.exam.id = ?1 and a.user.id = ?2")
     List<ExamInfoUser> findByExamUserId(String examid, String userid);

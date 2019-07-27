@@ -1,8 +1,8 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Sign;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface SignRepository extends CrudRepository<Sign, String> {
+public interface SignRepository extends BaseRepository<Sign, String> {
 
     //根据活动ID获取实体集合
     @Query("select s from Sign s where s.activity.id = ?1")

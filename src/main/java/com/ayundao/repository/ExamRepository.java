@@ -2,7 +2,6 @@ package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Exam;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -5,7 +5,6 @@ import com.ayundao.entity.Activity;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

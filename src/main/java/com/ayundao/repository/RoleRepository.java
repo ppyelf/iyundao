@@ -1,8 +1,8 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Role;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface RoleRepository extends CrudRepository<Role, String> {
+public interface RoleRepository extends BaseRepository<Role, String> {
 
     //获取所有实体结合
     @Query("select r from Role r")

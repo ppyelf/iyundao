@@ -2,6 +2,8 @@ package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.UserApp;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * @ClassName: UserAppRepository
@@ -18,5 +20,6 @@ public interface UserAppRepository extends BaseRepository<UserApp, String> {
      * @param openId
      * @return
      */
+    @Query("select up from UserApp up where up.openId = ?1")
     UserApp findByOpenId(String openId);
 }

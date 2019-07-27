@@ -1,8 +1,8 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Attendance;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface AttendanceRepository extends CrudRepository<Attendance, String> {
+public interface AttendanceRepository extends BaseRepository<Attendance, String> {
 
     //根据活动ID查找集合信息
     @Query("select a from Attendance a where a.activity.id = ?1")

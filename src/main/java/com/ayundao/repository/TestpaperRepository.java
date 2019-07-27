@@ -2,7 +2,6 @@ package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Testpaper;
-import org.springframework.data.repository.CrudRepository;
 
 /**
  * @ClassName: TestpaperRepository

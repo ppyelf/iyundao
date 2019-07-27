@@ -1,7 +1,7 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.ReleaseGroups;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @Version: V1.0
  */
 @Repository
-public interface ReleaseGroupRepository extends CrudRepository<ReleaseGroups, String> {
+public interface ReleaseGroupRepository extends BaseRepository<ReleaseGroups, String> {
 
 }

@@ -139,7 +139,7 @@ public class WechatController extends BaseController {
     public JsonResult login(String openId, HttpServletResponse resp) {
         UserApp app = userAppService.findByOpenId(openId);
         if (app == null) {
-            return JsonResult.failure(800, "请先登录");
+            return JsonResult.failure(800, "此openId没有关联用户");
         }
         User user = userService.findById(app.getUser().getId());
         JwtToken token = new JwtToken(user.getAccount(), user.getPassword(), true, SecurityConsts.PREFIX_SHIRO_REFRESH_TOKEN + user.getAccount());

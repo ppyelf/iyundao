@@ -1,7 +1,7 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.ReleaseDepart;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @Version: V1.0
  */
 @Repository
-public interface ReleaseDepartRepository extends CrudRepository<ReleaseDepart, String> {
+public interface ReleaseDepartRepository extends BaseRepository<ReleaseDepart, String> {
 
 }

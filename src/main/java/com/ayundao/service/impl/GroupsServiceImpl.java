@@ -19,7 +19,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class GroupsServiceImpl implements GroupsService {
 
     @Autowired

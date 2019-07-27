@@ -1,10 +1,10 @@
 package com.ayundao.repository;
 
+import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Exam;
 import com.ayundao.entity.ExamInfoUserScore;
 import com.ayundao.entity.User;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.List;
  * @Version: V1.0
  */
 @Repository
-public interface ExamInfoUserScoreRepository extends CrudRepository<ExamInfoUserScore, String>{
+public interface ExamInfoUserScoreRepository extends BaseRepository<ExamInfoUserScore, String> {
 
     @Query("select a from ExamInfoUserScore a where a.exam = ?1")
     List<ExamInfoUserScore> findAllByExamId(Exam exam);
