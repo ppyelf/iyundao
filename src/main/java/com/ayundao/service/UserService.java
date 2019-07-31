@@ -2,12 +2,9 @@ package com.ayundao.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.utils.JsonResult;
-import com.ayundao.entity.Role;
-import com.ayundao.entity.Subject;
-import com.ayundao.entity.User;
+import com.ayundao.entity.*;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
-import com.ayundao.entity.UserInfoWork;
 
 import java.util.List;
 
@@ -63,8 +60,9 @@ public interface UserService {
     /**
      * 添加用户
      * @param user
+     * @param permissions
      */
-    JsonResult save(User user, Subject subject, String departId, String groupsId, List<Role> roles, JsonResult jsonResult);
+    JsonResult save(User user, Subject subject, String departId, String groupsId, List<Role> roles, List<Permission> permissions, JsonResult jsonResult);
 
     /**
      * 获取用户详情的json

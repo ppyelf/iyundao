@@ -45,6 +45,30 @@ public class WechatController extends BaseController {
     @Autowired
     private WxUtils wxUtils;
 
+    /**
+     * @api {post} /wx/userAuthor 授权
+     * @apiGroup: 微信
+     * @apiVersion 1.0.0
+     * @apiDescription 授权
+     * @apiParam {String} code 微信返回值
+     * @apiParam {String} avatarUrl 头像路径
+     * @apiParam {String} nickName 昵称
+     * @apiParam {String} city 城市
+     * @apiParam {String} province 省份
+     * @apiParamExample {json} 请求样例
+     *                /wx/userAuthor?code=11234345&avatarUrl=http://xxx.xx.xx/xxx&nickName=nichng&city=haidian&province=BeiJing
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "登录成功",
+     *     "data": {"password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06","code": "000","salt": "3a10624a300f4670","sex": "0","name": "管理员","remark": "未填写","id": "0a4179fc06cb49e3ac0db7bcc8cf0882","userType": "admin","account": "admin","status": "normal","token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZU1pbGxpcyI6IjE1NjQwNDYwNjQ2MDkiLCJleHAiOjE1NjQwNTMyNjQsImFjY291bnQiOiJhZG1pbiJ9.3SxEItyxMJobboS_9RMkEFhCJTFjMgCh9oF-3xE8RlE"
+     *     }
+     * }
+     */
     @PostMapping("/userAuthor")
     public JsonResult userAuthor(String code,
                                  String avatarUrl,
@@ -91,6 +115,26 @@ public class WechatController extends BaseController {
         return jsonResult;
     }
 
+    /**
+     * @api {post} /wx/login 登录
+     * @apiGroup WeChat
+     * @apiVersion 1.0.0
+     * @apiDescription 查询信息发布详情
+     * @apiParam {String} openId openId
+     * @apiParamExample {json} 请求样例
+     *                /wx/login?openId=11234345
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              600:参数异常</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "登录成功",
+     *     "data": {"password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06","code": "000","salt": "3a10624a300f4670","sex": "0","name": "管理员","remark": "未填写","id": "0a4179fc06cb49e3ac0db7bcc8cf0882","userType": "admin","account": "admin","status": "normal","token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjdXJyZW50VGltZU1pbGxpcyI6IjE1NjQwNDYwNjQ2MDkiLCJleHAiOjE1NjQwNTMyNjQsImFjY291bnQiOiJhZG1pbiJ9.3SxEItyxMJobboS_9RMkEFhCJTFjMgCh9oF-3xE8RlE"
+     *     }
+     * }
+     */
     @PostMapping("/login")
     public JsonResult login(String openId, HttpServletResponse resp) {
         UserApp app = userAppService.findByOpenId(openId);

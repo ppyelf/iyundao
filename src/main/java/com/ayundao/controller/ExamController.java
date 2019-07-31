@@ -344,7 +344,7 @@ public class ExamController extends BaseController{
      * @apiVersion 1.0.0
      * @apiDescription 列表
      * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiParam {String} id 考试id 必填
+     * @apiParam {String} id 考试id,必填
      * @apiParamExample {json} 请求样例:
      *                   /exam/score?id=4028d8816bcb8bc8016bcb8de2b40008
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -474,7 +474,7 @@ public class ExamController extends BaseController{
     * @apiVersion 1.0.0
     * @apiDescription 查看
      * @apiHeader {String} IYunDao-AssessToken token验证
-    * @apiParam {String} id  用户id必填
+    * @apiParam {String} id 用户id必填
     * @apiParamExample {json} 请求样例:
     *                /exam/socreForUser?id=4028d8816bcc9a32016bcccd9616000c
     * @apiSuccess (200) {String} code 200:成功</br>

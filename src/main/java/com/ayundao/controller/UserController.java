@@ -7,11 +7,14 @@ import com.ayundao.base.utils.EncryptUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
+import com.ayundao.service.PermissionService;
 import com.ayundao.service.RoleService;
 import com.ayundao.service.UserService;
 import com.ayundao.service.ActivityService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -27,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static com.ayundao.base.BaseController.ROLE_ADMIN;
+
 
 /**
  * @ClassName: UserController
@@ -36,6 +41,8 @@ import java.util.UUID;
  * @Description: 控制层 - 用户
  * @Version: V1.0
  */
+@RequiresUser
+@RequiresRoles(ROLE_ADMIN)
 @RestController
 @RequestMapping("/user")
 public class UserController extends BaseController {
@@ -49,6 +56,8 @@ public class UserController extends BaseController {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private PermissionService permissionService;
     /**
      * @api {POST} /user/checkCode 检测code
      * @apiGroup User
@@ -148,16 +157,17 @@ public class UserController extends BaseController {
      * @apiVersion 1.0.0
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 新建用户
-     * @apiParam {String} account 账号
-     * @apiParam {String} name 姓名
-     * @apiParam {String} code 编号
+     * @apiParam {String} account 账号 必填
+     * @apiParam {String} name 姓名 必填
+     * @apiParam {String} code 编号 必填
      * @apiParam {int} sex 性别
      * @apiParam {int} userType 用户类型
-     * @apiParam {String} departId 部门ID
-     * @apiParam {String} groupsId 组织ID
+     * @apiParam {String} departId 部门ID 必填
+     * @apiParam {String} groupsId 组织ID 必填
      * @apiParam {String} remark 描述
-     * @apiParam {String} password 密码
-     * @apiParam {String[]} roleIds 角色IDS
+     * @apiParam {String} password 密码 必填
+     * @apiParam {String[]} roleIds 角色IDS 必填
+     * @apiParam {String[]} permissionIds 权限IDS 必填
      * @apiParamExample {json} 请求样例：
      *                /user/add?key=张三&page=1&size=10
      * @apiSuccess (200) {int} code 200:成功</br>
@@ -166,6 +176,7 @@ public class UserController extends BaseController {
      *                                 602:用户类型设置异常</br>
      *                                 603:部门/组织不存在</br>
      *                                 604:机构不存在</br>
+     *                                 605:账号必须分配角色,权限</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -187,7 +198,8 @@ public class UserController extends BaseController {
                           String groupsId,
                           String remark,
                           String password,
-                          String[] roleIds) {
+                          String[] roleIds,
+                          String[] permissionIds) {
         if (StringUtils.isBlank(account)
                 || StringUtils.isBlank(name)
                 || StringUtils.isBlank(password)) {
@@ -212,8 +224,12 @@ public class UserController extends BaseController {
             return JsonResult.failure(602, "用户类型设置异常");
         }
         List<Role> roles = roleService.findByRoleIds(roleIds);
+        List<Permission> permissions = permissionService.findByIds(permissionIds);
+        if (CollectionUtils.isEmpty(roles) || CollectionUtils.isEmpty(permissions)) {
+            return JsonResult.failure(605, "账号必须分配角色,权限");
+        } 
         user.setRemark(remark);
-        return userService.save(user, subject, departId, groupsId, roles, jsonResult);
+        return userService.save(user, subject, departId, groupsId, roles, permissions, jsonResult);
     }
 
     /**

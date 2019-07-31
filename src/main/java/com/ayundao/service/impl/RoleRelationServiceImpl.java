@@ -18,7 +18,7 @@ import java.util.Set;
  * @Version: V1.0
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class RoleRelationServiceImpl implements RoleRelationService {
 
     @Autowired

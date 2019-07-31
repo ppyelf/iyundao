@@ -30,7 +30,7 @@ import java.util.Set;
  * @Version: V1.0
  */
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -84,8 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public JsonResult save(User user, Subject subject, String departId, String groupsId, List<Role> roles, JsonResult jsonResult) {
+    public JsonResult save(User user, Subject subject, String departId, String groupsId, List<Role> roles, List<Permission> permissions, JsonResult jsonResult) {
         if (StringUtils.isBlank(departId)
                     || StringUtils.isBlank(groupsId)) {
             JsonResult.failure(601, "用户必须有所属的机构/部门/组织");
@@ -94,10 +93,10 @@ public class UserServiceImpl implements UserService {
         Groups groups = groupsRepository.findByGroupsId(groupsId);
         if (subject == null) {
             return JsonResult.failure(604, "机构不存在");
-        } 
+        }
         if (depart == null && groups == null) {
             return JsonResult.failure(603, "部门/组织不存在");
-        } 
+        }
         UserRelation userRelation = new UserRelation();
         userRelation.setCreatedDate(new Date());
         userRelation.setLastModifiedDate(new Date());
@@ -109,23 +108,24 @@ public class UserServiceImpl implements UserService {
         if (CollectionUtils.isNotEmpty(roles)) {
             Set<RoleRelation> set = new HashSet<>();
             for (Role role : roles) {
-                RoleRelation ur = new RoleRelation();
-                ur.setCreatedDate(new Date());
-                ur.setLastModifiedDate(new Date());
-                ur.setUser(user);
-                ur.setRole(role);
-                //todo 添加权限
-                roleRelationRepository.save(ur);
-                set.add(ur);
+                for (Permission permission : permissions) {
+                    RoleRelation ur = new RoleRelation();
+                    ur.setCreatedDate(new Date());
+                    ur.setLastModifiedDate(new Date());
+                    ur.setUser(user);
+                    ur.setRole(role);
+                    ur.setPermission(permission);
+                    ur = roleRelationRepository.save(ur);
+                    set.add(ur);
+                }
             }
             user.setRoleRelations(set);
-            userRepository.save(user);
         }
         userRelationRepository.save(userRelation);
         Set<UserRelation> userRelations = new HashSet<>();
         userRelations.add(userRelation);
         user.setUserRelations(userRelations);
-        userRepository.save(user);
+        user = userRepository.save(user);
         jsonResult.setData(getUserInfoJson(user));
         return jsonResult;
     }
@@ -197,6 +197,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public User save(User user) {
         return userRepository.save(user);
     }
