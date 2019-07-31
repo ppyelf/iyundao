@@ -76,6 +76,8 @@ public class TestpaperController extends BaseController{
                 object.put("intro",testpaper.getIntro());
                 arr.add(object);
             }
+        }else {
+            return JsonResult.notFound("没有找到数据");
         }
 
         jsonResult.setData(arr);
@@ -92,7 +94,7 @@ public class TestpaperController extends BaseController{
      * @apiDescription 新增
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例:
-     *                {Json} {"title":"title","intro":"intro","examination":[{"examcontent" : "111","answer" : "1.1|1.2|1.3","yesorno":"1|1|1","score":"5"},{"examcontent":"222","answer":"2.1|2.2|2.3","yesorno":"1|0|1","score":"10"},{"examcontent":"333","answer":"3.1|3.2|3.3","yesorno":"0|0|1","score":"15"}]}
+     *                {Json} {"title":"title","intro":"intro","examination":[{"examContent" : "111","answer" : "1.1|1.2|1.3","yesorno":"1|1|1","score":"5"},{"examContent":"222","answer":"2.1|2.2|2.3","yesorno":"1|0|1","score":"10"},{"examContent":"333","answer":"3.1|3.2|3.3","yesorno":"0|0|1","score":"15"}]}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:</br>
      *                                 603:试卷名称不能为空</br>

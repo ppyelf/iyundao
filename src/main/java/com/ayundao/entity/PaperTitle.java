@@ -32,7 +32,7 @@ public class PaperTitle extends BaseEntity<String>{
      * 考试内容介绍
      */
     @Column(name = "EXAMCONTENT", length = 50)
-    private String examcontent;
+    private String examContent;
 
     /**
      * 类型
@@ -86,12 +86,12 @@ public class PaperTitle extends BaseEntity<String>{
         this.examInfoUser = examInfoUser;
     }
 
-    public String getExamcontent() {
-        return examcontent;
+    public String getExamContent() {
+        return examContent;
     }
 
-    public void setExamcontent(String examcontent) {
-        this.examcontent = examcontent;
+    public void setExamContent(String examContent) {
+        this.examContent = examContent;
     }
 
     public String getType() {

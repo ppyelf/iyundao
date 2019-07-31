@@ -103,6 +103,7 @@ public class ExcelUtils {
         response.reset();
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setHeader("Content-Disposition", "attachment;filename="+ new String((fileName + ".xls").getBytes(), "iso-8859-1"));
+        response.setHeader("Access-Control-Allow-Origin", "*");
         ServletOutputStream out = response.getOutputStream();
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;

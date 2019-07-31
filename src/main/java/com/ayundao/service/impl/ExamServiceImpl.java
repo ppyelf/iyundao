@@ -178,11 +178,11 @@ public class ExamServiceImpl implements ExamService {
             }
         }
         object.put("title",exam.getTitle());
-        object.put("starttime",exam.getStarttime());
-        object.put("overtime",exam.getOvertime());
-        object.put("examlong",exam.getExamlong());
+        object.put("startTime",exam.getStartTime());
+        object.put("overTime",exam.getOverTime());
+        object.put("examLong",exam.getExamLong());
         object.put("score",exam.getScore());
-        object.put("showthat",exam.getShowthat());
+        object.put("showThat",exam.getShowThat());
         object.put("subjects",subjects);
         object.put("departs",departs);
         object.put("groups",groups);
@@ -231,9 +231,9 @@ public class ExamServiceImpl implements ExamService {
             //通过题目id找到题目
             PaperTitle paperTitle =paperTitleService.findByid(map.get("paperTitleid"));
             //通过题目找到所有的答案选择
-                answer = map.get("answerselect");
+                answer = map.get("answerSelect");
             examInfoUser.setPaperTitle(paperTitle);
-                examInfoUser.setAnswerselect(answer);
+                examInfoUser.setAnswerSelect(answer);
                 answers =answer.split("\\|");
             int a =0;
             //查找所有答案选择
@@ -245,7 +245,7 @@ public class ExamServiceImpl implements ExamService {
                 if(Integer.parseInt(paperAnswer.getAnswer()) == 1){
                     //循环判断传入的数据里有没有
                     for (int i =0;i<answers.length;i++){
-                      if (paperAnswer.getAnswerselect().toString().equals(answers[i].toString())){
+                      if (paperAnswer.getAnswerSelect().toString().equals(answers[i].toString())){
                           //如果有 a+1;
                                 a ++;
                       }

@@ -112,8 +112,8 @@ public class AssessmentServiceImpl  implements AssessmentService{
     }
 
     @Override
-    public Assessment findById(String assessmentid) {
-        return assessmentRepository.find(assessmentid);
+    public Assessment findById(String assessmentId) {
+        return assessmentRepository.find(assessmentId);
     }
 
     @Override
@@ -145,12 +145,12 @@ public class AssessmentServiceImpl  implements AssessmentService{
             ai.setCreatedDate(new Date());
             ai.setLastModifiedDate(new Date());
             ai.setAssessment(assessment);
-            ai.setSortedid(map.get("sortedid"));
-            ai.setLname(map.get("lname"));
-            ai.setSname(map.get("sname"));
-            ai.setParcode(map.get("parcode"));
-            ai.setNorder(map.get("norder"));
-            ai.setIsuse(map.get("isuse"));
+            ai.setSortedId(map.get("sortedId"));
+            ai.setlName(map.get("lName"));
+            ai.setsName(map.get("sName"));
+            ai.setParCode(map.get("parCode"));
+            ai.setNorDer(map.get("norDer"));
+            ai.setIsUse(map.get("isUse"));
             assessmentIndexRepository.save(ai);
         }
     }
@@ -215,8 +215,8 @@ public class AssessmentServiceImpl  implements AssessmentService{
         obj.put("name",assessment.getName());
         obj.put("type",assessment.getType());
         obj.put("total",assessment.getTotal());
-        obj.put("starttime",assessment.getStartTime());
-        obj.put("endtime",assessment.getEndTime());
+        obj.put("startTime",assessment.getStartTime());
+        obj.put("endTime",assessment.getEndTime());
         obj.put("remark",assessment.getRemark());
         JSONArray subject =new JSONArray();
         JSONArray usergroup = new JSONArray();
@@ -276,8 +276,8 @@ public class AssessmentServiceImpl  implements AssessmentService{
     }
 
     @Override
-    public AssessmentIndex findSnameBySortedid(String parcode) {
-        return assessmentIndexRepository.findbyparcode(parcode);
+    public AssessmentIndex findSnameBySortedid(String parCode) {
+        return assessmentIndexRepository.findbyparCode(parCode);
     }
 
     @Override

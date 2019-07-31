@@ -578,14 +578,14 @@ public class ActivityController extends BaseController {
 
 
     /**
-     * @api {POST} /activity/viewpeopleforactivity 根据活动查找改活动下的人员
+     * @api {POST} /activity/viewPeopleForActivity 根据活动查找改活动下的人员
      * @apiGroup Activity
      * @apiVersion 1.0.0
      * @apiDescription 分页
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} activityid 必填
      * @apiParamExample {json} 请求示例:
-     *             /activity/viewpeopleforactivity?activityid=88888888
+     *             /activity/viewPeopleForActivity?activityid=88888888
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 601:"没有此活动"<br>
      *                                  602:"没有此用户"<br>
@@ -598,8 +598,8 @@ public class ActivityController extends BaseController {
      *        "data": [{"password": "b356a1a11a067620275401a5a3de04300bf0c47267071e06","code": "000","salt": "3a10624a300f4670","sex": "0","name": "管理员","remark": "未填写","id": "0a4179fc06cb49e3ac0db7bcc8cf0882","userType": "normal","account": "admin","status": "normal"},{"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}]
      * }
      */
-    @PostMapping("/viewpeopleforactivity")
-    public JsonResult viewpeopleforactivity(String activityid){
+    @PostMapping("/viewPeopleForActivity")
+    public JsonResult viewPeopleForActivity(String activityid){
         Activity activity = activityService.find(activityid);
         if (activity == null){
             return JsonResult.notFound("找不到活动");
@@ -615,14 +615,14 @@ public class ActivityController extends BaseController {
 
 
     /**
-     * @api {POST} /activity/delpeople 删除人员
+     * @api {POST} /activity/delPeople 删除人员
      * @apiGroup Activity
      * @apiVersion 1.0.0
      * @apiDescription 分页
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String[]} userids 必填 用户id
      * @apiParamExample {json} 请求示例:
-     *             /activity/delpeople?userids=402881916ba10b8a016ba113adbc0006,0a4179fc06cb49e3ac0db7bcc8cf0882
+     *             /activity/delPeople?userids=402881916ba10b8a016ba113adbc0006,0a4179fc06cb49e3ac0db7bcc8cf0882
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -633,8 +633,8 @@ public class ActivityController extends BaseController {
      *        "data": []
      * }
      */
-    @PostMapping("/delpeople")
-    public  JsonResult delpeople(String[] userids){
+    @PostMapping("/delPeople")
+    public  JsonResult delPeople(String[] userids){
         List<User> users = userService.findbyIds(userids);
         if (CollectionUtils.isEmpty(users)){
             return JsonResult.notFound("没有找到用户实体");
@@ -646,7 +646,7 @@ public class ActivityController extends BaseController {
 
 
     /**
-    * @api {POST} /activity/searchname 模糊查询活动名称
+    * @api {POST} /activity/searchName 模糊查询活动名称
     * @apiGroup Activity
     * @apiVersion 1.0.0
     * @apiDescription 查看
@@ -654,7 +654,7 @@ public class ActivityController extends BaseController {
     * @apiParam {int} page  跳过的页数
     * @apiParam {int} size 每页的数量
     * @apiParamExample {json} 请求样例:
-    *                /activity/searchname?name=1&page&size
+    *                /activity/searchName?name=1&page&size
     * @apiSuccess (200) {String} code 200:成功</br>
     * @apiSuccess (200) {String} message 信息
     * @apiSuccess (200) {String} data 返回用户信息
@@ -685,7 +685,7 @@ public class ActivityController extends BaseController {
     }]}
     * }
     */
-    @PostMapping("/searchname")
+    @PostMapping("/searchName")
     public JsonResult searchtitle(String name,
                                   @RequestParam(defaultValue = "0")int page,
                                   @RequestParam(defaultValue = "10")int size){

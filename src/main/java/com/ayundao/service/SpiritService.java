@@ -93,4 +93,11 @@ public interface SpiritService {
      * @return
      */
     String getContentBySpiritId(String id);
+
+    /**
+     * 修改审核状态
+     * @param soiritid
+     * @param type
+     */
+    void updateState(String soiritid, int type);
 }

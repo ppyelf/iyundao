@@ -175,7 +175,7 @@ public class PMAssessController extends BaseController{
     */
     @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("findSearch")
-    public JsonResult findBydeption(String property,
+    public JsonResult findSearch(String property,
                                     String value,
                                     @RequestParam(defaultValue = "0") int page,
                                     @RequestParam(defaultValue = "10") int size){

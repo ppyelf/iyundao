@@ -38,19 +38,19 @@ public class Advices extends BaseEntity<String>{
      * 发布时间
      */
     @Column(name = "ISSUERTIME" , length = 50)
-    private String issuertime;
+    private String issuerTime;
 
     /**
      * 发送状态
      */
     @Column(name = "ADVICESSTATUS", length = 50)
-    private String advicesstatus;
+    private String advicesStatus;
 
     /**
      * 任务内容
      */
     @Column(name = "ADVICESTEXT", length = 9999)
-    private String advicestext;
+    private String advicesText;
 
     /**
      * 消息人员接收表消息id
@@ -115,28 +115,28 @@ public class Advices extends BaseEntity<String>{
         this.user = user;
     }
 
-    public String getIssuertime() {
-        return issuertime;
+    public String getIssuerTime() {
+        return issuerTime;
     }
 
-    public void setIssuertime(String issuertime) {
-        this.issuertime = issuertime;
+    public void setIssuerTime(String issuerTime) {
+        this.issuerTime = issuerTime;
     }
 
-    public String getAdvicesstatus() {
-        return advicesstatus;
+    public String getAdvicesStatus() {
+        return advicesStatus;
     }
 
-    public void setAdvicesstatus(String advicesstatus) {
-        this.advicesstatus = advicesstatus;
+    public void setAdvicesStatus(String advicesStatus) {
+        this.advicesStatus = advicesStatus;
     }
 
-    public String getAdvicestext() {
-        return advicestext;
+    public String getAdvicesText() {
+        return advicesText;
     }
 
-    public void setAdvicestext(String advicestext) {
-        this.advicestext = advicestext;
+    public void setAdvicesText(String advicesText) {
+        this.advicesText = advicesText;
     }
 
     public Set<AdvicesInfoUser> getAdvicesInfoUser() {

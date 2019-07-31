@@ -67,14 +67,14 @@ public class TestpaperServiceImpl implements TestpaperService{
         JSONArray one ;
         for (PaperTitle paperTitle : paperTitles) {
             obj2 = new JSONObject();
-            obj2.put("title",paperTitle.getExamcontent());
+            obj2.put("title",paperTitle.getExamContent());
             obj2.put("paperTitleid",paperTitle.getId());
            List<PaperAnswer> paperAnswers = paperAnswerRepository.findByPaperTitles(paperTitle);
             one = new JSONArray();
             for (PaperAnswer paperAnswer : paperAnswers) {
                 obj = new JSONObject();
                 obj.put("id",paperAnswer.getId());
-                obj.put("select",paperAnswer.getAnswerselect());
+                obj.put("select",paperAnswer.getAnswerSelect());
                 obj.put("istrue",paperAnswer.getAnswer());
                 one.add(obj);
             }
@@ -114,7 +114,7 @@ public class TestpaperServiceImpl implements TestpaperService{
             //放入试卷
             paperTitle.setTestpaper(testpaper);
             //放入属性
-            paperTitle.setExamcontent(map.get("examcontent"));
+            paperTitle.setExamContent(map.get("examContent"));
             paperTitle.setScore(map.get("score"));
             //添加题目
             paperTitle = paperTitleRepository.save(paperTitle);
@@ -125,7 +125,7 @@ public class TestpaperServiceImpl implements TestpaperService{
                 paperAnswer.setCreatedDate(new Date());
                 paperAnswer.setLastModifiedDate(new Date());
                 paperAnswer.setPaperTitle(paperTitle);
-                paperAnswer.setAnswerselect(answers[i]);
+                paperAnswer.setAnswerSelect(answers[i]);
                 paperAnswer.setAnswer(yesornos[i]);
                 paperAnswerRepository.save(paperAnswer);
             }

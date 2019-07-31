@@ -39,7 +39,6 @@ spring:
     database: 0
     host: localhost
 
-
   jpa:
     database: mysql
     show-sql: true

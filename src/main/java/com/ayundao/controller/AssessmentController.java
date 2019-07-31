@@ -46,9 +46,6 @@ public class AssessmentController extends BaseController {
     private AssessmentService assessmentService;
 
     @Autowired
-    private AssessmentRepository assessmentRepository;
-
-    @Autowired
     private UserService userService;
 
     @Autowired
@@ -63,7 +60,6 @@ public class AssessmentController extends BaseController {
     @Autowired
     private UserGroupService userGroupService;
 
-    @Autowired
 
     /**
      * @api {GET} /assessment/list 列表
@@ -80,7 +76,7 @@ public class AssessmentController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *      "data": [{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "personnel"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"}]
+     *      "data": [{"number": "","score": 11,"endTime": "11","remark": "11","startTime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endTime": "11","remark": "11","startTime": 11,"title": "11","type": "personnel"},{"number": "","score": 11,"endTime": "11","remark": "11","startTime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endTime": "11","remark": "11","startTime": 11,"title": "11","type": "branch"}]
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
@@ -96,11 +92,13 @@ public class AssessmentController extends BaseController {
                 object.put("title", assessment.getName());
                 object.put("type", assessment.getType());
                 object.put("score", assessment.getTotal());
-                object.put("starttime", assessment.getStartTime());
-                object.put("endtime", assessment.getEndTime());
+                object.put("startTime", assessment.getStartTime());
+                object.put("endTime", assessment.getEndTime());
                 object.put("remark", assessment.getRemark());
                 arr.add(object);
             }
+        }else {
+            JsonResult.notFound("没有找到数据");
         }
         jsonResult.setData(arr);
         return jsonResult;
@@ -108,7 +106,7 @@ public class AssessmentController extends BaseController {
 
 
     /**
-     * @api {GET} /assessment/list 列表
+     * @api {GET} /assessment/listPage 列表
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 列表
@@ -116,7 +114,7 @@ public class AssessmentController extends BaseController {
      * @apiParam {int} type  默认0
      * @apiParam {int} total  默认10
      * @apiParamExample {json} 请求样例:
-     * /assessment/listpage?page=1&size=2
+     * /assessment/listPage?page=1&size=2
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -124,11 +122,11 @@ public class AssessmentController extends BaseController {
      * {
      * "code": 200,
      * "message": "成功",
-     * "data": [{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "personnel"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endtime": "11","remark": "11","starttime": 11,"title": "11","type": "branch"}]
+     * "data": [{"number": "","score": 11,"endTime": "11","remark": "11","startTime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endTime": "11","remark": "11","startTime": 11,"title": "11","type": "personnel"},{"number": "","score": 11,"endTime": "11","remark": "11","startTime": 11,"title": "11","type": "branch"},{"number": "","score": 11,"endTime": "11","remark": "11","startTime": 11,"title": "11","type": "branch"}]
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
-    @PostMapping("/listpage")
+    @PostMapping("/listPage")
     public JsonResult list(@RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
         Page<Assessment> assessmentPage = assessmentService.findAllForPage(new Pageable(page, size));
@@ -151,7 +149,7 @@ public class AssessmentController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *       "data": {"number": "12","total": 80,"name": "测试考核","endtime": "2018-12-12 12:12:12","remark": "测试内容","deption": {"subject": ["bfc5bd62010f467cbbe98c9e4741733b","402881916b9d3031016b9d626593000c"],"usergroup": [],"depart": ["123"],"users": ["0a4179fc06cb49e3ac0db7bcc8cf0882","402881916ba10b8a016ba113adbc0006"],"group": ["402881916b9d3031016b9d706b4e0012","402881916b9d3031016b9d708a710013","402881916b9d3031016b9d70b2510014"]},"Index": [{"isuse": "1234567","lname": "12","norder": "123456","sname": "123","sortedcode": "12345","id": "4028d8816be4b6fd016be5224bb60024","parcode": "1234","sortedid": "1"},{"isuse": "9876543","lname": "98","norder": "987654","sname": "987","sortedcode": "98765","id": "4028d8816be4b6fd016be5224bb60025","parcode": "9876","sortedid": "9"}],"id": "4028d8816be4b6fd016be521e09f001b","starttime": "2018-12-12 12:12:12","type": "personnel","Image": [{"name": "123","id": "4028d8816be4b6fd016be52115250017","suffix": "12","url": "1231"},{"name": "123","id": "4028d8816be4b6fd016be521188f0018","suffix": "12","url": "1231"}],"File": [{"name": "12","id": "4028d8816be4b6fd016be52123450019","type": "file","suffix": "12","fromTo": "12","content": "12","url": "12"},{"name": "12","id": "4028d8816be4b6fd016be521264c001a","type": "file","suffix": "12","fromTo": "12","content": "12","url": "12"}]}
+     *       "data": {"number": "12","total": 80,"name": "测试考核","endTime": "2018-12-12 12:12:12","remark": "测试内容","deption": {"subject": ["bfc5bd62010f467cbbe98c9e4741733b","402881916b9d3031016b9d626593000c"],"usergroup": [],"depart": ["123"],"users": ["0a4179fc06cb49e3ac0db7bcc8cf0882","402881916ba10b8a016ba113adbc0006"],"group": ["402881916b9d3031016b9d706b4e0012","402881916b9d3031016b9d708a710013","402881916b9d3031016b9d70b2510014"]},"Index": [{"isUse": "1234567","lName": "12","norDer": "123456","sName": "123","sortedCode": "12345","id": "4028d8816be4b6fd016be5224bb60024","parCode": "1234","sortedId": "1"},{"isUse": "9876543","lName": "98","norDer": "987654","sName": "987","sortedCode": "98765","id": "4028d8816be4b6fd016be5224bb60025","parCode": "9876","sortedId": "9"}],"id": "4028d8816be4b6fd016be521e09f001b","startTime": "2018-12-12 12:12:12","type": "personnel","Image": [{"name": "123","id": "4028d8816be4b6fd016be52115250017","suffix": "12","url": "1231"},{"name": "123","id": "4028d8816be4b6fd016be521188f0018","suffix": "12","url": "1231"}],"File": [{"name": "12","id": "4028d8816be4b6fd016be52123450019","type": "file","suffix": "12","fromTo": "12","content": "12","url": "12"},{"name": "12","id": "4028d8816be4b6fd016be521264c001a","type": "file","suffix": "12","fromTo": "12","content": "12","url": "12"}]}
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
@@ -270,7 +268,7 @@ public class AssessmentController extends BaseController {
 
 
     /**
-     * @api {POST} /assessment/SearchAssessment 考核搜索
+     * @api {POST} /assessment/searchAssessment 考核搜索
      * @apiGroup Assessment
      * @apiVersion 1.0.0
      * @apiDescription 查看
@@ -281,7 +279,7 @@ public class AssessmentController extends BaseController {
      * @apiParam {String} page 必填 跳过的页数 默认0
      * @apiParam {String} size 必填 一页的数量  默认10
      * @apiParamExample {json} 请求样例:
-     *                /exam/view?id=4028d8816bcc9a32016bcccd9616000c
+     *                /assessment/searchAssessment?id=4028d8816bcc9a32016bcccd9616000c
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -293,8 +291,8 @@ public class AssessmentController extends BaseController {
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
-    @PostMapping("SearchAssessment")
-    public JsonResult SearchAssessment(String property,
+    @PostMapping("/searchAssessment")
+    public JsonResult searchAssessment(String property,
                                        String value,
                                        @RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "10") int size){
@@ -516,7 +514,7 @@ public class AssessmentController extends BaseController {
     * {
     *     "code": 200,
     *     "message": "成功",
-    *       "data": [{"isuse": "1234567","lname": "12","norder": "123456","sname": "123","sortedcode": "12345","id": "4028d8816be4b6fd016be5224bb60024","parcode": "1234","sortedid": "1"},{"isuse": "9876543","lname": "98","norder": "987654","sname": "987","sortedcode": "98765","id": "4028d8816be4b6fd016be5224bb60025","parcode": "9876","sortedid": "9"}]
+    *       "data": [{"isUse": "1234567","lName": "12","norDer": "123456","sName": "123","sortedCode": "12345","id": "4028d8816be4b6fd016be5224bb60024","parCode": "1234","sortedId": "1"},{"isUse": "9876543","lName": "98","norDer": "987654","sName": "987","sortedCode": "98765","id": "4028d8816be4b6fd016be5224bb60025","parCode": "9876","sortedId": "9"}]
     * }
     */
     @RequiresPermissions(PERMISSION_VIEW)
@@ -528,22 +526,24 @@ public class AssessmentController extends BaseController {
             for (AssessmentIndex assessmentIndex : assessmentIndices) {
                 JSONObject object = new JSONObject();
                 object.put("id",assessmentIndex.getId());
-                object.put("isuse",assessmentIndex.getIsuse());
-                object.put("lname",assessmentIndex.getLname());
-                object.put("norder",assessmentIndex.getNorder());
-                object.put("parcode",assessmentIndex.getParcode());
-                object.put("sname",assessmentIndex.getSname());
-                object.put("sortedcode",assessmentIndex.getSortedcode());
-                object.put("sortedid",assessmentIndex.getSortedcode());
+                object.put("isUse",assessmentIndex.getIsUse());
+                object.put("lName",assessmentIndex.getlName());
+                object.put("norDer",assessmentIndex.getNorDer());
+                object.put("parCode",assessmentIndex.getParCode());
+                object.put("sName",assessmentIndex.getsName());
+                object.put("sortedCode",assessmentIndex.getSortedCode());
+                object.put("sortedId",assessmentIndex.getSortedId());
                 object.put("assessment",JsonUtils.getJson(assessmentIndex.getAssessment()));
-                if (assessmentService.findSnameBySortedid(assessmentIndex.getParcode())!=null){
-                    object.put("parcodename",(assessmentService.findSnameBySortedid(assessmentIndex.getParcode())).getSname());
+                if (assessmentService.findSnameBySortedid(assessmentIndex.getParCode())!=null){
+                    object.put("parcodename",(assessmentService.findSnameBySortedid(assessmentIndex.getParCode())).getsName());
                 }else {
                     object.put("parcodename","");
                 }
 
                 array.add(object);
             }
+        }else {
+            return JsonResult.notFound("没有找到考核指标");
         }
         jsonResult.setData(array);
         return jsonResult;
@@ -558,23 +558,23 @@ public class AssessmentController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 新增
      * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiParam {String} assessmentid 考核id必填
+     * @apiParam {String} assessmentId 考核id必填
      * @apiParam {String[]} indexlist  请看样例中的indexlist
      * @apiParamExample {json} 请求样例:
      * {
-    "assessmentid":"4028d8816be4b6fd016be521e09f001b",
-    "indexlist":[{"sortedid":"1"   节点id
-                ,"lname":"12"         考核全称
-                  ,"sname":"123",       考核缩写
-                  "parcode":"1234",     父节点id
-                    "norder":"123456",      排序
-                     "isuse":"1234567"},        是否使用
-    {"sortedid":"9",
-    "lname":"98",
-    "sname":"987",
-    "parcode":"9876",
-    "norder":"987654",
-    "isuse":"9876543"}]}
+    "assessmentId":"4028d8816be4b6fd016be521e09f001b",
+    "indexlist":[{"sortedId":"1"   节点id
+                ,"lName":"12"         考核全称
+                  ,"sName":"123",       考核缩写
+                  "parCode":"1234",     父节点id
+                    "norDer":"123456",      排序
+                     "isUse":"1234567"},        是否使用
+    {"sortedId":"9",
+    "lName":"98",
+    "sName":"987",
+    "parCode":"9876",
+    "norDer":"987654",
+    "isUse":"9876543"}]}
      * @apiSuccess (200) {String} code 200:成功</br>
      * 404:</br>
      * 601:考核不存在</br>
@@ -590,8 +590,8 @@ public class AssessmentController extends BaseController {
     @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add_index")
     public JsonResult addIndex(@RequestBody JSONObject params) {
-        String assessmentid = (String) params.get("assessmentid");
-        Assessment assessment = assessmentService.findById(assessmentid);
+        String assessmentId = (String) params.get("assessmentId");
+        Assessment assessment = assessmentService.findById(assessmentId);
         if (assessment == null) {
             return JsonResult.failure(601, "考核不存在");
         }
@@ -631,14 +631,14 @@ public class AssessmentController extends BaseController {
 
 
     /**
-    * @api {POST} /assessment/del_byindexid 根据指标id删除该指标
+    * @api {POST} /assessment/delByIndexId 根据指标id删除该指标
     * @apiGroup Assessment
     * @apiVersion 1.0.0
     * @apiDescription 查看
     * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} id 必填
     * @apiParamExample {json} 请求样例:
-    *                /assessment/del_byindexid?id=4028d8816bf387ac016bf3a207830002
+    *                /assessment/delByIndexId?id=4028d8816bf387ac016bf3a207830002
     * @apiSuccess (200) {String} code 200:成功</br>
     * @apiSuccess (200) {String} message 信息
     * @apiSuccess (200) {String} data 返回用户信息
@@ -646,11 +646,11 @@ public class AssessmentController extends BaseController {
     * {
     *     "code": 200,
     *     "message": "成功",
-    *      "data": [{"number": "12","score": 80,"endtime": "2018-12-12 12:12:12","remark": "测试内容","starttime": 80,"title": "测试考核","type": "personnel"}]
+    *      "data": [{"number": "12","score": 80,"endTime": "2018-12-12 12:12:12","remark": "测试内容","startTime": 80,"title": "测试考核","type": "personnel"}]
     * }
     */
     @RequiresPermissions(PERMISSION_DELETE)
-    @PostMapping("del_byindexid")
+    @PostMapping("/delByIndexId")
     public JsonResult delbyindexid(String id){
        AssessmentIndex assessmentIndex =  assessmentService.findByIndexId(id);
        if (assessmentIndex == null){
