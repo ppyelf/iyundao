@@ -21,6 +21,6 @@ public interface AssessmentIndexRepository extends BaseRepository<AssessmentInde
     @Query("select a from AssessmentIndex a where a.assessment.id = ?1")
     List<AssessmentIndex> findIndexByAssessmentId(String id);
 
-    @Query("select a from AssessmentIndex  a where a.sortedid =?1")
-    AssessmentIndex findbyparcode(String parcode);
+    @Query("select a from AssessmentIndex  a where a.sortedId =?1")
+    AssessmentIndex findbyparCode(String parCode);
 }

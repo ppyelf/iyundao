@@ -81,7 +81,7 @@ public class ExamController extends BaseController{
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": [{"examlong": "60","starttime": "2121","title": "name","score": "100","showthat": "员工测试","overtime": "2121","id": "123123"},{"examlong": "60","starttime": "2121","title": "name","score": "100","showthat": "员工测试","overtime": "2121","id": "55555555"}]
+     *     "data": [{"examLong": "60","startTime": "2121","title": "name","score": "100","showThat": "员工测试","overTime": "2121","id": "123123"},{"examLong": "60","startTime": "2121","title": "name","score": "100","showThat": "员工测试","overTime": "2121","id": "55555555"}]
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
@@ -114,7 +114,7 @@ public class ExamController extends BaseController{
      * {
      *     "code": 200,
      *     "message": "成功",
-     *      "data": {"total": 5,"totalPage": 1,"page": 0,"content": [{"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bded8a8016bdee853d8000c","starttime": "2018-12-12 12:12:12","title": "学院检测"}]}
+     *      "data": {"total": 5,"totalPage": 1,"page": 0,"content": [{"examLong": "60","score": "100","showThat": "简介","overTime": "2018-12-12 12:12:12","id": "4028d8816bded8a8016bdee853d8000c","startTime": "2018-12-12 12:12:12","title": "学院检测"}]}
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
@@ -151,21 +151,21 @@ public class ExamController extends BaseController{
                     "page": 0,
                     "content": [
     {
-                            "examlong": "60",                                           考试时长
+                            "examLong": "60",                                           考试时长
                             "score": "100",                                             合格分数
-                            "showthat": "简介",                                       考试说明
-                            "overtime": "2018-12-12 12:12:12",                          开始结束时间
+                            "showThat": "简介",                                       考试说明
+                            "overTime": "2018-12-12 12:12:12",                          开始结束时间
                             "id": "4028d8816bcb8bc8016bcb8de2b40008",                       考试id
-                            "starttime": "2018-12-12 12:12:12",                         考试开始时间
+                            "startTime": "2018-12-12 12:12:12",                         考试开始时间
                             "title": "学院检测"                                              标题
     },
     {
-                            "examlong": "60",
+                            "examLong": "60",
                             "score": "100",
-                            "showthat": "简介",
-                            "overtime": "2018-12-12 12:12:12",
+                            "showThat": "简介",
+                            "overTime": "2018-12-12 12:12:12",
                             "id": "4028d8816bcb8bc8016bcbc8d9910010",
-                            "starttime": "2018-12-12 12:12:12",
+                            "startTime": "2018-12-12 12:12:12",
                             "title": "学院检测"
     },]
      * }
@@ -193,18 +193,18 @@ public class ExamController extends BaseController{
      * @apiDescription 新增
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} title 必填 标题
-     * @apiParam {String} starttime 考试开始时间
-     * @apiParam {String} overtime 开始结束时间
-     * @apiParam {String} examlong 考试时长
+     * @apiParam {String} startTime 考试开始时间
+     * @apiParam {String} overTime 开始结束时间
+     * @apiParam {String} examLong 考试时长
      * @apiParam {String} score 合格分数
-     * @apiParam {String} showthat 考试说明
+     * @apiParam {String} showThat 考试说明
      * @apiParam {String[]} subjectIds 机构id
      * @apiParam {String[]} departIds 部门id
      * @apiParam {String[]} groupIds    组织id
      * @apiParam {String[]} userids 用户id
      * @apiParam {String[]} testpapers  试卷id
      * @apiParamExample {json} 请求样例:
-     *                exam/add?title=学院检测&starttime=2018-12-12 12:12:12&overtime=2018-12-12 12:12:12&examlong=60&score=100&showthat=简介&subjectIds=402881916b9d3031016b9d626593000c,bfc5bd62010f467cbbe98c9e4741733b&departIds&groupIds=402881916b9d3031016b9d63a172000d,402881916b9d3031016b9d63d7af000e&userids=402881916ba10b8a016ba113adbc0006&testpapers=1,2
+     *                exam/add?title=学院检测&startTime=2018-12-12 12:12:12&overTime=2018-12-12 12:12:12&examLong=60&score=100&showThat=简介&subjectIds=402881916b9d3031016b9d626593000c,bfc5bd62010f467cbbe98c9e4741733b&departIds&groupIds=402881916b9d3031016b9d63a172000d,402881916b9d3031016b9d63d7af000e&userids=402881916ba10b8a016ba113adbc0006&testpapers=1,2
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:</br>
      *                                 601:考试标题不能为空<br>
@@ -219,17 +219,17 @@ public class ExamController extends BaseController{
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": {"examlong": "60","score": "100","showthat": "简介","overtime": "2018-12-12 12:12:12","id": "4028d8816bcb8bc8016bcb8de2b40008","starttime": "2018-12-12 12:12:12","title": "学院检测"}
+     *     "data": {"examLong": "60","score": "100","showThat": "简介","overTime": "2018-12-12 12:12:12","id": "4028d8816bcb8bc8016bcb8de2b40008","startTime": "2018-12-12 12:12:12","title": "学院检测"}
      * }
      */
     @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     public JsonResult add(String title,
-                          String starttime,
-                          String overtime,
-                          String examlong,
+                          String startTime,
+                          String overTime,
+                          String examLong,
                           String score,
-                          String showthat,
+                          String showThat,
                           String[] subjectIds,
                           String[] departIds,
                           String[] groupIds,
@@ -243,11 +243,11 @@ public class ExamController extends BaseController{
         exam.setCreatedDate(new Date());
         exam.setLastModifiedDate(new Date());
         exam.setTitle(title);
-        exam.setStarttime(starttime);
-        exam.setOvertime(overtime);
-        exam.setExamlong(examlong);
+        exam.setStartTime(startTime);
+        exam.setOverTime(overTime);
+        exam.setExamLong(examLong);
         exam.setScore(score);
-        exam.setShowthat(showthat);
+        exam.setShowThat(showThat);
         List<Subject> subjects = subjectService.findbyIds(subjectIds);
             if (subjects.size()!=subjectIds.length){
                 return JsonResult.failure(605,"有"+(subjectIds.length-subjects.size())+"个机构不存在");
@@ -289,7 +289,7 @@ public class ExamController extends BaseController{
      * {
      *     "code": 200,
      *     "message": "成功",
-     *      "data": {"examlong": "60","score": "100","textpapers": [{"name": "第一张","id": "1"},{"name": "第二张","id": "2"}],"subjects": [{"code": "1","name": "分院党组织","id": "402881916b9d3031016b9d626593000c","subjectType": "part"},{"code": "0","name": "富阳人民医院","id": "bfc5bd62010f467cbbe98c9e4741733b","subjectType": "part"}],"showthat": "简介","overtime": "2018-12-12 12:12:12","groups": [{"code": "0","name": "行政支部","remark": "","id": "402881916b9d3031016b9d63a172000d"},{"code": "1","name": "后勤支部","remark": "","id": "402881916b9d3031016b9d63d7af000e"}],"starttime": "2018-12-12 12:12:12","title": "学院检测","users": [{"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}],"departs": []}
+     *      "data": {"examLong": "60","score": "100","textpapers": [{"name": "第一张","id": "1"},{"name": "第二张","id": "2"}],"subjects": [{"code": "1","name": "分院党组织","id": "402881916b9d3031016b9d626593000c","subjectType": "part"},{"code": "0","name": "富阳人民医院","id": "bfc5bd62010f467cbbe98c9e4741733b","subjectType": "part"}],"showThat": "简介","overTime": "2018-12-12 12:12:12","groups": [{"code": "0","name": "行政支部","remark": "","id": "402881916b9d3031016b9d63a172000d"},{"code": "1","name": "后勤支部","remark": "","id": "402881916b9d3031016b9d63d7af000e"}],"startTime": "2018-12-12 12:12:12","title": "学院检测","users": [{"password": "6A36E430976A64EA","code": "001","salt": "45a1d914886d4a92b6835a181b2a20d8","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}],"departs": []}
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
@@ -386,16 +386,16 @@ public class ExamController extends BaseController{
      * @apiVersion 1.0.0
      * @apiDescription 新增
      * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiParam {String} examid 考试id必填
-     * @apiParam {String} testpaperid 试卷id必填
-     * @apiParam {String} userid  用户id必填
+     * @apiParam {String} examid  考试id 必填
+     * @apiParam {String} testpaperid 试卷id 必填
+     * @apiParam {String} userid  用户id 必填
      * @apiParam {String[]} changge  请看样例
      * @apiParamExample {json} 请求样例:
      *                {
                         "examid":"4028d8816bcb8bc8016bcb8de2b40008",
                         "testpaperid":"4028d8816bd07269016bd0c82ac10027",
                         "userid":"402881916ba10b8a016ba113adbc0006",
-                        "changge":[{"paperTitleid":"4028d8816bd07269016bd0c82ac10028","answerselect":"1.1"},{"paperTitleid":"4028d8816bd07269016bd0c82ac6002c","answerselect":"2.3"},{"paperTitleid":"4028d8816bd07269016bd0c82ac80030","answerselect":"3.1"}]}
+                        "changge":[{"paperTitleid":"4028d8816bd07269016bd0c82ac10028","answerSelect":"1.1"},{"paperTitleid":"4028d8816bd07269016bd0c82ac6002c","answerSelect":"2.3"},{"paperTitleid":"4028d8816bd07269016bd0c82ac80030","answerSelect":"3.1"}]}
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:</br>
      *                                 601:任务名称不能为空</br>
@@ -405,7 +405,7 @@ public class ExamController extends BaseController{
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": {"issuertime": "2018-12-12 12:12:12","sendstate": "","id": "4028d8816bcb8bc8016bcbe014240011","type": "1","title": "任务名称","tasktext": "任务简介"}
+     *     "data": []
      * }
      */
     @RequiresPermissions(PERMISSION_ADD)
@@ -458,8 +458,8 @@ public class ExamController extends BaseController{
         JSONArray arr = new JSONArray();
         for (ExamInfoUser examInfoUser : examInfoUsers) {
             JSONObject obj = new JSONObject();
-            obj.put("papertitle",examInfoUser.getPaperTitle().getExamcontent());
-            obj.put("answer",examInfoUser.getAnswerselect());
+            obj.put("papertitle",examInfoUser.getPaperTitle().getExamContent());
+            obj.put("answer",examInfoUser.getAnswerSelect());
             obj.put("istrue",examInfoUser.getAnswer());
             arr.add(obj);
         }
@@ -469,14 +469,14 @@ public class ExamController extends BaseController{
     }
 
     /**
-    * @api {POST} /exam/socreforuser 查看个人考试得分记录
+    * @api {POST} /exam/socreForUser 查看个人考试得分记录
     * @apiGroup Exam
     * @apiVersion 1.0.0
     * @apiDescription 查看
      * @apiHeader {String} IYunDao-AssessToken token验证
     * @apiParam {String} id 用户id必填
     * @apiParamExample {json} 请求样例:
-    *                /exam/socreforuser?id=4028d8816bcc9a32016bcccd9616000c
+    *                /exam/socreForUser?id=4028d8816bcc9a32016bcccd9616000c
     * @apiSuccess (200) {String} code 200:成功</br>
     * @apiSuccess (200) {String} message 信息
     * @apiSuccess (200) {String} data 返回用户信息
@@ -496,8 +496,8 @@ public class ExamController extends BaseController{
     * }
     */
     @RequiresPermissions(PERMISSION_VIEW)
-    @PostMapping("/socreforuser")
-    public JsonResult socreforuser(String id){
+    @PostMapping("/socreForUser")
+    public JsonResult socreForUser(String id){
         User user = userService.findById(id);
         if(user ==null){
             return  JsonResult.notFound("找不到用户");

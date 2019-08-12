@@ -24,42 +24,42 @@ public class CountryRank extends BaseEntity<String> {
     /**
      * 名称
      */
-    @Excel(name = "名称")
+    @Excel(name = "名称", sort = 0)
     @Column(name = "NAME", nullable = false, length = 50)
     private String name;
 
     /**
      * 用户ID
      */
-    @Excel(name = "用户ID")
+    @Excel(name = "用户ID" ,sort = 1)
     @Column(name = "USERID", nullable = false)
     private String userId;
 
     /**
      * 机构ID
      */
-    @Excel(name = "机构ID")
+    @Excel(name = "机构ID" ,sort = 2)
     @Column(name = "SUBJECTID", nullable = false)
     private String subjectId;
 
     /**
      * 部门ID
      */
-    @Excel(name = "部门ID")
+    @Excel(name = "部门ID" ,sort = 3)
     @Column(name = "DEPARTID")
     private String departId;
 
     /**
      * 组织ID
      */
-    @Excel(name = "组织ID")
+    @Excel(name = "组织ID" ,sort = 4)
     @Column(name = "GROUPID")
     private String groupId;
 
     /**
      * 分数
      */
-    @Excel(name = "分数")
+    @Excel(name = "分数" , sort = 5)
     @Column(name = "SCORE")
     private int score;
 

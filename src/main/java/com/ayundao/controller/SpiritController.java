@@ -336,7 +336,16 @@ public class SpiritController extends BaseController {
     @PostMapping("/view")
     public JsonResult view(String id) {
         Spirit spirit = spiritService.find(id);
-        jsonResult.setData(convert(spirit));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name",spirit.getName());
+        jsonObject.put("time",spirit.getTime());
+        jsonObject.put("spiritid",spirit.getId());
+        jsonObject.put("hots",spirit.getHots());
+        jsonObject.put("username",spirit.getUser().getName());
+        jsonObject.put("nameid",spirit.getUser().getId());
+        jsonObject.put("type",spirit.getType());
+        jsonObject.put("remark",spirit.getSpiritContent().getContent());
+jsonResult.setData(jsonObject);
         return jsonResult;
     }
 
@@ -388,12 +397,43 @@ public class SpiritController extends BaseController {
     }
 
     /**
-     * @api {POST} /spirit/del 查看
+     * @api {POST} /spirit/del 删除
      * @apiGroup Spirit
      * @apiVersion 1.0.0
      * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiDescription 查看党内精神
+     * @apiDescription 删除党内精神
      * @apiParam {String} id 必填
+     * @apiParamExample {json} 请求示例:
+     *               /spirit/del?id=2c9ba3816b95b1fe016b95fec5dd0005
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:标题/发布时间/正文不能为空</br>
+     *                                 601:标题/发布时间/正文不能为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     *{
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": ""
+     * }
+     */
+    @PostMapping("/del")
+    public JsonResult del(String id) {
+        if (spiritService.find(id)==null){
+            return JsonResult.notFound("找不到实体");
+        }
+        spiritService.deleteSpiritById(id);
+        return JsonResult.success();
+    }
+
+    /**
+     * @api {POST} /spirit/updateState  修改党内精神状态
+     * @apiGroup Spirit
+     * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiDescription 删除党内精神
+     * @apiParam {String} id 必填
+     * @apiParam {int} type 必填  0-未通过 1- 已通过
      * @apiParamExample {json} 请求示例:
      *              ?id=2c9ba3816b95b1fe016b95fec5dd0005
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -408,8 +448,17 @@ public class SpiritController extends BaseController {
      *     "data": ""
      * }
      */
-    public JsonResult del(String id) {
-        spiritService.deleteSpiritById(id);
+    @PostMapping("/updateState")
+    public JsonResult updateState(String soiritid,
+                                  int type){
+        System.out.println(soiritid);
+        System.out.println(type);
+        Spirit spirit = spiritService.find(soiritid);
+        System.out.println(spirit);
+        if (spirit ==null){
+            return JsonResult.notFound("找不到党内精神");
+        }
+        spiritService.updateState(soiritid,type);
         return JsonResult.success();
     }
 

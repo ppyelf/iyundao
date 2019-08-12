@@ -77,6 +77,7 @@ public class SpiritServiceImpl implements SpiritService {
         spirit.setLastModifiedDate(new Date());
         spirit.setName(name);
         spirit.setTime(time);
+        spirit.setUser(user);
         spirit = spiritRepository.save(spirit);
 
         //保存正文
@@ -152,5 +153,10 @@ public class SpiritServiceImpl implements SpiritService {
     @Override
     public String getContentBySpiritId(String id) {
         return spiritContentRepository.getContentBySpiritId(id);
+    }
+
+    @Override
+    public void updateState(String soiritid, int type) {
+        spiritRepository.updateState(soiritid,type);
     }
 }

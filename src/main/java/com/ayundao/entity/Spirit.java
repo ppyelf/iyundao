@@ -38,6 +38,19 @@ public class Spirit extends BaseEntity<String> {
     private int hots;
 
     /**
+     * 审批状态
+     */
+    @Column(name = "STATE")
+    private SPIRIT_TYPE type;
+
+    /**
+     * 审批人id
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USERID", nullable = false)
+    private User user;
+
+    /**
      * 正文
      */
     @OneToOne(mappedBy = "spirit", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -85,6 +98,14 @@ public class Spirit extends BaseEntity<String> {
      */
     @Column(name = "INFO5")
     private String info5;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getName() {
         return name;
@@ -182,6 +203,23 @@ public class Spirit extends BaseEntity<String> {
         this.info5 = info5;
     }
 
+    public SPIRIT_TYPE getType() {
+        return type;
+    }
+
+    public void setType(SPIRIT_TYPE type) {
+        this.type = type;
+    }
+
     public enum SPIRIT_TYPE{
+        /**
+         * 未通过
+         */
+        NO,
+
+        /**
+         * 已通过
+         */
+        YES,
     }
 }

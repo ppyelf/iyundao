@@ -71,7 +71,7 @@ public class TaskController extends BaseController {
      * {
      * "code": 200,
      * "message": "成功",
-     * "data": [{"issuertime": "2019-07-11 00:00:00","name": "钱正","sendstate": "未发送任务","id": "4028d8816bbc4897016bbc6731640000","title": "王柏","type": "0","tasktext": "1223123"}]
+     * "data": [{"issuerTime": "2019-07-11 00:00:00","name": "钱正","sendState": "未发送任务","id": "4028d8816bbc4897016bbc6731640000","title": "王柏","type": "0","taskText": "1223123"}]
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
@@ -86,12 +86,12 @@ public class TaskController extends BaseController {
                 object.put("title", task.getTitle());
                 object.put("name", task.getUser().getName());
                 object.put("type", task.getType());
-                object.put("issuertime", task.getIssuertime());
-                object.put("tasktext", task.getTasktext());
-                if (task.getSendstate() == null) {
-                    task.setSendstate("未发送任务");
+                object.put("issuerTime", task.getIssuerTime());
+                object.put("taskText", task.getTaskText());
+                if (task.getSendState() == null) {
+                    task.setSendState("未发送任务");
                 }
-                object.put("sendstate", task.getSendstate());
+                object.put("sendState", task.getSendState());
                 arr.add(object);
             }
         }
@@ -107,15 +107,15 @@ public class TaskController extends BaseController {
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} title 标题 必填
      * @apiParam {String} type 任务类型
-     * @apiParam {String} issuertime 发布时间
-     * @apiParam {String} tasktext  任务内容
+     * @apiParam {String} issuerTime 发布时间
+     * @apiParam {String} taskText  任务内容
      * @apiParam {String} userid 发布人员id 必填
      * @apiParam {String[]} subjectIds 机构id   每一条部门类型的只需要最子集部门
      * @apiParam {String[]} departIds   部门id
      * @apiParam {String[]} groupIds    组织id
      * @apiParam {String[]} userids 用户id
      * @apiParamExample {json} 请求样例:
-     *                /task/add?title=任务名称&type=1&issuertime=2018-12-12 12:12:12&tasktext=任务简介&userid=402881916ba10b8a016ba113adbc0006&subjectIds=402881916b9d3031016b9d626593000c,bfc5bd62010f467cbbe98c9e4741733b&departIds&groupIds=402881916b9d3031016b9d63a172000d,402881916b9d3031016b9d63d7af000e&userids=402881916ba10b8a016ba113adbc0006
+     *                /task/add?title=任务名称&type=1&issuerTime=2018-12-12 12:12:12&taskText=任务简介&userid=402881916ba10b8a016ba113adbc0006&subjectIds=402881916b9d3031016b9d626593000c,bfc5bd62010f467cbbe98c9e4741733b&departIds&groupIds=402881916b9d3031016b9d63a172000d,402881916b9d3031016b9d63d7af000e&userids=402881916ba10b8a016ba113adbc0006
      * @apiSuccess (200) {String} code 200:成功</br>
      *                                 404:</br>
      *                                 601:任务名称不能为空</br>
@@ -130,15 +130,15 @@ public class TaskController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": {"issuertime": "2018-12-12 12:12:12","sendstate": "","id": "4028d8816bcb8bc8016bcbe014240011","type": "1","title": "任务名称","tasktext": "任务简介"}
+     *     "data": {"issuerTime": "2018-12-12 12:12:12","sendState": "","id": "4028d8816bcb8bc8016bcbe014240011","type": "1","title": "任务名称","taskText": "任务简介"}
      * }
      */
     @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
     private JsonResult add(String title,
                            String type,
-                           String issuertime,
-                           String tasktext,
+                           String issuerTime,
+                           String taskText,
                            String userid,
                            String[] subjectIds,
                            String[] departIds,
@@ -157,8 +157,8 @@ public class TaskController extends BaseController {
            return JsonResult.failure(602, "发布人id有误");
         }
         task.setUser(user1);
-        task.setIssuertime(issuertime);
-        task.setTasktext(tasktext);
+        task.setIssuerTime(issuerTime);
+        task.setTaskText(taskText);
         List<Subject> subjects = subjectService.findbyIds(subjectIds);
             if (subjects.size()!=subjectIds.length){
                 return JsonResult.failure(605,"有"+(subjectIds.length-subjects.size())+"个机构不存在");
@@ -199,7 +199,7 @@ public class TaskController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *      "data": {"issuertime": "任务简介","subjects": [{"code": "1","name": "分院党组织","id": "402881916b9d3031016b9d626593000c","subjectType": "part"},{"code": "0","name": "富阳人民医院","id": "bfc5bd62010f467cbbe98c9e4741733b","subjectType": "part"}],"workType": "1","name": "钱正","sendstatu": null,"groups": [{"code": "0","name": "行政支部","remark": "","id": "402881916b9d3031016b9d63a172000d"},{"code": "1","name": "后勤支部","remark": "","id": "402881916b9d3031016b9d63d7af000e"}],"title": "任务名称","tasktext": "任务简介","users": [{"password": "6A36E430976A64EA","salt": "45a1d914886d4a92b6835a181b2a20d8","code": "001","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}],"departs": []}
+     *      "data": {"issuerTime": "任务简介","subjects": [{"code": "1","name": "分院党组织","id": "402881916b9d3031016b9d626593000c","subjectType": "part"},{"code": "0","name": "富阳人民医院","id": "bfc5bd62010f467cbbe98c9e4741733b","subjectType": "part"}],"workType": "1","name": "钱正","sendstatu": null,"groups": [{"code": "0","name": "行政支部","remark": "","id": "402881916b9d3031016b9d63a172000d"},{"code": "1","name": "后勤支部","remark": "","id": "402881916b9d3031016b9d63d7af000e"}],"title": "任务名称","taskText": "任务简介","users": [{"password": "6A36E430976A64EA","salt": "45a1d914886d4a92b6835a181b2a20d8","code": "001","sex": "0","name": "钱正","remark": "暂无描述","id": "402881916ba10b8a016ba113adbc0006","userType": "normal","account": "user","status": ""}],"departs": []}
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
@@ -218,10 +218,10 @@ public class TaskController extends BaseController {
         object.put("id",task.getId());
         object.put("title", task.getTitle());
         object.put("workType", task.getType());
-        object.put("issuertime", task.getTasktext());
+        object.put("issuerTime", task.getIssuerTime());
         object.put("name", task.getUser().getName());
-        object.put("tasktext", task.getTasktext());
-        object.put("sendstatu", task.getSendstate());
+        object.put("taskText", task.getTaskText());
+        object.put("sendstatu", task.getSendState());
         if (CollectionUtils.isNotEmpty(taskInfoDeparts)){
             for(TaskInfoDepart taskInfoDepart: taskInfoDeparts){
                 if(taskInfoDepart.getSubject()!= null){
@@ -283,14 +283,14 @@ public class TaskController extends BaseController {
 
 
     /**
-     * @api {POST} /task/findBydeption 根据部门组织机构查找任务
+     * @api {POST} /task/findByDeption 根据部门组织机构查找任务
      * @apiGroup Task
      * @apiVersion 1.0.0
      * @apiDescription 查看
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} id 必填
      * @apiParamExample {json} 请求样例:
-     *                /task/findBydeption?id=402881916b9d3031016b9d63a172000d
+     *                /task/findByDeption?id=402881916b9d3031016b9d63a172000d
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -298,12 +298,12 @@ public class TaskController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *       "data": [{"issuertime": "2018-12-12 12:12:12","name": "钱正","sendstate": "未发送任务","id": "4028d8816bcb8bc8016bcbe014240011","title": "任务名称","type": "1","tasktext": "任务简介"}]
+     *       "data": [{"issuerTime": "2018-12-12 12:12:12","name": "钱正","sendState": "未发送任务","id": "4028d8816bcb8bc8016bcbe014240011","title": "任务名称","type": "1","taskText": "任务简介"}]
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
-    @PostMapping("/findBydeption")
-    public JsonResult findBydeption(String id) {
+    @PostMapping("/findByDeption")
+    public JsonResult findByDeption(String id) {
         List<Task> tasksss = taskService.findAdvicesByDeptionId(id);
         JSONArray arr = new JSONArray();
         JSONObject object;
@@ -314,14 +314,16 @@ public class TaskController extends BaseController {
                 object.put("title", task.getTitle());
                 object.put("name", task.getUser().getName());
                 object.put("type", task.getType());
-                object.put("issuertime", task.getIssuertime());
-                object.put("tasktext", task.getTasktext());
-                if (task.getSendstate() == null) {
-                    task.setSendstate("未发送任务");
+                object.put("issuerTime", task.getIssuerTime());
+                object.put("taskText", task.getTaskText());
+                if (task.getSendState() == null) {
+                    task.setSendState("未发送任务");
                 }
-                object.put("sendstate", task.getSendstate());
+                object.put("sendState", task.getSendState());
                 arr.add(object);
             }
+        }else {
+            return JsonResult.notFound("没有找到数据");
         }
 
         jsonResult.setData(arr);

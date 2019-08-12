@@ -197,12 +197,14 @@ public class IdeologyController extends BaseController {
     @PostMapping("/pioneerList")
     public JsonResult pioneerList(@RequestParam(defaultValue = "0") int type) {
         List<Pioneer> list = ideologyService.findPioneerOrderByCreatedTime(type);
+        System.out.println(list);
         jsonResult.setData(convertPioneer(list));
         return jsonResult;
     }
 
     /**
-     * 转换强国排名信息
+     * 转换先锋人物排名信息
+     *
      * @param list
      * @return
      */
@@ -217,13 +219,34 @@ public class IdeologyController extends BaseController {
             Depart depart = departService.findById(pioneer.getDepartCode());
             Groups groups = groupsService.findById(pioneer.getGroupCode());
             User user = userService.findById(pioneer.getCode());
-            json.put("subject", JsonUtils.getJson(subject));
-            json.put("user", JsonUtils.getJson(user));
+
+            if (user!=null){
+//                json.put("user", JsonUtils.getJson(user));
+                json.put("user",user.getName());
+                json.put("userid", user.getId());
+            }else {
+                json.put("user", pioneer.getCode());
+            }
+            if (subject!=null){
+//                json.put("subject", JsonUtils.getJson(subject));
+                json.put("subject", subject.getName());
+                json.put("subjectid", subject.getId());
+            }else {
+                json.put("subject", pioneer.getSubjectCode());
+            }
             if (depart != null) {
-                json.put("depart", JsonUtils.getJson(depart));
+//                json.put("depart", JsonUtils.getJson(depart));
+                json.put("depart", depart.getName());
+                json.put("departid", depart.getId());
+            }else {
+                json.put("depart", pioneer.getDepartCode());
             }
             if (groups != null) {
-                json.put("groups", JsonUtils.getJson(groups));
+//                json.put("groups", JsonUtils.getJson(groups));
+                json.put("groups", groups.getName());
+                json.put("groupsid", groups.getId());
+            }else {
+                json.put("groups", pioneer.getGroupCode());
             }
             arr.add(json);
         }
@@ -232,7 +255,7 @@ public class IdeologyController extends BaseController {
 
 
     /**
-     * 转换先锋人物排名信息
+     *转换强国排名信息
      * @param list
      * @return
      */
@@ -247,13 +270,33 @@ public class IdeologyController extends BaseController {
             Depart depart = departService.findById(cr.getDepartId());
             Groups groups = groupsService.findById(cr.getGroupId());
             User user = userService.findById(cr.getUserId());
-            json.put("subject", JsonUtils.getJson(subject));
-            json.put("user", JsonUtils.getJson(user));
+            if (subject!=null){
+//                json.put("subject", JsonUtils.getJson(subject));
+                json.put("subject", subject.getName());
+                json.put("subjectid", subject.getId());
+            }else{
+                json.put("subject", cr.getSubjectId());
+            }
+            if (user != null ){
+//                json.put("user", JsonUtils.getJson(user));
+                json.put("user", user.getName());
+                json.put("userid", user.getId());
+            }else{
+                json.put("user",cr.getUserId());
+            }
             if (depart != null) {
-                json.put("depart", JsonUtils.getJson(depart));
+//                json.put("depart", JsonUtils.getJson(depart));
+                json.put("depart", depart.getName());
+                json.put("departid", depart.getId());
+            }else{
+                json.put("depart",cr.getDepartId());
             }
             if (groups != null) {
-                json.put("groups", JsonUtils.getJson(groups));
+//                json.put("groups", JsonUtils.getJson(groups));
+                json.put("groups", groups.getName());
+                json.put("groupsid", groups.getId());
+            }else {
+                json.put("groups",cr.getGroupId());
             }
             arr.add(json);
         }

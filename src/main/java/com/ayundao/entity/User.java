@@ -167,6 +167,12 @@ public class User extends BaseEntity<String> {
     private Set<ExamInfoDepart> examInfoDepart;
 
     /**
+     * 党内精神审核人用户id
+     */
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Spirit> spirit;
+
+    /**
      * 备用字段1
      */
     @Column(name = "INFO1")
@@ -378,6 +384,14 @@ public class User extends BaseEntity<String> {
 
     public void setExamInfoDepart(Set<ExamInfoDepart> examInfoDepart) {
         this.examInfoDepart = examInfoDepart;
+    }
+
+    public Set<Spirit> getSpirit() {
+        return spirit;
+    }
+
+    public void setSpirit(Set<Spirit> spirit) {
+        this.spirit = spirit;
     }
 
     /**

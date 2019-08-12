@@ -52,7 +52,7 @@ public class ExamInfoUser  extends BaseEntity<String>{
      * 考试答案选择
      */
     @Column(name = "ANSWERSELECT", length = 50)
-    private  String answerselect;
+    private  String answerSelect;
 
     /**
      * 是否为正确答案
@@ -101,12 +101,12 @@ public class ExamInfoUser  extends BaseEntity<String>{
         this.paperTitle = paperTitle;
     }
 
-    public String getAnswerselect() {
-        return answerselect;
+    public String getAnswerSelect() {
+        return answerSelect;
     }
 
-    public void setAnswerselect(String answerselect) {
-        this.answerselect = answerselect;
+    public void setAnswerSelect(String answerSelect) {
+        this.answerSelect = answerSelect;
     }
 
     public String getAnswer() {

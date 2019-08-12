@@ -25,19 +25,19 @@ public class Exam extends BaseEntity<String>{
      * 考试开始时间
      */
     @Column(name = "STARTTIME", length = 50)
-    private String starttime;
+    private String startTime;
 
     /**
      * 开始结束时间
      */
     @Column(name = "OVERTIME", length = 50)
-    private String overtime;
+    private String overTime;
 
     /**
      * 考试时长
      */
     @Column(name = "EXAMLONG", length = 50)
-    private String examlong;
+    private String examLong;
 
     /**
      * 合格分数
@@ -49,7 +49,7 @@ public class Exam extends BaseEntity<String>{
      * 考试说明
      */
     @Column(name = "SHOWTHAT", length = 200)
-    private String showthat;
+    private String showThat;
 
     /**
      * 考试与部门组织考试id
@@ -111,28 +111,37 @@ public class Exam extends BaseEntity<String>{
         this.title = title;
     }
 
-    public String getStarttime() {
-        return starttime;
+
+    public String getStartTime() {
+        return startTime;
     }
 
-    public void setStarttime(String starttime) {
-        this.starttime = starttime;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
-    public String getOvertime() {
-        return overtime;
+    public String getOverTime() {
+        return overTime;
     }
 
-    public void setOvertime(String overtime) {
-        this.overtime = overtime;
+    public void setOverTime(String overTime) {
+        this.overTime = overTime;
     }
 
-    public String getExamlong() {
-        return examlong;
+    public String getExamLong() {
+        return examLong;
     }
 
-    public void setExamlong(String examlong) {
-        this.examlong = examlong;
+    public void setExamLong(String examLong) {
+        this.examLong = examLong;
+    }
+
+    public String getShowThat() {
+        return showThat;
+    }
+
+    public void setShowThat(String showThat) {
+        this.showThat = showThat;
     }
 
     public String getScore() {
@@ -143,13 +152,6 @@ public class Exam extends BaseEntity<String>{
         this.score = score;
     }
 
-    public String getShowthat() {
-        return showthat;
-    }
-
-    public void setShowthat(String showthat) {
-        this.showthat = showthat;
-    }
 
     public Set<ExamInfoDepart> getExamInfoDepart() {
         return examInfoDepart;

@@ -46,43 +46,43 @@ public class AssessmentIndex extends BaseEntity<String> {
      * 节点ID
      */
     @Column(name = "SORTEDID",length = 50,unique = true)
-    private String sortedid;
+    private String sortedId;
 
     /**
      * 编码
      */
     @Column(name = "SORTEDCODE",length = 50)
-    private String sortedcode;
+    private String sortedCode;
 
     /**
      * 考核全称
      */
     @Column(name = "LNAME",length = 500)
-    private String lname;
+    private String lName;
 
     /**
      * 考核缩写
      */
     @Column(name = "SNAME",length = 50)
-    private String sname;
+    private String sName;
 
     /**
      * 父节点
      */
     @Column(name = "PARCODE",length = 50)
-    private String parcode;
+    private String parCode;
 
     /**
      * 排序
      */
     @Column(name = "NORDER",length = 50)
-    private String norder;
+    private String norDer;
 
     /**
      * 是否使用
      */
     @Column(name = "ISUSE",length = 50)
-    private String isuse;
+    private String isUse;
 
     /**
      * 所属考核ID
@@ -122,60 +122,60 @@ public class AssessmentIndex extends BaseEntity<String> {
     private String info5;
 
 
-    public String getSortedid() {
-        return sortedid;
+    public String getSortedId() {
+        return sortedId;
     }
 
-    public void setSortedid(String sortedid) {
-        this.sortedid = sortedid;
+    public void setSortedId(String sortedId) {
+        this.sortedId = sortedId;
     }
 
-    public String getSortedcode() {
-        return sortedcode;
+    public String getSortedCode() {
+        return sortedCode;
     }
 
-    public void setSortedcode(String sortedcode) {
-        this.sortedcode = sortedcode;
+    public void setSortedCode(String sortedCode) {
+        this.sortedCode = sortedCode;
     }
 
-    public String getLname() {
-        return lname;
+    public String getlName() {
+        return lName;
     }
 
-    public void setLname(String lname) {
-        this.lname = lname;
+    public void setlName(String lName) {
+        this.lName = lName;
     }
 
-    public String getSname() {
-        return sname;
+    public String getsName() {
+        return sName;
     }
 
-    public void setSname(String sname) {
-        this.sname = sname;
+    public void setsName(String sName) {
+        this.sName = sName;
     }
 
-    public String getParcode() {
-        return parcode;
+    public String getParCode() {
+        return parCode;
     }
 
-    public void setParcode(String parcode) {
-        this.parcode = parcode;
+    public void setParCode(String parCode) {
+        this.parCode = parCode;
     }
 
-    public String getNorder() {
-        return norder;
+    public String getNorDer() {
+        return norDer;
     }
 
-    public void setNorder(String norder) {
-        this.norder = norder;
+    public void setNorDer(String norDer) {
+        this.norDer = norDer;
     }
 
-    public String getIsuse() {
-        return isuse;
+    public String getIsUse() {
+        return isUse;
     }
 
-    public void setIsuse(String isuse) {
-        this.isuse = isuse;
+    public void setIsUse(String isUse) {
+        this.isUse = isUse;
     }
 
     public Assessment getAssessment() {

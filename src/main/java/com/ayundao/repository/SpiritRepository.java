@@ -2,6 +2,8 @@ package com.ayundao.repository;
 
 import com.ayundao.base.BaseRepository;
 import com.ayundao.entity.Spirit;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -15,4 +17,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SpiritRepository extends BaseRepository<Spirit, String> {
 
+    @Modifying
+    @Query(value = "UPDATE t_spirit set state = ?2 WHERE id = ?1",nativeQuery = true)
+    void updateState(String soiritid, int type);
 }

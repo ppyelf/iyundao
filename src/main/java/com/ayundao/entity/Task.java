@@ -38,20 +38,20 @@ public class Task extends BaseEntity<String>{
      * 发布时间
      */
     @Column(name = "ISSUERTIME", length = 50)
-    private String issuertime;
+    private String issuerTime;
 
 
     /**
      * 任务内容
      */
     @Column(name = "TASKTEXT", length = 9999)
-    private  String tasktext;
+    private  String taskText;
 
     /**
      * 发送状态
      */
     @Column(name = "SENDSTATE",length = 50)
-    private String sendstate;
+    private String sendState;
 
     /**
      * 任务人员参与表中的任务id
@@ -89,20 +89,28 @@ public class Task extends BaseEntity<String>{
         this.user = user;
     }
 
-    public String getIssuertime() {
-        return issuertime;
+    public String getIssuerTime() {
+        return issuerTime;
     }
 
-    public void setIssuertime(String issuertime) {
-        this.issuertime = issuertime;
+    public void setIssuerTime(String issuerTime) {
+        this.issuerTime = issuerTime;
     }
 
-    public String getTasktext() {
-        return tasktext;
+    public String getTaskText() {
+        return taskText;
     }
 
-    public void setTasktext(String tasktext) {
-        this.tasktext = tasktext;
+    public void setTaskText(String taskText) {
+        this.taskText = taskText;
+    }
+
+    public String getSendState() {
+        return sendState;
+    }
+
+    public void setSendState(String sendState) {
+        this.sendState = sendState;
     }
 
     public Set<TaskInfoUser> getTaskInfoUser() {
@@ -121,13 +129,6 @@ public class Task extends BaseEntity<String>{
         this.taskInfoDepart = taskInfoDepart;
     }
 
-    public String getSendstate() {
-        return sendstate;
-    }
-
-    public void setSendstate(String sendstate) {
-        this.sendstate = sendstate;
-    }
 
 //    public String getInfo1() {
 //        return info1;

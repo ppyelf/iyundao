@@ -52,10 +52,10 @@ public interface AssessmentService {
 
     /**
      * 根据id找到实体
-     * @param assessmentid
+     * @param assessmentId
      * @return
      */
-    Assessment findById(String assessmentid);
+    Assessment findById(String assessmentId);
 
     /**
      * 上传文件
@@ -177,10 +177,10 @@ public interface AssessmentService {
 
     /**
      * 通过本机id找到 对应的实体
-     * @param parcode
+     * @param parCode
      * @return
      */
-    AssessmentIndex findSnameBySortedid(String parcode);
+    AssessmentIndex findSnameBySortedid(String parCode);
 
     /**
      * 模糊查询
