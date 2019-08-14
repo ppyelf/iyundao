@@ -29,4 +29,5 @@ public interface RoleRepository extends BaseRepository<Role, String> {
     //根据IDS获取实体集合信息
     @Query("select r from Role r where r.id in (?1)")
     List<Role> findByRoleIds(String[] roleIds);
+
 }

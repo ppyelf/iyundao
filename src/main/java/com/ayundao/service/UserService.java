@@ -114,4 +114,11 @@ public interface UserService {
      * 通过机构id获得所有的用户
      */
     List<User> findBySubjectIdForPage(String id);
+
+    /**
+     * 检测账号是否存在
+     * @param account
+     * @return
+     */
+    boolean existsAccount(String account);
 }

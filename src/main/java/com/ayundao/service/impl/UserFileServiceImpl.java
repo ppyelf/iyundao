@@ -47,7 +47,7 @@ public class UserFileServiceImpl implements UserFileService {
         userFile.setUser(user);
         userFile.setStatus(UserFile.STATUS.myself);
         userFile.setType(type);
-        Map<String, String> map = FileUtils.uploadUserFile(file, userFile, uploadPath,user.getCode());
+        Map<String, String> map = FileUtils.uploadUserFile(file, userFile, uploadPath, user.getCode());
         if (map == null) {
             return JsonResult.failure(601, "上传失败");
         }

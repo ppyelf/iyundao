@@ -3,18 +3,17 @@ package com.ayundao.controller;
 
 import com.ayundao.base.BaseController;
 import com.ayundao.base.annotation.CurrentSubject;
-import com.ayundao.base.utils.EncryptUtils;
+import com.ayundao.base.annotation.CurrentUser;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
-import com.ayundao.service.PermissionService;
-import com.ayundao.service.RoleService;
-import com.ayundao.service.UserService;
-import com.ayundao.service.ActivityService;
+import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.hibernate.boot.jaxb.hbm.spi.JaxbHbmOnDeleteEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -22,13 +21,9 @@ import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-import sun.security.util.Password;
+import sun.util.resources.cldr.ti.CalendarData_ti_ER;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.ayundao.base.BaseController.ROLE_ADMIN;
 
@@ -42,7 +37,6 @@ import static com.ayundao.base.BaseController.ROLE_ADMIN;
  * @Version: V1.0
  */
 @RequiresUser
-@RequiresRoles(ROLE_ADMIN)
 @RestController
 @RequestMapping("/user")
 public class UserController extends BaseController {
@@ -58,6 +52,10 @@ public class UserController extends BaseController {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Autowired
+    private RoleRelationService roleRelationService;
+
     /**
      * @api {POST} /user/checkCode 检测code
      * @apiGroup User
@@ -152,6 +150,63 @@ public class UserController extends BaseController {
     }
 
     /**
+     * @api {GET} /user/role 用户搜索
+     * @apiName search
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiDescription 用户搜索
+     * @apiParamExample {json} 请求样例
+     *                ?key=张三&page=1&size=10
+     * @apiSuccess (200) {int} code 200:成功</br>
+     *                              404:不存在此用户</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     * @apiSuccessExample {json} 返回样例:
+     * {
+     *     "code": 200,
+     *     "message": "成功",
+     *     "data": {
+     *         "admin": [
+     *             "add",
+     *             "modify",
+     *             "view",
+     *             "examine",
+     *             "release",
+     *             "disable",
+     *             "lock",
+     *             "delete"
+     *         ]
+     *     }
+     * }
+     */
+    @GetMapping("/role")
+    public JsonResult role(@CurrentUser User user) {
+        Set<RoleRelation> roleRelations = roleRelationService.findRolesByUserId(user.getId());
+        JSONObject json = new JSONObject();
+        Map<String, String> map = new LinkedHashMap<>();
+        for (RoleRelation rr : roleRelations) {
+            if (map.get(rr.getRole().getCode()) != null) {
+                map.put(rr.getRole().getCode(), map.get(rr.getRole().getCode()) + "," + rr.getPermission().getCode());
+            } else {
+                map.put(rr.getRole().getCode(), rr.getPermission().getCode());
+            }
+        }
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String[] permission = entry.getValue().contains(",") ? entry.getValue().split(",") : new String[]{entry.getValue()};
+            Set<String> set = new HashSet<>();
+            set.addAll(Arrays.asList(permission));
+            JSONArray arr = new JSONArray();
+            for (String s : set) {
+                arr.add(s);
+            }
+            json.put(entry.getKey(), arr);
+        }
+        jsonResult.setData(json);
+        return jsonResult;
+    }
+
+    /**
      * @api {POST} /user/add 新建用户
      * @apiGroup User
      * @apiVersion 1.0.0
@@ -177,6 +232,7 @@ public class UserController extends BaseController {
      *                                 603:部门/组织不存在</br>
      *                                 604:机构不存在</br>
      *                                 605:账号必须分配角色,权限</br>
+     *                                 606:必填字段不能为空</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -200,11 +256,15 @@ public class UserController extends BaseController {
                           String password,
                           String[] roleIds,
                           String[] permissionIds) {
-        if (StringUtils.isBlank(account)
-                || StringUtils.isBlank(name)
-                || StringUtils.isBlank(password)) {
-            return JsonResult.failure(603, "用户名/账号/密码不能为空");
-        } 
+        if (isBlank(account, name, code, departId, groupsId, password)) {
+            return JsonResult.failure(606, "必填字段不能为空");
+        }
+        if (userService.existsAccount(account)) {
+            return JsonResult.failure("账号已存在");
+        }
+        if (userService.existsCode(code)) {
+            return JsonResult.failure("编号已存在");
+        }
         User user = new User();
         user.setCreatedDate(new Date());
         user.setLastModifiedDate(new Date());
@@ -213,6 +273,7 @@ public class UserController extends BaseController {
         user.setCode(code);
         user.setSex(sex);
         user.setSalt(getSalt());
+        user.setStatus(User.ACCOUNT_TYPE.normal);
         user.setPassword(setPassword(password, user.getSalt()));
         for (User.USER_TYPE type : User.USER_TYPE.values()) {
             if (type.ordinal() == userType) {

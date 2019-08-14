@@ -79,7 +79,7 @@ public class IndicatorServiceImpl implements IndicatorService {
     @Override
     public JsonResult delete(String id, JsonResult jsonResult) {
         Indicator indicator = indicatorRepository.find(id);
-        List<Indicator> indicators = indicatorRepository.findByFatherId(id);
+        indicatorRepository.delete(indicator);
         return JsonResult.success();
     }
 }

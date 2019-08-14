@@ -1,7 +1,9 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.Role;
 import com.ayundao.entity.RoleRelation;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,4 +22,5 @@ public interface RoleRelationService {
      * @return
      */
     Set<RoleRelation> findRolesByUserId(String id);
+
 }

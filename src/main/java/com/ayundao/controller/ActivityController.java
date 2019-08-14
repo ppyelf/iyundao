@@ -4,6 +4,7 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.annotation.CurrentSubject;
+import com.ayundao.base.utils.FileUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
@@ -18,9 +19,11 @@ import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import org.springframework.context.annotation.Role;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.ayundao.base.BaseController.*;
 
@@ -54,17 +57,15 @@ public class ActivityController extends BaseController {
     private UserService userService;
 
     /**
-     * @api {POST} /activity/upload_file 上传文件
+     * @api {POST} /activity/upload 上传文件
      * @apiGroup Activity
      * @apiVersion 1.0.0
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 上传文件
-     * @apiParam {String} name 必填
-     * @apiParam {String} url 必填
-     * @apiParam {String} suffix 必填
-     * @apiParam {int} type 必填
+     * @apiParam {MultipartFile} file 必填
      * @apiParam {String} content
      * @apiParam {String} fromTo
+     * @apiParam {int} type 0-文档,1-文件
      * @apiParamExample {json} 请求样例:
      *                ?name=上传文件1&url=1111111&suffix=jpg&type=1&content=测试内容
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -76,39 +77,39 @@ public class ActivityController extends BaseController {
      * {
      *     "code": 200,
      *     "message": "成功",
-     *     "data": {"version":"0","id":"402881916b2a9588016b2abd6f300001","createdDate":"20190606110236","lastModifiedDate":"20190606110236","name":"上传文件","type":"file","content":"测试内容","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
+     *     "data": {"hots": "0","name": "1a66c7cf216341e1b2fa12973c616348","id": "402881916c8ecadc016c8ede422c0005","type": "file","suffix": "sql","fromTo": "","content": "1234内容部分","url": "activityfile\\1a66c7cf216341e1b2fa12973c616348.sql"
+     *     }
      * }
      */
     @RequiresPermissions(PERMISSION_ADD)
-    @PostMapping("/upload_file")
-    public JsonResult uploadFile(String name,
-                                 String url,
-                                 String suffix,
+    @PostMapping("/upload")
+    public JsonResult uploadFile(MultipartFile file,
                                  @RequestParam(defaultValue = "0") int type,
                                  String content,
                                  String fromTo) {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(url) || StringUtils.isBlank(suffix)) {
-            return JsonResult.failure(601, "名称,路径或后缀名不能为空");
-        }
-        ActivityFile file = new ActivityFile();
-        file.setCreatedDate(new Date());
-        file.setLastModifiedDate(new Date());
-        file.setName(name);
-        file.setUrl(url);
-        file.setSuffix(suffix);
+        ActivityFile activityFile = new ActivityFile();
+        activityFile.setCreatedDate(new Date());
+        activityFile.setLastModifiedDate(new Date());
         for (ActivityFile.ACTIVITY_FILE_TYPE fileType : ActivityFile.ACTIVITY_FILE_TYPE.values()) {
             if (fileType.ordinal() == type) {
-                file.setType(fileType);
+                activityFile.setType(fileType);
                 break;
             }
         }
-        if (file.getType() == null) {
+        if (activityFile.getType() == null) {
             return jsonResult.failure(602, "文件类型异常");
         }
-        file.setContent(content);
-        file.setFromTo(fromTo);
-        file = activityService.saveFile(file);
-        jsonResult.setData(JsonUtils.getJson(file));
+        activityFile.setContent(content);
+        activityFile.setFromTo(fromTo);
+        Map<String, String> map = FileUtils.uploadFile(file, activityFile, uploadPath);
+        if (map == null) {
+            return JsonResult.failure(601, "上传失败");
+        }
+        activityFile.setUrl(map.get("url"));
+        activityFile.setSuffix(map.get("suffix"));
+        activityFile.setName(map.get("name"));
+        activityFile = activityService.saveFile(activityFile);
+        jsonResult.setData(JsonUtils.getJson(activityFile));
         return jsonResult;
     }
 
@@ -141,48 +142,6 @@ public class ActivityController extends BaseController {
         }
         activityService.delFileByIds(ids);
         return JsonResult.success();
-    }
-
-    /**
-     * @api {POST} /activity/upload_image 上传图片
-     * @apiGroup Activity
-     * @apiVersion 1.0.0
-     * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiDescription 上传图片
-     * @apiParam {String} name 必填
-     * @apiParam {String} url 必填
-     * @apiParam {String} suffix 必填
-     * @apiParamExample {json} 请求样例:
-     *                ?name=上传图片&url=1111111&suffix=jpg
-     * @apiSuccess (200) {String} code 200:成功</br>
-     *                                 601:名称,路径或后缀名不能为空</br>
-     * @apiSuccess (200) {String} message 信息
-     * @apiSuccess (200) {String} data 返回用户信息
-     * @apiSuccessExample {json} 返回样例:
-     * {
-     *     "code": 200,
-     *     "message": "成功",
-     *     "data": {"version":"0","id":"402881916b2a9588016b2adbe569000e","createdDate":"20190606113622","lastModifiedDate":"20190606113622","name":"上传图片","type":"text","content":"","suffix":"jpg","url":"1111111","info4":"","info3":"","info5":"","info2":"","info1":"","hots":"0","fromTo":""}
-     * }
-     */
-
-    @RequiresPermissions(PERMISSION_ADD)
-    @PostMapping("/upload_image")
-    public JsonResult uploadImage(String name,
-                                  String url,
-                                  String suffix) {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(url) || StringUtils.isBlank(suffix)) {
-            return JsonResult.failure(601, "名称,路径或后缀名不能为空");
-        }
-        ActivityImage image = new ActivityImage();
-        image.setCreatedDate(new Date());
-        image.setLastModifiedDate(new Date());
-        image.setName(name);
-        image.setUrl(url);
-        image.setSuffix(suffix);
-        image = activityService.saveImage(image);
-        jsonResult.setData(JsonUtils.getJson(image));
-        return jsonResult;
     }
 
     /**
@@ -508,6 +467,8 @@ public class ActivityController extends BaseController {
      * @apiVersion 1.0.0
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 分页
+     * @apiParam {int} page 页码,默认0
+     * @apiParam {int} size 长度,默认10
      * @apiParamExample {json} 请求示例:
      *              /activity/page?id=123
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -523,10 +484,10 @@ public class ActivityController extends BaseController {
      */
     @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/page")
-    public JsonResult page(@RequestParam(defaultValue = "1") int page,
-                           @RequestParam(defaultValue = "10") int size,
-                           String search) {
-        Page<Activity> activityPage = activityService.findAllForPage(new Pageable(page, size));
+    public JsonResult page(@RequestParam(defaultValue = "0") int page,
+                           @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = new Pageable(page, size);
+        Page<Activity> activityPage = activityService.findAllForPage(pageable);
         jsonResult.setData(JsonUtils.getPage(activityPage));
         return jsonResult;
     }

@@ -291,7 +291,7 @@ public class WorkController extends BaseController {
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
-    @GetMapping("/indicatorList")
+    @PostMapping("/indicatorList")
     public JsonResult indicatorList() {
         List<Indicator> list = indicatorService.findAllAndFatherIsNull();
         JSONArray arr =  new JSONArray();
@@ -496,7 +496,6 @@ public class WorkController extends BaseController {
     @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/delIndicator")
     public JsonResult delIndicator(String id) {
-        //需要完善
         return indicatorService.delete(id, jsonResult);
     }
 

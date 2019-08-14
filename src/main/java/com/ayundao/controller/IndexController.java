@@ -112,7 +112,6 @@ public class IndexController extends BaseController {
      * @apiGroup 首页
      * @apiVersion 1.0.0
      * @apiDescription 个人机构列表
-     * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例：
      *                /subjectList
      * @apiSuccess (200) {String} code 200:成功</br>

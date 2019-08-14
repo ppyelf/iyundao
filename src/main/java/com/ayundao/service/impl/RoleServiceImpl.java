@@ -50,4 +50,5 @@ public class RoleServiceImpl implements RoleService {
     public List<Role> findByRoleIds(String[] roleIds) {
         return roleRepository.findByRoleIds(roleIds);
     }
+
 }
