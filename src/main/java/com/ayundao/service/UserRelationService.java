@@ -1,5 +1,6 @@
 package com.ayundao.service;
 
+import com.ayundao.entity.Subject;
 import com.ayundao.entity.User;
 import com.ayundao.entity.UserRelation;
 

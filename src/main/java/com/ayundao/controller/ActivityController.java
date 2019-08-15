@@ -456,7 +456,6 @@ public class ActivityController extends BaseController {
         if (activity == null) {
             return JsonResult.notFound("活动不存在");
         }
-        //todo
         jsonResult.setData(convertActivity(activity));
         return jsonResult;
     }
@@ -650,10 +649,10 @@ public class ActivityController extends BaseController {
     public JsonResult searchtitle(String name,
                                   @RequestParam(defaultValue = "0")int page,
                                   @RequestParam(defaultValue = "10")int size){
-            Pageable pageable = new Pageable(page,size);
-            pageable.setSearchProperty("name");
-            pageable.setSearchValue(name);
-            Page<Activity> activityPage = activityService.findAllForPage(pageable);
+        Pageable pageable = new Pageable(page,size);
+        pageable.setSearchProperty("name");
+        pageable.setSearchValue(name);
+        Page<Activity> activityPage = activityService.findAllForPage(pageable);
         JSONObject jsonObject = JsonUtils.getPage(activityPage);
         jsonResult.setData(jsonObject);
         return jsonResult;

@@ -64,11 +64,16 @@ public interface SubjectService {
      */
     Subject findByCode(String code);
 
-
-
-    /**\
+    /**
      * 查找所有实体
      * @return
      */
     List<Subject> findbyIds(String[] subjectIds);
+
+    /**
+     * 获取个人机构列表
+     * @param userId
+     * @return
+     */
+    List<Subject> findMySubjectByUserId(String userId);
 }

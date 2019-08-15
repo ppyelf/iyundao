@@ -5,6 +5,8 @@ import com.ayundao.entity.Subject;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @ClassName: SubjectRepository
  * @project: ayundao
@@ -19,4 +21,12 @@ public interface SubjectRepository extends BaseRepository<Subject, String> {
     //根据code查询实体
     @Query("select s from Subject s where s.code = (?1)")
     Subject findByCode(String code);
+
+    /**
+     * 获取个人机构列表
+     * @param userId
+     * @return
+     */
+    @Query(value = "select ts.* from t_subject ts left join t_user_relations tur on ts.ID = tur.SUBJECTID where tur.USERID = ?1 group by ts.ID",nativeQuery = true)
+    List<Subject> findMySubjectByUserId(String userId);
 }
