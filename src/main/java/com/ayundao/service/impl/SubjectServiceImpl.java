@@ -104,5 +104,10 @@ public class SubjectServiceImpl implements SubjectService {
         return subjectRepository.findByIds(subjectIds);
     }
 
+    @Override
+    public List<Subject> findMySubjectByUserId(String userId) {
+        return subjectRepository.findMySubjectByUserId(userId);
+    }
+
 
 }

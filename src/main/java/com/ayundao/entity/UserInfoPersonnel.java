@@ -16,7 +16,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "t_user_info_personnel")
-
 public class UserInfoPersonnel extends BaseEntity<String> {
 
     private static final long serialVerisionUID = -12154545145454L;
@@ -188,10 +187,6 @@ public class UserInfoPersonnel extends BaseEntity<String> {
      */
     @Column(name = "INFO5")
     private String info5;
-
-    public static long getSerialVerisionUID() {
-        return serialVerisionUID;
-    }
 
     public String getWorkyear() {
         return workyear;

@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8080
   salt: 45a1d914886d4a92b6835a181b2a20d8
   upload: d:\upload\
   token:
@@ -17,7 +17,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ayundao?serverTimezone=CTT&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     username: root
-    password: root
+    password: 123465
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       filters: stat
@@ -41,7 +41,7 @@ spring:
 
   jpa:
     database: mysql
-    show-sql: true
+    show-sql: false
     hibernate:
       #自动建表
       ddl-auto: update

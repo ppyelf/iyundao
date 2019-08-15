@@ -2,6 +2,7 @@ package com.ayundao.base;
 
 import com.ayundao.base.utils.JsonResult;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.AuthorizationException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -60,6 +61,13 @@ public class GlobalDefaultExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public JsonResult processAuthenticationException(AuthenticationException e) {
         jsonResult.setCode(803);
+        jsonResult.setMessage(e.getMessage());
+        return jsonResult;
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    public JsonResult processAuthorizationException(AuthorizationException e) {
+        jsonResult.setCode(804);
         jsonResult.setMessage(e.getMessage());
         return jsonResult;
     }

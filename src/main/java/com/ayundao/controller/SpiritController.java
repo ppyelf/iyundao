@@ -470,7 +470,7 @@ jsonResult.setData(jsonObject);
         Groups groups = groupsService.findById(s.getSpiritSubject().getGroupId());
         User user = userService.findById(s.getSpiritSubject().getUserId());
         ss.put("subject", JsonUtils.getSimpleJson(subject, new String[]{"id", "name"}));
-        ss.put("user", JsonUtils.getSimpleJson(user, new String[]{"id", "name"}));
+        ss.put("user", user == null ? null : JsonUtils.getSimpleJson(user, new String[]{"id", "name"}));
         ss.put("depart", depart == null ? null : JsonUtils.getSimpleJson(subject, new String[]{"id", "name"}));
         ss.put("groups", groups == null ? null : JsonUtils.getSimpleJson(subject, new String[]{"id", "name"}));
         json.put("spiritSubject", ss);

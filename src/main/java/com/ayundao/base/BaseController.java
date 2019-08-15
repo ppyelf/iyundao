@@ -13,6 +13,7 @@ import com.ayundao.entity.UserRelation;
 import com.ayundao.service.UserRelationService;
 import com.ayundao.service.UserService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -185,6 +186,20 @@ public abstract class BaseController {
         } catch (IncorrectCredentialsException ex){
             return JsonResult.failure(807, "密码校验错误");
         }
+    }
+
+    /**
+     * 验证字符串是否为空
+     */
+    protected boolean isBlank(String... args) {
+        boolean flag = false;
+        for (String arg : args) {
+            if (StringUtils.isBlank(arg)) {
+                flag = true;
+                break;
+            }
+        }
+        return flag;
     }
 
     /**

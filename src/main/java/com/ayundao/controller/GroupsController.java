@@ -82,10 +82,10 @@ public class GroupsController extends BaseController {
     }
 
     /**
-     * @api {get} /groups/manager_list 部门管理列表
+     * @api {get} /groups/manager_list 管理-小组列表
      * @apiGroup Group
      * @apiVersion 1.0.0
-     * @apiDescription 部门管理列表
+     * @apiDescription 管理-小组列表
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例：
      *                /groups/manager_list

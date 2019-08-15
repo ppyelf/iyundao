@@ -33,7 +33,6 @@ import java.util.*;
  * @Version: V1.1
  */
 @Repository
-@Transactional(readOnly = true)
 public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements BaseRepository<T,ID> {
 
     /**
@@ -96,6 +95,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public <S extends T> S save(S s) {
         Assert.notNull(s);
         if (entityInformation.isNew(s)) {
@@ -108,7 +108,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     @SuppressWarnings("unchecked")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void delete(T entity) {
         Assert.notNull(entity);
         em.remove(em.contains(entity) ? entity : em.merge(entity));
@@ -116,6 +116,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     @SuppressWarnings("unchecked")
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void deleteAll(Iterable<? extends T> entities) {
         Assert.notNull(entities);
         for (T entity : entities) {
@@ -124,6 +125,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void deleteAll() {
         List<T> result = findAll();
         for (T t : result) {
@@ -164,11 +166,13 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public boolean exists(ID id) {
         return existsById(id);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void deleteById(ID id) {
         T t = find(id);
         if (t != null) {
@@ -177,6 +181,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public <S extends T> List<S> saveAll(Iterable<S> entities) {
         Assert.notNull(entities);
         List<S> list = new ArrayList<>();
@@ -219,7 +224,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     public List<T> findByIds(Iterable<ID> ids) {
         if (ids == null) {
             return new ArrayList<>();
-        } 
+        }
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(entityClass);
         Root<T> root = query.from(entityClass);
@@ -356,7 +361,7 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
         }
         return null;
     }
-    
+
     private <X> Path<X> recurionPath(Path<?> path, String name) {
         if (path == null || StringUtils.isEmpty(name)) {
             return (Path<X>) path;

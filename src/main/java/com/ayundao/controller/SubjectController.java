@@ -101,13 +101,13 @@ public class SubjectController extends BaseController {
     }
 
     /**
-     * @api {GET} /user_group/manager_list 列表
+     * @api {GET} /subject/manager_list 管理-机构列表
      * @apiGroup Subject
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiVersion 1.0.0
-     * @apiDescription 列表
+     * @apiDescription 管理-机构列表
      * @apiParamExample {json} 请求样例：
-     *                /user_group/manager_list
+     *                /subject/manager_list
      * @apiSuccess (200) {String} code 200:成功</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息

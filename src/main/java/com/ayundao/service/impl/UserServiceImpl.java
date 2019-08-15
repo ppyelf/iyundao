@@ -30,7 +30,6 @@ import java.util.Set;
  * @Version: V1.0
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -87,6 +86,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public JsonResult save(User user, Subject subject, String departId, String groupsId, List<Role> roles, List<Permission> permissions, JsonResult jsonResult) {
         if (StringUtils.isBlank(departId)
                     || StringUtils.isBlank(groupsId)) {
@@ -213,5 +213,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findBySubjectIdForPage(String id) {
         return userRepository.findBySubjectIdForPage(id);
+    }
+
+    @Override
+    public boolean existsAccount(String account) {
+        User user = userRepository.findByAccount(account);
+        return user == null ? false : true;
     }
 }

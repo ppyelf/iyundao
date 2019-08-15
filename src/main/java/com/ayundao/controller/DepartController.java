@@ -94,10 +94,10 @@ public class DepartController extends BaseController {
     }
 
     /**
-     * @api {get} /depart/manager_list 部门管理列表
+     * @api {get} /depart/manager_list 管理-部门列表
      * @apiGroup Depart
      * @apiVersion 1.0.0
-     * @apiDescription 部门管理列表
+     * @apiDescription 管理-部门列表
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParamExample {json} 请求样例：
      *                /depart/manager_list
@@ -370,8 +370,21 @@ public class DepartController extends BaseController {
     
     private JSONObject convertJson(Depart depart) {
         JSONObject json = new JSONObject(JsonUtils.getJson(depart));
-        json.put("subject", JsonUtils.getJson(depart.getSubject()));
-        json.put("user", depart.getUser() == null ? null : JsonUtils.getJson(depart.getUser()));
+        JSONObject subject = new JSONObject();
+        json.put("id", depart.getId());
+        subject.put("id", depart.getSubject().getId());
+        subject.put("name", depart.getSubject().getName());
+        subject.put("code", depart.getSubject().getCode());
+        subject.put("subjectType", depart.getSubject().getSubjectType());
+        json.put("subject", subject);
+        json.put("user", null);
+        if (depart.getUser() != null) {
+            JSONObject user = new JSONObject();
+            user.put("id", depart.getUser().getId());
+            user.put("name", depart.getUser().getName());
+            json.put("user", user);
+        }
+
         return json;
     }
 

@@ -112,7 +112,6 @@ public class IndexController extends BaseController {
      * @apiGroup 首页
      * @apiVersion 1.0.0
      * @apiDescription 个人机构列表
-     * @apiParam {String} id 用户ID
      * @apiParamExample {json} 请求样例：
      *                /subjectList
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -129,20 +128,12 @@ public class IndexController extends BaseController {
      */
     @GetMapping("/subjectList")
     public JsonResult subjectList(@CurrentUser User user) {
-        Set<com.ayundao.entity.Subject> set = new HashSet<>();
-        List<UserRelation> list = userRelationService.findByUserId(user.getId());
-        for (UserRelation ur : list) {
-            set.add(ur.getSubject());
-        }
+        List<com.ayundao.entity.Subject> list = subjectService.findMySubjectByUserId(user.getId());
         JSONArray arr = new JSONArray();
-        for (com.ayundao.entity.Subject subject : set) {
-            JSONObject json = new JSONObject();
-            json.put("id", subject.getId());
-            json.put("name", subject.getName());
-            arr.add(json);
+        for (com.ayundao.entity.Subject subject : list) {
+            arr.add(JsonUtils.getJson(subject));
         }
-        jsonResult = JsonResult.success();
-        if (CollectionUtils.isEmpty(arr)) {
+        if (CollectionUtils.isEmpty(list)) {
             jsonResult.setCode(100);
             jsonResult.setMessage("未加入任何和机构");
             return jsonResult;

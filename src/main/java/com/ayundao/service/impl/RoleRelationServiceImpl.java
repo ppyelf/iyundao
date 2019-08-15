@@ -1,5 +1,6 @@
 package com.ayundao.service.impl;
 
+import com.ayundao.entity.Role;
 import com.ayundao.entity.RoleRelation;
 import com.ayundao.repository.RoleRelationRepository;
 import com.ayundao.service.RoleRelationService;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,4 +30,5 @@ public class RoleRelationServiceImpl implements RoleRelationService {
     public Set<RoleRelation> findRolesByUserId(String id) {
         return repository.findRolesByUserId(id);
     }
+
 }

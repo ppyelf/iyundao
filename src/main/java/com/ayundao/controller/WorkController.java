@@ -291,7 +291,7 @@ public class WorkController extends BaseController {
      * }
      */
     @RequiresPermissions(PERMISSION_VIEW)
-    @GetMapping("/indicatorList")
+    @PostMapping("/indicatorList")
     public JsonResult indicatorList() {
         List<Indicator> list = indicatorService.findAllAndFatherIsNull();
         JSONArray arr =  new JSONArray();
