@@ -497,8 +497,8 @@ public class ActivityController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 分页
      * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiParam {String} activityid 必填
-     * @apiParam {String[]} userid 必填
+     * @apiParam {String} activityid 活动ID,必填
+     * @apiParam {String[]} userid 用户ID,必填
      * @apiParamExample {json} 请求示例:
      *              /activity/registration?activityid=88888888&userid=402881916ba10b8a016ba113adbc0006
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -514,19 +514,21 @@ public class ActivityController extends BaseController {
      * }
      */
     @PostMapping("/registration")
-    private JsonResult registration(String activityid,
-                                    String[] userid
-                                    ){
-        List<User> user = userService.findbyIds(userid);
-        Activity activity = activityService.find(activityid);
+    public JsonResult registration(String activityId,
+                           String[] userId){
+        if (StringUtils.isBlank(activityId) || userId == null) {
+            return JsonResult.failure(601, "必填字段不能为空");
+        }
+        List<User> user = userService.findbyIds(userId);
+        Activity activity = activityService.find(activityId);
         if (activity == null){
             return JsonResult.failure(601,"没有此活动");
         }
         if(CollectionUtils.isEmpty(user)){
             return JsonResult.failure(602,"没有此用户");
         }
-        if (userid.length!=user.size()){
-            return JsonResult.failure(603,"有"+(userid.length-user.size())+"个用户实体不存在");
+        if (userId.length!=user.size()){
+            return JsonResult.failure(603,"有"+(userId.length-user.size())+"个用户实体不存在");
         }
        List<ActivityInfoUser> activities = activityService.findActivityInfoUserByUserAndActivity(activity,user);
         if (CollectionUtils.isNotEmpty(activities)){
@@ -573,7 +575,6 @@ public class ActivityController extends BaseController {
         return jsonResult;
     }
 
-
     /**
      * @api {POST} /activity/delPeople 删除人员
      * @apiGroup Activity
@@ -594,7 +595,7 @@ public class ActivityController extends BaseController {
      * }
      */
     @PostMapping("/delPeople")
-    public  JsonResult delPeople(String[] userids){
+    public JsonResult delPeople(String[] userids){
         List<User> users = userService.findbyIds(userids);
         if (CollectionUtils.isEmpty(users)){
             return JsonResult.notFound("没有找到用户实体");
