@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8080
   salt: 45a1d914886d4a92b6835a181b2a20d8
   upload: d:\upload\
   token:
@@ -41,7 +41,7 @@ spring:
 
   jpa:
     database: mysql
-    show-sql: true
+    show-sql: false
     hibernate:
       #自动建表
       ddl-auto: update

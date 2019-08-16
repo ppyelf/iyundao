@@ -317,7 +317,9 @@ public class UserController extends BaseController {
     @PostMapping("/view")
     public JsonResult view(String id) {
         User user = userService.findById(id);
-        if (user == null) return JsonResult.notFound("此用户不存在");
+        if (user == null) {
+            return JsonResult.notFound("此用户不存在");
+        }
         jsonResult.setData(userService.getUserInfoJson(user));
         return jsonResult;
     }
@@ -384,19 +386,25 @@ public class UserController extends BaseController {
     public JsonResult departUser(String departId,
                            @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
-        //todo 需要整改部门用户的分页查询
-        org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size);
         List<User> userPage = userService.findByDepartIdForPage(departId);
-        if (userPage == null) {
-            return JsonResult.success();
+        List<User> currentPageList = new ArrayList<>();
+        if (userPage != null && userPage.size() > 0) {
+            int currIdx = (page > 1 ? (page - 1) * size : 0);
+            for (int i = 0; i < size && i < userPage.size() - currIdx; i++) {
+                User data = userPage.get(currIdx + i);
+                currentPageList.add(data);
+            }
         }
-        JSONObject pageJson = new JSONObject();
-        JSONArray pageArray = new JSONArray();
-//        pageJson.put("total", ((Page) userPage).getTotal());
-//        pageJson.put("totalPage", userPage.getTotalPages());
-//        pageJson.put("page", userPage.getNumber());
-        pageJson.put("content", pageArray);
-        jsonResult.setData(pageJson);
+        JSONObject object = new JSONObject();
+        object.put("total",userPage.size());
+        object.put("page",page);
+        object.put("size",size);
+        JSONArray arr = new JSONArray();
+        for (User user : currentPageList) {
+            arr.add(JsonUtils.getJson(user));
+        }
+        object.put("content",arr);
+        jsonResult.setData(object);
         return jsonResult;
     }
 

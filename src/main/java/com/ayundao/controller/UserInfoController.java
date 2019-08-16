@@ -14,6 +14,7 @@ import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -1488,11 +1489,19 @@ public class UserInfoController extends BaseController {
             userInfo = userInfoService.findbyUserId(userid);
         }
         if (workOrEducation == 0){
-                UserInfoWork userInfoWork = userInfoService.findWorkById(userInfo.getId());
-                jsonResult.setData(JsonUtils.getJson(userInfoWork));
+                List<UserInfoWork> userInfoWork = userInfoService.findWorkById(userInfo.getId());
+                JSONArray array = new JSONArray();
+            for (UserInfoWork infoWork : userInfoWork) {
+                array.add(JsonUtils.getJson(infoWork));
+            }
+                jsonResult.setData(array);
         }else if (workOrEducation ==1){
-                UserInfoEducationWork userInfoEducationWork = userInfoService.findEducationWorkById(userInfo.getId());
-                jsonResult.setData(JsonUtils.getJson(userInfoEducationWork));
+                List<UserInfoEducationWork> userInfoEducationWork = userInfoService.findEducationWorkById(userInfo.getId());
+                JSONArray array = new JSONArray();
+            for (UserInfoEducationWork infoEducationWork : userInfoEducationWork) {
+                array.add(JsonUtils.getJson(infoEducationWork));
+            }
+                jsonResult.setData(array);
         }else {
             return JsonResult.failure(601,"输入的类型有误");
         }

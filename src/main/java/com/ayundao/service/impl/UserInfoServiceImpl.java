@@ -655,12 +655,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public UserInfoWork findWorkById(String userid) {
+    public List<UserInfoWork> findWorkById(String userid) {
         return userInfoWorkRepository.findbyUserInfoId(userid);
     }
 
     @Override
-    public UserInfoEducationWork findEducationWorkById(String userid) {
+    public List<UserInfoEducationWork> findEducationWorkById(String userid) {
         return userInfoEducationWorkRepository.findByUserInfoId(userid);
     }
 
