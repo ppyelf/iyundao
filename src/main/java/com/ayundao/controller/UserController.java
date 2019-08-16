@@ -350,7 +350,6 @@ public class UserController extends BaseController {
     public JsonResult groupUser(String groupId,
                            @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
-        //todo 需要整改小组用户的分页查询
         List<User> userPage = userService.findByGroupIdForPage(groupId);
         JSONArray pageArray = new JSONArray();
         for (User user : userPage) {
