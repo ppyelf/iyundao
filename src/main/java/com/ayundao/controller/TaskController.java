@@ -3,6 +3,7 @@ package com.ayundao.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
+import com.ayundao.base.utils.HttpUtil;
 import com.ayundao.base.utils.HttpUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
@@ -33,7 +34,7 @@ import static com.ayundao.base.BaseController.*;
  * Created by 13620 on 2019/7/3.
  */
 @RequiresUser
-@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER, ROLE_USER, ROLE_PUBLISHER}, logical = Logical.OR)
+@RequiresRoles(value = {ROLE_ADMIN, ROLE_USER, ROLE_MANAGER}, logical = Logical.OR)
 @RestController
 @RequestMapping("/task")
 public class TaskController extends BaseController {
@@ -109,11 +110,11 @@ public class TaskController extends BaseController {
      * @apiParam {String} type 任务类型
      * @apiParam {String} issuerTime 发布时间
      * @apiParam {String} taskText  任务内容
-     * @apiParam {String} userid 发布人员id 必填
+     * @apiParam {String} userId 发布人员id 必填
      * @apiParam {String[]} subjectIds 机构id   每一条部门类型的只需要最子集部门
      * @apiParam {String[]} departIds   部门id
      * @apiParam {String[]} groupIds    组织id
-     * @apiParam {String[]} userids 用户id
+     * @apiParam {String[]} userIds 用户id
      * @apiParamExample {json} 请求样例:
      *                /task/add?title=任务名称&type=1&issuerTime=2018-12-12 12:12:12&taskText=任务简介&userid=402881916ba10b8a016ba113adbc0006&subjectIds=402881916b9d3031016b9d626593000c,bfc5bd62010f467cbbe98c9e4741733b&departIds&groupIds=402881916b9d3031016b9d63a172000d,402881916b9d3031016b9d63d7af000e&userids=402881916ba10b8a016ba113adbc0006
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -135,15 +136,15 @@ public class TaskController extends BaseController {
      */
     @RequiresPermissions(PERMISSION_ADD)
     @PostMapping("/add")
-    private JsonResult add(String title,
+    public JsonResult add(String title,
                            String type,
                            String issuerTime,
                            String taskText,
-                           String userid,
+                           String userId,
                            String[] subjectIds,
                            String[] departIds,
                            String[] groupIds,
-                           String[] userids) {
+                           String[] userIds) {
         if (StringUtils.isBlank(title)) {
             return JsonResult.failure(601, "任务名称不能为空");
         }
@@ -152,11 +153,12 @@ public class TaskController extends BaseController {
         task.setLastModifiedDate(new Date());
         task.setTitle(title);
         task.setType(type);
-        User user1 = userService.findById(userid);
-        if (user1 == null) {
+        System.err.println(userId);
+        User user = userService.findById(userId);
+        if (user == null) {
            return JsonResult.failure(602, "发布人id有误");
         }
-        task.setUser(user1);
+        task.setUser(user);
         task.setIssuerTime(issuerTime);
         task.setTaskText(taskText);
         List<Subject> subjects = subjectService.findbyIds(subjectIds);
@@ -171,16 +173,15 @@ public class TaskController extends BaseController {
             if (groups.size()!=groupIds.length){
                 return JsonResult.failure(607,"有"+(groupIds.length-groups.size())+"个组织不存在");
             }
-        List<User> users = userService.findbyIds(userids);
-            if (users.size()!=userids.length){
-                return JsonResult.failure(608,"有"+(userids.length-users.size())+"个用户不存在");
+        List<User> users = userService.findbyIds(userIds);
+            if (users.size()!=userIds.length){
+                return JsonResult.failure(608,"有"+(userIds.length-users.size())+"个用户不存在");
             }
-        task = taskService.save(task,subjectIds,departIds,groupIds,userids);
+        task = taskService.save(task,subjectIds,departIds,groupIds,userIds);
 
         jsonResult.setData(converTask(task));
         return jsonResult;
     }
-
 
 
     /**
@@ -330,6 +331,7 @@ public class TaskController extends BaseController {
         return jsonResult;
     }
 
+
     /**
      * @api {POST} /task/sendTask 发送任务
      * @apiGroup Task
@@ -363,15 +365,13 @@ public class TaskController extends BaseController {
         //发送任务返回用戶实体
         List<User> userList = taskService.sendtask(taskInfoDeparts);
         //通过实体找到电话号码
-//        Map<String,String> map = taskService.findphoneByUser(userList);
-//        String url = "http://localhost:8080/duanxin/sendSMSSS";
-//        String result = HttpUtils.sendPost(url, map);
+        Map<String,String> map = taskService.findphoneByUser(userList);
+        String url = "http://localhost:8030/duanxin/sendSMSSS";
+        String result = HttpUtil.sendPost(url, map);
         String state ="已发送";
         taskService.updatstate(id,state);
         return jsonResult;
     }
-
-
 
     /**
      *

@@ -496,6 +496,10 @@ public class WorkController extends BaseController {
     @RequiresPermissions(PERMISSION_DELETE)
     @PostMapping("/delIndicator")
     public JsonResult delIndicator(String id) {
+        //需要完善
+        if (indicatorService.find(id)==null){
+            return JsonResult.notFound("找不到指标");
+        }
         return indicatorService.delete(id, jsonResult);
     }
 
