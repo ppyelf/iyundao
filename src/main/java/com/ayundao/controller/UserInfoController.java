@@ -1478,7 +1478,7 @@ public class UserInfoController extends BaseController {
     *      "data": {"witness": "姜子儒","userinfoid": "402881916ba10b8a016ba11f1cd0000f","education": "本科","enddate": "2015-07-01","major": "中医药","degree": "学士","educationcategory": "全日制","id": "402881916ba10b8a016ba124904f0012","startdate": "2011-09-01","graduationschool": "浙江大学","degreedate": "2015-07-01","edusystem": "4年"}
     * }
     */
-    @RequiresPermissions(PERMISSION_VIEW)
+//    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findWorkOrEducationByUserid")
     public JsonResult findWorkOrEducationByUserid(String userid,
                                                   @RequestParam(defaultValue = "0") int workOrEducation){
@@ -1566,6 +1566,9 @@ public class UserInfoController extends BaseController {
             return JsonResult.notFound("找不到用户");
         }
         List<Sign> signs = userInfoService.findAllByUserId(userid);
+        if (CollectionUtils.isEmpty(signs)){
+            return JsonResult.notFound("找不到实体");
+        }
         JSONArray array =  userInfoService.findsocreALL(signs,user);
         jsonResult.setData(array);
         return jsonResult;
