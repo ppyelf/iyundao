@@ -41,7 +41,7 @@ spring:
 
   jpa:
     database: mysql
-    show-sql: true
+    show-sql: false
     hibernate:
       #自动建表
       ddl-auto: update

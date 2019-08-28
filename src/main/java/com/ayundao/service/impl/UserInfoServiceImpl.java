@@ -2,15 +2,12 @@ package com.ayundao.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.ayundao.base.Page;
-import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.*;
 import com.ayundao.repository.*;
 import com.ayundao.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -655,12 +652,12 @@ public class UserInfoServiceImpl implements UserInfoService {
     }
 
     @Override
-    public UserInfoWork findWorkById(String userid) {
+    public List<UserInfoWork> findWorkById(String userid) {
         return userInfoWorkRepository.findbyUserInfoId(userid);
     }
 
     @Override
-    public UserInfoEducationWork findEducationWorkById(String userid) {
+    public List<UserInfoEducationWork> findEducationWorkById(String userid) {
         return userInfoEducationWorkRepository.findByUserInfoId(userid);
     }
 
@@ -688,7 +685,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             object.put("time",sign.getSignTime());
             object.put("activity",JsonUtils.getJson(sign.getActivity()));
             object.put("getscore",Integer.parseInt(sign.getActivity().getTotal())/sign.getActivity().getNumber());
-            object.put("user",user);
+            object.put("user",JsonUtils.getJson(user));
             array.add(object);
         }
         return array;

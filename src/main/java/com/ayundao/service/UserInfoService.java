@@ -434,14 +434,14 @@ public interface UserInfoService {
      * @param userid
      * @return
      */
-    UserInfoWork findWorkById(String userid);
+    List<UserInfoWork> findWorkById(String userid);
 
     /**
      * 根据用户id查找教育经历
      * @param userid
      * @return
      */
-    UserInfoEducationWork findEducationWorkById(String userid);
+    List<UserInfoEducationWork> findEducationWorkById(String userid);
 
     /**
      * 用户用户id找到用户关系id

@@ -14,6 +14,7 @@ import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -1477,7 +1478,7 @@ public class UserInfoController extends BaseController {
     *      "data": {"witness": "姜子儒","userinfoid": "402881916ba10b8a016ba11f1cd0000f","education": "本科","enddate": "2015-07-01","major": "中医药","degree": "学士","educationcategory": "全日制","id": "402881916ba10b8a016ba124904f0012","startdate": "2011-09-01","graduationschool": "浙江大学","degreedate": "2015-07-01","edusystem": "4年"}
     * }
     */
-    @RequiresPermissions(PERMISSION_VIEW)
+//    @RequiresPermissions(PERMISSION_VIEW)
     @PostMapping("/findWorkOrEducationByUserid")
     public JsonResult findWorkOrEducationByUserid(String userid,
                                                   @RequestParam(defaultValue = "0") int workOrEducation){
@@ -1488,11 +1489,19 @@ public class UserInfoController extends BaseController {
             userInfo = userInfoService.findbyUserId(userid);
         }
         if (workOrEducation == 0){
-                UserInfoWork userInfoWork = userInfoService.findWorkById(userInfo.getId());
-                jsonResult.setData(JsonUtils.getJson(userInfoWork));
+                List<UserInfoWork> userInfoWork = userInfoService.findWorkById(userInfo.getId());
+                JSONArray array = new JSONArray();
+            for (UserInfoWork infoWork : userInfoWork) {
+                array.add(JsonUtils.getJson(infoWork));
+            }
+                jsonResult.setData(array);
         }else if (workOrEducation ==1){
-                UserInfoEducationWork userInfoEducationWork = userInfoService.findEducationWorkById(userInfo.getId());
-                jsonResult.setData(JsonUtils.getJson(userInfoEducationWork));
+                List<UserInfoEducationWork> userInfoEducationWork = userInfoService.findEducationWorkById(userInfo.getId());
+                JSONArray array = new JSONArray();
+            for (UserInfoEducationWork infoEducationWork : userInfoEducationWork) {
+                array.add(JsonUtils.getJson(infoEducationWork));
+            }
+                jsonResult.setData(array);
         }else {
             return JsonResult.failure(601,"输入的类型有误");
         }
@@ -1557,6 +1566,9 @@ public class UserInfoController extends BaseController {
             return JsonResult.notFound("找不到用户");
         }
         List<Sign> signs = userInfoService.findAllByUserId(userid);
+        if (CollectionUtils.isEmpty(signs)){
+            return JsonResult.notFound("找不到实体");
+        }
         JSONArray array =  userInfoService.findsocreALL(signs,user);
         jsonResult.setData(array);
         return jsonResult;

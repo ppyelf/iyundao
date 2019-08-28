@@ -27,7 +27,7 @@ public interface SignRepository extends BaseRepository<Sign, String> {
     List<Sign> findByActivityId(String id);
 
     @Query(value = "select * from t_sign  where type = ?1 and userid = ?2 order by signTime desc", nativeQuery = true)
-    List<Sign> findActivityByUserId(int aaa, String id);
+    List<Sign> findActivityByUserId(int number, String id);
 
 //    @Query("select s from Sign s where s.userId=?1 and s.SIGN_TYPE = ?2")
 //    List<Sign> findAllByUserId(String userid, Sign.SIGN_TYPE type);
