@@ -383,7 +383,6 @@ public class UserController extends BaseController {
     public JsonResult departUser(String departId,
                            @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size) {
-        org.springframework.data.domain.Pageable pageable = PageRequest.of(page, size);
         List<User> userPage = userService.findByDepartIdForPage(departId);
         if (userPage == null) {
             return JsonResult.success();
