@@ -5,6 +5,7 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.*;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -121,4 +122,11 @@ public interface UserService {
      * @return
      */
     boolean existsAccount(String account);
+
+    /**
+     * 根据用户编号获取用户
+     * @param codes
+     * @return
+     */
+    List<User> findByCodes(String[] codes);
 }

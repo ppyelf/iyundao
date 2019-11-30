@@ -29,4 +29,12 @@ public interface SubjectRepository extends BaseRepository<Subject, String> {
      */
     @Query(value = "select ts.* from t_subject ts left join t_user_relations tur on ts.ID = tur.SUBJECTID where tur.USERID = ?1 group by ts.ID",nativeQuery = true)
     List<Subject> findMySubjectByUserId(String userId);
+
+    /**
+     * 根据名字获取实体
+     * @param val
+     * @return
+     */
+    @Query("select s from Subject s where s.name = ?1")
+    Subject findByName(String val);
 }

@@ -217,4 +217,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByAccount(account);
         return user == null ? false : true;
     }
+
+    @Override
+    public List<User> findByCodes(String[] codes) {
+        return userRepository.findByCodes(codes);
+    }
 }

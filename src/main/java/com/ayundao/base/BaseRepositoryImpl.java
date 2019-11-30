@@ -1,5 +1,6 @@
 package com.ayundao.base;
 
+import com.ayundao.base.utils.ClassUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.util.CollectionUtils;
@@ -98,7 +99,10 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public <S extends T> S save(S s) {
         Assert.notNull(s);
+        s = (S) ClassUtils.parseEntity(s);
+        s.setLastModifiedDate(new Date());
         if (entityInformation.isNew(s)) {
+            s.setCreatedDate(new Date());
             em.persist(s);
             return s;
         } else {

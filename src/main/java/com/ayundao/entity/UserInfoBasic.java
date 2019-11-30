@@ -19,7 +19,7 @@ import javax.persistence.Table;
 
 public class UserInfoBasic extends BaseEntity<String> {
 
-    private static final long serialVerisionUID = -125421545122L;
+    private static final long serialVersionUID = -125421545122L;
 
     /**
      * 计算连续工龄时间
@@ -129,13 +129,6 @@ public class UserInfoBasic extends BaseEntity<String> {
     @Column(name = "INFO5")
     private String info5;
 
-    public static long getSerialVerisionUID() {
-        return serialVerisionUID;
-    }
-
-    public String getWorkerdate() {
-        return workerdate;
-    }
 
     public void setWorkerdate(String workerdate) {
         this.workerdate = workerdate;

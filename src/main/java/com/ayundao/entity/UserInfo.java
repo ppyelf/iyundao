@@ -4,7 +4,6 @@ import com.ayundao.base.BaseEntity;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import java.util.Set;
 
 /**
  * @ClassName: UserInfo
@@ -23,7 +22,7 @@ public class UserInfo extends BaseEntity<String> {
     /**
      * 行政编号
      */
-    @Column(name = "NUMBER", nullable=false, unique = true, length = 50)
+    @Column(name = "NUMBER", nullable = false, unique = true, length = 50)
     private String number;
 
     /**
@@ -36,132 +35,105 @@ public class UserInfo extends BaseEntity<String> {
     /**
      * 支部名称
      */
-    @Column(name = "BRANCHNAME",nullable = false,length = 50)
+    @Column(name = "BRANCHNAME", nullable = false, length = 50)
     private String branchName;
 
     /**
      * 性别 0-男 1-女
      */
-    @Column(name = "SEX",nullable = false,length = 2)
+    @Column(name = "SEX", nullable = false, length = 2)
     private String sex;
 
     /**
      * 科室
      */
-    @Column(name = "DEPARTMENT",nullable = false,length = 50)
+    @Column(name = "DEPARTMENT", nullable = false, length = 50)
     private String department;
 
     /**
      * 出生日期
      */
-    @Column(name = "BIRTHDAY",nullable = false,length = 50)
+    @Column(name = "BIRTHDAY", nullable = false, length = 50)
     private String birthday;
 
     /**
      * 学历
      */
-    @Column(name = "EDUCATION",nullable = false,length = 50)
+    @Column(name = "EDUCATION", nullable = false, length = 50)
     private String education;
 
     /**
      * 籍贯
      */
-    @Column(name = "PLACE",nullable = false,length = 50)
+    @Column(name = "PLACE", nullable = false, length = 50)
     private String place;
 
     /**
      * 民族
      */
-    @Column(name = "NATION",nullable = false,length = 50)
+    @Column(name = "NATION", nullable = false, length = 50)
     private String nation;
 
     /**
      * 职务
      */
-    @Column(name = "POST",nullable = false,length = 50)
+    @Column(name = "POST", nullable = false, length = 50)
     private String post;
 
     /**
      * 职称
      */
-    @Column(name = "TITLE",length = 50)
+    @Column(name = "TITLE", length = 50)
     private String title;
 
     /**
      * 个人身份
      */
-    @Column(name = "IDENTITY",length = 50)
+    @Column(name = "IDENTITY", length = 50)
     private String idEntity;
 
     /**
      * 工作时间
      */
-    @Column(name = "WORKDATE",length = 50)
+    @Column(name = "WORKDATE", length = 50)
     private String workDate;
 
     /**
      * 入党时间
      */
-    @Column(name = "PARTYDATE",length = 50)
+    @Column(name = "PARTYDATE", length = 50)
     private String partyDate;
 
     /**
      * 转正时间
      */
-    @Column(name = "CORRECTIONDATE",length = 50)
+    @Column(name = "CORRECTIONDATE", length = 50)
     private String correctionDate;
 
     /**
      * 联系电话
      */
-    @Column(name = "PHONE",length = 11)
+    @Column(name = "PHONE", length = 11)
     private String phone;
 
     /**
      * 身份证号
      */
-    @Column(name = "IDCARD",nullable = false,length = 18)
+    @Column(name = "IDCARD", nullable = false, length = 18)
     private String idcard;
+
+    /**
+     * 岗位
+     */
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "POSTTYPE")
+    private POST_TYPE postType;
 
     /**
      * 用户ID
      */
-    @Column(name = "USERID",nullable = false,length = 50)
+    @Column(name = "USERID", nullable = false, length = 50)
     private String userid;
-
-    /**
-     * 备用字段1
-     */
-    @Column(name = "INFO1")
-    private String info1;
-
-    /**
-     * 备用字段2
-     */
-    @Column(name = "INFO2")
-    private String info2;
-
-    /**
-     * 备用字段3
-     */
-    @Column(name = "INFO3")
-    private String info3;
-
-    /**
-     * 备用字段4
-     */
-    @Column(name = "INFO4")
-    private String info4;
-
-    /**
-     * 备用字段5
-     */
-    @Column(name = "INFO5")
-    private String info5;
-
-    public static long getSerialVerisonUID() {
-        return serialVerisonUID;
-    }
 
     public String getNumber() {
         return number;
@@ -307,43 +279,43 @@ public class UserInfo extends BaseEntity<String> {
         this.userid = userid;
     }
 
-    public String getInfo1() {
-        return info1;
+    public POST_TYPE getPostType() {
+        return postType;
     }
 
-    public void setInfo1(String info1) {
-        this.info1 = info1;
+    public void setPostType(POST_TYPE postType) {
+        this.postType = postType;
     }
 
-    public String getInfo2() {
-        return info2;
-    }
+    public enum POST_TYPE {
+        /**
+         * 医生
+         */
+        doctor("医生"),
 
-    public void setInfo2(String info2) {
-        this.info2 = info2;
-    }
+        /**
+         * 护士
+         */
+        nurse("护士"),
 
-    public String getInfo3() {
-        return info3;
-    }
+        /**
+         * 医技
+         */
+        medical("医技"),
 
-    public void setInfo3(String info3) {
-        this.info3 = info3;
-    }
+        /**
+         * 其他
+         */
+        etc("其他");
 
-    public String getInfo4() {
-        return info4;
-    }
+        private String name;
 
-    public void setInfo4(String info4) {
-        this.info4 = info4;
-    }
+        POST_TYPE(String name) {
+            this.name = name;
+        }
 
-    public String getInfo5() {
-        return info5;
-    }
-
-    public void setInfo5(String info5) {
-        this.info5 = info5;
+        public String getName() {
+            return name;
+        }
     }
 }

@@ -39,6 +39,14 @@ spring:
     database: 0
     host: localhost
 
+  liquibase:
+    enabled: true
+    drop-first: false
+    contexts: dev,prod
+    change-log: classpath:db/changelog.xml
+    database-change-log-table: T_CHANGE_LOG
+    database-change-log-lock-table: T_CHANGE_LOG_LOCK
+
   jpa:
     database: mysql
     show-sql: false

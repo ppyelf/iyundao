@@ -76,4 +76,11 @@ public interface SubjectService {
      * @return
      */
     List<Subject> findMySubjectByUserId(String userId);
+
+    /**
+     * 根据名字查询实体信息
+     * @param val
+     * @return
+     */
+    Subject findByName(String val);
 }

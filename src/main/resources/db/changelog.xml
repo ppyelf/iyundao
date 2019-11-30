@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+<!--ChangeSet id使用[任务ID]-[日期]-[序号]，如 T1-20191022-001-->
+<!--ChangeSet必须填写author-->
+<!--Liquibase仅操作DDL类语句,但增加字段由JPA完成且禁止对业务数据进行sql操作,3万条以内基础数据除外-->
+<!--使用<sql>时，禁止包含schema名称-->
+<!--Liquibase禁止使用存储过程-->
+<!--所有表，列要加remarks进行注释-->
+<!--已经执行过的ChangeSet严禁修改。-->
+<!--不要随便升级项目liquibase版本，特别是大版本升级。不同版本ChangeSet MD5SUM的算法不一样。-->
+<!--    <changeSet id="1" author="念">-->
+<!--        <sqlFile path="classpath:db/T1.sql"/>-->
+<!--    </changeSet>-->
+</databaseChangeLog>

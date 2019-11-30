@@ -75,8 +75,6 @@ public class Exam extends BaseEntity<String>{
     @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ExamInfoUser> examInfoUser;
 
-
-
     /**
      * 备用字段1
      */
@@ -110,7 +108,6 @@ public class Exam extends BaseEntity<String>{
     public void setTitle(String title) {
         this.title = title;
     }
-
 
     public String getStartTime() {
         return startTime;

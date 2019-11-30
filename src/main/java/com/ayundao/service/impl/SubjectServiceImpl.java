@@ -8,12 +8,10 @@ import com.ayundao.service.DepartService;
 import com.ayundao.service.GroupsService;
 import com.ayundao.service.SubjectService;
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.hql.spi.id.inline.IdsClauseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.acl.Group;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -107,6 +105,11 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<Subject> findMySubjectByUserId(String userId) {
         return subjectRepository.findMySubjectByUserId(userId);
+    }
+
+    @Override
+    public Subject findByName(String val) {
+        return subjectRepository.findByName(val);
     }
 
 

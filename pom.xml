@@ -20,6 +20,7 @@
         <fastjson.version>1.2.47</fastjson.version>
         <skipTests>true</skipTests>
         <shiro.version>1.4.0</shiro.version>
+        <liquibase.version>3.6.3</liquibase.version>
     </properties>
 
     <dependencies>
@@ -145,6 +146,11 @@
         <!-- Apache POI -->
         <dependency>
             <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.17</version>
         </dependency>
@@ -173,6 +179,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- liquibase -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -180,6 +192,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase.version}</version>
+                <configuration>
+                    <changeLogFile>${basedir}/src/main/resources/db/changelog.xml</changeLogFile>
+                </configuration>
             </plugin>
         </plugins>
     </build>

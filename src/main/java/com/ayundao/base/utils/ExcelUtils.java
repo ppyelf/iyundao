@@ -6,6 +6,7 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,12 +34,13 @@ public class ExcelUtils {
 
     private static final FastDateFormat FAST_DATE_FORMAT = FastDateFormat.getInstance("yyyy/MM/dd");
 
-    private static final DecimalFormat DECIMAL_FORMAT_NUMBER  = new DecimalFormat("0.00E000"); //格式化科学计数器
+    private static final DecimalFormat DECIMAL_FORMAT_NUMBER = new DecimalFormat("0.00E000"); //格式化科学计数器
 
     private static final Pattern POINTS_PATTERN = Pattern.compile("0.0+_*[^/s]+"); //小数匹配
 
     /**
      * 模板生成
+     *
      * @return
      */
     public static HSSFWorkbook createWorkBook(Class<? extends BaseEntity> cls) {
@@ -54,13 +56,13 @@ public class ExcelUtils {
                 excels.add(annotation);
             }
         }
-        for(int i=0;i<excels.size();i++){
-            sheet.setColumnWidth((short) i, (short) (50*60));
+        for (int i = 0; i < excels.size(); i++) {
+            sheet.setColumnWidth((short) i, (short) (50 * 60));
         }
 
         // 创建第一行，并设置其单元格格式
         HSSFRow row = sheet.createRow((short) 0);
-        row.setHeight((short)500);
+        row.setHeight((short) 500);
         // 单元格格式(用于列名)
         HSSFCellStyle cs = wb.createCellStyle();
         HSSFFont f = wb.createFont();
@@ -82,15 +84,27 @@ public class ExcelUtils {
         return wb;
     }
 
+    public static HSSFSheet setHSSFValidation(HSSFSheet sheet, String[] textlist, int firstRow, int endRow, int firstCol, int endCol) {
+        // 设置数据有效性加载在哪个单元格上,四个参数分别是：起始行、终止行、起始列、终止列
+        CellRangeAddressList regions = new CellRangeAddressList(firstRow, endRow, firstCol, endCol);
+        // 加载下拉列表内容
+        DVConstraint constraint = DVConstraint.createExplicitListConstraint(textlist);
+        // 数据有效性对象
+        HSSFDataValidation data_validation_list = new HSSFDataValidation(regions, constraint);
+        sheet.addValidationData(data_validation_list);
+        return sheet;
+    }
+
     /**
      * 生成下载
+     *
      * @param fileName
      * @param response
      * @throws IOException
      */
     public static void downloadWorkBook(String fileName,
                                         Class<? extends BaseEntity> cls,
-                                        HttpServletResponse response) throws IOException{
+                                        HttpServletResponse response) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             createWorkBook(cls).write(os);
@@ -102,7 +116,7 @@ public class ExcelUtils {
         // 设置response参数
         response.reset();
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename="+ new String((fileName + ".xls").getBytes(), "iso-8859-1"));
+        response.setHeader("Content-Disposition", "attachment;filename=" + new String((fileName + ".xls").getBytes(), "iso-8859-1"));
         response.setHeader("Access-Control-Allow-Origin", "*");
         ServletOutputStream out = response.getOutputStream();
         BufferedInputStream bis = null;
@@ -127,6 +141,7 @@ public class ExcelUtils {
 
     /**
      * 创建工作簿
+     *
      * @param file
      * @return
      */
@@ -139,7 +154,7 @@ public class ExcelUtils {
             //获取excel文件的io流
             InputStream is = file.getInputStream();
             //根据文件后缀名不同(xls和xlsx)获得不同的Workbook实现类对象
-            if(fileName.endsWith("xls")){
+            if (fileName.endsWith("xls")) {
                 //2003
                 workbook = new HSSFWorkbook(is);
             }
@@ -197,15 +212,15 @@ public class ExcelUtils {
                             for (Field field : fieldList) {
                                 try {
                                     switch (field.getType().getSimpleName()) {
-                                        case  "String":
-                                             field.set(t, cellValue);
-                                             break;
-                                        case  "int":
-                                             field.setInt(t, Integer.parseInt(cellValue + ""));
-                                             break;
-                                        default :
-                                             field.set(t, null);
-                                             break;
+                                        case "String":
+                                            field.set(t, cellValue);
+                                            break;
+                                        case "int":
+                                            field.setInt(t, Integer.parseInt(cellValue + ""));
+                                            break;
+                                        default:
+                                            field.set(t, null);
+                                            break;
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -223,12 +238,56 @@ public class ExcelUtils {
         return dataList;
     }
 
+    public static void setCellStyle(HSSFWorkbook wb) {
+        HSSFCellStyle cs = wb.createCellStyle();
+        HSSFFont f = wb.createFont();
+        f.setFontHeightInPoints((short) 10);
+        f.setFontName("宋体");
+        f.setBold(true);
+        cs.setFont(f);
+        cs.setAlignment(HorizontalAlignment.CENTER);// 水平居中
+        cs.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
+        cs.setWrapText(true);//自动换行
+        for (Row cells : wb.getSheetAt(0)) {
+            for (Cell cell : cells) {
+                cell.setCellStyle(cs);
+            }
+        }
+    }
 
-    public static Object getCellValue(Cell cell){
-        Object value = null;
+    public static void createFile(String fileName, HttpServletResponse response, ByteArrayOutputStream os) throws IOException {
+        byte[] content = os.toByteArray();
+        InputStream is = new ByteArrayInputStream(content);
+        // 设置response参数
+        response.reset();
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename="+ new String((fileName).getBytes(), "iso-8859-1"));
+        ServletOutputStream out = response.getOutputStream();
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            bis = new BufferedInputStream(is);
+            bos = new BufferedOutputStream(out);
+            byte[] buff = new byte[2048];
+            int bytesRead;
+            while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+                bos.write(buff, 0, bytesRead);
+            }
+        } catch (final IOException e) {
+            throw e;
+        } finally {
+            if (bis != null)
+                bis.close();
+            if (bos != null)
+                bos.close();
+        }
+    }
+
+    public static Object getCellValue(Cell cell) {
+        Object value = "";
         if (cell == null) {
-            return null;
-        } 
+            return "";
+        }
         switch (cell.getCellTypeEnum()) {
             case _NONE:
                 break;
@@ -236,22 +295,22 @@ public class ExcelUtils {
                 value = cell.getStringCellValue();
                 break;
             case NUMERIC:
-                if(DateUtil.isCellDateFormatted(cell)){ //日期
+                if (DateUtil.isCellDateFormatted(cell)) { //日期
                     value = FAST_DATE_FORMAT.format(DateUtil.getJavaDate(cell.getNumericCellValue()));//统一转成 yyyy/MM/dd
-                } else if("@".equals(cell.getCellStyle().getDataFormatString())
+                } else if ("@".equals(cell.getCellStyle().getDataFormatString())
                         || "General".equals(cell.getCellStyle().getDataFormatString())
-                        || "0_ ".equals(cell.getCellStyle().getDataFormatString())){
+                        || "0_ ".equals(cell.getCellStyle().getDataFormatString())) {
                     //文本  or 常规 or 整型数值
                     value = DECIMAL_FORMAT.format(cell.getNumericCellValue());
-                } else if(POINTS_PATTERN.matcher(cell.getCellStyle().getDataFormatString()).matches()){ //正则匹配小数类型
+                } else if (POINTS_PATTERN.matcher(cell.getCellStyle().getDataFormatString()).matches()) { //正则匹配小数类型
                     value = cell.getNumericCellValue();  //直接显示
-                } else if("0.00E+00".equals(cell.getCellStyle().getDataFormatString())){//科学计数
-                    value = cell.getNumericCellValue();	//待完善
+                } else if ("0.00E+00".equals(cell.getCellStyle().getDataFormatString())) {//科学计数
+                    value = cell.getNumericCellValue();    //待完善
                     value = DECIMAL_FORMAT_NUMBER.format(value);
-                } else if("0.00%".equals(cell.getCellStyle().getDataFormatString())){//百分比
+                } else if ("0.00%".equals(cell.getCellStyle().getDataFormatString())) {//百分比
                     value = cell.getNumericCellValue(); //待完善
                     value = DECIMAL_FORMAT_PERCENT.format(value);
-                } else if("# ?/?".equals(cell.getCellStyle().getDataFormatString())){//分数
+                } else if ("# ?/?".equals(cell.getCellStyle().getDataFormatString())) {//分数
                     value = cell.getNumericCellValue(); ////待完善
                 } else { //货币
                     value = cell.getNumericCellValue();
@@ -267,7 +326,7 @@ public class ExcelUtils {
             default:
                 value = cell.toString();
         }
-        return value;
+        return value == null ? "" : value;
     }
 
     /**
@@ -275,13 +334,13 @@ public class ExcelUtils {
      */
     public static boolean checkFile(MultipartFile file) {
         //判断文件是否存在
-        if(null == file){
+        if (null == file) {
             return false;
         }
         //获得文件名
         String fileName = file.getOriginalFilename();
         //判断文件是否是excel文件
-        if(!fileName.endsWith("xls")){
+        if (!fileName.endsWith("xls")) {
             return false;
         }
         return true;

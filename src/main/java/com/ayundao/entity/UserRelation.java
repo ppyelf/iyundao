@@ -54,35 +54,6 @@ public class UserRelation extends BaseEntity<String> {
     @JoinColumn(name = "USERID")
     private User user;
 
-    /**
-     * 备用字段1
-     */
-    @Column(name = "INFO1")
-    private String info1;
-
-    /**
-     * 备用字段2
-     */
-    @Column(name = "INFO2")
-    private String info2;
-
-    /**
-     * 备用字段3
-     */
-    @Column(name = "INFO3")
-    private String info3;
-
-    /**
-     * 备用字段4
-     */
-    @Column(name = "INFO4")
-    private String info4;
-
-    /**
-     * 备用字段5
-     */
-    @Column(name = "INFO5")
-    private String info5;
 
     public Subject getSubject() {
         return subject;
@@ -114,46 +85,6 @@ public class UserRelation extends BaseEntity<String> {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public String getInfo1() {
-        return info1;
-    }
-
-    public void setInfo1(String info1) {
-        this.info1 = info1;
-    }
-
-    public String getInfo2() {
-        return info2;
-    }
-
-    public void setInfo2(String info2) {
-        this.info2 = info2;
-    }
-
-    public String getInfo3() {
-        return info3;
-    }
-
-    public void setInfo3(String info3) {
-        this.info3 = info3;
-    }
-
-    public String getInfo4() {
-        return info4;
-    }
-
-    public void setInfo4(String info4) {
-        this.info4 = info4;
-    }
-
-    public String getInfo5() {
-        return info5;
-    }
-
-    public void setInfo5(String info5) {
-        this.info5 = info5;
     }
 
     public UserGroup getUserGroup() {

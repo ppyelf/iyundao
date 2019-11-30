@@ -1,5 +1,7 @@
 package com.ayundao.base.utils;
 
+import org.hibernate.proxy.HibernateProxy;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,6 +22,8 @@ public class ClassUtils {
      */
     private ClassUtils() {
     }
+
+    private final static String[] baseNames = new String[]{"id", "version", "createdDate", "lastModifiedDate"};
 
     /**
      * 强制获取字段的value
@@ -145,4 +149,31 @@ public class ClassUtils {
         return name.substring(0, 1).toLowerCase() + name.substring(1, name.length());
     }
 
+    /**
+     * 解析敏感词
+     * @param s
+     * @return
+     */
+    public static Object parseEntity(Object s) {
+        if (s instanceof HibernateProxy) {
+            s = ((HibernateProxy)s).getHibernateLazyInitializer().getImplementation();
+        }
+        Method[] methods = s.getClass().getMethods();
+        try {
+            for (Method method : methods) {
+                if (method.getName().startsWith("get") && method.getReturnType().isAssignableFrom(String.class) && !baseNames.equals(method.getName().substring(3, method.getName().length()))) {
+                    Object obj = method.invoke(s, new Object[]{});
+                    String mn = method.getName();
+                    Field field = s.getClass().getDeclaredField(toFirstLowerCase(mn.substring(3, mn.length())));
+                    String str = obj == null ? "" : obj.toString();
+                    field.setAccessible(true);
+                    field.set(s, str);
+                }
+            }
+        } catch (IllegalAccessException e) {
+        } catch (InvocationTargetException e) {
+        } catch (NoSuchFieldException e) {
+        }
+        return s;
+    }
 }

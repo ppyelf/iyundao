@@ -41,36 +41,6 @@ public class RoleRelation extends BaseEntity<String> {
     @JoinColumn(name = "PERMISSIONID")
     private Permission permission;
 
-    /**
-     * 备用字段1
-     */
-    @Column(name = "INFO1")
-    private String info1;
-
-    /**
-     * 备用字段2
-     */
-    @Column(name = "INFO2")
-    private String info2;
-
-    /**
-     * 备用字段3
-     */
-    @Column(name = "INFO3")
-    private String info3;
-
-    /**
-     * 备用字段4
-     */
-    @Column(name = "INFO4")
-    private String info4;
-
-    /**
-     * 备用字段5
-     */
-    @Column(name = "INFO5")
-    private String info5;
-
     public User getUser() {
         return user;
     }
