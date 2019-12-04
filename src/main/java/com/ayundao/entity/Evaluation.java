@@ -85,6 +85,12 @@ public class Evaluation extends BaseEntity<String> {
     @Column(name = "SURETIME", length = 20)
     private String sureTime;
 
+    /**
+     * 所属春风行动
+     */
+    @OneToOne(mappedBy = "evaluation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Action action;
+
     public String getYear() {
         return year;
     }
@@ -163,6 +169,14 @@ public class Evaluation extends BaseEntity<String> {
 
     public void setSureTime(String sureTime) {
         this.sureTime = sureTime;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
     }
 
     public enum STATUS{

@@ -67,12 +67,13 @@ public interface EvaluationService {
      * @param code
      * @param subjectId
      * @param addSubjectId
+     * @param indexId
      * @param status
      * @param currentSubjectId
      * @param num
      * @param size
      */
-    Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int status, String currentSubjectId, int num, int size);
+    Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, String indexId, int status, String currentSubjectId, int num, int size);
 
 
     /**
@@ -132,4 +133,11 @@ public interface EvaluationService {
      * @param status
      */
     void sure(Evaluation evaluation, Evaluation.STATUS status);
+
+    /**
+     * 保存实体
+     * @param e
+     * @return
+     */
+    Evaluation save(Evaluation e);
 }

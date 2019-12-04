@@ -30,11 +30,12 @@ public class User extends BaseEntity<String> {
     /**
      * 姓名
      */
-    @Column(name ="NAME", nullable = false,length = 50)
+    @Column(name = "NAME", nullable = false, length = 50)
     private String name;
 
     /**
      * 个人考评
+     *
      * @return
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -108,13 +109,12 @@ public class User extends BaseEntity<String> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Groups> groups;
 
-	 /**
-
+    /**
      * 第三方授权
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<UserApp> userApps;
-	
+
     /**
      * 任务发布人id
      */
@@ -130,7 +130,7 @@ public class User extends BaseEntity<String> {
     /**
      * 消息发布人id
      */
-    @OneToMany(mappedBy = "user",cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Advices> advices;
 
     /**
@@ -158,7 +158,7 @@ public class User extends BaseEntity<String> {
     private Set<ExamInfoUser> examInfoUser;
 
     /**
-     *任务组织部门表用户id
+     * 任务组织部门表用户id
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<TaskInfoDepart> taskInfoDepart;
@@ -178,12 +178,12 @@ public class User extends BaseEntity<String> {
     /**
      * 党内精神审核人用户id
      */
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Spirit> spirit;
 
     public static void main(String[] args) {
-        for (int i = 0; i < 21; i++) {
-            System.out.println("'"+UUID.randomUUID().toString().replace("-", "")+"',");
+        for (int i = 0; i < 1313; i++) {
+            System.out.println(UUID.randomUUID().toString().replace("-", ""));
         }
     }
 
@@ -283,14 +283,16 @@ public class User extends BaseEntity<String> {
         this.groups = groups;
     }
 
-	
+
     public Set<UserApp> getUserApps() {
         return userApps;
     }
 
     public void setUserApps(Set<UserApp> userApps) {
         this.userApps = userApps;
-    }    public Set<Task> getTask() {
+    }
+
+    public Set<Task> getTask() {
         return task;
     }
 

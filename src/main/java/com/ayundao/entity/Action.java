@@ -54,6 +54,13 @@ public class Action extends BaseEntity<String> {
     @Column(name = "MONEY", length = 5, columnDefinition = "bigint(5) default 0")
     private long money;
 
+    /**
+     * 所属医德医风
+     */
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "EVALUATIONID", nullable = false)
+    private Evaluation evaluation;
+
     public BaseComponent getSubject() {
         return subject;
     }
@@ -84,5 +91,13 @@ public class Action extends BaseEntity<String> {
 
     public void setMoney(long money) {
         this.money = money;
+    }
+
+    public Evaluation getEvaluation() {
+        return evaluation;
+    }
+
+    public void setEvaluation(Evaluation evaluation) {
+        this.evaluation = evaluation;
     }
 }

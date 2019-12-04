@@ -83,13 +83,14 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "                    where tg.ID like ?5) operator on operator.code = te.USERCODE " +
             "where (te.CREATEDATE between ?1 and ?2) " +
             "  and te.STATUS in (?6) " +
+            " and te.EVALUATIONINDEXID like ?10" +
             "  and operator.name is not null " +
             "  and operator.sname is not null " +
             "  and user.code is not null " +
             "  and user.name is not null " +
             "order by te.CREATEDATE asc " +
             "limit ?8, ?9", nativeQuery = true)
-    List<Map<String, Object>> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, int num, int size);
+    List<Map<String, Object>> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, int num, int size, String indexId);
 
     /**
      * 统计列表
@@ -111,8 +112,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
             "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
             "                    where tu.CODE like ?3 " +
-            "                      and (tg.ID like ?4 " +
-            "                        or tg.ID like ?7)) user on user.id = te.USERID " +
+            "                      and (tg.ID like ?4 or tg.ID like ?7)) user on user.id = te.USERID " +
             "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME sname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
@@ -120,8 +120,13 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "                    where tg.ID like ?5) operator on operator.code = te.USERCODE " +
             "where (te.CREATEDATE between ?1 and ?2) " +
             "  and te.STATUS in (?6) " +
+            "  and te.EVALUATIONINDEXID like ?8 " +
+            "  and operator.name is not null " +
+            "  and operator.sname is not null " +
+            "  and user.code is not null " +
+            "  and user.name is not null " +
             "order by te.CREATEDATE asc", nativeQuery = true)
-    long countList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId);
+    long countList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, String indexId);
 
     /**
      * 查询统计分页

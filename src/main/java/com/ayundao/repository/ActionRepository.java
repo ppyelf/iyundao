@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: ActionRepository
@@ -25,6 +26,16 @@ public interface ActionRepository extends BaseRepository<Action, String> {
      * @param year
      * @return
      */
-    @Query(value = "select ta.id, createdate, lastmodifiedtime, version, subjectcode, subjectname, groupcode, groupname, usercode, username, sum(ta.MONEY) money from t_action ta where ta.SUBJECTCODE = ?1 and ta.CREATEDATE like ?2 group by ta.USERCODE", nativeQuery = true)
-    List<Action> findBySubjectIdAndYear(String id, String year);
+    @Query(value = "select ta.USERCODE   userCode, " +
+            "       ta.USERNAME   userName, " +
+            "       ta.GROUPCODE  groupCode, " +
+            "       ta.GROUPNAME  groupName, " +
+            "       sum(ta.MONEY) money, " +
+            "       sum(ifnull(te.SCORE, 0))      score " +
+            "from t_action ta " +
+            "         left join t_evaluation te on te.ID = ta.EVALUATIONID " +
+            "where ta.SUBJECTCODE = ?1 " +
+            "  and ta.CREATEDATE like ?2 " +
+            "group by ta.USERCODE", nativeQuery = true)
+    List<Map<String, Object>> findBySubjectIdAndYear(String id, String year);
 }

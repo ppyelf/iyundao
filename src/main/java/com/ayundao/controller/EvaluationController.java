@@ -244,6 +244,7 @@ public class EvaluationController extends BaseController {
      * @apiParam {String} code 胸牌号
      * @apiParam {String} subjectId 所属科室ID
      * @apiParam {String} addSubjectId 录入科室ID
+     * @apiParam {String} indexId 指标ID
      * @apiParam {int} status 审核状态,-1-全部(默认),参见/evaluation/statusList
      * @apiParam {String} currentSubjectId 当前机构
      * @apiParam {int} num 页数,默认0
@@ -268,6 +269,7 @@ public class EvaluationController extends BaseController {
                                @RequestParam(defaultValue = "") String code,
                                @RequestParam(defaultValue = "") String subjectId,
                                @RequestParam(defaultValue = "") String addSubjectId,
+                               @RequestParam(defaultValue = "") String indexId,
                                @RequestParam(defaultValue = "-1") int status,
                                @RequestParam(defaultValue = "") String currentSubjectId,
                                @RequestParam(defaultValue = "0") int num,
@@ -282,7 +284,7 @@ public class EvaluationController extends BaseController {
         if (s == -2 && s != -1) {
             return JsonResult.failure(601, "status类型异常");
         }
-        Page<JSONObject> page = evaluationService.getList(startTime, endTime, code, subjectId, addSubjectId, s, currentSubjectId, num, size);
+        Page<JSONObject> page = evaluationService.getList(startTime, endTime, code, subjectId, addSubjectId, indexId, s, currentSubjectId, num, size);
         jsonResult.setData(page);
         return jsonResult;
     }

@@ -5,11 +5,13 @@ import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.Action;
+import com.ayundao.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: ActionService
@@ -38,14 +40,15 @@ public interface ActionService {
     /**
      * 导入春风行动
      * @param file
+     * @param operator
      * @return
      */
-    JsonResult upload(MultipartFile file);
+    JsonResult upload(MultipartFile file, User operator);
 
     /**
      * 转换用数据
      */
-    JSONObject covert(Action action);
+    JSONObject covert(Action action, double score);
 
     /**
      * 导出春风行动
@@ -55,7 +58,7 @@ public interface ActionService {
      * @param req
      * @param resp
      */
-    JsonResult export(String id, String year, List<Action> list, HttpServletRequest req, HttpServletResponse resp);
+    JsonResult export(String id, String year, List<Map<String, Object>> list, HttpServletRequest req, HttpServletResponse resp);
 
     /**
      * 根据年份和机构ID导出春风行动
@@ -63,5 +66,5 @@ public interface ActionService {
      * @param year
      * @return
      */
-    List<Action> findBySubjectIdAndYear(String id, String year);
+    List<Map<String, Object>> findBySubjectIdAndYear(String id, String year);
 }

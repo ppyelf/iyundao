@@ -8,15 +8,10 @@ import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.ExcelUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
-import com.ayundao.entity.Action;
-import com.ayundao.entity.Groups;
-import com.ayundao.entity.Subject;
-import com.ayundao.entity.User;
+import com.ayundao.base.utils.TimeUtils;
+import com.ayundao.entity.*;
 import com.ayundao.repository.ActionRepository;
-import com.ayundao.service.ActionService;
-import com.ayundao.service.GroupsService;
-import com.ayundao.service.SubjectService;
-import com.ayundao.service.UserService;
+import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -31,7 +26,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: ActionServiceImpl
@@ -57,6 +54,8 @@ public class ActionServiceImpl implements ActionService {
     @Autowired
     private GroupsService groupsService;
 
+    @Autowired
+    private EvaluationService evaluationService;
 
     @Override
     public Page<Action> findPage(Pageable pageable) {
@@ -87,8 +86,8 @@ public class ActionServiceImpl implements ActionService {
 
         //第一行
         Row row = sheet.createRow(0);
-        row.createCell(0).setCellValue("医院名称");
-        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 4);
+        row.createCell(0).setCellValue("富阳区第一人民医院");
+        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 5);
         sheet.addMergedRegion(range);
 
         //第二行
@@ -99,6 +98,7 @@ public class ActionServiceImpl implements ActionService {
         row.createCell(i++).setCellValue("部门编号");
         row.createCell(i++).setCellValue("部门");
         row.createCell(i++).setCellValue("金额");
+        row.createCell(i++).setCellValue("爱心公益得分");
 
         ExcelUtils.setCellStyle(wb);
         row = sheet.getRow(0);
@@ -120,19 +120,17 @@ public class ActionServiceImpl implements ActionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public JsonResult upload(MultipartFile file) {
+    public JsonResult upload(MultipartFile file, User operator) {
         JsonResult jsonResult = JsonResult.success();
         Workbook wb = ExcelUtils.getWorkBook(file);
         Sheet sheet = wb.getSheetAt(0);
 
-        String val = ExcelUtils.getCellValue(sheet.getRow(0).getCell(0)).toString();
-        if (val.equals("医院名称")) {
-            JsonResult.failure(601, "第1行医院名称为空或不存在");
-        }
+        String val = "富阳区第一人民医院";
         Subject subject = subjectService.findByName(val);
         if (subject == null) {
             JsonResult.failure(601, "第1行医院名称为空或不存在");
         }
+        EvaluationIndex ei = evaluationService.findEvaluationIndex("5d28f98ba17c49f6bc1c335f8866d653");
 
         JSONArray arr = new JSONArray();
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
@@ -157,16 +155,38 @@ public class ActionServiceImpl implements ActionService {
             if (!val.matches("^[1-9]\\d*$")) {
                 return JsonResult.failure(604, "第"+(i+1)+"请输入大于零的正整数");
             }
+
+            //保存爱心公益指标
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(5)).toString();
+            if (!val.matches("^[0-6]+([.]{1}[0-5]{1,2})?$")) {
+                return JsonResult.failure(604, "第"+(i+1)+"行请输0.5-6之间的分数");
+            }
+            double score = Double.parseDouble(val);
+            if (score > 6 || score < 0.5) {
+                return JsonResult.failure(604, "第"+(i+1)+"行请输0.5-6之间的分数");
+            }
+            Evaluation e = new Evaluation();
+            String time = TimeUtils.convertTime(new Date(), TimeUtils.yyyyMMddHHmmss);
+            e.setSureTime(time);
+            e.setStatus(Evaluation.STATUS.agree);
+            e.setYear(time.substring(0, 4));
+            e.setUser(user);
+            e.setEvaluationIndex(ei);
+            e.setScore(score);
+            e.setOperator(new BaseComponent(operator.getCode(), operator.getName()));
+            e = evaluationService.save(e);
+
+            action.setEvaluation(e);
             action.setMoney(Long.parseLong(val));
             action = actionRepository.save(action);
-            arr.add(covert(action));
+            arr.add(covert(action, score));
         }
         jsonResult.setData(arr);
         return jsonResult;
     }
 
     @Override
-    public JSONObject covert(Action action) {
+    public JSONObject covert(Action action, double score) {
         JSONObject result = JsonUtils.getJson(action);
         JSONObject json = new JSONObject();
         json.put("name", action.getUser().getName());
@@ -180,11 +200,12 @@ public class ActionServiceImpl implements ActionService {
         json.put("code", action.getGroup().getId());
         json.put("name", action.getGroup().getName());
         result.put("groups", json);
+        result.put("score", score);
         return result;
     }
 
     @Override
-    public JsonResult export(String id, String year, List<Action> list, HttpServletRequest req, HttpServletResponse resp) {
+    public JsonResult export(String id, String year, List<Map<String, Object>> list, HttpServletRequest req, HttpServletResponse resp) {
         HSSFWorkbook wb = createWorkBook();
         Sheet sheet = wb.getSheetAt(0);
 
@@ -199,12 +220,13 @@ public class ActionServiceImpl implements ActionService {
         int index = 0;
         if (CollectionUtils.isNotEmpty(list)) {
             for (int i = 0; i < list.size(); i++) {
-                Action action = list.get(i);
-                sheet.createRow(i+2).createCell(index++).setCellValue(action.getUser().getId());
-                sheet.getRow(i+2).createCell(index++).setCellValue(action.getUser().getName());
-                sheet.getRow(i+2).createCell(index++).setCellValue(action.getGroup().getId());
-                sheet.getRow(i+2).createCell(index++).setCellValue(action.getGroup().getName());
-                sheet.getRow(i+2).createCell(index++).setCellValue(action.getMoney());
+                Map<String, Object> map = list.get(i);
+                sheet.createRow(i+2).createCell(index++).setCellValue(map.get("userCode").toString());
+                sheet.getRow(i+2).createCell(index++).setCellValue(map.get("userName").toString());
+                sheet.getRow(i+2).createCell(index++).setCellValue(map.get("groupCode").toString());
+                sheet.getRow(i+2).createCell(index++).setCellValue(map.get("groupName").toString());
+                sheet.getRow(i+2).createCell(index++).setCellValue(map.get("money").toString());
+                sheet.getRow(i+2).createCell(index++).setCellValue(map.get("score").toString());
                 index = 0;
             }
         }
@@ -225,7 +247,7 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public List<Action> findBySubjectIdAndYear(String id, String year) {
+    public List<Map<String, Object>> findBySubjectIdAndYear(String id, String year) {
         year = "%" + year + "%";
         return actionRepository.findBySubjectIdAndYear(id, year);
     }

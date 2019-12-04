@@ -100,13 +100,14 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     @Override
-    public Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int s, String currentSubjectId, int num, int size) {
+    public Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, String indexId, int s, String currentSubjectId, int num, int size) {
         Pageable pageable = new Pageable(num, size);
         num = num == 0 ? 0 : num * size;
         code = "%" + code + "%";
         subjectId = "%" + subjectId + "%";
         addSubjectId = "%" + addSubjectId + "%";
         currentSubjectId = "%" + currentSubjectId + "%";
+        indexId = "%" + indexId + "%";
         int[] status = null;
         if (s == -1) {
             status = new int[]{0, 1, 2};
@@ -118,8 +119,8 @@ public class EvaluationServiceImpl implements EvaluationService {
                 }
             }
         }
-        List<Map<String, Object>> list = evaluationRepository.getList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, num, size);
-        long count = evaluationRepository.countList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId);
+        List<Map<String, Object>> list = evaluationRepository.getList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, num, size, indexId);
+        long count = evaluationRepository.countList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, indexId);
         List<JSONObject> ll = new LinkedList<>();
         for (Map<String, Object> map : list) {
             ll.add(new JSONObject(map));
@@ -428,6 +429,12 @@ public class EvaluationServiceImpl implements EvaluationService {
         evaluation.setStatus(status);
         evaluation.setSureTime(TimeUtils.convertTime(new Date(), TimeUtils.yyyyMMddHHmmss));
         evaluationRepository.save(evaluation);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Evaluation save(Evaluation e) {
+        return evaluationRepository.save(e);
     }
 
     /**

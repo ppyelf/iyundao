@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
+import com.ayundao.base.annotation.CurrentUser;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.Action;
+import com.ayundao.entity.User;
 import com.ayundao.service.ActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName: ActionController
@@ -127,11 +130,11 @@ public class ActionController extends BaseController {
      * }
      */
     @PostMapping("/upload")
-    public JsonResult upload(MultipartFile file) {
+    public JsonResult upload(MultipartFile file, @CurrentUser User operator) {
         if (file == null) {
             return JsonResult.failure(605, "文件不能为空");
         }
-        return actionService.upload(file);
+        return actionService.upload(file, operator);
     }
 
     /**
@@ -160,7 +163,7 @@ public class ActionController extends BaseController {
         if (isBlank(code, year)) {
             return JsonResult.failure(601, "必填参数不能为空");
         }
-        List<Action> list = actionService.findBySubjectIdAndYear(code, year);
+        List<Map<String, Object>> list = actionService.findBySubjectIdAndYear(code, year);
         return actionService.export(code, year, list, req, resp);
     }
 }

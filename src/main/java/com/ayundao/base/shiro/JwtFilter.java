@@ -206,6 +206,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        HttpServletRequest req = (HttpServletRequest) request;
+        if (req.getRequestURI().startsWith("/action")) {
+            return true;
+        }
         if (isAppLogin(request)) {
             return executeAppLogin(request);
         } 
