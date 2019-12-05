@@ -11,6 +11,7 @@ import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.Action;
 import com.ayundao.entity.User;
 import com.ayundao.service.ActionService;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -130,7 +131,9 @@ public class ActionController extends BaseController {
      * }
      */
     @PostMapping("/upload")
-    public JsonResult upload(MultipartFile file, @CurrentUser User operator) {
+    public JsonResult upload(MultipartFile file, @CurrentUser User user) {
+        User operator = (User) SecurityUtils.getSubject().getPrincipal();
+        operator = operator == null ? user : operator;
         if (file == null) {
             return JsonResult.failure(605, "文件不能为空");
         }

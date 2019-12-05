@@ -52,6 +52,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
      * @param currentSubjectId
      * @param num
      * @param size
+     * @param departId
      * @return
      */
     @Query(value = "select te.ID                                                                           id, " +
@@ -61,7 +62,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "       case when tei.TYPE = 0 then '加分指标' when tei.TYPE = 1 then '减分指标' else '一票否' end type, " +
             "       te.SCORE                                                                        score, " +
             "       operator.name                                                                   operatorName, " +
-            "       operator.sname                                                                  subjectName, " +
+            "       ifnull(operator.gname, operator.dname)                                          subjectName, " +
             "       te.CREATEDATE                                                                   operatorTime, " +
             "       case when te.STATUS = 0 then '等待中' when te.STATUS = 1 then '同意' else '拒绝' end   status, " +
             "       te.SURETIME                                                                     sureTime, " +
@@ -76,21 +77,21 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
             "                    where tu.CODE like ?3 " +
             "                      and (tg.ID like ?4 or tg.ID like ?7)) user on user.id = te.USERID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME sname " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME gname, td.NAME dname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
             "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
-            "                    where tg.ID like ?5) operator on operator.code = te.USERCODE " +
+            "                             left join t_depart td on tur.DEPARTID = td.ID " +
+            "                    where tg.ID like ?5 " +
+            "                       or td.ID like ?11) operator on operator.code = te.USERCODE " +
             "where (te.CREATEDATE between ?1 and ?2) " +
             "  and te.STATUS in (?6) " +
-            " and te.EVALUATIONINDEXID like ?10" +
-            "  and operator.name is not null " +
-            "  and operator.sname is not null " +
+            "  and te.EVALUATIONINDEXID like ?10 " +
             "  and user.code is not null " +
             "  and user.name is not null " +
             "order by te.CREATEDATE asc " +
             "limit ?8, ?9", nativeQuery = true)
-    List<Map<String, Object>> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, int num, int size, String indexId);
+    List<Map<String, Object>> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, int num, int size, String indexId, String departId);
 
     /**
      * 统计列表
@@ -102,6 +103,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
      * @param addSubjectId
      * @param status
      * @param currentSubjectId
+     * @param departId
      * @return
      */
     @Query(value = "select ifnull(count(te.ID), 0) count " +
@@ -113,20 +115,20 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
             "                    where tu.CODE like ?3 " +
             "                      and (tg.ID like ?4 or tg.ID like ?7)) user on user.id = te.USERID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME sname " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME gname, td.NAME dname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
             "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
-            "                    where tg.ID like ?5) operator on operator.code = te.USERCODE " +
+            "                             left join t_depart td on tur.DEPARTID = td.ID " +
+            "                    where tg.ID like ?5 " +
+            "                       or td.ID like ?9) operator on operator.code = te.USERCODE " +
             "where (te.CREATEDATE between ?1 and ?2) " +
             "  and te.STATUS in (?6) " +
             "  and te.EVALUATIONINDEXID like ?8 " +
-            "  and operator.name is not null " +
-            "  and operator.sname is not null " +
             "  and user.code is not null " +
             "  and user.name is not null " +
             "order by te.CREATEDATE asc", nativeQuery = true)
-    long countList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, String indexId);
+    long countList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, String indexId, String departId);
 
     /**
      * 查询统计分页
@@ -211,6 +213,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
             "where te.USERID = ?1 " +
             "  and te.YEAR like ?2 " +
+            " and te.STATUS = 1 " +
             "order by year, type", nativeQuery = true)
     List<Map<String, Object>> findEvaluationByUserIdAndYear(String id, String year);
 

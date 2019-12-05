@@ -13,6 +13,8 @@ import com.ayundao.entity.*;
 import com.ayundao.repository.ActionRepository;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -151,13 +153,19 @@ public class ActionServiceImpl implements ActionService {
             action.setGroup(new BaseComponent(groups.getCode(), groups.getName()));
             action.setSubject(new BaseComponent(subject.getCode(), subject.getName()));
 
+
             val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(4)).toString();
             if (!val.matches("^[1-9]\\d*$")) {
                 return JsonResult.failure(604, "第"+(i+1)+"请输入大于零的正整数");
             }
 
             //保存爱心公益指标
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(5)).toString();
+            //设置特别格式
+            Cell cell = sheet.getRow(i).getCell(5);
+            CellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
+            cell.setCellStyle(cellStyle);
+            val = ExcelUtils.getCellValue(cell).toString();
             if (!val.matches("^[0-6]+([.]{1}[0-5]{1,2})?$")) {
                 return JsonResult.failure(604, "第"+(i+1)+"行请输0.5-6之间的分数");
             }
@@ -177,7 +185,7 @@ public class ActionServiceImpl implements ActionService {
             e = evaluationService.save(e);
 
             action.setEvaluation(e);
-            action.setMoney(Long.parseLong(val));
+            action.setMoney(Long.parseLong(ExcelUtils.getCellValue(sheet.getRow(i).getCell(4)).toString()));
             action = actionRepository.save(action);
             arr.add(covert(action, score));
         }

@@ -100,7 +100,7 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     @Override
-    public Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, String indexId, int s, String currentSubjectId, int num, int size) {
+    public Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, String indexId, int s, String currentSubjectId, int num, int size, String departId) {
         Pageable pageable = new Pageable(num, size);
         num = num == 0 ? 0 : num * size;
         code = "%" + code + "%";
@@ -108,6 +108,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         addSubjectId = "%" + addSubjectId + "%";
         currentSubjectId = "%" + currentSubjectId + "%";
         indexId = "%" + indexId + "%";
+        departId = "%" + departId + "%";
         int[] status = null;
         if (s == -1) {
             status = new int[]{0, 1, 2};
@@ -119,8 +120,8 @@ public class EvaluationServiceImpl implements EvaluationService {
                 }
             }
         }
-        List<Map<String, Object>> list = evaluationRepository.getList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, num, size, indexId);
-        long count = evaluationRepository.countList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, indexId);
+        List<Map<String, Object>> list = evaluationRepository.getList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, num, size, indexId, departId);
+        long count = evaluationRepository.countList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, indexId, departId);
         List<JSONObject> ll = new LinkedList<>();
         for (Map<String, Object> map : list) {
             ll.add(new JSONObject(map));
@@ -195,6 +196,9 @@ public class EvaluationServiceImpl implements EvaluationService {
         String[] codes = new String[sheet.getLastRowNum() - 1];
         List<EvaluationIndex> indices = new LinkedList<>();
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
+            if (sheet.getRow(i) == null) {
+                break;
+            }
             codes[i - 2] = ExcelUtils.getCellValue(sheet.getRow(i).getCell(0)).toString();
             val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
             for (EvaluationIndex.TYPE value : EvaluationIndex.TYPE.values()) {
@@ -209,7 +213,6 @@ public class EvaluationServiceImpl implements EvaluationService {
             }
 
         }
-        List<User> eUsers = userService.findByCodes(codes);
         val = ExcelUtils.getCellValue(sheet.getRow(0).getCell(3)).toString();
         User aUser = userService.findByCode(val);
         if (aUser == null) {
@@ -217,13 +220,16 @@ public class EvaluationServiceImpl implements EvaluationService {
         }
         List<Evaluation> list = new ArrayList<>();
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
+            if (sheet.getRow(i) == null) {
+                break;
+            }
             Evaluation e = new Evaluation();
             e.setYear(year);
             int index = i - 2;
-            if (StringUtils.isBlank(codes[index]) || !codes[index].equals(eUsers.get(index).getCode())) {
+            User user = userService.findByCode(codes[index]);
+            if (user == null) {
                 return JsonResult.failure(601, "第" + (i + 1) + "行胸牌号为空或查询不存在");
             }
-            User user = eUsers.get(index);
             e.setUser(user);
             EvaluationIndex ei = indices.get(index);
             e.setEvaluationIndex(ei);
@@ -240,6 +246,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                 return JsonResult.failure(605, "第" + (i + 1) + "行医德分必须在" + ei.getMin() + "到" + ei.getMax() + "之间");
             }
             val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(4)).toString();
+            e.setRemark(val);
             e.setOperator(new BaseComponent(aUser.getCode(), aUser.getName()));
 
             //设置病人
@@ -359,7 +366,8 @@ public class EvaluationServiceImpl implements EvaluationService {
         cell = table.getRow(0).getCell(5);
         cell.setText(userInfo.getBirthday());
         table.getRow(0).getCell(6).setText("岗位");
-        table.getRow(0).getCell(7).setText(userInfo.getPostType() == null ? "" : userInfo.getPostType().getName());
+        table.getRow(0).getCell(7).setText(userInfo.getPostType() == null ? "无" : userInfo.getPostType().getName());
+        setCellWidthAndVAlign(table.getRow(0).getCell(7), 4);
 
         //第二行
         table.getRow(1).getCell(0).setText("所在单位");
@@ -369,7 +377,8 @@ public class EvaluationServiceImpl implements EvaluationService {
         table.getRow(1).getCell(4).setText("职务");
         table.getRow(1).getCell(5).setText(userInfo.getPost());
         table.getRow(1).getCell(6).setText("职称");
-        table.getRow(1).getCell(7).setText(userInfo.getTitle());
+        table.getRow(1).getCell(7).setText(StringUtils.isBlank(userInfo.getTitle()) ? "无" : userInfo.getTitle());
+        setCellWidthAndVAlign(table.getRow(1).getCell(7), 4);
 
         //第三行
         table.getRow(2).getCtRow().addNewTrPr().addNewTrHeight().setVal(BigInteger.valueOf(6000));

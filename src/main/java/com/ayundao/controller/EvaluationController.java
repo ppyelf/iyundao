@@ -4,9 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseController;
 import com.ayundao.base.Page;
-import com.ayundao.base.Pageable;
 import com.ayundao.base.annotation.CurrentUser;
-import com.ayundao.base.utils.FileUtils;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.Evaluation;
@@ -14,21 +12,14 @@ import com.ayundao.entity.EvaluationIndex;
 import com.ayundao.entity.User;
 import com.ayundao.service.EvaluationService;
 import com.ayundao.service.UserService;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName: EvaluationController
@@ -272,6 +263,7 @@ public class EvaluationController extends BaseController {
                                @RequestParam(defaultValue = "") String indexId,
                                @RequestParam(defaultValue = "-1") int status,
                                @RequestParam(defaultValue = "") String currentSubjectId,
+                               @RequestParam(defaultValue = "") String departId,
                                @RequestParam(defaultValue = "0") int num,
                                @RequestParam(defaultValue = "10") int size) {
         int s = status == -1 ? -1 : -2;
@@ -284,7 +276,7 @@ public class EvaluationController extends BaseController {
         if (s == -2 && s != -1) {
             return JsonResult.failure(601, "status类型异常");
         }
-        Page<JSONObject> page = evaluationService.getList(startTime, endTime, code, subjectId, addSubjectId, indexId, s, currentSubjectId, num, size);
+        Page<JSONObject> page = evaluationService.getList(startTime, endTime, code, subjectId, addSubjectId, indexId, s, currentSubjectId, num, size, departId);
         jsonResult.setData(page);
         return jsonResult;
     }
@@ -357,7 +349,7 @@ public class EvaluationController extends BaseController {
         if (evaluation == null) {
             return jsonResult.failure(603, "医德医风不存在");
         }
-        if (type != 1 && type == 2) {
+        if (type != 1 && type != 2) {
             return JsonResult.failure(602, "审核态度异常");
         }
         Evaluation.STATUS status = type == 1 ? Evaluation.STATUS.agree : Evaluation.STATUS.refuse;

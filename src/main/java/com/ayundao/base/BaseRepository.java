@@ -1,5 +1,7 @@
 package com.ayundao.base;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -15,6 +17,7 @@ import java.util.Map;
  * @Version: V1.1
  */
 @NoRepositoryBean
+@Scope(proxyMode = ScopedProxyMode.INTERFACES)
 public interface BaseRepository<T, ID> extends JpaRepositoryImplementation<T, ID> {
 
     T find(ID id);

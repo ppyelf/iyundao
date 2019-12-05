@@ -72,8 +72,9 @@ public interface EvaluationService {
      * @param currentSubjectId
      * @param num
      * @param size
+     * @param departId
      */
-    Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, String indexId, int status, String currentSubjectId, int num, int size);
+    Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, String indexId, int status, String currentSubjectId, int num, int size, String departId);
 
 
     /**

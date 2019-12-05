@@ -7,11 +7,13 @@ import com.ayundao.base.shiro.SecurityConsts;
 import com.ayundao.base.utils.JwtUtils;
 import com.ayundao.entity.User;
 import com.ayundao.service.UserService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -50,6 +52,9 @@ public class CurrentUserResolver implements HandlerMethodArgumentResolver {
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = servletRequestAttributes.getRequest();
             String token = request.getHeader("IYunDao-AssessToken");
+            if (StringUtils.isBlank(token)) {
+                throw new NullPointerException("token为空");
+            }
             user = userService.findByAccount(JwtUtils.getClaim(token, SecurityConsts.ACCOUNT));
         } 
         SecurityUtils.getSubject().getSession().setAttribute("currentUser", user);
