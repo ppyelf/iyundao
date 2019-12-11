@@ -183,8 +183,8 @@ public class PMAssessController extends BaseController{
             return JsonResult.paramError();
         }
         Pageable pageable = new Pageable(page,size);
-        pageable.setSearchProperty(property);
-        pageable.setSearchValue(value);
+        pageable.setSearchKey(new String[]{property});
+        pageable.setSearchValue(new String[]{value});
         Page<PioneerIndex> pioneerIndexPage = pmAssessService.findByProperty(pageable);
         JSONObject jsonObject = JsonUtils.getPage(pioneerIndexPage);
          jsonObject = bianshen(jsonObject);
@@ -342,8 +342,8 @@ public class PMAssessController extends BaseController{
             return JsonResult.paramError();
         }
         Pageable pageable = new Pageable(page,size);
-        pageable.setSearchProperty(property);
-        pageable.setSearchValue(value);
+        pageable.setSearchKey(new String[]{property});
+        pageable.setSearchValue(new String[]{value});
         Page<DemocraticAppraisal> democraticAppraisalPage = pmAssessService.findDemoByProperty(pageable);
         JSONObject object = JsonUtils.getPage(democraticAppraisalPage);
         object = bianshen(object);

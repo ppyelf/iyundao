@@ -55,4 +55,13 @@ public interface GroupsRepository extends BaseRepository<Groups, String> {
     //根据CODE查询实体
     @Query("select g from Groups g where g.code = ?1")
     Groups findByCode(String code);
+
+    /**
+     * 根据支部名称查询
+     *
+     * @param val
+     * @return
+     */
+    @Query("select g from Groups g where g.name = ?1")
+    Groups findByName(String val);
 }

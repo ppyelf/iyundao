@@ -379,8 +379,8 @@ jsonResult.setData(jsonObject);
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = new Pageable(page, size);
         if (StringUtils.isNotBlank(key) || StringUtils.isNotBlank(value)) {
-            pageable.setSearchProperty(key);
-            pageable.setSearchValue(value);
+            pageable.setSearchKey(new String[]{key});
+            pageable.setSearchValue(new String[]{value});
         }
         Page<Spirit> spiritPage = spiritService.findPage(pageable);
         JSONArray arr = new JSONArray();

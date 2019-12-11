@@ -25,12 +25,17 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xwpf.usermodel.*;
+import org.hibernate.query.internal.NativeQueryImpl;
+import org.hibernate.transform.Transformers;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,6 +66,9 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Autowired
     private UserService userService;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public JSONArray getIndexList() {
@@ -137,15 +145,52 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     @Override
-    public Page<JSONObject> getSumList(String code, String year, int num, int size) {
+    public Page<JSONObject> getSumList(String code, String year, int num, int size, String order) {
+        Pageable pageable = new Pageable(num, size);
+        String sql = "select te.ID                                  id, " +
+                "       te.YEAR                                year, " +
+                "       tu.CODE                                code, " +
+                "       tu.NAME                                name, " +
+                "       if(tu.SEX = 0, '男', '女')               sex, " +
+                "       tui.BIRTHDAY                           birthday, " +
+                "       case " +
+                "           when tui.POSTTYPE = 0 then '医生' " +
+                "           when tui.POSTTYPE = 1 then '护士' " +
+                "           when tui.POSTTYPE = 2 then '医技' " +
+                "           else '其他' end                      postType, " +
+                "       ifnull(tui.DEPARTMENT, tui.BRANCHNAME) department, " +
+                "       tui.post                               post, " +
+                "       tui.title                              title, " +
+                "       sum(te.SCORE)                          score, " +
+                "       td.ID                                  departId, " +
+                "       td.NAME                                departName, " +
+                "       tg.ID                                  groupId, " +
+                "       tg.NAME                                groupName " +
+                "from t_evaluation te " +
+                "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
+                "         left join t_user tu on te.USERID = tu.ID " +
+                "         left join t_user_info tui on tui.USERID = te.USERID " +
+                "         left join t_user_relations tur on te.USERID = tur.USERID " +
+                "         left join t_depart td on td.ID = tur.DEPARTID " +
+                "         left join t_groups tg on tg.ID = tur.GROUPSID " +
+                "where te.YEAR like ?2 " +
+                "  and tu.CODE like ?1 " +
+                "group by te.USERID " +
+                "order by  "+order+" ";
         code = "%" + code + "%";
         year = "%" + year + "%";
-        Pageable pageable = new Pageable(num, size);
         num = num == 0 ? 0 : num * size;
-        List<Map<String, Object>> list = evaluationRepository.getSumList(code, year, num, size);
+        Query query = em.createNativeQuery(sql);
+        query.setParameter(1, code);
+        query.setParameter(2, year);
+        query.setFirstResult(num);
+        query.setMaxResults(size);
+        query.unwrap(NativeQueryImpl.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        List<Map<String, Object>> list = query.getResultList();
         List<JSONObject> result = new LinkedList<>();
+        int index = 0;
         for (Map<String, Object> map : list) {
-            result.add(new JSONObject(map));
+            result.add(index++, new JSONObject(map));
         }
         List<Long> count = evaluationRepository.countSumList(code, year);
         return new Page<>(result, count.size(), pageable);
@@ -434,16 +479,26 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void sure(Evaluation evaluation, Evaluation.STATUS status) {
-        evaluation.setStatus(status);
-        evaluation.setSureTime(TimeUtils.convertTime(new Date(), TimeUtils.yyyyMMddHHmmss));
-        evaluationRepository.save(evaluation);
+    public void sure(List<Evaluation> evaluations, Evaluation.STATUS status) {
+        for (Evaluation evaluation : evaluations) {
+            if (evaluation.getStatus().equals(status)) {
+                continue;
+            }
+            evaluation.setStatus(status);
+            evaluation.setSureTime(TimeUtils.convertTime(new Date(), TimeUtils.yyyyMMddHHmmss));
+            evaluationRepository.save(evaluation);
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Evaluation save(Evaluation e) {
         return evaluationRepository.save(e);
+    }
+
+    @Override
+    public List<Evaluation> findByIds(String[] ids) {
+        return evaluationRepository.findByIds(ids);
     }
 
     /**

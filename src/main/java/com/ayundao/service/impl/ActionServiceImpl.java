@@ -13,12 +13,10 @@ import com.ayundao.entity.*;
 import com.ayundao.repository.ActionRepository;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +57,9 @@ public class ActionServiceImpl implements ActionService {
     @Autowired
     private EvaluationService evaluationService;
 
+    @Autowired
+    private DepartService departService;
+
     @Override
     public Page<Action> findPage(Pageable pageable) {
         return actionRepository.findPage(pageable);
@@ -84,12 +85,12 @@ public class ActionServiceImpl implements ActionService {
 
     private HSSFWorkbook createWorkBook() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        Sheet sheet = wb.createSheet();
+        HSSFSheet sheet = wb.createSheet();
 
         //第一行
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue("富阳区第一人民医院");
-        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 5);
+        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 4);
         sheet.addMergedRegion(range);
 
         //第二行
@@ -97,8 +98,7 @@ public class ActionServiceImpl implements ActionService {
         int i = 0;
         row.createCell(i++).setCellValue("胸牌号");
         row.createCell(i++).setCellValue("姓名");
-        row.createCell(i++).setCellValue("部门编号");
-        row.createCell(i++).setCellValue("部门");
+        row.createCell(i++).setCellValue("科室名称");
         row.createCell(i++).setCellValue("金额");
         row.createCell(i++).setCellValue("爱心公益得分");
 
@@ -146,22 +146,22 @@ public class ActionServiceImpl implements ActionService {
             action.setUser(new BaseComponent(user.getCode(), user.getName()));
             //机构
             val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
-            Groups groups = groupsService.findByCode(val);
-            if (groups == null) {
-                return JsonResult.failure(603, "第"+(i+1)+"部门编号不能为空");
+            List<Depart> depart = departService.findByName("%" + val + "%");
+            if (CollectionUtils.isEmpty(depart)) {
+                return JsonResult.failure(603, "第"+(i+1)+"科室名称不能为空");
+            }else {
+                action.setGroup(new BaseComponent(depart.get(0).getCode(), depart.get(0).getName()));
             }
-            action.setGroup(new BaseComponent(groups.getCode(), groups.getName()));
             action.setSubject(new BaseComponent(subject.getCode(), subject.getName()));
 
-
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(4)).toString();
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(3)).toString();
             if (!val.matches("^[1-9]\\d*$")) {
                 return JsonResult.failure(604, "第"+(i+1)+"请输入大于零的正整数");
             }
 
             //保存爱心公益指标
             //设置特别格式
-            Cell cell = sheet.getRow(i).getCell(5);
+            Cell cell = sheet.getRow(i).getCell(4);
             CellStyle cellStyle = wb.createCellStyle();
             cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
             cell.setCellStyle(cellStyle);
@@ -185,7 +185,7 @@ public class ActionServiceImpl implements ActionService {
             e = evaluationService.save(e);
 
             action.setEvaluation(e);
-            action.setMoney(Long.parseLong(ExcelUtils.getCellValue(sheet.getRow(i).getCell(4)).toString()));
+            action.setMoney(Long.parseLong(ExcelUtils.getCellValue(sheet.getRow(i).getCell(3)).toString()));
             action = actionRepository.save(action);
             arr.add(covert(action, score));
         }

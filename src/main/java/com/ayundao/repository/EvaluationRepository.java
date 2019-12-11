@@ -1,12 +1,12 @@
 package com.ayundao.repository;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ayundao.base.BaseRepository;
-import com.ayundao.base.Page;
 import com.ayundao.entity.Evaluation;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -58,11 +58,12 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
     @Query(value = "select te.ID                                                                           id, " +
             "       user.code                                                                       userCode, " +
             "       user.name                                                                       userName, " +
+            "       tei.ID indexId, " +
             "       tei.NAME                                                                        indexName, " +
             "       case when tei.TYPE = 0 then '加分指标' when tei.TYPE = 1 then '减分指标' else '一票否' end type, " +
             "       te.SCORE                                                                        score, " +
             "       operator.name                                                                   operatorName, " +
-            "       ifnull(operator.gname, operator.dname)                                          subjectName, " +
+            "       operator.sname                                                                  subjectName, " +
             "       te.CREATEDATE                                                                   operatorTime, " +
             "       case when te.STATUS = 0 then '等待中' when te.STATUS = 1 then '同意' else '拒绝' end   status, " +
             "       te.SURETIME                                                                     sureTime, " +
@@ -71,13 +72,15 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "       te.PATIENTNAME                                                                  patientName " +
             "from t_evaluation te " +
             "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME sname " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, ifnull(tg.NAME, td.NAME) sname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
             "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
+            "                             left join t_depart td on td.ID = tur.DEPARTID " +
             "                    where tu.CODE like ?3 " +
-            "                      and (tg.ID like ?4 or tg.ID like ?7)) user on user.id = te.USERID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME gname, td.NAME dname " +
+            "                      and (tg.ID like ?4 or tg.ID like ?7 or td.ID like ?4 or td.ID like ?7)) user " +
+            "                   on user.id = te.USERID " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, ifnull(tg.NAME, td.NAME) sname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
             "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
@@ -89,8 +92,8 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "  and te.EVALUATIONINDEXID like ?10 " +
             "  and user.code is not null " +
             "  and user.name is not null " +
-            "order by te.CREATEDATE asc " +
-            "limit ?8, ?9", nativeQuery = true)
+            "  order by te.CREATEDATE asc " +
+            "  limit ?8, ?9 ", nativeQuery = true)
     List<Map<String, Object>> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, int num, int size, String indexId, String departId);
 
     /**
@@ -109,12 +112,13 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
     @Query(value = "select ifnull(count(te.ID), 0) count " +
             "from t_evaluation te " +
             "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME sname " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, ifnull(tg.NAME, td.NAME) sname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
             "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
+            "                             left join t_depart td on td.ID = tur.DEPARTID " +
             "                    where tu.CODE like ?3 " +
-            "                      and (tg.ID like ?4 or tg.ID like ?7)) user on user.id = te.USERID " +
+            "                      and (tg.ID like ?4 or tg.ID like ?7 or td.ID like ?4 or td.ID like ?7)) user on user.id = te.USERID " +
             "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME gname, td.NAME dname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
@@ -132,44 +136,48 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
 
     /**
      * 查询统计分页
+     *
      * @param code
      * @param year
      * @param num
      * @param size
      * @return
      */
-    @Query(value = "select te.ID                    id, " +
-            "       te.YEAR                  year, " +
-            "       tu.CODE                  code, " +
-            "       tu.NAME                  name, " +
-            "       if(tu.SEX = 0, '男', '女') sex, " +
-            "       tui.BIRTHDAY             birthday, " +
+    @Query(value = "select te.ID                                  id, " +
+            "       te.YEAR                                year, " +
+            "       tu.CODE                                code, " +
+            "       tu.NAME                                name, " +
+            "       if(tu.SEX = 0, '男', '女')               sex, " +
+            "       tui.BIRTHDAY                           birthday, " +
             "       case " +
             "           when tui.POSTTYPE = 0 then '医生' " +
             "           when tui.POSTTYPE = 1 then '护士' " +
             "           when tui.POSTTYPE = 2 then '医技' " +
-            "           else '其他' end        postType, " +
-            "       tui.department           departMent, " +
-            "       tui.post                 post, " +
-            "       tui.title                title, " +
-            "       sum(te.SCORE)            score, " +
-            "       tg.ID                    groupId, " +
-            "       tg.NAME                  groupName " +
+            "           else '其他' end                      postType, " +
+            "       tui.post                               post, " +
+            "       tui.title                              title, " +
+            "       sum(te.SCORE)                          score, " +
+            "       td.ID                                  departId, " +
+            "       td.NAME                                departName, " +
+            "       tg.ID                                  groupId, " +
+            "       tg.NAME                                groupName " +
             "from t_evaluation te " +
             "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
             "         left join t_user tu on te.USERID = tu.ID " +
             "         left join t_user_info tui on tui.USERID = te.USERID " +
             "         left join t_user_relations tur on te.USERID = tur.USERID " +
+            "         left join t_depart td on td.ID = tur.DEPARTID " +
             "         left join t_groups tg on tg.ID = tur.GROUPSID " +
             "where te.YEAR like ?2 " +
             "  and tu.CODE like ?1 " +
             "group by te.USERID " +
-            "order by score desc " +
+            "order by ?5 " +
             "limit ?3, ?4", nativeQuery = true)
-    List<Map<String, Object>> getSumList(String code, String year, int num, int size);
+    LinkedList<Map<String, Object>> getSumList(String code, String year, int num, int size, @Param("order") Object order);
 
     /**
      * 统计统计分页的总和
+     *
      * @param code
      * @param year
      * @return
@@ -189,6 +197,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
 
     /**
      * 获取年份列表
+     *
      * @return
      */
     @Query(value = "select YEAR year from t_evaluation group by YEAR", nativeQuery = true)
@@ -196,6 +205,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
 
     /**
      * 获取年度里个人的考评记录
+     *
      * @param id
      * @param year
      * @return
@@ -219,6 +229,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
 
     /**
      * 获取个人年度的医德医风
+     *
      * @param id
      * @param year
      * @return

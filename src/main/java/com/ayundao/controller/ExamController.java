@@ -177,8 +177,8 @@ public class ExamController extends BaseController{
                                    @RequestParam(defaultValue = "10") int size){
         String name  = "title";
         Pageable pageable = new Pageable(page,size);
-        pageable.setSearchProperty(name);
-        pageable.setSearchValue(title);
+        pageable.setSearchKey(new String[]{name});
+        pageable.setSearchValue(new String[]{title});
         Page<Exam> examPage = examService.findNameForPage(pageable);
         jsonResult.setData(JsonUtils.getPage(examPage));
         return jsonResult;

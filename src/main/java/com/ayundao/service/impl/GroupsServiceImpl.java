@@ -92,4 +92,9 @@ public class GroupsServiceImpl implements GroupsService {
     public List<Groups> findByIds(String[] groupIds) {
         return groupsRepository.findByIds(groupIds);
     }
+
+    @Override
+    public Groups findByName(String val) {
+        return groupsRepository.findByName(val);
+    }
 }

@@ -49,4 +49,12 @@ public interface DepartRepository extends BaseRepository<Depart, String> {
     //根据编号查询实体
     @Query("select d from Depart d where d.code = ?1")
     Depart findByCode(String code);
+
+    /**
+     * 根据部门名称查询实体
+     * @param val
+     * @return
+     */
+    @Query("select d from Depart d where d.name like ?1")
+    List<Depart> findByName(String val);
 }

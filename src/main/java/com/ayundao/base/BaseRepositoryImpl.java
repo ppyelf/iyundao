@@ -1,37 +1,34 @@
 package com.ayundao.base;
 
+import com.ayundao.base.BaseEntity;
+import com.ayundao.base.BaseRepository;
+import com.ayundao.base.Page;
+import com.ayundao.base.Pageable;
 import com.ayundao.base.utils.ClassUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.shiro.util.Assert;
-import org.apache.shiro.util.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.provider.PersistenceProvider;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.support.CrudMethodMetadata;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
  * @ClassName: BaseRepositoryImpl
- * @project: ayundao
+ * @project: IYunDao
  * @author: 念
  * @Date: 2019/6/5 11:37
  * @Description: 基类
- * @Version: V1.1
+ * @Version: V1.2
  */
 @Repository
 public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements BaseRepository<T,ID> {
@@ -41,13 +38,14 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
      */
     private static final String ATTRIBUTE_SEPARATOR = ".";
 
+    private static final String ATTRIBUTE_TRANSFER = "\\u002E";
+
     @PersistenceContext
     private EntityManager em;
 
     private JpaEntityInformation<T, ID> entityInformation;
 
     private PersistenceProvider provider;
-
     @Nullable
     private CrudMethodMetadata metadata;
 
@@ -96,7 +94,15 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     @SuppressWarnings("unchecked")
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(T entity) {
+        Assert.notNull(entity);
+        em.remove(em.contains(entity) ? entity : em.merge(entity));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    @Transactional(rollbackFor = Exception.class)
     public <S extends T> S save(S s) {
         Assert.notNull(s);
         s = (S) ClassUtils.parseEntity(s);
@@ -112,24 +118,16 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
 
     @Override
     @SuppressWarnings("unchecked")
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-    public void delete(T entity) {
-        Assert.notNull(entity);
-        em.remove(em.contains(entity) ? entity : em.merge(entity));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteAll(Iterable<? extends T> entities) {
         Assert.notNull(entities);
         for (T entity : entities) {
-            em.remove(entity);
+            delete(entity);
         }
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @Transactional(rollbackFor = Exception.class)
     public void deleteAll() {
         List<T> result = findAll();
         for (T t : result) {
@@ -170,13 +168,11 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public boolean exists(ID id) {
         return existsById(id);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public void deleteById(ID id) {
         T t = find(id);
         if (t != null) {
@@ -185,11 +181,10 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     public <S extends T> List<S> saveAll(Iterable<S> entities) {
         Assert.notNull(entities);
         List<S> list = new ArrayList<>();
-        for (S entity : list) {
+        for (S entity : entities) {
             list.add(save(entity));
         }
         return list;
@@ -214,7 +209,6 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
         T t = find(id);
         return t == null ? false : true;
     }
-
 
     @Override
     public T find(ID id) {
@@ -267,43 +261,6 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
-    public List<T> findList() {
-        return findList(new Pageable());
-    }
-
-    @Override
-    public List<T> findList(Pageable pageable) {
-        Assert.notNull(pageable);
-
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<T> query = builder.createQuery(entityClass);
-        Root<T> root = query.from(entityClass);
-
-        Predicate predicate = query.getRestriction() != null
-                ? query.getRestriction()
-                : builder.conjunction();
-        String searchProperty = pageable.getSearchProperty();
-        String searchValue = pageable.getSearchValue();
-        if (StringUtils.isNotEmpty(searchProperty) && StringUtils.isNotEmpty(searchValue)) {
-            Path<String> searchPath = getPath(root, searchProperty);
-            if (searchPath != null) {
-                predicate = builder.and(predicate, builder.like(searchPath, "%" + searchValue + "%"));
-            }
-        }
-        List<javax.persistence.criteria.Order> orderList = toOrders(root, pageable.getOrders());
-        if (CollectionUtils.isEmpty(orderList)) {
-            orderList.add(builder.asc(getPath(root, "createdDate")));
-        }
-
-        query.where(predicate);
-        query.orderBy(orderList);
-        TypedQuery<T> typedQuery = em.createQuery(query);
-        typedQuery.setFirstResult(pageable.getPageNumber());
-        typedQuery.setMaxResults(pageable.getPageSize());
-        return typedQuery.getResultList();
-    }
-
-    @Override
     public Page<T> findPage(Pageable pageable) {
         Assert.notNull(pageable);
 
@@ -311,90 +268,66 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
         CriteriaQuery query = builder.createQuery(entityClass);
         Root<T> root = findRoot(query, query.getResultType());
 
+        List<Predicate> predicates = new LinkedList<>();
+        String[] searchKey = pageable.getSearchKey();
+        String[] searchValue = pageable.getSearchValue();
+        if (searchKey != null && searchValue != null && searchKey.length > 0 && searchValue.length > 0) {
+            for (int i = 0; i < searchKey.length; i++) {
+                String key = searchKey[i];
+                String val = searchValue[i];
+                if (key.contains(ATTRIBUTE_SEPARATOR)) {
+                    predicates.add(getJoin(builder, root, key, val));
+                } else {
+                    predicates.add(builder.like(getPath(root, key), "%" + val + "%"));
+                }
+            }
+        }
         Predicate predicate = query.getRestriction() == null
                 ? builder.conjunction()
                 : query.getRestriction();
-        String searchProperty = pageable.getSearchProperty();
-        String searchValue = pageable.getSearchValue();
-        if (StringUtils.isNotEmpty(searchProperty) && StringUtils.isNotEmpty(searchValue)) {
-            Path<String> searchPath = getPath(root, searchProperty);
-            if (searchPath != null) {
-                predicate = builder.and(predicate, builder.like(searchPath, "%" + searchValue + "%"));
-            }
+        for (Predicate p : predicates) {
+            predicate = builder.and(p);
         }
         List<javax.persistence.criteria.Order> orderList = toOrders(root, pageable.getOrders());
+        if (pageable.getOrder() != null) {
+            orderList.add(pageable.getOrder().getDirection().equals(Order.Direction.asc)
+                    ? builder.asc(getPath(root, pageable.getOrder().getProperty()))
+                    : builder.desc(getPath(root, pageable.getOrder().getProperty())));
+        }
         if (CollectionUtils.isEmpty(orderList)) {
             orderList.add(builder.asc(getPath(root, "createdDate")));
         }
 
         query.where(predicate);
         query.orderBy(orderList);
-        long total = count(query, pageable);
+        long total = em.createQuery(query).getResultList().size();
         TypedQuery<T> typedQuery = em.createQuery(query);
         typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         typedQuery.setMaxResults(pageable.getPageSize());
-        return new Page<T>(typedQuery.getResultList(), total, new Pageable());
+        return new Page<T>(typedQuery.getResultList(), total, pageable);
     }
 
     @Override
-    public Page<T> fetchPage(Map<String, String> map,  Pageable pageable) {
-        Assert.notNull(map);
-        Assert.notNull(pageable);
-
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery query = cb.createQuery(entityClass);
-        Root<T> root = query.from(entityClass);
-
-        Predicate predicate = query.getRestriction() == null
-                ? cb.conjunction()
-                : query.getRestriction();
-        List<Path<T>> paths = new ArrayList<>();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            List<String> joinList = Arrays.asList(entry.getKey().split("."));
-            String value = entry.getValue();
-            if (!CollectionUtils.isEmpty(joinList)) {
-                String fetchName = "";
-                for (int i = 0; i < joinList.size(); i++) {
-                    if ((i + 1) == joinList.size()) {
-                        break;
-                    }
-                    fetchName = joinList.get(i) + ATTRIBUTE_SEPARATOR + joinList.get(i + 1);
-                    root.fetch(fetchName);
-                }
-            }
-        }
-        return null;
+    public Page<T> selectPage(String sql, String countSql, Pageable pageable) {
+        sql = sql.contains("limit")
+                ? sql.substring(0, sql.lastIndexOf("limit"))
+                : sql;
+        Query query =  em.createNativeQuery(sql);
+        query.setFirstResult(pageable.getPageNumber());
+        query.setMaxResults(pageable.getPageSize());
+        long total = Long.parseLong(em.createNativeQuery(countSql).getSingleResult()+"");
+        return new Page<T>(query.getResultList(), total, pageable);
     }
 
-    private <X> Path<X> recurionPath(Path<?> path, String name) {
-        if (path == null || StringUtils.isEmpty(name)) {
-            return (Path<X>) path;
-        }
-        return getPath(path.get(StringUtils.substringBefore(name, ATTRIBUTE_SEPARATOR)), StringUtils.substringAfter(name, ATTRIBUTE_SEPARATOR));
-    }
-
-    private long count(CriteriaQuery<T> query, Pageable pageable) {
-        Assert.notNull(query);
-
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
-        Root<T> countRoot = countQuery.from(entityClass);
-        String searchProperty = pageable.getSearchProperty();
-        String searchValue = pageable.getSearchValue();
-        Predicate predicate = builder.conjunction();
-        if (StringUtils.isNotEmpty(searchProperty) && StringUtils.isNotEmpty(searchValue)) {
-            Path<String> searchPath = getPath(countRoot, searchProperty);
-            if (searchPath != null) {
-                predicate = builder.and(predicate, builder.like(searchPath, "%" + searchValue + "%"));
-            }
-        }
-        countQuery.where(predicate);
-        if (countQuery.isDistinct()) {
-            countQuery.select(builder.countDistinct(countRoot));
-        } else {
-            countQuery.select(builder.count(countRoot));
-        }
-        return em.createQuery(countQuery).getSingleResult();
+    /**
+     * 抓取左外
+     * @param root
+     * @param key
+     * @param val
+     */
+    private Predicate getJoin(CriteriaBuilder builder, Root<T> root, String key, String val) {
+        String[] k = key.split("\\u002E");
+        return builder.like(root.join(k[0]).get(k[1]).as(String.class), "%" + val + "%");
     }
 
     /**
@@ -418,7 +351,9 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
                 continue;
             }
             String property = order.getProperty();
-            Order.Direction direction = order.getDirection();
+            Order.Direction direction = order.getDirection() != null
+                    ? order.getDirection()
+                    : Order.Direction.asc;
             Path<?> path = getPath(root, property);
             if (path == null || direction == null) {
                 continue;
@@ -483,7 +418,6 @@ public class BaseRepositoryImpl<T extends BaseEntity<String>, ID> implements Bas
     }
 
     @Override
-    @Transactional
     public <S extends T> S saveAndFlush(S entity) {
         S s = save(entity);
         em.flush();

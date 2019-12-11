@@ -651,8 +651,8 @@ public class ActivityController extends BaseController {
                                   @RequestParam(defaultValue = "0")int page,
                                   @RequestParam(defaultValue = "10")int size){
         Pageable pageable = new Pageable(page,size);
-        pageable.setSearchProperty("name");
-        pageable.setSearchValue(name);
+        pageable.setSearchKey(new String[]{"name"});
+        pageable.setSearchValue(new String[]{name});
         Page<Activity> activityPage = activityService.findAllForPage(pageable);
         JSONObject jsonObject = JsonUtils.getPage(activityPage);
         jsonResult.setData(jsonObject);

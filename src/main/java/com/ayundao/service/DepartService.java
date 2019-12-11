@@ -98,4 +98,17 @@ public interface DepartService {
      * @return
      */
     List<Depart> findbyIds(String[] departIds);
+
+    /**
+     * 根据部门名称查询
+     * @param val
+     * @return
+     */
+    List<Depart> findByName(String val);
+
+    /**
+     * 获取部门列表
+     * @return
+     */
+    List<Depart> findAll();
 }

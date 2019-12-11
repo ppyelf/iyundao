@@ -12,6 +12,8 @@ import com.ayundao.entity.EvaluationIndex;
 import com.ayundao.entity.User;
 import com.ayundao.service.EvaluationService;
 import com.ayundao.service.UserService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -291,9 +293,13 @@ public class EvaluationController extends BaseController {
      * @apiParam {String} year 年度
      * @apiParam {int} num 页数,默认0
      * @apiParam {int} size 页宽,默认10
+     * @apiParam {String} orderType 排序字段,0-科室(默认),1-分数
+     * @apiParam {String} direction 排序方向,asc-升序(默认),desc-降序
      * @apiParamExample {json} 请求示例:
      * /evaluation/sumList
      * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 801:科室排序异常,请设置ASC或者DESC</br>
+     *                                 802:orderType类型异常</br>
      * 601:status类型异常</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -309,8 +315,17 @@ public class EvaluationController extends BaseController {
     public JsonResult sumList(@RequestParam(defaultValue = "") String code,
                               @RequestParam(defaultValue = "") String year,
                               @RequestParam(defaultValue = "0") int num,
-                              @RequestParam(defaultValue = "10") int size) {
-        Page<JSONObject> page = evaluationService.getSumList(code, year, num, size);
+                              @RequestParam(defaultValue = "10") int size,
+                              @RequestParam(defaultValue = "0") int orderType,
+                              @RequestParam(defaultValue = "asc") String direction) {
+        if (orderType != 0 && orderType != 1) {
+            return jsonResult.failure(802, "orderType类型异常");
+        }
+        if (!direction.toLowerCase().equals("asc") && !direction.toLowerCase().equals("desc")) {
+            return JsonResult.failure(801, "科室排序异常,请设置ASC或者DESC");
+        }
+        String order = orderType == 0 ? "department "+direction : "score " + direction;
+        Page<JSONObject> page = evaluationService.getSumList(code, year, num, size, order);
         jsonResult.setData(page);
         return jsonResult;
     }
@@ -321,7 +336,7 @@ public class EvaluationController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 统计分页
      * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiParam {String} id 医德医风ID,必填
+     * @apiParam {String[]} ids 医德医风ID集合,必填
      * @apiParam {int} type 审核态度,1-同意(默认),2-拒绝
      * @apiParamExample {json} 请求示例:
      * /evaluation/sure
@@ -340,20 +355,20 @@ public class EvaluationController extends BaseController {
      * }
      */
     @PostMapping("/sure")
-    public JsonResult sure(String id,
+    public JsonResult sure(String[] ids,
                            @RequestParam(defaultValue = "1") int type) {
-        if (isBlank(id)) {
+        if (ids == null && ids.length > 0) {
             return JsonResult.failure(601, "必填参数不能为空");
         }
-        Evaluation evaluation = evaluationService.find(id);
-        if (evaluation == null) {
+        List<Evaluation> evaluations = evaluationService.findByIds(ids);
+        if (CollectionUtils.isEmpty(evaluations)) {
             return jsonResult.failure(603, "医德医风不存在");
         }
         if (type != 1 && type != 2) {
             return JsonResult.failure(602, "审核态度异常");
         }
         Evaluation.STATUS status = type == 1 ? Evaluation.STATUS.agree : Evaluation.STATUS.refuse;
-        evaluationService.sure(evaluation, status);
+        evaluationService.sure(evaluations, status);
         return JsonResult.success();
     }
     /**

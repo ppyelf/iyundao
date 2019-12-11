@@ -299,8 +299,8 @@ public class AssessmentController extends BaseController {
             return JsonResult.paramError();
         }
         Pageable pageable = new Pageable(page,size);
-        pageable.setSearchProperty(property);
-        pageable.setSearchValue(value);
+        pageable.setSearchKey(new String[]{property});
+        pageable.setSearchValue(new String[]{value});
         Page<Assessment> assessmentPage = assessmentService.findAssessByProperty(pageable);
         JSONObject object = JsonUtils.getPage(assessmentPage);
         jsonResult.setData(object);

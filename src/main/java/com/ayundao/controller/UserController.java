@@ -6,6 +6,7 @@ import com.ayundao.base.annotation.CurrentSubject;
 import com.ayundao.base.annotation.CurrentUser;
 import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
+import com.ayundao.base.utils.PinyinUtils;
 import com.ayundao.entity.*;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -113,7 +114,7 @@ public class UserController extends BaseController {
      * @apiVersion 1.0.0
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiDescription 用户搜索
-     * @apiParam {String} key 搜索条件
+     * @apiParam {String} key 搜索条件,值为name或者code
      * @apiParam {String} value 查询值
      * @apiParam {int} page 页数(默认:1)
      * @apiParam {int} size 长度(默认:10)
@@ -131,17 +132,31 @@ public class UserController extends BaseController {
      * }
      */
     @PostMapping("/search")
-    public JsonResult search(String key,
-                             String value,
+    public JsonResult search(@RequestParam(defaultValue = "code") String key,
+                             @RequestParam(defaultValue = "") String value,
                              @RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "10") int size) {
         if (StringUtils.isBlank(key)) {
             return JsonResult.paramError();
         }
+        if (!key.equals("name") && !key.equals("code")) {
+            return jsonResult.failure(800, "key值为name或者code");
+        }
         Pageable pageable = new Pageable(page, size);
-        pageable.setSearchProperty(key);
-        pageable.setSearchValue(value);
-        Page<User> userPage = userService.findByKey(pageable);
+        if (key.equals("name")) {
+            String val = "";
+            for (int i = 0; i < value.length(); i++) {
+                if (i == value.length()) {
+                    break;
+                }
+                val += !value.matches("[A-Za-z]")
+                        ? PinyinUtils.getFirst(value.substring(i, i + 1)) + "%" : value.substring(i, i + 1) + "%";
+            }
+            value = "%"+val.toLowerCase();
+        }
+        pageable.setSearchKey(new String[]{key});
+        pageable.setSearchValue(new String[]{value});
+        Page<User> userPage = userService.findByKey(key, value, pageable);
         if (CollectionUtils.isEmpty(userPage.getContent())) {
             return JsonResult.notFound("不存在此用户");
         }
@@ -279,7 +294,7 @@ public class UserController extends BaseController {
             if (type.ordinal() == userType) {
                 user.setUserType(type);
                 break;
-            } 
+            }
         }
         if (user.getUserType() == null) {
             return JsonResult.failure(602, "用户类型设置异常");
@@ -288,7 +303,7 @@ public class UserController extends BaseController {
         List<Permission> permissions = permissionService.findByIds(permissionIds);
         if (CollectionUtils.isEmpty(roles) || CollectionUtils.isEmpty(permissions)) {
             return JsonResult.failure(605, "账号必须分配角色,权限");
-        } 
+        }
         user.setRemark(remark);
         return userService.save(user, subject, departId, groupsId, roles, permissions, jsonResult);
     }
@@ -461,7 +476,7 @@ public class UserController extends BaseController {
             if (st.ordinal() == type) {
                 s.setSignType(st);
                 break;
-            } 
+            }
         }
         if (s.getSignType() == null) {
             return JsonResult.failure(603, "签到类型不能为空");

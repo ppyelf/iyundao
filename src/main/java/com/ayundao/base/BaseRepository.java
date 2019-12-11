@@ -1,23 +1,19 @@
 package com.ayundao.base;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @ClassName: BaseRepository
- * @project: ayundao
+ * @project: IYunDao
  * @author: 念
  * @Date: 2019/6/5 11:30
  * @Description: 基类 - 仓库
  * @Version: V1.1
  */
 @NoRepositoryBean
-@Scope(proxyMode = ScopedProxyMode.INTERFACES)
 public interface BaseRepository<T, ID> extends JpaRepositoryImplementation<T, ID> {
 
     T find(ID id);
@@ -26,13 +22,9 @@ public interface BaseRepository<T, ID> extends JpaRepositoryImplementation<T, ID
 
     List<T> findByIds(String[] ids);
 
-    List<T> findList();
-
-    List<T> findList(Pageable pageable);
-
     Page<T> findPage(Pageable pageable);
 
-    Page<T> fetchPage(Map<String, String> map, Pageable pageable);
+    Page<T> selectPage(String sql, String countSql, Pageable pageable);
 
     @Override
     <S extends T> S save(S entity);
@@ -43,10 +35,17 @@ public interface BaseRepository<T, ID> extends JpaRepositoryImplementation<T, ID
     @Override
     <S extends T> S saveAndFlush(S entity);
 
+    @Override
     void delete(T s);
 
+    @Override
     void deleteAll(Iterable<? extends T> entities);
 
+    /**
+     * 统计
+     * @return
+     */
+    @Override
     long count();
 
     boolean exists(ID id);

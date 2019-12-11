@@ -5,7 +5,6 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.entity.*;
 import com.ayundao.base.Page;
 import com.ayundao.base.Pageable;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public interface UserService {
      * 用户搜索
      * @return
      */
-    Page<User> findByKey(Pageable pageable);
+    Page<User> findByKey(String key, String value, Pageable pageable);
 
     /**
      * 根据ID获取实体信息

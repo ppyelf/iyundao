@@ -90,4 +90,14 @@ public class DepartServiceImpl implements DepartService {
         return departRepository.findByIds(departIds);
     }
 
+    @Override
+    public List<Depart> findByName(String val) {
+        return departRepository.findByName(val);
+    }
+
+    @Override
+    public List<Depart> findAll() {
+        return departRepository.findAll();
+    }
+
 }

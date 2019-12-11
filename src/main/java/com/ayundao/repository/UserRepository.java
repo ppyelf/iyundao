@@ -91,4 +91,22 @@ public interface UserRepository extends BaseRepository<User, String> {
      */
     @Query(value = "select * from t_user where CODE in ?1 order by field(CODE, ?1);", nativeQuery = true)
     List<User> findByCodes(String[] codes);
+
+    /**
+     * 根据编号和姓名获取实体信息
+     * @param value
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
+    @Query(value = "select u.* from t_user u where to_pinyin(u.NAME) like ?1 order by u.NAME limit ?2, ?3", nativeQuery = true)
+    List<User> getNameForPage(String value, int pageNumber, int pageSize);
+
+    /**
+     * 统计 - 根据编号和姓名获取实体信息
+     * @param value
+     * @return
+     */
+    @Query(value = "select ifnull(count(*), 0) from t_user u where to_pinyin(u.NAME) like ?1", nativeQuery = true)
+    long countNameForPage(String value);
 }

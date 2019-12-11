@@ -67,8 +67,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findByKey(Pageable pageable) {
-        return userRepository.findPage(pageable);
+    public Page<User> findByKey(String key, String value, Pageable pageable) {
+        List<User> list = userRepository.getNameForPage(value, pageable.getPageNumber(), pageable.getPageSize());
+        long count = userRepository.countNameForPage(value);
+        return key.equals("name") ? new Page<>(list, count, pageable) : userRepository.findPage(pageable);
     }
 
     @Override

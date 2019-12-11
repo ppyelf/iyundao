@@ -90,9 +90,10 @@ public interface EvaluationService {
      * @param year
      * @param num
      * @param size
+     * @param order
      * @return
      */
-    Page<JSONObject> getSumList(String code, String year, int num, int size);
+    Page<JSONObject> getSumList(String code, String year, int num, int size, String order);
 
     /**
      * 获取年份列表
@@ -133,7 +134,7 @@ public interface EvaluationService {
      * @param evaluation
      * @param status
      */
-    void sure(Evaluation evaluation, Evaluation.STATUS status);
+    void sure(List<Evaluation> evaluation, Evaluation.STATUS status);
 
     /**
      * 保存实体
@@ -141,4 +142,6 @@ public interface EvaluationService {
      * @return
      */
     Evaluation save(Evaluation e);
+
+    List<Evaluation> findByIds(String[] ids);
 }

@@ -95,4 +95,11 @@ public interface GroupsService {
      * @return
      */
     List<Groups> findByIds(String[] groupIds);
+
+    /**
+     * 根据名称查询支部信息
+     * @param val
+     * @return
+     */
+    Groups findByName(String val);
 }
