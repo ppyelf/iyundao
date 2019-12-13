@@ -109,4 +109,23 @@ public interface UserRepository extends BaseRepository<User, String> {
      */
     @Query(value = "select ifnull(count(*), 0) from t_user u where to_pinyin(u.NAME) like ?1", nativeQuery = true)
     long countNameForPage(String value);
+
+    /**
+     * 根据姓名和科室ID不为空查询实体信息
+     * @param userName
+     * @return
+     */
+    @Query(value = "select tu.* " +
+            "from t_user tu " +
+            "         left join t_user_relations tur on tu.ID = tur.USERID " +
+            "         left join t_depart td on tur.DEPARTID = td.ID " +
+            "where tu.NAME = ?1 and td.ID is not null", nativeQuery = true)
+    User findByNameAndGroupIdIsNotNull(String userName);
+
+    @Query(value = "select td.NAME " +
+            "from t_user tu " +
+            "         left join t_user_relations tur on tu.ID = tur.USERID " +
+            "         left join t_depart td on tur.DEPARTID = td.ID " +
+            "where tu.ID = ?1 group by td.NAME", nativeQuery = true)
+    String findUserDepart(String id);
 }

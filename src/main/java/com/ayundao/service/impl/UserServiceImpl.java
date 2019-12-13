@@ -224,4 +224,14 @@ public class UserServiceImpl implements UserService {
     public List<User> findByCodes(String[] codes) {
         return userRepository.findByCodes(codes);
     }
+
+    @Override
+    public User findByNameAndGroupIdIsNotNull(String userName) {
+        return userRepository.findByNameAndGroupIdIsNotNull(userName);
+    }
+
+    @Override
+    public String findUserDepart(String id) {
+        return userRepository.findUserDepart(id);
+    }
 }

@@ -19,11 +19,15 @@ import com.ayundao.service.EvaluationService;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.xwpf.usermodel.*;
 import org.hibernate.query.internal.NativeQueryImpl;
 import org.hibernate.transform.Transformers;
@@ -42,6 +46,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @ClassName: EvaluationServiceImpl
@@ -92,7 +98,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Evaluation save(String year, User user, EvaluationIndex ei, double score, String remark, String number, String patientName, User operator) {
+    public Evaluation save(String year, User user, EvaluationIndex ei, double score, String remark, User operator) {
         Evaluation e = new Evaluation();
         e.setOperator(new BaseComponent(operator.getCode(), operator.getName()));
         e.setUser(user);
@@ -100,21 +106,17 @@ public class EvaluationServiceImpl implements EvaluationService {
         e.setYear(year);
         e.setScore(score);
         e.setRemark(remark);
-        e.setNumber(number);
-        e.setPatientName(patientName);
         e.setStatus(Evaluation.STATUS.waiting);
         e.setSureTime(null);
         return evaluationRepository.save(e);
     }
 
     @Override
-    public Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, String indexId, int s, String currentSubjectId, int num, int size, String departId) {
+    public Page<JSONObject> getList(String startTime, String endTime, String code, String addSubjectId, String departId, String indexId, int s, int num, int size) {
         Pageable pageable = new Pageable(num, size);
         num = num == 0 ? 0 : num * size;
         code = "%" + code + "%";
-        subjectId = "%" + subjectId + "%";
         addSubjectId = "%" + addSubjectId + "%";
-        currentSubjectId = "%" + currentSubjectId + "%";
         indexId = "%" + indexId + "%";
         departId = "%" + departId + "%";
         int[] status = null;
@@ -128,8 +130,8 @@ public class EvaluationServiceImpl implements EvaluationService {
                 }
             }
         }
-        List<Map<String, Object>> list = evaluationRepository.getList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, num, size, indexId, departId);
-        long count = evaluationRepository.countList(startTime, endTime, code, subjectId, addSubjectId, status, currentSubjectId, indexId, departId);
+        List<Map<String, Object>> list = evaluationRepository.getList(startTime, endTime, code, addSubjectId, departId, indexId, status, num, size);
+        long count = evaluationRepository.countList(startTime, endTime, code, addSubjectId, departId, indexId, status);
         List<JSONObject> ll = new LinkedList<>();
         for (Map<String, Object> map : list) {
             ll.add(new JSONObject(map));
@@ -176,7 +178,7 @@ public class EvaluationServiceImpl implements EvaluationService {
                 "where te.YEAR like ?2 " +
                 "  and tu.CODE like ?1 " +
                 "group by te.USERID " +
-                "order by  "+order+" ";
+                "order by  " + order + " ";
         code = "%" + code + "%";
         year = "%" + year + "%";
         num = num == 0 ? 0 : num * size;
@@ -229,39 +231,27 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public JsonResult upload(MultipartFile file, JsonResult success) {
+    public JsonResult upload(MultipartFile file, User aUser, JsonResult success) {
         Workbook wb = ExcelUtils.getWorkBook(file);
         Sheet sheet = wb.getSheetAt(0);
+
+        List<EvaluationIndex> indexes = evaluationIndexRepository.findAll();
         JSONArray arr = new JSONArray();
-        String val = ExcelUtils.getCellValue(sheet.getRow(0).getCell(1)).toString();
-        String year = val;
-        if (StringUtils.isBlank(year)) {
-            return JsonResult.failure(606, "年份不能为空");
+        String val = ExcelUtils.getCellValue(sheet.getRow(0).getCell(0)).toString();
+        String year = "";
+        Pattern pattern = Pattern.compile("^(((?:19|20)\\d\\d)年(0[1-9]|1[0-2])月)(.*)$");
+        Matcher matcher = pattern.matcher(val);
+        if (matcher.find()) {
+            year = matcher.group(1).replace("年", "").substring(0, 6);
+        } else {
+            return JsonResult.failure(603, "第1行情输入正确的日期格式,如:2019年01月医德医风考评");
         }
         String[] codes = new String[sheet.getLastRowNum() - 1];
-        List<EvaluationIndex> indices = new LinkedList<>();
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
             if (sheet.getRow(i) == null) {
                 break;
             }
             codes[i - 2] = ExcelUtils.getCellValue(sheet.getRow(i).getCell(0)).toString();
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
-            for (EvaluationIndex.TYPE value : EvaluationIndex.TYPE.values()) {
-                if (value.getName().substring(0, 2).equals(val.substring(1, 3))) {
-                    EvaluationIndex evaluationIndex = evaluationIndexRepository.findByTypeAndName(value.ordinal(), val.substring(4));
-                    if (evaluationIndex == null) {
-                        return JsonResult.failure(602, "第" + (i + 1) + "行指标查询不存在");
-                    }
-                    indices.add(evaluationIndex);
-                    break;
-                }
-            }
-
-        }
-        val = ExcelUtils.getCellValue(sheet.getRow(0).getCell(3)).toString();
-        User aUser = userService.findByCode(val);
-        if (aUser == null) {
-            return JsonResult.failure(604, "录入人胸牌号不存在");
         }
         List<Evaluation> list = new ArrayList<>();
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
@@ -276,7 +266,17 @@ public class EvaluationServiceImpl implements EvaluationService {
                 return JsonResult.failure(601, "第" + (i + 1) + "行胸牌号为空或查询不存在");
             }
             e.setUser(user);
-            EvaluationIndex ei = indices.get(index);
+            EvaluationIndex ei = null;
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
+            for (EvaluationIndex evaluationIndex : indexes) {
+                if (evaluationIndex.getName().equals(val)) {
+                    ei = evaluationIndex;
+                    break;
+                }
+            }
+            if (ei == null) {
+                return JsonResult.failure(602, "第" + (i + 1) + "行指标查询不存在");
+            }
             e.setEvaluationIndex(ei);
             val = sheet.getRow(i).getCell(3).getNumericCellValue() + "";
             if (StringUtils.isBlank(val)) {
@@ -294,13 +294,8 @@ public class EvaluationServiceImpl implements EvaluationService {
             e.setRemark(val);
             e.setOperator(new BaseComponent(aUser.getCode(), aUser.getName()));
 
-            //设置病人
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(5)).toString();
-            e.setNumber(val);
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(6)).toString();
-            e.setPatientName(val);
-            e.setStatus(Evaluation.STATUS.waiting);
-            e.setSureTime(null);
+            e.setStatus(Evaluation.STATUS.agree);
+            e.setSureTime(TimeUtils.convertTime(new Date(), TimeUtils.yyyyMMddHHmmss));
             list.add(e);
         }
         for (Evaluation evaluation : list) {
@@ -320,14 +315,11 @@ public class EvaluationServiceImpl implements EvaluationService {
 
         //第一行
         Row row = sheet.createRow(0);
-        row.createCell(0).setCellValue("年份:");
-
-        //第二行
-        row.createCell(2).setCellValue("录入人员胸牌号:");
+        row.createCell(0).setCellValue("____年医德医风考评");
 
         //标题行
         row = sheet.createRow(1);
-        String[] names = new String[]{"胸牌号", "考评对象", "指标", "医德分", "备注", "病历号", "病人姓名"};
+        String[] names = new String[]{"胸牌号", "考评对象", "指标", "医德分", "备注"};
         List<EvaluationIndex> list = evaluationIndexRepository.getAllNames();
         String[] val = new String[list.size()];
         for (int j = 0; j < val.length; j++) {
@@ -337,10 +329,12 @@ public class EvaluationServiceImpl implements EvaluationService {
         for (int i = 0; i < names.length; i++) {
             row.createCell(i).setCellValue(names[i]);
             if (names[i].equals("指标")) {
-                ExcelUtils.setHSSFValidation(sheet, val, 2, 100, 2, 2);
+                ExcelUtils.setHSSFValidation(sheet, val, 2, 2, 2, 2);
             }
         }
         ExcelUtils.setCellStyle(wb);
+        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 4);
+        sheet.addMergedRegion(range);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         wb.write(os);
         InputStream is = new ByteArrayInputStream(os.toByteArray());
@@ -371,105 +365,157 @@ public class EvaluationServiceImpl implements EvaluationService {
     }
 
     @Override
-    public JsonResult export(String code, String year, HttpServletRequest req, HttpServletResponse resp) {
+    public JsonResult export(String code, HttpServletRequest req, HttpServletResponse resp) {
+        // 创建excel工作簿
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+
+        //第一行
+        List<Cell> cells = new ArrayList<>();
+        Row row = sheet.createRow(0);
+        row.setHeight((short) 700);
+        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 5);
+        sheet.addMergedRegion(range);
+        Cell cell = row.createCell(0);
+        cell.setCellValue("医德医风考核档案");
+        cells.add(row.getCell(0));
+
+        //第二行
+        range = new CellRangeAddress(1, 1, 0, 5);
+        sheet.addMergedRegion(range);
+        sheet.createRow(1).createCell(0).setCellValue("工作人员基本情况");
+        sheet.getRow(1).setHeight((short) 700);
+        cells.add(sheet.getRow(1).getCell(0));
+
+        //第三行
         User user = userService.findByCode(code);
         if (user == null) {
             return JsonResult.failure(602, "用户不存在");
         }
         UserInfo userInfo = userInfoService.findbyUserId(user.getId());
-        XWPFDocument doc = new XWPFDocument();
-        XWPFParagraph titleParagraph = doc.createParagraph();    //新建一个标题段落对象（就是一段文字）
-        titleParagraph.setAlignment(ParagraphAlignment.CENTER);//样式居中
-        XWPFRun titleFun = titleParagraph.createRun();    //创建文本对象
-        titleFun.setText("医务人员医德考评表"); //设置标题的名字
-        titleFun.setBold(true); //加粗
-        titleFun.setColor("000000");//设置颜色
-        titleFun.setFontSize(25);    //字体大小
-        titleFun.addBreak();    //换行
 
-        titleParagraph = doc.createParagraph();    //新建一个标题段落对象（就是一段文字）
-        titleParagraph.setAlignment(ParagraphAlignment.LEFT);//样式居中
-        titleFun = titleParagraph.createRun();
-        titleFun.setText("考核年度:" + year);
-        titleFun.setBold(true);
-        titleFun.setFontSize(12);
-        titleFun.addBreak();
+        int index = 0;
+        row = sheet.createRow(2);
+        row.createCell(index++).setCellValue("姓名");
+        row.createCell(index++).setCellValue(user.getName());
+        row.createCell(index++).setCellValue("性别");
+        row.createCell(index++).setCellValue(user.getSex() == 1 ? "女" : "男");
+        row.createCell(index++).setCellValue("出生年月");
+        row.createCell(index++).setCellValue(userInfo.getBirthday());
+        cells.add(row.getCell(0));
+        cells.add(row.getCell(2));
+        cells.add(row.getCell(4));
 
-        //表格
-        XWPFTable table = doc.createTable(3, 8);
-        CTTblPr tblPr = table.getCTTbl().getTblPr();
-        tblPr.getTblW().setType(STTblWidth.DXA);
-        tblPr.getTblW().setW(new BigInteger("9000"));
-        XWPFTableCell cell = null;
-        table.getRow(0).getCell(0).setText("姓名");
-        table.getRow(0).getCell(1).setText(user.getName());
-        table.getRow(0).getCell(2).setText("性别");
-        setCellWidthAndVAlign(table.getRow(0).getCell(2), 2);
-        table.getRow(0).getCell(3).setText(user.getSex() == 1 ? "女" : "男");
-        setCellWidthAndVAlign(table.getRow(0).getCell(3), 2);
-        table.getRow(0).getCell(4).setText("出生年月");
-        cell = table.getRow(0).getCell(5);
-        cell.setText(userInfo.getBirthday());
-        table.getRow(0).getCell(6).setText("岗位");
-        table.getRow(0).getCell(7).setText(userInfo.getPostType() == null ? "无" : userInfo.getPostType().getName());
-        setCellWidthAndVAlign(table.getRow(0).getCell(7), 4);
 
-        //第二行
-        table.getRow(1).getCell(0).setText("所在单位");
-        cell = table.getRow(1).getCell(1);
-        mergeCellsHorizontal(table, 1, 1, 3);
-        cell.setText(userInfo.getDepartment());
-        table.getRow(1).getCell(4).setText("职务");
-        table.getRow(1).getCell(5).setText(userInfo.getPost());
-        table.getRow(1).getCell(6).setText("职称");
-        table.getRow(1).getCell(7).setText(StringUtils.isBlank(userInfo.getTitle()) ? "无" : userInfo.getTitle());
-        setCellWidthAndVAlign(table.getRow(1).getCell(7), 4);
+        //第四行
+        index = 0;
+        row = sheet.createRow(3);
+        row.createCell(index++).setCellValue("岗位");
+        range = new CellRangeAddress(3, 3, 1, 5);
+        sheet.addMergedRegion(range);
+        row.createCell(index++).setCellValue(userInfo.getPostType() != null ? userInfo.getPostType().getName() : "暂无");
+        cells.add(row.getCell(0));
 
-        //第三行
-        table.getRow(2).getCtRow().addNewTrPr().addNewTrHeight().setVal(BigInteger.valueOf(6000));
-        cell = table.getRow(2).getCell(0);
-        cell.setText("个人评价");
-        setCellWidthAndVAlign(cell, 4);
-        List<Map<String, Object>> list = evaluationRepository.getEvaluationByUserIdAndYear(user.getCode(), year);
+        //第五行
+        index = 0;
+        row = sheet.createRow(4);
+        row.createCell(index++).setCellValue("职务");
+        row.createCell(index++);
+        row.createCell(index++);
+        sheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 2));
+        row.getCell(1).setCellValue(userInfo.getPost());
+        row.createCell(index++).setCellValue("职称");
+        row.createCell(index++);
+        row.createCell(index++);
+        sheet.addMergedRegion(new CellRangeAddress(4, 4, 4, 5));
+        row.getCell(4).setCellValue(userInfo.getTitle());
+        cells.add(row.getCell(0));
+        cells.add(row.getCell(3));
 
-        cell = table.getRow(2).getCell(1);
-        mergeCellsHorizontal(table, 2, 1, 7);
-        cell.setVerticalAlignment(XWPFTableCell.XWPFVertAlign.TOP);
-        XWPFParagraph para = cell.addParagraph();
-        para.setAlignment(ParagraphAlignment.LEFT);//样式居中
-        String val = "";
-        double score = 0;
-        XWPFRun run = para.createRun();
-        for (Map<String, Object> map : list) {
-            if (StringUtils.isBlank(val)) {
-                val = map.get("year").toString();
-                run.setText(val + "年度:");
-            }
-            run.addBreak();
-            run.addTab();
-            run.setText(map.get("type").toString());
-            run.addTab();
-            run.setText(map.get("name").toString());
-            run.addTab();
-            run.setText("得分:" + map.get("score").toString());
+        //第六行
+        index = 0;
+        row = sheet.createRow(5);
+        row.createCell(index++).setCellValue("所在单位");
+        row.createCell(index);
+        range = new CellRangeAddress(5, 5, 1, 5);
+        sheet.addMergedRegion(range);
+        row.getCell(index).setCellValue(userService.findUserDepart(user.getId()));
+        cells.add(row.getCell(0));
+
+        //第七行
+        row = sheet.createRow(6);
+        row.createCell(0).setCellValue("医德医风考评汇总表");
+        range = new CellRangeAddress(6, 6, 0, 5);
+        sheet.addMergedRegion(range);
+        cells.add(row.getCell(0));
+
+        //第八行 年份    得分	加分情况	减分情况	备注	总分
+        index = 0;
+        row = sheet.createRow(7);
+        row.createCell(index++).setCellValue("年份");
+        row.createCell(index++).setCellValue("指标类型");
+        row.createCell(index++).setCellValue("指标名称");
+        row.createCell(index++).setCellValue("得分");
+        row.createCell(index++).setCellValue("备注");
+        row.createCell(index++).setCellValue("总分");
+        index=0;
+        cells.add(row.getCell(index++));
+        cells.add(row.getCell(index++));
+        cells.add(row.getCell(index++));
+        cells.add(row.getCell(index++));
+        cells.add(row.getCell(index++));
+        cells.add(row.getCell(index++));
+
+        List<Map<String, Object>> list = evaluationRepository.getEvaluationByUserIdAndYear(user.getCode());
+        String year = "";
+        int start = 8;
+        double score = 0.0;
+        for (int i = 8; i < list.size() + 8; i++) {
+            index = 0;
+            Map<String, Object> map = list.get(i - 8);
+            row = sheet.createRow(i);
+            row.createCell(index++).setCellValue(map.get("year").toString().substring(0, 4));
+            row.createCell(index++).setCellValue(map.get("type").toString());
+            row.createCell(index++).setCellValue(map.get("name").toString());
+            row.createCell(index++).setCellValue(map.get("score").toString());
+            row.createCell(index++).setCellValue(StringUtils.isBlank(map.get("remark").toString()) ? "暂无" : map.get("remark").toString());
             score += Double.parseDouble(map.get("score").toString());
+            row.createCell(index++).setCellValue(score);
+            if (StringUtils.isBlank(year)) {
+                year = sheet.getRow(8).getCell(0).getStringCellValue();
+            }
+            if (!sheet.getRow(i).getCell(0).getStringCellValue().equals(year)
+            || list.size() == 1 || i == (list.size() + 7)) {
+                if (i == start) {
+                    sheet.getRow(start).getCell(5).setCellValue(score+80);
+                    continue;
+                }
+                range = new CellRangeAddress(start, i, 0, 0);
+                sheet.addMergedRegion(range);
+                int rowLine = start == 8 ? start : start - 1;
+                sheet.getRow(rowLine).getCell(0).setCellValue(year);
+                year = map.get("year").toString();
+                range = new CellRangeAddress(start, i, 5, 5);
+                sheet.addMergedRegion(range);
+                sheet.getRow(start).getCell(5).setCellValue(score+80);
+                score = 0.0;
+                start = i + 1;
+            }
         }
-        para = cell.addParagraph();
-        para.setAlignment(ParagraphAlignment.RIGHT);
-        run = para.createRun();
-        run.addBreak();
-        run.setText("总分:"+score);
 
-        cell.setParagraph(para.getBody().getParagraphs().get(0));
+        ExcelUtils.setCellStyle(wb);
+        //批量设置加粗的cell
+        ExcelUtils.setTitleStyle(cells, wb);
+
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            doc.write(os);
-            ExcelUtils.createFile(user.getName() + ".doc", resp, os);
+            wb.write(os);
+            ExcelUtils.createFile(user.getName() + ".xls", resp, os);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                doc.close();
+                wb.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -501,26 +547,5 @@ public class EvaluationServiceImpl implements EvaluationService {
         return evaluationRepository.findByIds(ids);
     }
 
-    /**
-     * @Description: 设置列宽和垂直对齐方式
-     */
-    private void setCellWidthAndVAlign(XWPFTableCell cell, int width) {
-        CTTcPr tcpr = cell.getCTTc().addNewTcPr();
-        CTTblWidth w = tcpr.addNewTcW();
-        w.setType(STTblWidth.DXA);
-        w.setW(BigInteger.valueOf(width * 360));
-    }
 
-    private void mergeCellsHorizontal(XWPFTable table, int row, int fromCell, int toCell) {
-        for (int cellIndex = fromCell; cellIndex <= toCell; cellIndex++) {
-            XWPFTableCell cell = table.getRow(row).getCell(cellIndex);
-            if (cellIndex == fromCell) {
-                // The first merged cell is set with RESTART merge value
-                cell.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.RESTART);
-            } else {
-                // Cells which join (merge) the first one, are set with CONTINUE
-                cell.getCTTc().addNewTcPr().addNewHMerge().setVal(STMerge.CONTINUE);
-            }
-        }
-    }
 }

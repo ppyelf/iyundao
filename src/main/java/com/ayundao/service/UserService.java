@@ -128,4 +128,18 @@ public interface UserService {
      * @return
      */
     List<User> findByCodes(String[] codes);
+
+    /**
+     * 根据姓名和科室ID不为空查询实体信息
+     * @param userName
+     * @return
+     */
+    User findByNameAndGroupIdIsNotNull(String userName);
+
+    /**
+     * 获取用户所在部门的名称
+     * @param id
+     * @return
+     */
+    String findUserDepart(String id);
 }

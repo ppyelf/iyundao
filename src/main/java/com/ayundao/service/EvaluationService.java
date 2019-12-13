@@ -52,12 +52,10 @@ public interface EvaluationService {
      * @param ei
      * @param score
      * @param remark
-     * @param number
-     * @param patientName
      * @param operator
      * @return
      */
-    Evaluation save(String year, User user, EvaluationIndex ei, double score, String remark, String number, String patientName, User operator);
+    Evaluation save(String year, User user, EvaluationIndex ei, double score, String remark, User operator);
 
     /**
      * 获取待审核考评列表
@@ -65,16 +63,14 @@ public interface EvaluationService {
      * @param startTime
      * @param endTime
      * @param code
-     * @param subjectId
      * @param addSubjectId
      * @param indexId
      * @param status
-     * @param currentSubjectId
      * @param num
      * @param size
      * @param departId
      */
-    Page<JSONObject> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, String indexId, int status, String currentSubjectId, int num, int size, String departId);
+    Page<JSONObject> getList(String startTime, String endTime, String code, String addSubjectId, String departId, String indexId, int status, int num, int size);
 
 
     /**
@@ -115,19 +111,18 @@ public interface EvaluationService {
      * @param success
      * @return
      */
-    JsonResult upload(MultipartFile file, JsonResult success);
+    JsonResult upload(MultipartFile file, User user, JsonResult success);
 
     void downloadEvaluation(HttpServletRequest req, HttpServletResponse resp) throws IOException;
 
     /**
      * 导出个人医德医风
      * @param code
-     * @param year
      * @param req
      * @param resp
      * @return
      */
-    JsonResult export(String code, String year, HttpServletRequest req, HttpServletResponse resp);
+    JsonResult export(String code, HttpServletRequest req, HttpServletResponse resp);
 
     /**
      * 审核医德医风

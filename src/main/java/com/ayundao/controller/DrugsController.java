@@ -53,7 +53,6 @@ public class DrugsController extends BaseController {
     public JsonResult downloadDrugs(HttpServletRequest req, HttpServletResponse resp) {
         try {
             FileUtils.download(ResourceUtils.getFile("classpath:static/excel/药品.xls").getAbsolutePath(), req, resp);
-            return JsonResult.success();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -74,7 +73,6 @@ public class DrugsController extends BaseController {
      * 602:第1行中医院不存在,请输入正确的机构名称</br>
      * 603:第2行情输入正确的日期格式,如:2019年09月药品使用预警（医生约谈）签到表</br>
      * 604:第2行胸牌号或姓名为空,查询不存在</br>
-     * 605:第2行的药品名称不能为空</br>
      * 606:第2行的备注超过100个字符</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
@@ -88,7 +86,7 @@ public class DrugsController extends BaseController {
      */
     @PostMapping("/upload")
     public JsonResult uploadDrugs(MultipartFile file) {
-        if (file.isEmpty()) {
+        if (file ==null || file.isEmpty()) {
             return JsonResult.failure(601, "导入到文件不能为空");
         }
         return drugsService.upload(file, jsonResult);

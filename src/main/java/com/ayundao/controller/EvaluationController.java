@@ -77,8 +77,6 @@ public class EvaluationController extends BaseController {
      * @apiParam {String} evaluationIndexId 考评指标ID,必填
      * @apiParam {double} score 医德分,必填
      * @apiParam {String} remark 描述
-     * @apiParam {String} number 病床号
-     * @apiParam {String} patientName 病人姓名
      * @apiParamExample {json} 请求示例:
      * /evaluation/add
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -103,8 +101,6 @@ public class EvaluationController extends BaseController {
                           String evaluationIndexId,
                           @RequestParam(defaultValue = "0.0") double score,
                           String remark,
-                          String number,
-                          String patientName,
                           @CurrentUser User operator) {
         if (isBlank(userId, year, evaluationIndexId)) {
             return JsonResult.failure(601, "必填参数不能为空");
@@ -123,7 +119,7 @@ public class EvaluationController extends BaseController {
                 || score == 0.0) {
             return JsonResult.failure(604, "分数设置异常,该指标分数必须在" + ei.getMin() + "到" + ei.getMax() + "之间");
         }
-        Evaluation evaluation = evaluationService.save(year, user, ei, score, remark, number, patientName, operator);
+        Evaluation evaluation = evaluationService.save(year, user, ei, score, remark, operator);
         jsonResult.setData(JsonUtils.getJson(evaluation));
         return jsonResult;
     }
@@ -232,20 +228,21 @@ public class EvaluationController extends BaseController {
      * @apiVersion 1.0.0
      * @apiDescription 分页
      * @apiHeader {String} IYunDao-AssessToken token验证
-     * @apiParam {String} startTime 开始时间
-     * @apiParam {String} endTime 结束时间
+     * @apiParam {String} startTime 开始时间, 必填
+     * @apiParam {String} endTime 结束时间, 必填
      * @apiParam {String} code 胸牌号
-     * @apiParam {String} subjectId 所属科室ID
-     * @apiParam {String} addSubjectId 录入科室ID
+     * @apiParam {String} addSubjectId 所属科室ID
+     * @apiParam {String} departId 录入科室ID
      * @apiParam {String} indexId 指标ID
      * @apiParam {int} status 审核状态,-1-全部(默认),参见/evaluation/statusList
-     * @apiParam {String} currentSubjectId 当前机构
      * @apiParam {int} num 页数,默认0
      * @apiParam {int} size 页宽,默认10
      * @apiParamExample {json} 请求示例:
      * /evaluation/list
      * @apiSuccess (200) {String} code 200:成功</br>
      * 601:status类型异常</br>
+     * 800:必填参数不能为空</br>
+     * 801:时间格式为:201901</br>
      * @apiSuccess (200) {String} message 信息
      * @apiSuccess (200) {String} data 返回用户信息
      * @apiSuccessExample {json} 返回样例:
@@ -260,14 +257,15 @@ public class EvaluationController extends BaseController {
     public JsonResult examines(@RequestParam(defaultValue = "") String startTime,
                                @RequestParam(defaultValue = "") String endTime,
                                @RequestParam(defaultValue = "") String code,
-                               @RequestParam(defaultValue = "") String subjectId,
                                @RequestParam(defaultValue = "") String addSubjectId,
                                @RequestParam(defaultValue = "") String indexId,
-                               @RequestParam(defaultValue = "-1") int status,
-                               @RequestParam(defaultValue = "") String currentSubjectId,
                                @RequestParam(defaultValue = "") String departId,
+                               @RequestParam(defaultValue = "-1") int status,
                                @RequestParam(defaultValue = "0") int num,
                                @RequestParam(defaultValue = "10") int size) {
+        if (isBlank(startTime, endTime)) {
+            return jsonResult.failure(800, "必填参数不能为空");
+        }
         int s = status == -1 ? -1 : -2;
         for (Evaluation.STATUS value : Evaluation.STATUS.values()) {
             if (value.ordinal() == status) {
@@ -275,10 +273,13 @@ public class EvaluationController extends BaseController {
                 break;
             }
         }
+        if (startTime.length() > 6 || endTime.length() > 6) {
+            return JsonResult.failure(801, "时间格式为:201901");
+        }
         if (s == -2 && s != -1) {
             return JsonResult.failure(601, "status类型异常");
         }
-        Page<JSONObject> page = evaluationService.getList(startTime, endTime, code, subjectId, addSubjectId, indexId, s, currentSubjectId, num, size, departId);
+        Page<JSONObject> page = evaluationService.getList(startTime, endTime, code, addSubjectId, departId, indexId, s, num, size);
         jsonResult.setData(page);
         return jsonResult;
     }
@@ -431,6 +432,7 @@ public class EvaluationController extends BaseController {
     public JsonResult download(HttpServletRequest req, HttpServletResponse resp) {
         try {
             evaluationService.downloadEvaluation(req, resp);
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -463,11 +465,11 @@ public class EvaluationController extends BaseController {
      * }
      */
     @PostMapping("/upload")
-    public JsonResult upload(MultipartFile file) {
+    public JsonResult upload(MultipartFile file, @CurrentUser User user) {
         if (file == null) {
             return JsonResult.failure(601, "导入到文件不能为空");
         }
-        return evaluationService.upload(file, JsonResult.success());
+        return evaluationService.upload(file, user, JsonResult.success());
     }
 
     /**
@@ -477,7 +479,6 @@ public class EvaluationController extends BaseController {
      * @apiDescription 导出个人医德医风
      * @apiHeader {String} IYunDao-AssessToken token验证
      * @apiParam {String} code 用户code,必填
-     * @apiParam {String} year 年份,必填
      * @apiParamExample {json} 请求示例:
      * /evaluation/export
      * @apiSuccess (200) {String} code 200:成功</br>
@@ -493,10 +494,10 @@ public class EvaluationController extends BaseController {
      * }
      */
     @GetMapping("/export")
-    public JsonResult export(String code, String year, HttpServletRequest req, HttpServletResponse resp) {
-        if (isBlank(code, year)) {
+    public JsonResult export(String code, HttpServletRequest req, HttpServletResponse resp) {
+        if (isBlank(code)) {
             return jsonResult.failure(601, "必填参数不能为空");
         }
-        return evaluationService.export(code, year, req, resp);
+        return evaluationService.export(code, req, resp);
     }
 }

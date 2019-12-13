@@ -369,9 +369,11 @@ public class DepartController extends BaseController {
     }
     
     private JSONObject convertJson(Depart depart) {
-        JSONObject json = new JSONObject(JsonUtils.getJson(depart));
+        JSONObject json = new JSONObject();
         JSONObject subject = new JSONObject();
         json.put("id", depart.getId());
+        json.put("name", depart.getName());
+        json.put("code", depart.getCode());
         subject.put("id", depart.getSubject().getId());
         subject.put("name", depart.getSubject().getName());
         subject.put("code", depart.getSubject().getCode());

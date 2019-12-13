@@ -6,7 +6,9 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.RegionUtil;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,7 +61,6 @@ public class ExcelUtils {
         for (int i = 0; i < excels.size(); i++) {
             sheet.setColumnWidth((short) i, (short) (50 * 60));
         }
-
         // 创建第一行，并设置其单元格格式
         HSSFRow row = sheet.createRow((short) 0);
         row.setHeight((short) 500);
@@ -85,13 +86,32 @@ public class ExcelUtils {
     }
 
     public static HSSFSheet setHSSFValidation(HSSFSheet sheet, String[] textlist, int firstRow, int endRow, int firstCol, int endCol) {
+        HSSFSheet hidden = sheet.getWorkbook().createSheet("hidden");
+        HSSFCell cell = null;
+        for (int i = 0, length = textlist.length; i < length; i++) {
+            String name = textlist[i];
+            HSSFRow row = hidden.createRow(i);
+            cell = row.createCell(0);
+            cell.setCellValue(name);
+        }
+
+        Name namedCell = sheet.getWorkbook().createName();
+        namedCell.setNameName("hidden");
+        namedCell.setRefersToFormula("hidden!$A$1:$A$" + textlist.length);
+        //加载数据,将名称为hidden的
+        DVConstraint constraint = DVConstraint.createFormulaListConstraint("hidden");
+
         // 设置数据有效性加载在哪个单元格上,四个参数分别是：起始行、终止行、起始列、终止列
-        CellRangeAddressList regions = new CellRangeAddressList(firstRow, endRow, firstCol, endCol);
-        // 加载下拉列表内容
-        DVConstraint constraint = DVConstraint.createExplicitListConstraint(textlist);
-        // 数据有效性对象
-        HSSFDataValidation data_validation_list = new HSSFDataValidation(regions, constraint);
-        sheet.addValidationData(data_validation_list);
+        CellRangeAddressList addressList = new CellRangeAddressList(firstRow, endRow, firstCol,
+                endCol);
+        HSSFDataValidation validation = new HSSFDataValidation(addressList, constraint);
+
+        //将第二个sheet设置为隐藏
+        sheet.getWorkbook().setSheetHidden(1, true);
+
+        if (null != validation) {
+            sheet.addValidationData(validation);
+        }
         return sheet;
     }
 
@@ -154,7 +174,7 @@ public class ExcelUtils {
             //获取excel文件的io流
             InputStream is = file.getInputStream();
             //根据文件后缀名不同(xls和xlsx)获得不同的Workbook实现类对象
-            if (fileName.endsWith("xls")) {
+            if (fileName.toLowerCase().endsWith("xls")) {
                 //2003
                 workbook = new HSSFWorkbook(is);
             }
@@ -241,17 +261,46 @@ public class ExcelUtils {
     public static void setCellStyle(HSSFWorkbook wb) {
         HSSFCellStyle cs = wb.createCellStyle();
         HSSFFont f = wb.createFont();
-        f.setFontHeightInPoints((short) 10);
-        f.setFontName("宋体");
-        f.setBold(true);
+        f.setFontHeightInPoints((short) 11);
+        f.setFontName("黑体");
         cs.setFont(f);
         cs.setAlignment(HorizontalAlignment.CENTER);// 水平居中
         cs.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
         cs.setWrapText(true);//自动换行
+        cs.setBorderBottom(BorderStyle.THIN); //下边框    
+        cs.setBorderLeft( BorderStyle.THIN);//左边框    
+        cs.setBorderTop( BorderStyle.THIN);//上边框    
+        cs.setBorderRight( BorderStyle.THIN);//右边框 
         for (Row cells : wb.getSheetAt(0)) {
             for (Cell cell : cells) {
                 cell.setCellStyle(cs);
             }
+        }
+        Sheet sheet = wb.getSheetAt(0);
+        for (CellRangeAddress mergedRegion : sheet.getMergedRegions()) {
+            RegionUtil.setBorderBottom(BorderStyle.THIN, mergedRegion, sheet);
+            RegionUtil.setBorderLeft(BorderStyle.THIN, mergedRegion, sheet);
+            RegionUtil.setBorderRight(BorderStyle.THIN, mergedRegion, sheet);
+            RegionUtil.setBorderTop(BorderStyle.THIN, mergedRegion, sheet);
+        }
+    }
+
+    public static void setTitleStyle(List<Cell> cells, HSSFWorkbook wb) {
+        HSSFCellStyle cs = wb.createCellStyle();
+        HSSFFont f = wb.createFont();
+        f.setFontHeightInPoints((short) 12);
+        f.setFontName("黑体");
+        f.setBold(true);
+        cs.setFont(f);
+        cs.setAlignment(HorizontalAlignment.CENTER);// 水平居中
+        cs.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
+        cs.setBorderBottom(BorderStyle.THIN); //下边框
+        cs.setBorderLeft( BorderStyle.THIN);//左边框
+        cs.setBorderTop( BorderStyle.THIN);//上边框
+        cs.setBorderRight( BorderStyle.THIN);//右边框
+        wb.getSheetAt(0).autoSizeColumn(1, true);
+        for (Cell c : cells) {
+            c.setCellStyle(cs);
         }
     }
 
@@ -261,7 +310,7 @@ public class ExcelUtils {
         // 设置response参数
         response.reset();
         response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename="+ new String((fileName).getBytes(), "iso-8859-1"));
+        response.setHeader("Content-Disposition", "attachment;filename=" + new String((fileName).getBytes(), "iso-8859-1"));
         ServletOutputStream out = response.getOutputStream();
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;

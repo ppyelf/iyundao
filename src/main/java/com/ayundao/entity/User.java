@@ -182,7 +182,7 @@ public class User extends BaseEntity<String> {
     private Set<Spirit> spirit;
 
     public static void main(String[] args) {
-        for (int i = 0; i < 1313; i++) {
+        for (int i = 0; i < 20; i++) {
             System.out.println(UUID.randomUUID().toString().replace("-", ""));
         }
     }

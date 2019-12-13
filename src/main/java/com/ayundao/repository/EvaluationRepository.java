@@ -42,23 +42,21 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
 
     /**
      * 获取待审核考核列表
-     *
-     * @param startTime
-     * @param endTime
-     * @param code
-     * @param subjectId
-     * @param addSubjectId
-     * @param status
-     * @param currentSubjectId
-     * @param num
-     * @param size
-     * @param departId
+     * @param startTime 1
+     * @param endTime 2
+     * @param code 3
+     * @param subjectId 4
+     * @param departId 5
+     * @param indexId 6
+     * @param status 7
+     * @param num 8
+     * @param size 9
      * @return
      */
     @Query(value = "select te.ID                                                                           id, " +
             "       user.code                                                                       userCode, " +
             "       user.name                                                                       userName, " +
-            "       tei.ID indexId, " +
+            "       tei.ID                                                                          indexId, " +
             "       tei.NAME                                                                        indexName, " +
             "       case when tei.TYPE = 0 then '加分指标' when tei.TYPE = 1 then '减分指标' else '一票否' end type, " +
             "       te.SCORE                                                                        score, " +
@@ -67,72 +65,67 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "       te.CREATEDATE                                                                   operatorTime, " +
             "       case when te.STATUS = 0 then '等待中' when te.STATUS = 1 then '同意' else '拒绝' end   status, " +
             "       te.SURETIME                                                                     sureTime, " +
-            "       te.REMARK                                                                       remark, " +
-            "       te.NUMBER                                                                       number, " +
-            "       te.PATIENTNAME                                                                  patientName " +
+            "       te.REMARK                                                                       remark " +
             "from t_evaluation te " +
             "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, ifnull(tg.NAME, td.NAME) sname " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, td.NAME sname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
-            "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
             "                             left join t_depart td on td.ID = tur.DEPARTID " +
             "                    where tu.CODE like ?3 " +
-            "                      and (tg.ID like ?4 or tg.ID like ?7 or td.ID like ?4 or td.ID like ?7)) user " +
+            "                      and td.ID like ?4) user " +
             "                   on user.id = te.USERID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, ifnull(tg.NAME, td.NAME) sname " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, ifnull(td.NAME, ts.NAME) sname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
-            "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
+            "                             left join t_subject ts on tur.SUBJECTID = ts.ID " +
             "                             left join t_depart td on tur.DEPARTID = td.ID " +
-            "                    where tg.ID like ?5 " +
-            "                       or td.ID like ?11) operator on operator.code = te.USERCODE " +
-            "where (te.CREATEDATE between ?1 and ?2) " +
-            "  and te.STATUS in (?6) " +
-            "  and te.EVALUATIONINDEXID like ?10 " +
+            "                    where td.ID like ?5) operator on operator.code = te.USERCODE " +
+            "where (te.YEAR between ?1 and ?2) " +
+            "  and te.STATUS in (?7) " +
+            "  and te.EVALUATIONINDEXID like ?6 " +
             "  and user.code is not null " +
             "  and user.name is not null " +
-            "  order by te.CREATEDATE asc " +
-            "  limit ?8, ?9 ", nativeQuery = true)
-    List<Map<String, Object>> getList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, int num, int size, String indexId, String departId);
+            "  and operator.name is not null " +
+            "order by te.CREATEDATE asc " +
+            "limit ?8, ?9", nativeQuery = true)
+    List<Map<String, Object>> getList(String startTime, String endTime, String code, String subjectId, String departId, String indexId, int[] status, int num, int size);
 
     /**
      * 统计列表
-     *
-     * @param startTime
-     * @param endTime
-     * @param code
-     * @param subjectId
-     * @param addSubjectId
-     * @param status
-     * @param currentSubjectId
-     * @param departId
+     * @param startTime 1
+     * @param endTime 2
+     * @param code 3
+     * @param subjectId 4
+     * @param departId 5
+     * @param indexId 6
+     * @param status 7
      * @return
      */
     @Query(value = "select ifnull(count(te.ID), 0) count " +
             "from t_evaluation te " +
             "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, ifnull(tg.NAME, td.NAME) sname " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, td.NAME sname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
-            "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
             "                             left join t_depart td on td.ID = tur.DEPARTID " +
             "                    where tu.CODE like ?3 " +
-            "                      and (tg.ID like ?4 or tg.ID like ?7 or td.ID like ?4 or td.ID like ?7)) user on user.id = te.USERID " +
-            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, tg.NAME gname, td.NAME dname " +
+            "                      and td.ID like ?4) user " +
+            "                   on user.id = te.USERID " +
+            "         left join (select tu.ID id, tu.CODE code, tu.NAME name, ifnull(td.NAME, ts.NAME) sname " +
             "                    from t_user tu " +
             "                             left join t_user_relations tur on tur.USERID = tu.ID " +
-            "                             left join t_groups tg on tur.GROUPSID = tg.ID " +
+            "                             left join t_subject ts on tur.SUBJECTID = ts.ID " +
             "                             left join t_depart td on tur.DEPARTID = td.ID " +
-            "                    where tg.ID like ?5 " +
-            "                       or td.ID like ?9) operator on operator.code = te.USERCODE " +
-            "where (te.CREATEDATE between ?1 and ?2) " +
-            "  and te.STATUS in (?6) " +
-            "  and te.EVALUATIONINDEXID like ?8 " +
+            "                    where td.ID like ?5) operator on operator.code = te.USERCODE " +
+            "where (te.YEAR between ?1 and ?2) " +
+            "  and te.STATUS in (?7) " +
+            "  and te.EVALUATIONINDEXID like ?6 " +
             "  and user.code is not null " +
             "  and user.name is not null " +
+            "  and operator.name is not null " +
             "order by te.CREATEDATE asc", nativeQuery = true)
-    long countList(String startTime, String endTime, String code, String subjectId, String addSubjectId, int[] status, String currentSubjectId, String indexId, String departId);
+    long countList(String startTime, String endTime, String code, String subjectId, String departId, String indexId, int[] status);
 
     /**
      * 查询统计分页
@@ -230,27 +223,26 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
     /**
      * 获取个人年度的医德医风
      *
-     * @param id
-     * @param year
+     * @param code
      * @return
      */
     @Query(value = "select te.YEAR                year, " +
             "       case " +
             "           when tei.TYPE = 0 then '加分指标' " +
             "           when tei.TYPE = 1 then '减分指标' " +
-            "           else '一票否决' " +
-            "           end                type, " +
+            "           else '一票否决' end    type, " +
             "       tei.NAME               name, " +
             "       sum(case " +
             "               when tei.TYPE = 0 then te.SCORE " +
-            "               when tei.TYPE = 1 then -te.SCORE " +
-            "               else -999 end) score " +
+            "               when tei.TYPE = 1 then te.SCORE " +
+            "               else -999 end) score , " +
+            "       te.REMARK remark " +
             "from t_evaluation te " +
             "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
             "         left join t_user tu on te.USERID = tu.ID " +
             "where tu.CODE = ?1 " +
-            "  and te.YEAR = ?2 " +
             "  and te.STATUS = 1 " +
-            "group by name", nativeQuery = true)
-    List<Map<String, Object>> getEvaluationByUserIdAndYear(String id, String year);
+            "group by name, year " +
+            "order by year asc", nativeQuery = true)
+    List<Map<String, Object>> getEvaluationByUserIdAndYear(String code);
 }

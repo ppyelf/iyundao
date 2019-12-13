@@ -75,24 +75,23 @@ public class DrugsServiceImpl implements DrugsService {
         }
         for (int i = 3; i <= sheet.getLastRowNum(); i++) {
             Drugs d = new Drugs();
-            String userCode = ExcelUtils.getCellValue(sheet.getRow(i).getCell(0 )).toString();
-            String userName = ExcelUtils.getCellValue(sheet.getRow(i).getCell(1 )).toString();
-            User user = userService.findByCode(userCode);
-            if (StringUtils.isBlank(userCode) || user == null || !user.getName().equals(userName)) {
-                return JsonResult.failure(604, "第" + (i + 1) + "行胸牌号或姓名为空,查询不存在");
+            String userName = ExcelUtils.getCellValue(sheet.getRow(i).getCell(0 )).toString();
+            User user = userService.findByNameAndGroupIdIsNotNull(userName);
+            if ( user == null || !user.getName().equals(userName)) {
+                return JsonResult.failure(604, "第" + (i + 1) + "行姓名为空,查询不存在");
             }
             d.setUser(new BaseComponent(user.getCode(), user.getName()));
             d.setSubject(new BaseComponent(subject.getCode(), subject.getName()));
             //年份
             d.setYear(time.replace("年", "").replace("月", ""));
             //药品名称
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(1)).toString();
             if (StringUtils.isBlank(val)) {
                 return JsonResult.failure(605, "第" + (i + 1) + "行的药品名称不能为空");
             }
             d.setName(val);
             //备注
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(3)).toString();
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
             if (val.length() > 100) {
                 return JsonResult.failure(606, "第" + (i + 1) + "行的备注超过100个字符");
             }

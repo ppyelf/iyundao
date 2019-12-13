@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 80
   salt: 45a1d914886d4a92b6835a181b2a20d8
   upload: d:\upload\
   token:

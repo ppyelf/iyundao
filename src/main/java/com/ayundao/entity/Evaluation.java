@@ -22,7 +22,7 @@ public class Evaluation extends BaseEntity<String> {
     /**
      * 年度
      */
-    @Column(name = "YEAR", length = 4, nullable = false)
+    @Column(name = "YEAR", length = 6, nullable = false)
     private String year;
 
     /**
@@ -59,18 +59,6 @@ public class Evaluation extends BaseEntity<String> {
             @AttributeOverride(name = "name", column = @Column(name = "USERNAME"))
     })
     private BaseComponent operator;
-
-    /**
-     * 病历号
-     */
-    @Column(name = "NUMBER", length = 10)
-    private String number;
-
-    /**
-     * 病人姓名
-     */
-    @Column(name = "PATIENTNAME", length = 20)
-    private String patientName;
 
     /**
      * 党办审核
@@ -137,22 +125,6 @@ public class Evaluation extends BaseEntity<String> {
 
     public void setOperator(BaseComponent operator) {
         this.operator = operator;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public String getPatientName() {
-        return patientName;
-    }
-
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
     }
 
     public STATUS getStatus() {
