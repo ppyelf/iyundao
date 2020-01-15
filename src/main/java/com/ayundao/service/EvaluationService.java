@@ -139,4 +139,13 @@ public interface EvaluationService {
     Evaluation save(Evaluation e);
 
     List<Evaluation> findByIds(String[] ids);
+
+    /**
+     * 导出年度医德医风
+     * @param year
+     * @param resp
+     * @param req
+     * @return
+     */
+    JsonResult exportYear(String year, HttpServletResponse resp, HttpServletRequest req);
 }

@@ -216,7 +216,7 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
             "where te.USERID = ?1 " +
             "  and te.YEAR like ?2 " +
-            " and te.STATUS = 1 " +
+            "  and te.STATUS = 1 " +
             "order by year, type", nativeQuery = true)
     List<Map<String, Object>> findEvaluationByUserIdAndYear(String id, String year);
 
@@ -245,4 +245,34 @@ public interface EvaluationRepository extends BaseRepository<Evaluation, String>
             "group by name, year " +
             "order by year asc", nativeQuery = true)
     List<Map<String, Object>> getEvaluationByUserIdAndYear(String code);
+
+    /**
+     * 导出年度医德医风
+     * @param year
+     * @return
+     */
+    @Query(value = "select tu.CODE                                            code, " +
+            "       tu.NAME                                            name, " +
+            "       if(tu.SEX = 0, '男', '女')                           sex, " +
+            "       ifnull(ifnull(tui.DEPARTMENT, tui.BRANCHNAME), '') department, " +
+            "       case " +
+            "           when tui.POSTTYPE = 0 then '医生' " +
+            "           when tui.POSTTYPE = 1 then '护士' " +
+            "           when tui.POSTTYPE = 2 then '医技' " +
+            "           else '其他' end                                  postType, " +
+            "       ifnull(tui.post, '')                               post, " +
+            "       ifnull(tui.title, '')                              title, " +
+            "       sum(te.SCORE)                                      score, " +
+            "       '80'                                               baseScore, " +
+            "       80 + sum(te.SCORE)                                 total " +
+            "from t_evaluation te " +
+            "         left join t_evaluation_index tei on te.EVALUATIONINDEXID = tei.ID " +
+            "         left join t_user tu on te.USERID = tu.ID " +
+            "         left join t_user_info tui on tui.USERID = te.USERID " +
+            "         left join t_user_relations tur on te.USERID = tur.USERID " +
+            "         left join t_depart td on td.ID = tur.DEPARTID " +
+            "where left(te.YEAR, 4) like ?1 " +
+            "group by te.USERID " +
+            "order by total desc ", nativeQuery = true)
+    List<Map<String, Object>> exportYear(String year);
 }

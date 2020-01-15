@@ -10,7 +10,7 @@
 <!--所有表，列要加remarks进行注释-->
 <!--已经执行过的ChangeSet严禁修改。-->
 <!--不要随便升级项目liquibase版本，特别是大版本升级。不同版本ChangeSet MD5SUM的算法不一样。-->
-    <changeSet id="1" author="念">
-        <sqlFile path="classpath:db/T1.sql"/>
-    </changeSet>
+<!--    <changeSet id="1" author="念">-->
+<!--        <sqlFile path="classpath:db/T1.sql"/>-->
+<!--    </changeSet>-->
 </databaseChangeLog>

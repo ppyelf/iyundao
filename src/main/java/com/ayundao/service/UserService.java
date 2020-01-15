@@ -142,4 +142,11 @@ public interface UserService {
      * @return
      */
     String findUserDepart(String id);
+
+    /**
+     * 根据姓名查询用户
+     * @param val
+     * @return
+     */
+    User findByName(String val);
 }

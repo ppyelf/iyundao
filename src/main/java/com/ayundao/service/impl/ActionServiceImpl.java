@@ -13,6 +13,7 @@ import com.ayundao.entity.*;
 import com.ayundao.repository.ActionRepository;
 import com.ayundao.service.*;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -90,13 +91,12 @@ public class ActionServiceImpl implements ActionService {
         //第一行
         Row row = sheet.createRow(0);
         row.createCell(0).setCellValue("富阳区第一人民医院");
-        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 4);
+        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 3);
         sheet.addMergedRegion(range);
 
         //第二行
         row = sheet.createRow(1);
         int i = 0;
-        row.createCell(i++).setCellValue("胸牌号");
         row.createCell(i++).setCellValue("姓名");
         row.createCell(i++).setCellValue("科室名称");
         row.createCell(i++).setCellValue("金额");
@@ -138,30 +138,30 @@ public class ActionServiceImpl implements ActionService {
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
             Action action = new Action();
             val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(0)).toString();
-            User user = userService.findByCode(val);
+            User user = userService.findByName(val);
             if (user == null) {
-                return JsonResult.failure(602, "第"+(i+1)+"行胸牌号不能为空或不存在");
+                return JsonResult.failure(602, "第"+(i+1)+"行姓名不能为空或不存在");
             }
 
             action.setUser(new BaseComponent(user.getCode(), user.getName()));
             //机构
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
-            List<Depart> depart = departService.findByName("%" + val + "%");
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(1)).toString();
+            List<Depart> depart = departService.findByName("%" + StringUtils.trim(val) + "%");
             if (CollectionUtils.isEmpty(depart)) {
-                return JsonResult.failure(603, "第"+(i+1)+"科室名称不能为空");
+                return JsonResult.failure(603, "第"+(i+1)+"行科室名称不能为空");
             }else {
                 action.setGroup(new BaseComponent(depart.get(0).getCode(), depart.get(0).getName()));
             }
             action.setSubject(new BaseComponent(subject.getCode(), subject.getName()));
 
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(3)).toString();
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
             if (!val.matches("^[1-9]\\d*$")) {
                 return JsonResult.failure(604, "第"+(i+1)+"请输入大于零的正整数");
             }
 
             //保存爱心公益指标
             //设置特别格式
-            Cell cell = sheet.getRow(i).getCell(4);
+            Cell cell = sheet.getRow(i).getCell(3);
             CellStyle cellStyle = wb.createCellStyle();
             cellStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("0.00"));
             cell.setCellStyle(cellStyle);
@@ -177,7 +177,7 @@ public class ActionServiceImpl implements ActionService {
             String time = TimeUtils.convertTime(new Date(), TimeUtils.yyyyMMddHHmmss);
             e.setSureTime(time);
             e.setStatus(Evaluation.STATUS.agree);
-            e.setYear(time.substring(0, 4));
+            e.setYear(time.substring(0, 6));
             e.setUser(user);
             e.setEvaluationIndex(ei);
             e.setScore(score);
@@ -185,7 +185,7 @@ public class ActionServiceImpl implements ActionService {
             e = evaluationService.save(e);
 
             action.setEvaluation(e);
-            action.setMoney(Long.parseLong(ExcelUtils.getCellValue(sheet.getRow(i).getCell(3)).toString()));
+            action.setMoney(Long.parseLong(ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString()));
             action = actionRepository.save(action);
             arr.add(covert(action, score));
         }
@@ -229,7 +229,6 @@ public class ActionServiceImpl implements ActionService {
         if (CollectionUtils.isNotEmpty(list)) {
             for (int i = 0; i < list.size(); i++) {
                 Map<String, Object> map = list.get(i);
-                sheet.createRow(i+2).createCell(index++).setCellValue(map.get("userCode").toString());
                 sheet.getRow(i+2).createCell(index++).setCellValue(map.get("userName").toString());
                 sheet.getRow(i+2).createCell(index++).setCellValue(map.get("groupCode").toString());
                 sheet.getRow(i+2).createCell(index++).setCellValue(map.get("groupName").toString());

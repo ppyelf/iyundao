@@ -9,11 +9,15 @@ import com.ayundao.base.utils.JsonResult;
 import com.ayundao.base.utils.JsonUtils;
 import com.ayundao.entity.Evaluation;
 import com.ayundao.entity.EvaluationIndex;
+import com.ayundao.entity.Subject;
 import com.ayundao.entity.User;
 import com.ayundao.service.EvaluationService;
+import com.ayundao.service.SubjectService;
 import com.ayundao.service.UserService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -332,6 +336,28 @@ public class EvaluationController extends BaseController {
     }
 
     /**
+     * @api {GET} /evaluation/exportYear 导出年度医德医风
+     * @apiGroup Evaluation
+     * @apiVersion 1.0.0
+     * @apiDescription 导出年度医德医风
+     * @apiHeader {String} IYunDao-AssessToken token验证
+     * @apiParam {String} year 年度,必填
+     * @apiParamExample {json} 请求示例:
+     * /evaluation/exportYear
+     * @apiSuccess (200) {String} code 200:成功</br>
+     *                                 601:必填参数不能为空</br>
+     * @apiSuccess (200) {String} message 信息
+     * @apiSuccess (200) {String} data 返回用户信息
+     */
+    @GetMapping("/exportYear")
+    public JsonResult exportYear(String year, HttpServletResponse resp, HttpServletRequest req) {
+        if (isBlank(year)) {
+            return jsonResult.failure(601, "必填参数不能为空");
+        }
+        return evaluationService.exportYear(year, resp, req);
+    }
+
+    /**
      * @api {POST} /evaluation/sure 统计分页
      * @apiGroup Evaluation
      * @apiVersion 1.0.0
@@ -372,6 +398,7 @@ public class EvaluationController extends BaseController {
         evaluationService.sure(evaluations, status);
         return JsonResult.success();
     }
+
     /**
      * @api {POST} /evaluation/viewSum 查看个人医德分数
      * @apiGroup Evaluation
@@ -408,6 +435,7 @@ public class EvaluationController extends BaseController {
         }
         return evaluationService.viewSum(user, year);
     }
+
 
     /**
      * @api {GET} /evaluation/download 下载医德医风模板

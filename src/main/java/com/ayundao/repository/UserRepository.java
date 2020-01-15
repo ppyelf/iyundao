@@ -128,4 +128,7 @@ public interface UserRepository extends BaseRepository<User, String> {
             "         left join t_depart td on tur.DEPARTID = td.ID " +
             "where tu.ID = ?1 group by td.NAME", nativeQuery = true)
     String findUserDepart(String id);
+
+    @Query(value = "select * from t_user where NAME = ?1 group by NAME", nativeQuery = true)
+    User findByName(String val);
 }

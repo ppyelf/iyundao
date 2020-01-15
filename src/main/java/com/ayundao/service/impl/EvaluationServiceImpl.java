@@ -18,20 +18,15 @@ import com.ayundao.repository.EvaluationRepository;
 import com.ayundao.service.EvaluationService;
 import com.ayundao.service.UserInfoService;
 import com.ayundao.service.UserService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.RegionUtil;
-import org.apache.poi.xwpf.usermodel.*;
 import org.hibernate.query.internal.NativeQueryImpl;
 import org.hibernate.transform.Transformers;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +39,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -239,19 +233,19 @@ public class EvaluationServiceImpl implements EvaluationService {
         JSONArray arr = new JSONArray();
         String val = ExcelUtils.getCellValue(sheet.getRow(0).getCell(0)).toString();
         String year = "";
-        Pattern pattern = Pattern.compile("^(((?:19|20)\\d\\d)年(0[1-9]|1[0-2])月)(.*)$");
+        Pattern pattern = Pattern.compile("(((?:19|20)\\d\\d)年(0[1-9]|1[0-2])月)(.*)");
         Matcher matcher = pattern.matcher(val);
         if (matcher.find()) {
             year = matcher.group(1).replace("年", "").substring(0, 6);
         } else {
             return JsonResult.failure(603, "第1行情输入正确的日期格式,如:2019年01月医德医风考评");
         }
-        String[] codes = new String[sheet.getLastRowNum() - 1];
+        String[] names = new String[sheet.getLastRowNum() - 1];
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
             if (sheet.getRow(i) == null) {
                 break;
             }
-            codes[i - 2] = ExcelUtils.getCellValue(sheet.getRow(i).getCell(0)).toString();
+            names[i - 2] = ExcelUtils.getCellValue(sheet.getRow(i).getCell(0)).toString();
         }
         List<Evaluation> list = new ArrayList<>();
         for (int i = 2; i <= sheet.getLastRowNum(); i++) {
@@ -261,15 +255,15 @@ public class EvaluationServiceImpl implements EvaluationService {
             Evaluation e = new Evaluation();
             e.setYear(year);
             int index = i - 2;
-            User user = userService.findByCode(codes[index]);
+            User user = userService.findByName(names[index]);
             if (user == null) {
-                return JsonResult.failure(601, "第" + (i + 1) + "行胸牌号为空或查询不存在");
+                return JsonResult.failure(601, "第" + (i + 1) + "行用户姓名为空或查询不存在");
             }
             e.setUser(user);
             EvaluationIndex ei = null;
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(2)).toString();
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(1)).toString();
             for (EvaluationIndex evaluationIndex : indexes) {
-                if (evaluationIndex.getName().equals(val)) {
+                if (evaluationIndex.getName().equals(val.substring(4))) {
                     ei = evaluationIndex;
                     break;
                 }
@@ -278,19 +272,20 @@ public class EvaluationServiceImpl implements EvaluationService {
                 return JsonResult.failure(602, "第" + (i + 1) + "行指标查询不存在");
             }
             e.setEvaluationIndex(ei);
-            val = sheet.getRow(i).getCell(3).getNumericCellValue() + "";
+            sheet.getRow(i).getCell(2).setCellType(CellType.STRING);
+            val = sheet.getRow(i).getCell(2).getStringCellValue() + "";
             if (StringUtils.isBlank(val)) {
                 return JsonResult.failure(603, "第" + (i + 1) + "行未设置医德分或医德分异常");
             }
             double score = Double.parseDouble(val);
             if (ei.getType().equals(EvaluationIndex.TYPE.one)) {
                 e.setScore(-999.0);
-            } else if (score <= ei.getMax() && score >= ei.getMin()) {
+            } else if ((score <= ei.getMax() && score >= ei.getMin()) || (score < 0 && score >= ei.getMax() && score <= ei.getMin())) {
                 e.setScore(score);
             } else {
                 return JsonResult.failure(605, "第" + (i + 1) + "行医德分必须在" + ei.getMin() + "到" + ei.getMax() + "之间");
             }
-            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(4)).toString();
+            val = ExcelUtils.getCellValue(sheet.getRow(i).getCell(3)).toString();
             e.setRemark(val);
             e.setOperator(new BaseComponent(aUser.getCode(), aUser.getName()));
 
@@ -315,11 +310,12 @@ public class EvaluationServiceImpl implements EvaluationService {
 
         //第一行
         Row row = sheet.createRow(0);
-        row.createCell(0).setCellValue("____年医德医风考评");
+        row.createCell(0).setCellValue("____年__月医德医风考评");
+        row.setHeight((short) 600);
 
         //标题行
         row = sheet.createRow(1);
-        String[] names = new String[]{"胸牌号", "考评对象", "指标", "医德分", "备注"};
+        String[] names = new String[]{"考评对象", "指标", "医德分", "备注"};
         List<EvaluationIndex> list = evaluationIndexRepository.getAllNames();
         String[] val = new String[list.size()];
         for (int j = 0; j < val.length; j++) {
@@ -329,11 +325,11 @@ public class EvaluationServiceImpl implements EvaluationService {
         for (int i = 0; i < names.length; i++) {
             row.createCell(i).setCellValue(names[i]);
             if (names[i].equals("指标")) {
-                ExcelUtils.setHSSFValidation(sheet, val, 2, 2, 2, 2);
+                ExcelUtils.setHSSFValidation(sheet, val, 2, 2, 1, 1);
             }
         }
         ExcelUtils.setCellStyle(wb);
-        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 4);
+        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 3);
         sheet.addMergedRegion(range);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         wb.write(os);
@@ -413,7 +409,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         row.createCell(index++).setCellValue("岗位");
         range = new CellRangeAddress(3, 3, 1, 5);
         sheet.addMergedRegion(range);
-        row.createCell(index++).setCellValue(userInfo.getPostType() != null ? userInfo.getPostType().getName() : "暂无");
+        row.createCell(index++).setCellValue(userInfo.getPostType() != null ? userInfo.getPostType().getName() : "");
         cells.add(row.getCell(0));
 
         //第五行
@@ -435,7 +431,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         //第六行
         index = 0;
         row = sheet.createRow(5);
-        row.createCell(index++).setCellValue("所在单位");
+        row.createCell(index++).setCellValue("所在科室");
         row.createCell(index);
         range = new CellRangeAddress(5, 5, 1, 5);
         sheet.addMergedRegion(range);
@@ -478,7 +474,7 @@ public class EvaluationServiceImpl implements EvaluationService {
             row.createCell(index++).setCellValue(map.get("type").toString());
             row.createCell(index++).setCellValue(map.get("name").toString());
             row.createCell(index++).setCellValue(map.get("score").toString());
-            row.createCell(index++).setCellValue(StringUtils.isBlank(map.get("remark").toString()) ? "暂无" : map.get("remark").toString());
+            row.createCell(index++).setCellValue(StringUtils.isBlank(map.get("remark").toString()) ? "" : map.get("remark").toString());
             score += Double.parseDouble(map.get("score").toString());
             row.createCell(index++).setCellValue(score);
             if (StringUtils.isBlank(year)) {
@@ -545,6 +541,103 @@ public class EvaluationServiceImpl implements EvaluationService {
     @Override
     public List<Evaluation> findByIds(String[] ids) {
         return evaluationRepository.findByIds(ids);
+    }
+
+    @Override
+    public JsonResult exportYear(String year, HttpServletResponse resp, HttpServletRequest req) {
+        HSSFWorkbook wb = createWorkBook(year);
+        Sheet sheet = wb.getSheetAt(0);
+
+        //年度数据
+        int index = 0;
+        List<Map<String, Object>> list = evaluationRepository.exportYear(year);
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (int i = 0; i < list.size(); i++) {
+                Map<String, Object> map = list.get(i);
+                Row row = sheet.createRow(i + 3);
+                //姓名
+                row.createCell(index++).setCellValue(map.get("name").toString());
+                //性别
+                row.createCell(index++).setCellValue(map.get("sex").toString());
+                //所属科室
+                row.createCell(index++).setCellValue(map.get("department").toString());
+                //岗位
+                row.createCell(index++).setCellValue(map.get("postType").toString());
+                //职务
+                row.createCell(index++).setCellValue(map.get("post").toString());
+                //职称
+                row.createCell(index++).setCellValue(map.get("title").toString());
+                //加减分
+                row.createCell(index++).setCellValue(map.get("score").toString());
+                //基础分
+                row.createCell(index++).setCellValue(map.get("baseScore").toString());
+                //总分
+                row.createCell(index++).setCellValue(map.get("total").toString());
+                index = 0;
+            }
+        }
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            wb.write(os);
+            ExcelUtils.createFile(year+"年度医德医风汇总.xls", resp, os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                wb.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private HSSFWorkbook createWorkBook(String year) {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+
+        //第一行
+        Row row = sheet.createRow(0);
+        row.createCell(0).setCellValue("富阳区第一人民医院");
+        CellRangeAddress range = new CellRangeAddress(0, 0, 0, 8);
+        sheet.addMergedRegion(range);
+        row = sheet.createRow(1);
+        row.createCell(0).setCellValue(year+ "年度全院职工医德医风汇总");
+        range = new CellRangeAddress(1, 1, 0, 8);
+        sheet.addMergedRegion(range);
+
+        //第二行
+        row = sheet.createRow(2);
+        int i = 0;
+        row.createCell(i++).setCellValue("姓名");
+        row.createCell(i++).setCellValue("性别");
+        row.createCell(i++).setCellValue("所属科室");
+        row.createCell(i++).setCellValue("岗位");
+        row.createCell(i++).setCellValue("职务");
+        row.createCell(i++).setCellValue("职称");
+        row.createCell(i++).setCellValue("加减分");
+        row.createCell(i++).setCellValue("基础分");
+        row.createCell(i++).setCellValue("总分");
+
+        ExcelUtils.setCellStyle(wb);
+        row = sheet.getRow(0);
+        Cell cell = row.getCell(0);
+        CellStyle cs = wb.createCellStyle();
+        HSSFFont f = wb.createFont();
+        f.setFontName("宋体");
+        f.setFontHeightInPoints((short) 20);
+        f.setBold(true);
+        cs.setFont(f);
+        cs.setAlignment(HorizontalAlignment.CENTER);// 水平居中
+        cs.setVerticalAlignment(VerticalAlignment.CENTER);// 垂直居中
+        cs.setWrapText(true);//自动换行
+        row.setHeight((short) 600);
+        sheet.setColumnWidth(0, 4500);
+        cell.setCellStyle(cs);
+        row = sheet.getRow(1);
+        row.setHeight((short) 600);
+        row.getCell(0).setCellStyle(cs);
+        return wb;
     }
 
 

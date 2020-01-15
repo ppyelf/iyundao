@@ -234,4 +234,9 @@ public class UserServiceImpl implements UserService {
     public String findUserDepart(String id) {
         return userRepository.findUserDepart(id);
     }
+
+    @Override
+    public User findByName(String val) {
+        return userRepository.findByName(val);
+    }
 }
